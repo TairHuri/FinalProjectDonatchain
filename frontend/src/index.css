@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #8fa98f, #3b6978); /* אותו רקע כמו ה-navbar */
+}
