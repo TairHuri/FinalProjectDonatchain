@@ -28,7 +28,7 @@ export default function LoginModal({ onClose }: LoginModalProps) {
       return;
     }
     const success = await login({
-      id: loginData.email, // אם ב־API שלך זה נקרא id, השאירי כך
+      email: loginData.email, // אם ב־API שלך זה נקרא id, השאירי כך
       password: loginData.password,
     });
     if (success) {

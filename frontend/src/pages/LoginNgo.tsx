@@ -3,11 +3,13 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { LogIn, Mail, Lock } from "lucide-react";
 import { loginUser } from "../services/api";
+import { useAuth } from "../contexts/AuthContext";
 
 const LoginNgo: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const { login } = useAuth(); 
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -15,18 +17,14 @@ const LoginNgo: React.FC = () => {
       return;
     }
 
-    try {
-      const res = await loginUser({ email, password }); // 👈 שולח לשרת email+password
-      if (res.token) {
-        localStorage.setItem("token", res.token);
-        navigate("/ngo/home");
-      } else {
-        alert(res.message || "פרטי ההתחברות שגויים");
-      }
-    } catch (err) {
-      alert("שגיאה בהתחברות לשרת");
+    const success = await login({ email, password });
+    if (success) {
+      navigate("/ngo/home");
+    } else {
+      alert("פרטי ההתחברות שגויים");
     }
   };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-100 to-green-200">
