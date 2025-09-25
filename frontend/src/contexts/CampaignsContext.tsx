@@ -11,6 +11,7 @@ interface Campaign {
   startDate: string;
   endDate: string;
   description: string;
+  targetAmount: number;
   ngoLogo?: string;
   image?: string;
   video?: string;
@@ -19,35 +20,43 @@ interface Campaign {
 
 interface CampaignsContextType {
   campaigns: Campaign[];
-  addCampaign: (c: Omit<Campaign, "raised">) => Promise<void>; // ← פרמטר אחד בלבד
+  addCampaign: (data: Omit<Campaign, "_id" | "raised">) => Promise<void>;
   refreshCampaigns: () => Promise<void>;
 }
 
-
 const CampaignsContext = createContext<CampaignsContextType | undefined>(undefined);
 
-export function CampaignsProvider({ children }: { children: ReactNode }) {
+export function CampaignsProvider({ children }: { children: React.ReactNode }) {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const { ngo } = useAuth();
 
-  const refreshCampaigns = async () => {
-    try {
-      const data = await getCampaigns();
-      setCampaigns(data);
-    } catch (err) {
-      console.error("Error loading campaigns:", err);
-    }
-  };
+const refreshCampaigns = async () => {
+  try {
+    console.log("Fetching campaigns for NGO:", ngo?._id);
+    const data = await getCampaigns(ngo?._id);
+    console.log("Campaigns received:", data);
+    setCampaigns(data);
+  } catch (err) {
+    console.error("Failed to fetch campaigns:", err);
+  }
+};
 
-   const addCampaign = async (c: Omit<Campaign, "raised">) => {
+
+
+
+  const addCampaign = async (data: Omit<Campaign, "_id" | "raised">) => {
     try {
       if (!ngo?.token) throw new Error("NGO not logged in");
-      await createCampaign(c, ngo.token);
+      await createCampaign(data, ngo.token);
       await refreshCampaigns();
     } catch (err) {
       console.error("Error creating campaign:", err);
     }
-  }
+  };
+
+  useEffect(() => {
+    if (ngo) refreshCampaigns();
+  }, [ngo]);
 
   return (
     <CampaignsContext.Provider value={{ campaigns, addCampaign, refreshCampaigns }}>

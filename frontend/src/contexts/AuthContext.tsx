@@ -1,13 +1,18 @@
-import React, { createContext, useState, useContext } from "react";
-import { loginUser, registerUser } from "../services/api";
+import React, { createContext, useState, useContext, useEffect } from "react";
+import { loginUser, registerUser, getNgoProfile } from "../services/api";
 
 interface NgoData {
   name: string;
-  id: string;
-  email?: string;
-  phone?: string;
+  _id: string;
+  ngoId?: string;
+  email: string;
+  phone: string;
   password?: string;
-  token?: string; // נוסיף טוקן מהשרת
+  address?: string;
+  bankAccount?: string;
+  wallet?: string;
+  goals?: string;
+  token: string;
 }
 
 interface AuthContextType {
@@ -24,25 +29,74 @@ const AuthContext = createContext<AuthContextType>({
   logout: () => {},
 });
 
-
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [ngo, setNgo] = useState<NgoData | null>(null);
 
-  const login = async (data: { email: string; password: string }): Promise<boolean> => {
-    try {
-      // שולח email+password
-      const res = await loginUser(data); 
-      if (res?.token) {
-        setNgo({ name: res.name, id: res.id, token: res.token });
-        localStorage.setItem("token", res.token);
-        return true;
-      }
-      return false;
-    } catch (err) {
-      console.error("Login failed", err);
-      return false;
+useEffect(() => {
+  const savedNgo = localStorage.getItem("ngoData");
+  if (savedNgo) {
+    setNgo(JSON.parse(savedNgo));
+  }
+}, []);
+
+
+  const fetchNgoData = async (token: string) => {
+  try {
+    const res = await getNgoProfile(token); // קריאת פרופיל מהשרת
+    if (res) {
+      const ngoData: NgoData = {
+        name: res.name ?? "",
+        _id: res.id ?? "",
+        ngoId: res.ngoId ?? "",
+        email: res.email ?? "",
+        phone: res.phone ?? "",
+        address: res.address ?? "",
+        bankAccount: res.bankAccount ?? "",
+        wallet: res.wallet ?? "",
+        goals: res.goals ?? "",
+        token, // חייב להיות כי שמרנו בלוקאל סטורג'
+      };
+      setNgo(ngoData);
+      localStorage.setItem("ngoData", JSON.stringify(ngoData));
     }
-  };
+  } catch (err) {
+    console.error("Failed to fetch NGO profile", err);
+  }
+};
+
+const login = async (data: { email: string; password: string }): Promise<boolean> => {
+  try {
+    const res = await loginUser(data);
+
+    if (res?.token && res?.user) {
+      // נשמור את הנתונים שהגיעו מהשרת
+      const ngoData: NgoData = {
+        _id: res.user.id,
+        name: res.user.name,
+        email: res.user.email,
+        ngoId: res.user.ngoId,
+        phone: res.user.phone,
+        address: res.user.address,
+        bankAccount: res.user.bankAccount,
+        wallet: res.user.wallet,
+        goals: res.user.goals,
+        token: res.token,
+      };
+
+      setNgo(ngoData);
+      localStorage.setItem("token", res.token);
+      localStorage.setItem("ngoData", JSON.stringify(ngoData));
+
+      return true;
+    }
+
+    return false;
+  } catch (err) {
+    console.error("Login failed", err);
+    return false;
+  }
+};
+
 
   const register = async (data: any): Promise<boolean> => {
     try {
@@ -57,6 +111,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = () => {
     setNgo(null);
     localStorage.removeItem("token");
+    localStorage.removeItem("ngoData");
   };
 
   return (
@@ -65,4 +120,5 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     </AuthContext.Provider>
   );
 };
+
 export const useAuth = () => useContext(AuthContext);
