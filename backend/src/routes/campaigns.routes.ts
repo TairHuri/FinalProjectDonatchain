@@ -5,8 +5,13 @@ import roleMiddleware from '../middlewares/role.middleware';
 
 const router = Router();
 
-router.get('/', listCampaigns); // ← GET /api/campaigns?ngoId=...
+// 📋 רשימת כל הקמפיינים
+router.get('/', listCampaigns);
+
+// 🔎 קמפיין בודד לפי ID
 router.get('/:id', getCampaign);
+
+// ➕ יצירת קמפיין (מאובטח - רק NGO/Admin)
 router.post('/', authMiddleware, roleMiddleware(['ngo', 'admin']), createCampaign);
 
 export default router;

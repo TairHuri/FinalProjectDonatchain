@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useCampaigns } from "../contexts/CampaignsContext";
-import { createCampaign } from "../services/api";
 
 const NewCampaign: React.FC = () => {
   const { addCampaign } = useCampaigns();
@@ -11,9 +10,9 @@ const NewCampaign: React.FC = () => {
   const [endDate, setEndDate] = useState("");
   const [description, setDescription] = useState("");
 
-const [video, setVideo] = useState<string | undefined>(undefined);
-const [ngoLogo, setNgoLogo] = useState<string | undefined>(undefined);
-const [image, setImage] = useState<string | undefined>(undefined);
+  const [image, setImage] = useState<string | null>(null);
+  const [video, setVideo] = useState<string | null>(null);
+  const [ngoLogo, setNgoLogo] = useState<string | null>(null);
 
   // המרה של קובץ ל-URL מקומי (base64 / blob)
   const handleFileUpload = (
@@ -29,42 +28,33 @@ const [image, setImage] = useState<string | undefined>(undefined);
       reader.readAsDataURL(file);
     }
   };
-  
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  try {
-const newCampaign = {
-  title,
-  description,
-  targetAmount: Number(goal),
-  goal: Number(goal),
-  startDate,
-  endDate,
-  images: image ? [image] : [],
-  ngoLogo: ngoLogo || "/default-logo.png",
-  video,
-  tags: [],  // אם רוצים, אפשר להוסיף שדות tags מהטופס
-};
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
 
-    await addCampaign(newCampaign); // ✅ רק זה, בלי createCampaign ישיר
+    const newCampaign = {
+      title,
+      goal: Number(goal),
+      startDate,
+      endDate,
+      description,
+      image: image || "/default-banner.png",
+      ngoLogo: ngoLogo || "/default-logo.png",
+      video,
+    };
+
+    addCampaign(newCampaign);
+
     alert("הקמפיין נוצר בהצלחה!");
-
-    // איפוס שדות
     setTitle("");
     setGoal("");
     setStartDate("");
     setEndDate("");
     setDescription("");
-    setImage("");
-    setNgoLogo("");
-    setVideo("");
-
-  } catch (err) {
-    console.error("שגיאה ביצירת קמפיין:", err);
-    alert("שגיאה ביצירת הקמפיין");
-  }
-};
+    setImage(null);
+    setNgoLogo(null);
+    setVideo(null);
+  };
 
   return (
     <div style={{ display: "flex", direction: "rtl" }}>

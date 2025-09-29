@@ -24,23 +24,13 @@ export const register = async (req: Request, res: Response) => {
     });
 
     const token = AuthService.signJwt({ sub: user._id.toString() });
-res.status(201).json({
-  success: true,
-  message: "עמותה נרשמה בהצלחה",
-  user: { 
-    id: user._id, 
-    email: user.email, 
-    name: user.name,
-    ngoId: user.ngoId,       // ✅ נוסיף מספר עמותה
-    phone: user.phone,       // ✅ נוסיף טלפון
-    address: user.address,
-    bankAccount: user.bankAccount,
-    wallet: user.wallet,
-    goals: user.goals,
-  },
-  token,
-});
 
+    res.status(201).json({
+      success: true,
+      message: "עמותה נרשמה בהצלחה",
+      user: { id: user._id, email: user.email, name: user.name },
+      token,
+    });
   } catch (err: any) {
     console.error("❌ שגיאה בהרשמה:", err.message);
     res.status(400).json({ success: false, message: err.message });
@@ -66,21 +56,7 @@ export const login = async (req: Request, res: Response) => {
 
     const token = AuthService.signJwt({ sub: user._id.toString() });
 
-    res.json({
-      success: true,
-      token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        ngoId: user.ngoId,
-        phone: user.phone,
-        address: user.address,
-        bankAccount: user.bankAccount,
-        wallet: user.wallet,
-        goals: user.goals,
-      },
-    });
+    res.json({ success: true, token, user: { id: user._id, email: user.email, name: user.name } });
   } catch (err: any) {
     console.error("❌ שגיאה בהתחברות:", err.message);
     res.status(500).json({ success: false, message: err.message });
@@ -94,8 +70,6 @@ export const me = async (req: Request, res: Response) => {
     user: {
       id: user._id,
       email: user.email,
-      ngoId: user.ngoId,   // ✅
-      phone: user.phone, 
       name: user.name,
       roles: user.roles,
     },

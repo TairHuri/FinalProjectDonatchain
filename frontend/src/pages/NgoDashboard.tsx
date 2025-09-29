@@ -25,6 +25,18 @@ const NgoDashboard: React.FC = () => {
   const handleCreateCampaign = () => {
     if (!form.title || !form.goal) return alert("יש למלא את כל השדות");
 
+    addCampaign({
+      title: form.title,
+      goal: Number(form.goal),
+
+      startDate: form.startDate,
+      endDate: form.endDate,
+      description: form.description,
+      ngoLogo: form.logo ? URL.createObjectURL(form.logo) : "/logos/default.png",
+      image: form.image ? URL.createObjectURL(form.image) : "/campaigns/default.png",
+      video: form.video ? URL.createObjectURL(form.video) : undefined,
+    });
+
     setForm({
       title: "",
       goal: "",
@@ -41,7 +53,7 @@ const NgoDashboard: React.FC = () => {
   const [editMode, setEditMode] = useState<"view" | "edit" | "password">("view");
   const [formData, setFormData] = useState({
     name: ngo?.name || "",
-    id: ngo?._id || "",
+    id: ngo?.id || "",
   });
   const [passwords, setPasswords] = useState({
     current: "",
@@ -170,24 +182,20 @@ const NgoDashboard: React.FC = () => {
             </button>
           </div>
         )}
+
 {activePage === "profile" && (
   <div style={cardStyle}>
     <h2 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "20px" }}>
-      פרטים אישיים
+      פרטם אישיים
     </h2>
     {ngo ? (
       <>
         {editMode === "view" && (
           <div>
             <p><strong>שם העמותה:</strong> {ngo.name}</p>
-            <p><strong>מספר עמותה:</strong> {ngo?.ngoId}</p>
+            <p><strong>מספר עמותה:</strong> {ngo.id}</p>
             <p><strong>אימייל:</strong> {ngo.email}</p>
             <p><strong>טלפון:</strong> {ngo.phone}</p>
-            {ngo.address && <p><strong>כתובת:</strong> {ngo.address}</p>}
-            {ngo.bankAccount && <p><strong>חשבון בנק:</strong> {ngo.bankAccount}</p>}
-            {ngo.wallet && <p><strong>ארנק קריפטו:</strong> {ngo.wallet}</p>}
-            {ngo.goals && <p><strong>מטרות העמותה:</strong> {ngo.goals}</p>}
-
             <button
               onClick={() => setEditMode("edit")}
               style={{ ...primaryBtnStyle, marginTop: "15px" }}
@@ -213,15 +221,9 @@ const NgoDashboard: React.FC = () => {
               placeholder="מספר עמותה"
               style={inputStyle}
             />
-            {/* כאן תוכלי להוסיף שדות נוספים אם תרצי לערוך גם אימייל/טלפון וכו' */}
             <div style={{ display: "flex", gap: "10px" }}>
               <button onClick={handleSaveChanges} style={primaryBtnStyle}>שמור</button>
-              <button
-                onClick={() => setEditMode("view")}
-                style={{ ...menuBtnStyle, background: "#f87171", color: "#fff" }}
-              >
-                ביטול
-              </button>
+              <button onClick={() => setEditMode("view")} style={{ ...menuBtnStyle, background: "#f87171", color: "#fff" }}>ביטול</button>
             </div>
           </div>
         )}
@@ -233,22 +235,20 @@ const NgoDashboard: React.FC = () => {
 )}
 
 
-
         {activePage === "campaigns" && (
           <div>
             <h2 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "20px" }}>
               הקמפיינים שלי
             </h2>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: "20px" }}>
-      {campaigns.map((c) => (
-        <div key={c._id} style={cardStyle}>
-          <img src={c.image?.[0] || "/default-banner.png"} alt="קמפיין" 
-               style={{ width: "100%", height: "150px", objectFit: "cover", borderRadius: "8px" }} />
-          <h3 style={{ fontSize: "20px", fontWeight: "bold", marginTop: "10px" }}>{c.title}</h3>
-          <p>{c.raised.toLocaleString()} ₪ מתוך {c.targetAmount.toLocaleString()} ₪</p>
-          <div style={{ background: "#e5e7eb", borderRadius: "8px", overflow: "hidden", height: "8px", marginTop: "5px" }}>
-            <div style={{ width: `${(c.raised / c.targetAmount) * 100}%`, background: "#10b981", height: "100%" }}></div>
-          </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: "20px" }}>
+              {campaigns.map((c) => (
+                <div key={c._id} style={cardStyle}>
+                  <img src={c.image} alt="קמפיין" style={{ width: "100%", height: "150px", objectFit: "cover", borderRadius: "8px" }} />
+                  <h3 style={{ fontSize: "20px", fontWeight: "bold", marginTop: "10px" }}>{c.title}</h3>
+                  <p>{c.raised.toLocaleString()} ₪ מתוך {c.goal.toLocaleString()} ₪</p>
+                  <div style={{ background: "#e5e7eb", borderRadius: "8px", overflow: "hidden", height: "8px", marginTop: "5px" }}>
+                    <div style={{ width: `${(c.raised / c.goal) * 100}%`, background: "#10b981", height: "100%" }}></div>
+                  </div>
                 </div>
               ))}
             </div>

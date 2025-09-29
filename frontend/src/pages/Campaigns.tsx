@@ -1,13 +1,28 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Grid, List } from "lucide-react";
 import { useCampaigns } from "../contexts/CampaignsContext";
 import { Link } from "react-router-dom";
+import { getCampaigns } from "../services/api";
+
 
 export default function Campaigns() {
-  const { campaigns } = useCampaigns(); // ✅ מחובר ל־Context
+  const [campaigns, setCampaigns] = useState<any[]>([]);
   const [query, setQuery] = useState("");
   const [sortBy, setSortBy] = useState("title");
   const [view, setView] = useState<"grid" | "list">("grid");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getCampaigns();
+        setCampaigns(data);
+      } catch (err) {
+        console.error("שגיאה בטעינת הקמפיינים:", err);
+      }
+    };
+    fetchData();
+  }, []);
+
   const filtered = campaigns
     .filter((c) => c.title.toLowerCase().includes(query.toLowerCase()))
     .sort((a, b) =>
@@ -92,8 +107,8 @@ export default function Campaigns() {
 
             return (
               <Link
-                to={`/campaign/${c._id}`}
-                key={c._id}
+                to={`/campaign/${c.id}`}
+                key={c.id}
                 style={{
                   display: "block",
                   background: "white",
@@ -151,8 +166,8 @@ export default function Campaigns() {
 
             return (
               <Link
-                to={`/campaign/${c._id}`}
-                key={c._id}
+                to={`/campaign/${c.id}`}
+                key={c.id}
                 style={{
                   display: "flex",
                   alignItems: "center",
