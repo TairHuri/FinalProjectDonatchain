@@ -43,7 +43,7 @@ const NewCampaign: React.FC = () => {
       video,
     };
 
-    addCampaign(newCampaign);
+   //חסר הוספת קמפיין כאן
 
     alert("הקמפיין נוצר בהצלחה!");
     setTitle("");
