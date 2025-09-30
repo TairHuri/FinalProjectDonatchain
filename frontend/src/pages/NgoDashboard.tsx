@@ -28,7 +28,7 @@ const NgoDashboard: React.FC = () => {
     addCampaign({
       title: form.title,
       goal: Number(form.goal),
-
+_id: crypto.randomUUID(),
       startDate: form.startDate,
       endDate: form.endDate,
       description: form.description,
@@ -53,7 +53,7 @@ const NgoDashboard: React.FC = () => {
   const [editMode, setEditMode] = useState<"view" | "edit" | "password">("view");
   const [formData, setFormData] = useState({
     name: ngo?.name || "",
-    id: ngo?.id || "",
+    id: ngo?._id || "",
   });
   const [passwords, setPasswords] = useState({
     current: "",
@@ -193,7 +193,7 @@ const NgoDashboard: React.FC = () => {
         {editMode === "view" && (
           <div>
             <p><strong>שם העמותה:</strong> {ngo.name}</p>
-            <p><strong>מספר עמותה:</strong> {ngo.id}</p>
+            <p><strong>מספר עמותה:</strong> {ngo._id}</p>
             <p><strong>אימייל:</strong> {ngo.email}</p>
             <p><strong>טלפון:</strong> {ngo.phone}</p>
             <button
