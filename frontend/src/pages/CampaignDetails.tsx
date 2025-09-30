@@ -5,7 +5,7 @@ import { useState } from "react";
 const CampaignDetails: React.FC = () => {
   const { id } = useParams();
   const { campaigns } = useCampaigns();
-  const campaign = campaigns.find((c) => c.id === Number(id));
+  const campaign = campaigns.find((c) => c._id === id);
 
   const [activeTab, setActiveTab] = useState<"project" | "ngo" | "donations">("project");
 
