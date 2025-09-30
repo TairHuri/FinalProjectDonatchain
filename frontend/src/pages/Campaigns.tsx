@@ -11,23 +11,35 @@ export default function Campaigns() {
   const [sortBy, setSortBy] = useState("title");
   const [view, setView] = useState<"grid" | "list">("grid");
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getCampaigns();
-        setCampaigns(data);
-      } catch (err) {
-        console.error("שגיאה בטעינת הקמפיינים:", err);
-      }
-    };
-    fetchData();
-  }, []);
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const data = await getCampaigns();
+      console.log("🔍 נתונים שחזרו מה־API:", data);
 
-  const filtered = campaigns
-    .filter((c) => c.title.toLowerCase().includes(query.toLowerCase()))
-    .sort((a, b) =>
-      sortBy === "title" ? a.title.localeCompare(b.title) : b.raised - a.raised
-    );
+      // תמיד נוודא שמה ששמים זה מערך
+      if (Array.isArray(data)) {
+        setCampaigns(data);
+      } else if (data && Array.isArray(data.campaigns)) {
+        setCampaigns(data.campaigns);
+      } else {
+        setCampaigns([]);
+      }
+    } catch (err) {
+      console.error("שגיאה בטעינת הקמפיינים:", err);
+      setCampaigns([]);
+    }
+  };
+  fetchData();
+}, []);
+
+
+const filtered = (Array.isArray(campaigns) ? campaigns : [])
+  .filter((c) => c.title?.toLowerCase().includes(query.toLowerCase()))
+  .sort((a, b) =>
+    sortBy === "title" ? a.title.localeCompare(b.title) : b.raised - a.raised
+  );
+
 
   return (
     <div dir="rtl" style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
