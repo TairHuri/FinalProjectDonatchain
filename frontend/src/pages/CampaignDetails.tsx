@@ -1,11 +1,12 @@
 import { useParams } from "react-router-dom";
 import { useCampaigns } from "../contexts/CampaignsContext";
-import { useState } from "react";
+import { useState, type ChangeEvent } from "react";
 
 const CampaignDetails: React.FC = () => {
   const { id } = useParams();
   const { campaigns } = useCampaigns();
   const campaign = campaigns.find((c) => c._id! === (id));
+  const [showCreditPay, setShowCreditPay] = useState<boolean>(false)
 
   const [activeTab, setActiveTab] = useState<"project" | "ngo" | "donations">("project");
 
@@ -34,13 +35,16 @@ const CampaignDetails: React.FC = () => {
 
       {/* כפתורים */}
       <div style={{ display: "flex", gap: "12px", marginTop: "20px" }}>
-        <button style={{ flex: 1, backgroundColor: "green", color: "white", padding: "10px", borderRadius: "8px", border: "none" }}>
+        <button style={{ flex: 1, backgroundColor: "green", color: "white", padding: "10px", borderRadius: "8px", border: "none" }}
+          onClick={() => setShowCreditPay(true)}>
           תרומה באשראי
         </button>
+
         <button style={{ flex: 1, backgroundColor: "#4b5563", color: "white", padding: "10px", borderRadius: "8px", border: "none" }}>
           תרומה בקריפטו
         </button>
       </div>
+      {showCreditPay && <CreditPayment close={() => setShowCreditPay(false)} campaignId={campaign._id!} userId={campaign.ngo} />}
 
       {/* תמונות וסרטון */}
       <div style={{ display: "flex", gap: "10px", marginTop: "20px", overflowX: "auto" }}>
@@ -74,4 +78,63 @@ const CampaignDetails: React.FC = () => {
   );
 };
 
+const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campaignId: string, userId: string }) => {
+  const date = new Date()
+  const [ccForm, setCcform] = useState({amount:0, ccNumber: '', expYear: date.getFullYear(), expMonth: 1, cvv: 0, ownerId: '', ownername: '' })
+  const [message, setMessage] = useState<string | null>(null)
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = event.target;
+    setCcform({ ...ccForm, [id]: value })
+  }
+
+  const handlePayment = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (ccForm.ccNumber.length < 8) {
+      setMessage("cc number is too short")
+      return;
+    }
+    if (ccForm.cvv < 100 || ccForm.cvv > 999) {
+      setMessage("cvv is invalid ")
+      return
+    }
+    // send post /charge
+    const chargeData = { ...ccForm, campaignId, ngo: userId }
+    const CHARGE_URL = import.meta.env.VITE_CHARGE_URL || "http://localhost:8890/api";
+    const response = await fetch(`${CHARGE_URL}/charge`, {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json",
+        //"Authorization": `Bearer ${token}`,
+      },
+      body: JSON.stringify(chargeData),
+    })
+    console.log('sent', chargeData)
+    console.log(response.status);
+    
+    close()
+  }
+
+  return (
+    <form onSubmit={handlePayment}>
+      <label htmlFor="donorFirstName">שם פרטי</label><input id="donorFirstName" placeholder="שם פרטי" type="text" required onChange={handleChange} />
+      <label htmlFor="donorLastName">שם משפחה</label><input id="donorLastName" placeholder="שם משפחה" type="text" required onChange={handleChange} />
+      <label htmlFor="donorNumber">פלאפון</label><input id="donorNumber" placeholder="מספר פלאפון" pattern="^[0-9]{3}[\-.]?[0-9]{7}$" title="incorrect be xxx.1234567" type="tel" required onChange={handleChange} />
+      <label htmlFor="donorEmail">מייל</label><input id="donorEmail" placeholder="מייל" type="email" required onChange={handleChange} />
+      <p>credit payment</p>
+      {message && <p>{message}</p>}
+      <label htmlFor="amount">סכום </label><input id="amount" placeholder="סכום התרומה" required onChange={handleChange} />
+      <label htmlFor="ccNumber">כרטיס אשראי</label><input id="ccNumber" placeholder="מספר כרטיס" required onChange={handleChange} />
+      <label>תאריך תפוגה</label>
+      <input id="expYear" type="number" min={date.getFullYear()} max={date.getFullYear() + 15} placeholder="שנה" required onChange={handleChange} />
+      <input id="expMonth" type="number" min="1" max="12" placeholder="חודש" required onChange={handleChange} />
+      <label htmlFor="cvv">CVV code</label><input id="cvv" placeholder="cvv" required onChange={handleChange} />
+      <label htmlFor="ownerId">ת"ז</label><input id="ownerId" type="text" placeholder="תעודת זהות בעל הכרטיס" required onChange={handleChange} />
+      <label htmlFor="ownerName">שם</label><input id="ownerName" type="text" placeholder="שם בעל הכרטיס" required onChange={handleChange} />
+      <button type='submit' style={{ flex: 1, backgroundColor: "green", color: "white", padding: "10px", borderRadius: "8px", border: "none" }}>
+        תרום </button>
+    </form>
+  )
+
+}
 export default CampaignDetails;

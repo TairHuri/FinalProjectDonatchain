@@ -15,6 +15,7 @@ interface Campaign {
   image?: string;
   video?: string;
   gallery?: string[];
+  ngo:string;
 }
 
 interface CampaignsContextType {
@@ -41,6 +42,11 @@ const refreshCampaigns = async () => {
   }
 };
 
+  useEffect(()=>{
+    if(ngo && ngo?.token){
+      refreshCampaigns();
+    }
+  }, [ngo])
    const addCampaign = async (c: Omit<Campaign, "raised">) => {
     try {
       if (!ngo?.token) throw new Error("NGO not logged in");

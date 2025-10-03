@@ -18,13 +18,11 @@ useEffect(() => {
       console.log("🔍 נתונים שחזרו מה־API:", data);
 
       // תמיד נוודא שמה ששמים זה מערך
-      if (Array.isArray(data)) {
-        setCampaigns(data);
-      } else if (data && Array.isArray(data.campaigns)) {
+      if (data && Array.isArray(data.campaigns)) {
         setCampaigns(data.campaigns);
-      } else {
-        setCampaigns([]);
-      }
+      } else if(data && Array.isArray(data.items)){
+        setCampaigns(data.items);
+      } 
     } catch (err) {
       console.error("שגיאה בטעינת הקמפיינים:", err);
       setCampaigns([]);
@@ -119,8 +117,8 @@ const filtered = (Array.isArray(campaigns) ? campaigns : [])
 
             return (
               <Link
-                to={`/campaign/${c.id}`}
-                key={c.id}
+                to={`/campaign/${c._id}`}
+                key={c._id}
                 style={{
                   display: "block",
                   background: "white",

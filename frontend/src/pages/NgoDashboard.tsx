@@ -4,13 +4,14 @@ import { useCampaigns } from "../contexts/CampaignsContext";
 import { PlusCircle, Home, Users, LogOut, FileText, Settings } from "lucide-react";
 
 const NgoDashboard: React.FC = () => {
- const { ngo } = useAuth();
+  const { ngo } = useAuth();
   const { campaigns, addCampaign } = useCampaigns();
 
   const [activePage, setActivePage] = useState<
     "dashboard" | "newCampaign" | "campaigns" | "profile" | "donors"
   >("dashboard");
-  
+  console.log('campaigns', campaigns);
+
   const [form, setForm] = useState({
     title: "",
     goal: "",
@@ -22,21 +23,22 @@ const NgoDashboard: React.FC = () => {
     video: null as File | null,
   });
 
-  const handleCreateCampaign = async() => {
+  const handleCreateCampaign = async () => {
     if (!form.title || !form.goal) return alert("יש למלא את כל השדות");
-
-  const newCampaign = {
-  title:form.title,
-  description:form.description,
-  targetAmount: Number(form.goal),
-  goal: Number(form.goal),
-  startDate:form.startDate,
-  endDate:form.endDate,
-  images: form.image ? [form.image] : [],
-  ngoLogo: "form.logo",
-  video:form.title,
-  tags: [],  // אם רוצים, אפשר להוסיף שדות tags מהטופס
-};
+    if (!ngo) return;
+    const newCampaign = {
+      ngo: ngo._id,
+      title: form.title,
+      description: form.description,
+      targetAmount: Number(form.goal),
+      goal: Number(form.goal),
+      startDate: form.startDate,
+      endDate: form.endDate,
+      images: form.image ? [form.image] : [],
+      ngoLogo: "form.logo",
+      video: form.title,
+      tags: [],  // אם רוצים, אפשר להוסיף שדות tags מהטופס
+    };
 
 
     await addCampaign(newCampaign); // ✅ רק זה, בלי createCampaign ישיר
@@ -187,56 +189,56 @@ const NgoDashboard: React.FC = () => {
           </div>
         )}
 
-{activePage === "profile" && (
-  <div style={cardStyle}>
-    <h2 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "20px" }}>
-      פרטם אישיים
-    </h2>
-    {ngo ? (
-      <>
-        {editMode === "view" && (
-          <div>
-            <p><strong>שם העמותה:</strong> {ngo.name}</p>
-            <p><strong>מספר עמותה:</strong> {ngo._id}</p>
-            <p><strong>אימייל:</strong> {ngo.email}</p>
-            <p><strong>טלפון:</strong> {ngo.phone}</p>
-            <button
-              onClick={() => setEditMode("edit")}
-              style={{ ...primaryBtnStyle, marginTop: "15px" }}
-            >
-              עריכת פרטים
-            </button>
-          </div>
-        )}
+        {activePage === "profile" && (
+          <div style={cardStyle}>
+            <h2 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "20px" }}>
+              פרטם אישיים
+            </h2>
+            {ngo ? (
+              <>
+                {editMode === "view" && (
+                  <div>
+                    <p><strong>שם העמותה:</strong> {ngo.name}</p>
+                    <p><strong>מספר עמותה:</strong> {ngo._id}</p>
+                    <p><strong>אימייל:</strong> {ngo.email}</p>
+                    <p><strong>טלפון:</strong> {ngo.phone}</p>
+                    <button
+                      onClick={() => setEditMode("edit")}
+                      style={{ ...primaryBtnStyle, marginTop: "15px" }}
+                    >
+                      עריכת פרטים
+                    </button>
+                  </div>
+                )}
 
-        {editMode === "edit" && (
-          <div>
-            <input
-              type="text"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="שם העמותה"
-              style={inputStyle}
-            />
-            <input
-              type="text"
-              value={formData.id}
-              onChange={(e) => setFormData({ ...formData, id: e.target.value })}
-              placeholder="מספר עמותה"
-              style={inputStyle}
-            />
-            <div style={{ display: "flex", gap: "10px" }}>
-              <button onClick={handleSaveChanges} style={primaryBtnStyle}>שמור</button>
-              <button onClick={() => setEditMode("view")} style={{ ...menuBtnStyle, background: "#f87171", color: "#fff" }}>ביטול</button>
-            </div>
+                {editMode === "edit" && (
+                  <div>
+                    <input
+                      type="text"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      placeholder="שם העמותה"
+                      style={inputStyle}
+                    />
+                    <input
+                      type="text"
+                      value={formData.id}
+                      onChange={(e) => setFormData({ ...formData, id: e.target.value })}
+                      placeholder="מספר עמותה"
+                      style={inputStyle}
+                    />
+                    <div style={{ display: "flex", gap: "10px" }}>
+                      <button onClick={handleSaveChanges} style={primaryBtnStyle}>שמור</button>
+                      <button onClick={() => setEditMode("view")} style={{ ...menuBtnStyle, background: "#f87171", color: "#fff" }}>ביטול</button>
+                    </div>
+                  </div>
+                )}
+              </>
+            ) : (
+              <p>לא נמצאו פרטים, אנא התחבר שוב.</p>
+            )}
           </div>
         )}
-      </>
-    ) : (
-      <p>לא נמצאו פרטים, אנא התחבר שוב.</p>
-    )}
-  </div>
-)}
 
 
         {activePage === "campaigns" && (
