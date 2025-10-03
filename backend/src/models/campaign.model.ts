@@ -4,7 +4,7 @@ export interface ICampaign extends Document {
   title: string;
   description: string;
   ngo: Schema.Types.ObjectId;
-  targetAmount: number;
+  goal: number;
   currency: string;
   raised: number;
   images: string[];
@@ -19,7 +19,7 @@ const campaignSchema = new Schema(
     title: { type: String, required: true, index: 'text' },
     description: { type: String, required: true, index: 'text' },
     ngo: { type: Schema.Types.ObjectId, ref: 'Ngo', required: true },
-    targetAmount: { type: Number, required: true },
+    goal: { type: Number, required: true },
     currency: { type: String, default: 'USD' },
     raised: { type: Number, default: 0 },
     images: [String],

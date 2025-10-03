@@ -1,6 +1,8 @@
 import { useParams } from "react-router-dom";
 import { useCampaigns } from "../contexts/CampaignsContext";
 import { useState, type ChangeEvent } from "react";
+import { useAuth } from "../contexts/AuthContext";
+import { creditDonation } from "../services/api";
 
 const CampaignDetails: React.FC = () => {
   const { id } = useParams();
@@ -80,16 +82,18 @@ const CampaignDetails: React.FC = () => {
 
 const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campaignId: string, userId: string }) => {
   const date = new Date()
-  const [ccForm, setCcform] = useState({amount:0, ccNumber: '', expYear: date.getFullYear(), expMonth: 1, cvv: 0, ownerId: '', ownername: '' })
+  //const { ngo } = useAuth();
+  const [ccForm, setCcform] = useState({donorNumber:'', donorEmail:'', donorFirstName:'', donorLastName:'', amount:0, currency:'', ccNumber: '', expYear: date.getFullYear(), expMonth: 1, cvv: 0, ownerId: '', ownername: '' })
   const [message, setMessage] = useState<string | null>(null)
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (event: ChangeEvent<HTMLInputElement|HTMLSelectElement>) => {
     const { id, value } = event.target;
     setCcform({ ...ccForm, [id]: value })
   }
 
   const handlePayment = async (event: React.FormEvent) => {
     event.preventDefault();
+
     if (ccForm.ccNumber.length < 8) {
       setMessage("cc number is too short")
       return;
@@ -99,20 +103,16 @@ const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campa
       return
     }
     // send post /charge
-    const chargeData = { ...ccForm, campaignId, ngo: userId }
-    const CHARGE_URL = import.meta.env.VITE_CHARGE_URL || "http://localhost:8890/api";
-    const response = await fetch(`${CHARGE_URL}/charge`, {
-      method: 'POST',
-      headers: {
-        "Content-Type": "application/json",
-        //"Authorization": `Bearer ${token}`,
-      },
-      body: JSON.stringify(chargeData),
-    })
+    const chargeData = { ...ccForm, campaignId, }
+    const {data, status} = await creditDonation(chargeData, campaignId)
+
     console.log('sent', chargeData)
-    console.log(response.status);
-    
-    close()
+    console.log(data, status);
+    if(status == 201){
+      close()
+    }else{
+      setMessage(data.message)
+    }
   }
 
   return (
@@ -124,6 +124,7 @@ const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campa
       <p>credit payment</p>
       {message && <p>{message}</p>}
       <label htmlFor="amount">סכום </label><input id="amount" placeholder="סכום התרומה" required onChange={handleChange} />
+      <label htmlFor="currency">מטבע</label><select id="currency" onChange={handleChange}><option value="ILS">ILS</option><option value="USD">USD</option><option value="EU">EU</option></select>
       <label htmlFor="ccNumber">כרטיס אשראי</label><input id="ccNumber" placeholder="מספר כרטיס" required onChange={handleChange} />
       <label>תאריך תפוגה</label>
       <input id="expYear" type="number" min={date.getFullYear()} max={date.getFullYear() + 15} placeholder="שנה" required onChange={handleChange} />

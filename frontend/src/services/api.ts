@@ -77,3 +77,19 @@ export const getCampaigns = async (ngoId?: string) => {
   return data;
 };
 
+type CreditDonation = {
+  amount: number, currency: string, ccNumber: string, expYear: number, expMonth: number, cvv: number, ownerId: string, ownername: string;
+  donorNumber:string, donorEmail:string, donorFirstName:string, donorLastName:string
+}
+export const creditDonation = async(chargeData: CreditDonation, campaignId:string) => {
+      const res = await fetch(`${API_URL}/donations/${campaignId}/credit-donate`, {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json",
+        //"Authorization": `Bearer ${ngo?.token}`,
+      },
+      body: JSON.stringify(chargeData),
+    })
+     const data = await res.json();
+    return {data, status: res.status};
+}

@@ -1,6 +1,10 @@
 import { Schema, model, Document } from 'mongoose';
 
 export interface IDonation extends Document {
+  email:string;
+  phone:string;
+  firstName: string;
+  lastName: string;
   donor: Schema.Types.ObjectId | null;
   campaign: Schema.Types.ObjectId;
   amount: number;
@@ -12,6 +16,10 @@ export interface IDonation extends Document {
 
 const donationSchema = new Schema(
   {
+    email:{type:String},
+    phone:{type:String},
+    firstName:{type:String},
+    lastName:{type:String},
     donor: { type: Schema.Types.ObjectId, ref: 'User', default: null },
     campaign: { type: Schema.Types.ObjectId, ref: 'Campaign', required: true },
     amount: { type: Number, required: true },
