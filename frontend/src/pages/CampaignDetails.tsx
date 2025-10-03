@@ -27,7 +27,7 @@ const CampaignDetails: React.FC = () => {
           <div style={{ width: `${percent}%`, height: "14px", background: "#22c55e", borderRadius: "10px" }} />
         </div>
         <p style={{ marginTop: "8px", fontSize: "14px" }}>
-          {campaign.raised.toLocaleString()} ₪ מתוך {campaign.targetAmount.toLocaleString()} ₪
+          {campaign.raised.toLocaleString()} ₪ מתוך {campaign.goal.toLocaleString()} ₪
         </p>
         <p style={{ fontSize: "14px", color: "#666" }}>מספר תורמים: {Math.floor(Math.random() * 500) + 1}</p>
       </div>
