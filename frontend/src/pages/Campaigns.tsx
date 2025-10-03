@@ -151,7 +151,7 @@ const filtered = (Array.isArray(campaigns) ? campaigns : [])
                     <h2 style={{ fontWeight: "bold", fontSize: "18px" }}>{c.title}</h2>
                   </div>
                   <p style={{ fontSize: "14px", color: "#4b5563" }}>
-                    {c.raised.toLocaleString()} ₪ מתוך {c.goal.toLocaleString()} ₪
+                    {(c.raised||0).toLocaleString()} ₪ מתוך {(c.goal||0).toLocaleString()} ₪
                   </p>
 
                   {/* פס התקדמות */}

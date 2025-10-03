@@ -10,7 +10,7 @@ const NgoDashboard: React.FC = () => {
   const [activePage, setActivePage] = useState<
     "dashboard" | "newCampaign" | "campaigns" | "profile" | "donors"
   >("dashboard");
-
+  
   const [form, setForm] = useState({
     title: "",
     goal: "",
@@ -22,21 +22,25 @@ const NgoDashboard: React.FC = () => {
     video: null as File | null,
   });
 
-  const handleCreateCampaign = () => {
+  const handleCreateCampaign = async() => {
     if (!form.title || !form.goal) return alert("יש למלא את כל השדות");
 
-    addCampaign({
-      title: form.title,
-      goal: Number(form.goal),
-_id: crypto.randomUUID(),
-      startDate: form.startDate,
-      endDate: form.endDate,
-      description: form.description,
-      ngoLogo: form.logo ? URL.createObjectURL(form.logo) : "/logos/default.png",
-      image: form.image ? URL.createObjectURL(form.image) : "/campaigns/default.png",
-      video: form.video ? URL.createObjectURL(form.video) : undefined,
-    });
+  const newCampaign = {
+  title:form.title,
+  description:form.description,
+  targetAmount: Number(form.goal),
+  goal: Number(form.goal),
+  startDate:form.startDate,
+  endDate:form.endDate,
+  images: form.image ? [form.image] : [],
+  ngoLogo: "form.logo",
+  video:form.title,
+  tags: [],  // אם רוצים, אפשר להוסיף שדות tags מהטופס
+};
 
+
+    await addCampaign(newCampaign); // ✅ רק זה, בלי createCampaign ישיר
+    alert("הקמפיין נוצר בהצלחה!");
     setForm({
       title: "",
       goal: "",

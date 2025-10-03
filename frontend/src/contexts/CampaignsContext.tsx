@@ -4,7 +4,7 @@ import { getCampaigns, createCampaign } from "../services/api";
 import { useAuth } from "../contexts/AuthContext";
 
 interface Campaign {
-  _id: string;
+  _id?: string;
   title: string;
   goal: number;
   raised: number;
@@ -30,14 +30,16 @@ export function CampaignsProvider({ children }: { children: ReactNode }) {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const { ngo } = useAuth();
 
-  const refreshCampaigns = async () => {
-    try {
-      const data = await getCampaigns();
-      setCampaigns(data);
-    } catch (err) {
-      console.error("Error loading campaigns:", err);
-    }
-  };
+const refreshCampaigns = async () => {
+  try {
+    console.log("Fetching campaigns for NGO:", ngo?._id);
+    const data = await getCampaigns(ngo?._id);
+    console.log("Campaigns received:", data);
+    setCampaigns(data.items);
+  } catch (err) {
+    console.error("Failed to fetch campaigns:", err);
+  }
+};
 
    const addCampaign = async (c: Omit<Campaign, "raised">) => {
     try {
