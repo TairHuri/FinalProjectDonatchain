@@ -10,6 +10,7 @@ const CampaignDetails: React.FC = () => {
   const campaign = campaigns.find((c) => c._id! === (id));
   const [showCreditPay, setShowCreditPay] = useState<boolean>(false)
 
+  
   const [activeTab, setActiveTab] = useState<"project" | "ngo" | "donations">("project");
 
   if (!campaign) return <p>קמפיין לא נמצא</p>;
@@ -32,7 +33,7 @@ const CampaignDetails: React.FC = () => {
         <p style={{ marginTop: "8px", fontSize: "14px" }}>
           {campaign.raised.toLocaleString()} ₪ מתוך {campaign.goal.toLocaleString()} ₪
         </p>
-        <p style={{ fontSize: "14px", color: "#666" }}>מספר תורמים: {Math.floor(Math.random() * 500) + 1}</p>
+        <p style={{ fontSize: "14px", color: "#666" }}>מספר תורמים: {campaign.numOfDonors}</p>
       </div>
 
       {/* כפתורים */}
@@ -82,6 +83,7 @@ const CampaignDetails: React.FC = () => {
 
 const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campaignId: string, userId: string }) => {
   const date = new Date()
+  const { updateCampaign } = useCampaigns();
   //const { ngo } = useAuth();
   const [ccForm, setCcform] = useState({donorNumber:'', donorEmail:'', donorFirstName:'', donorLastName:'', amount:0, currency:'', ccNumber: '', expYear: date.getFullYear(), expMonth: 1, cvv: 0, ownerId: '', ownername: '' })
   const [message, setMessage] = useState<string | null>(null)
@@ -109,6 +111,7 @@ const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campa
     console.log('sent', chargeData)
     console.log(data, status);
     if(status == 201){
+      updateCampaign(campaignId);
       close()
     }else{
       setMessage(data.message)
@@ -117,10 +120,10 @@ const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campa
 
   return (
     <form onSubmit={handlePayment}>
-      <label htmlFor="donorFirstName">שם פרטי</label><input id="donorFirstName" placeholder="שם פרטי" type="text" required onChange={handleChange} />
-      <label htmlFor="donorLastName">שם משפחה</label><input id="donorLastName" placeholder="שם משפחה" type="text" required onChange={handleChange} />
-      <label htmlFor="donorNumber">פלאפון</label><input id="donorNumber" placeholder="מספר פלאפון" pattern="^[0-9]{3}[\-.]?[0-9]{7}$" title="incorrect be xxx.1234567" type="tel" required onChange={handleChange} />
-      <label htmlFor="donorEmail">מייל</label><input id="donorEmail" placeholder="מייל" type="email" required onChange={handleChange} />
+      <label htmlFor="donorFirstName">שם פרטי</label><input id="donorFirstName" placeholder="שם פרטי" type="text" required onChange={handleChange} style={inputStyle}/>
+      <label htmlFor="donorLastName">שם משפחה</label><input id="donorLastName" placeholder="שם משפחה" type="text" required onChange={handleChange} style={inputStyle}/>
+      <label htmlFor="donorNumber">פלאפון</label><input id="donorNumber" placeholder="מספר פלאפון" pattern="^[0-9]{3}[\-.]?[0-9]{7}$" title="incorrect be xxx.1234567" type="tel" required onChange={handleChange} style={inputStyle} />
+      <label htmlFor="donorEmail">מייל</label><input id="donorEmail" placeholder="מייל" type="email" required onChange={handleChange} style={inputStyle} />
       <p>credit payment</p>
       {message && <p>{message}</p>}
       <label htmlFor="amount">סכום </label><input id="amount" placeholder="סכום התרומה" required onChange={handleChange} />
@@ -139,3 +142,11 @@ const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campa
 
 }
 export default CampaignDetails;
+
+const inputStyle: React.CSSProperties = {
+  width: "40%",
+  border: "1px solid #d1d5db",
+  borderRadius: "4px",
+  padding: "5px",
+  marginBottom: "5px",
+};

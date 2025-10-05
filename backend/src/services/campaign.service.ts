@@ -9,7 +9,7 @@ export default {
       title: payload.title,
       description: payload.description,
       ngo: payload.ngoId,
-      targetAmount: payload.targetAmount,
+      goal: payload.goal,
       currency: payload.currency || 'USD',
       images: payload.images || [],
       tags: payload.tags || []
@@ -32,7 +32,12 @@ export default {
 
   async getById(id: string) {
     if (!mongoose.Types.ObjectId.isValid(id)) return null;
-    return Campaign.findById(id).populate('ngo');
+    return Campaign.findById(id).populate({path:'Ngo', strictPopulate:false});
+  },
+
+  async getByNgo(ngoId: string) {
+    if (!mongoose.Types.ObjectId.isValid(ngoId)) return null;
+    return Campaign.find({ngo:ngoId});
   },
 
   // עדכון סכום ממקור מאוחד (transaction-like using session)
@@ -43,6 +48,8 @@ export default {
       const campaign = await Campaign.findById(campaignId).session(session);
       if (!campaign) throw new Error('Campaign not found');
       campaign.raised = (campaign.raised || 0) + amount;
+      campaign.numOfDonors = (campaign.numOfDonors || 0) + 1;
+
       await campaign.save({ session });
       await session.commitTransaction();
       session.endSession();

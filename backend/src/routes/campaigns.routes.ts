@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createCampaign, listCampaigns, getCampaign } from '../controllers/campaigns.controller';
+import { createCampaign, listCampaigns, getCampaign, getCampagnsByNgo } from '../controllers/campaigns.controller';
 import authMiddleware from '../middlewares/auth.middleware';
 import roleMiddleware from '../middlewares/role.middleware';
 

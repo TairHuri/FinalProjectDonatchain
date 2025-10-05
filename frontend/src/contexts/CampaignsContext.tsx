@@ -1,13 +1,14 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
-import { getCampaigns, createCampaign } from "../services/api";
+import { getCampaigns, createCampaign, getCampaign } from "../services/api";
 import { useAuth } from "../contexts/AuthContext";
 
-interface Campaign {
+export interface Campaign {
   _id?: string;
   title: string;
   goal: number;
   raised: number;
+  numOfDonors: number;
   startDate: string;
   endDate: string;
   description: string;
@@ -20,8 +21,9 @@ interface Campaign {
 
 interface CampaignsContextType {
   campaigns: Campaign[];
-  addCampaign: (c: Omit<Campaign, "raised">) => Promise<void>; // ← פרמטר אחד בלבד
+  addCampaign: (c: Omit<Campaign, "raised">) => Promise<boolean>; // ← פרמטר אחד בלבד
   refreshCampaigns: () => Promise<void>;
+  updateCampaign: (campaignId:string) => Promise<void>;
 }
 
 
@@ -42,23 +44,29 @@ const refreshCampaigns = async () => {
   }
 };
 
+const updateCampaign = async (campaignId: string) =>{
+  const campaign:Campaign = await getCampaign(campaignId)
+  setCampaigns(prev => [...prev.filter(c => c._id !== campaignId), campaign])
+}
+
   useEffect(()=>{
-    if(ngo && ngo?.token){
       refreshCampaigns();
-    }
-  }, [ngo])
+    
+  }, [])
    const addCampaign = async (c: Omit<Campaign, "raised">) => {
     try {
       if (!ngo?.token) throw new Error("NGO not logged in");
-      await createCampaign(c, ngo.token);
+      const campaign =await createCampaign(c, ngo.token);
       await refreshCampaigns();
+      return true
     } catch (err) {
       console.error("Error creating campaign:", err);
+      return false;
     }
   }
 
   return (
-    <CampaignsContext.Provider value={{ campaigns, addCampaign, refreshCampaigns }}>
+    <CampaignsContext.Provider value={{ campaigns, addCampaign, refreshCampaigns, updateCampaign }}>
       {children}
     </CampaignsContext.Provider>
   );

@@ -37,6 +37,9 @@ export default {
   async listByUser(userId: string) {
     return Donation.find({ donor: userId }).populate('campaign').sort({ createdAt: -1 });
   },
+  async listByNgo(ngoId: string) {
+    return Donation.find().populate({path:'campaign', match:{ngo:ngoId}}).sort({ createdAt: -1 });
+  },
 
   async listByCampaign(campaignId: string) {
     return Donation.find({ campaign: campaignId }).populate('donor').sort({ createdAt: -1 });

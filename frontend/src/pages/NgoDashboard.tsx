@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useCampaigns } from "../contexts/CampaignsContext";
 import { PlusCircle, Home, Users, LogOut, FileText, Settings } from "lucide-react";
+import NgoDonors from "../components/NgoDonors";
+import CampaignItem from "../components/CampaignItem";
 
 const NgoDashboard: React.FC = () => {
   const { ngo } = useAuth();
@@ -33,6 +35,7 @@ const NgoDashboard: React.FC = () => {
       targetAmount: Number(form.goal),
       goal: Number(form.goal),
       startDate: form.startDate,
+      numOfDonors:0,
       endDate: form.endDate,
       images: form.image ? [form.image] : [],
       ngoLogo: "form.logo",
@@ -41,7 +44,11 @@ const NgoDashboard: React.FC = () => {
     };
 
 
-    await addCampaign(newCampaign); // ✅ רק זה, בלי createCampaign ישיר
+    const success = await addCampaign(newCampaign); // ✅ רק זה, בלי createCampaign ישיר = 
+    if(!success){
+      alert("שגיאה ביצירת הקמפיין");
+      return;
+    }
     alert("הקמפיין נוצר בהצלחה!");
     setForm({
       title: "",
@@ -149,7 +156,7 @@ const NgoDashboard: React.FC = () => {
             </div>
           </div>
         )}
-
+        {activePage == "donors" && <NgoDonors />}
         {activePage === "newCampaign" && (
           <div style={cardStyle}>
             <h2 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "20px" }}>
@@ -192,7 +199,7 @@ const NgoDashboard: React.FC = () => {
         {activePage === "profile" && (
           <div style={cardStyle}>
             <h2 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "20px" }}>
-              פרטם אישיים
+              פרטים אישיים
             </h2>
             {ngo ? (
               <>
@@ -247,16 +254,7 @@ const NgoDashboard: React.FC = () => {
               הקמפיינים שלי
             </h2>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: "20px" }}>
-              {campaigns.map((c) => (
-                <div key={c._id} style={cardStyle}>
-                  <img src={c.image} alt="קמפיין" style={{ width: "100%", height: "150px", objectFit: "cover", borderRadius: "8px" }} />
-                  <h3 style={{ fontSize: "20px", fontWeight: "bold", marginTop: "10px" }}>{c.title}</h3>
-                  <p>{c.raised.toLocaleString()} ₪ מתוך {c.goal.toLocaleString()} ₪</p>
-                  <div style={{ background: "#e5e7eb", borderRadius: "8px", overflow: "hidden", height: "8px", marginTop: "5px" }}>
-                    <div style={{ width: `${(c.raised / c.goal) * 100}%`, background: "#10b981", height: "100%" }}></div>
-                  </div>
-                </div>
-              ))}
+              {campaigns.map((c) => <CampaignItem key={c._id} c={c}/>)}
             </div>
           </div>
         )}

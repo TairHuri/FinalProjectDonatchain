@@ -3,10 +3,11 @@ import { Schema, model, Document } from 'mongoose';
 export interface ICampaign extends Document {
   title: string;
   description: string;
-  ngo: Schema.Types.ObjectId;
+  ngo:  { type: Schema.Types.ObjectId, ref: 'Ngo' };
   goal: number;
   currency: string;
   raised: number;
+  numOfDonors: number;
   images: string[];
   tags: string[]; // for recommendations
   blockchainTx?: string; // optional tx that created campaign on-chain
@@ -22,6 +23,7 @@ const campaignSchema = new Schema(
     goal: { type: Number, required: true },
     currency: { type: String, default: 'USD' },
     raised: { type: Number, default: 0 },
+    numOfDonors: {type: Number, default: 0},
     images: [String],
     tags: [String],
     blockchainTx: String,

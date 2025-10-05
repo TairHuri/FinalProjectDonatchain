@@ -58,11 +58,14 @@ export async function createCampaign(data: any, token: string) {
     },
     body: JSON.stringify(data),
   });
+  if(res.status != 201){
+    throw new Error(await res.text())
+  }
   return res.json();
 }
 
 export const getCampaigns = async (ngoId?: string) => {
-  const url = ngoId 
+  const url = ngoId
     ? `${API_URL}/campaigns?ngoId=${ngoId}`  // שים לב לשימוש ב-query param
     : `${API_URL}/campaigns`;
 
@@ -72,6 +75,50 @@ export const getCampaigns = async (ngoId?: string) => {
     console.error("Failed fetching campaigns:", text);
     return [];
   }
+  const data = await res.json();
+  return data;
+}
+export const getDonations = async (campaignId: string) => {
+  const url = `${API_URL}/donations/campaign?campaignId=${campaignId}`  // שים לב לשימוש ב-query param
+  try {
+    const res = await fetch(url);
+    if (!res.ok) {
+      const text = await res.text();
+      console.error("Failed fetching campaigns:", text);
+      return [];
+    }
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.log(error);
+    return []
+  }
+}
+export const getDonationsByNgo = async (ngoId: string) => {
+  const url = `${API_URL}/donations/ngo?ngoId=${ngoId}`  // שים לב לשימוש ב-query param
+  try {
+    const res = await fetch(url);
+    if (!res.ok) {
+      const text = await res.text();
+      console.error("Failed fetching donations per ngo:", text);
+      return [];
+    }
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.log(error);
+    return []
+  }
+}
+export const getCampaign = async (campaignId: string) => {
+  const url = `${API_URL}/campaigns/${campaignId}`
+
+  const res = await fetch(url);
+  if (!res.ok) {
+    const text = await res.text();
+    console.error("Failed fetching campaigns:", text);
+    return null;
+  }
 
   const data = await res.json();
   return data;
@@ -79,17 +126,17 @@ export const getCampaigns = async (ngoId?: string) => {
 
 type CreditDonation = {
   amount: number, currency: string, ccNumber: string, expYear: number, expMonth: number, cvv: number, ownerId: string, ownername: string;
-  donorNumber:string, donorEmail:string, donorFirstName:string, donorLastName:string
+  donorNumber: string, donorEmail: string, donorFirstName: string, donorLastName: string
 }
-export const creditDonation = async(chargeData: CreditDonation, campaignId:string) => {
-      const res = await fetch(`${API_URL}/donations/${campaignId}/credit-donate`, {
-      method: 'POST',
-      headers: {
-        "Content-Type": "application/json",
-        //"Authorization": `Bearer ${ngo?.token}`,
-      },
-      body: JSON.stringify(chargeData),
-    })
-     const data = await res.json();
-    return {data, status: res.status};
+export const creditDonation = async (chargeData: CreditDonation, campaignId: string) => {
+  const res = await fetch(`${API_URL}/donations/${campaignId}/credit-donate`, {
+    method: 'POST',
+    headers: {
+      "Content-Type": "application/json",
+      //"Authorization": `Bearer ${ngo?.token}`,
+    },
+    body: JSON.stringify(chargeData),
+  })
+  const data = await res.json();
+  return { data, status: res.status };
 }

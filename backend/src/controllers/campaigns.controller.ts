@@ -5,7 +5,7 @@ import CampaignService from '../services/campaign.service';
  * ➕ יצירת קמפיין חדש
  */
 export const createCampaign = async (req: Request, res: Response) => {
-  const { title, description, targetAmount, currency, tags, images } = req.body;
+  const { title, description, targetAmount, currency, tags, images, goal } = req.body;
   const user = (req as any).user;
   try {
     const campaign = await CampaignService.create({
@@ -13,6 +13,7 @@ export const createCampaign = async (req: Request, res: Response) => {
       description,
       targetAmount,
       currency,
+      goal,
       tags,
       images,
       ngoId: user._id
@@ -55,3 +56,13 @@ export const getCampaign = async (req: Request, res: Response) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+export const getCampagnsByNgo = async (req: Request, res: Response) => {
+  try {
+    const { ngoId } = req.query;
+    if (!ngoId) return res.status(400).send({ message: 'invalid ngo id' })
+    return await CampaignService.getByNgo(ngoId.toString())
+  } catch (err: any) {
+    res.status(500).json({ message: err.message });
+  }
+}
