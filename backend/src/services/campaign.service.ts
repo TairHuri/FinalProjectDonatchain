@@ -42,21 +42,17 @@ export default {
 
   // עדכון סכום ממקור מאוחד (transaction-like using session)
   async addDonationToCampaign(campaignId: string, amount: number) {
-    const session = await mongoose.startSession();
-    session.startTransaction();
+
     try {
-      const campaign = await Campaign.findById(campaignId).session(session);
+      const campaign = await Campaign.findById(campaignId);
       if (!campaign) throw new Error('Campaign not found');
       campaign.raised = (campaign.raised || 0) + amount;
       campaign.numOfDonors = (campaign.numOfDonors || 0) + 1;
 
-      await campaign.save({ session });
-      await session.commitTransaction();
-      session.endSession();
+      await campaign.save();
+
       return campaign;
     } catch (err) {
-      await session.abortTransaction();
-      session.endSession();
       throw err;
     }
   }

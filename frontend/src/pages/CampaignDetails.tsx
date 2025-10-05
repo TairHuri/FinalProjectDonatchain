@@ -126,7 +126,7 @@ const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campa
       <label htmlFor="donorEmail">מייל</label><input id="donorEmail" placeholder="מייל" type="email" required onChange={handleChange} style={inputStyle} />
       <p>credit payment</p>
       {message && <p>{message}</p>}
-      <label htmlFor="amount">סכום </label><input id="amount" placeholder="סכום התרומה" required onChange={handleChange} />
+      <label htmlFor="amount">סכום </label><input id="amount" placeholder="סכום התרומה" required onChange={handleChange}  />
       <label htmlFor="currency">מטבע</label><select id="currency" onChange={handleChange}><option value="ILS">ILS</option><option value="USD">USD</option><option value="EU">EU</option></select>
       <label htmlFor="ccNumber">כרטיס אשראי</label><input id="ccNumber" placeholder="מספר כרטיס" required onChange={handleChange} />
       <label>תאריך תפוגה</label>
@@ -135,7 +135,7 @@ const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campa
       <label htmlFor="cvv">CVV code</label><input id="cvv" placeholder="cvv" required onChange={handleChange} />
       <label htmlFor="ownerId">ת"ז</label><input id="ownerId" type="text" placeholder="תעודת זהות בעל הכרטיס" required onChange={handleChange} />
       <label htmlFor="ownerName">שם</label><input id="ownerName" type="text" placeholder="שם בעל הכרטיס" required onChange={handleChange} />
-      <button type='submit' style={{ flex: 1, backgroundColor: "green", color: "white", padding: "10px", borderRadius: "8px", border: "none" }}>
+      <button type='submit' style={{flex: 1, backgroundColor: "green", color: "white", padding: "10px", borderRadius: "8px", border: "none" }}>
         תרום </button>
     </form>
   )

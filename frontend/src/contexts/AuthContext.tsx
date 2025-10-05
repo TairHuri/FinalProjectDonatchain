@@ -1,22 +1,11 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import { loginUser, registerUser, getNgoProfile } from "../services/api";
+import type { Ngo } from "../models/Ngo";
 
-interface NgoData {
-  name: string;
-  _id: string;
-  ngoId?: string;
-  email: string;
-  phone: string;
-  password?: string;
-  address?: string;
-  bankAccount?: string;
-  wallet?: string;
-  goals?: string;
-  token: string;
-}
+
 
 interface AuthContextType {
-  ngo: NgoData | null;
+  ngo: Ngo | null;
   login: (data: { email: string; password: string }) => Promise<boolean>;
   register: (data: any) => Promise<boolean>;
   logout: () => void;
@@ -30,7 +19,7 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [ngo, setNgo] = useState<NgoData | null>(null);
+  const [ngo, setNgo] = useState<Ngo | null>(null);
 
 useEffect(() => {
   const savedNgo = localStorage.getItem("ngoData");
@@ -44,16 +33,18 @@ useEffect(() => {
   try {
     const res = await getNgoProfile(token); // קריאת פרופיל מהשרת
     if (res) {
-      const ngoData: NgoData = {
+      const ngoData: Ngo = {
         name: res.name ?? "",
-        _id: res.id ?? "",
-        ngoId: res.ngoId ?? "",
+        _id: res._id ?? "",
+        ngoNumber:  "",
         email: res.email ?? "",
         phone: res.phone ?? "",
         address: res.address ?? "",
         bankAccount: res.bankAccount ?? "",
         wallet: res.wallet ?? "",
-        goals: res.goals ?? "",
+        description: res.description ?? "",
+        createdBy: res.createdBy,
+        createdAt: res.createdAt,
         token, // חייב להיות כי שמרנו בלוקאל סטורג'
       };
       setNgo(ngoData);
@@ -70,16 +61,18 @@ const login = async (data: { email: string; password: string }): Promise<boolean
 
     if (res?.token && res?.user) {
       // נשמור את הנתונים שהגיעו מהשרת
-      const ngoData: NgoData = {
+      const ngoData: Ngo = {
         _id: res.user.id,
         name: res.user.name,
         email: res.user.email,
-        ngoId: res.user.ngoId,
+        description: res.user.description,
+        ngoNumber: res.user.ngoId,
         phone: res.user.phone,
         address: res.user.address,
         bankAccount: res.user.bankAccount,
         wallet: res.user.wallet,
-        goals: res.user.goals,
+        createdBy: res.createdBy,
+        createdAt: res.createdAt,
         token: res.token,
       };
 

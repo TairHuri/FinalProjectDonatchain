@@ -1,4 +1,5 @@
 import axios from "axios";
+import type { Ngo } from "../models/Ngo";
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
 
 export async function registerUser(data: any) {
@@ -20,21 +21,10 @@ export async function registerUser(data: any) {
     return { success: false, message: err.message ?? "שגיאה לא צפויה" };
   }
 }
-export interface NgoProfileResponse {
-  name: string;
-  id: string;
-  email: string;
-  ngoId?: string;
-  phone: string;
-  password?: string;
-  address?: string;
-  bankAccount?: string;
-  wallet?: string;
-  goals?: string;
-}
 
-export const getNgoProfile = async (token: string): Promise<NgoProfileResponse> => {
-  const res = await axios.get<NgoProfileResponse>(`${API_URL}/auth/profile`, {
+
+export const getNgoProfile = async (token: string): Promise<Ngo> => {
+  const res = await axios.get<Ngo>(`${API_URL}/auth/profile`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 
