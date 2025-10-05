@@ -32,7 +32,14 @@ export const inputStyle: React.CSSProperties = {
   padding: "10px",
   marginBottom: "10px",
 };
-
+export const inputStyleNoWidth: React.CSSProperties = {
+  
+  border: "1px solid #d1d5db",
+  borderRadius: "8px",
+  padding: "10px",
+  marginBottom: "10px",
+};
+export const buttonStyle ={flex: 1, backgroundColor: "green", color: "white", padding: "10px", borderRadius: "8px", border: "none" }
 export const cardStyle: React.CSSProperties = {
   background: "white",
   padding: "20px",

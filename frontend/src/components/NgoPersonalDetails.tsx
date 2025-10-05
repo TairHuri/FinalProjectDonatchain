@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext"
 import { cardStyle, inputStyle, menuBtnStyle, primaryBtnStyle } from "../css/dashboardStyles"
 import type { Ngo } from "../models/Ngo";
+import InputText from "./gui/InputText";
 
 const NgoPersonalDetails = ({ editMode, setEditMode }: { editMode: string, setEditMode: (mode: "view" | "edit" | "password") => void }) => {
   const { ngo } = useAuth()
@@ -71,16 +72,5 @@ const NgoPersonalDetails = ({ editMode, setEditMode }: { editMode: string, setEd
 
 }
 
-const InputText = ({field,value,placeholder, onChange,type="text"}:{placeholder:string,field:string, onChange(field:string, value:string|number):void, type?:"text"|'number'|'email'|'tel'|'password', value:string|number}) => {
 
-  return (
-    <input
-      type={type}
-      value={value}
-      onChange={(e) =>  onChange( field, e.target.value )}
-      placeholder={placeholder}
-      style={inputStyle}
-    />
-  )
-}
 export default NgoPersonalDetails;
