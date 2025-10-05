@@ -14,6 +14,7 @@ import Discover from "./pages/Discover";
 import Donate from "./pages/Donate";
 import CampaignDetails from "./pages/CampaignDetails";
 import NewCampaign from "./pages/NewCampaign";
+import AboutRules from "./pages/AboutRules"
 
 const App: React.FC = () => {
   return (
@@ -37,6 +38,7 @@ const App: React.FC = () => {
               <Route path="/donors/ngo" element={<DonorsNgo />} />
               <Route path="/ngo/home" element={<NgoDashboard />} />
               <Route path="/campaign/:id" element={<CampaignDetails />} />
+              <Route path="/about/rules" element={<AboutRules />} />
               <Route path="/campaigns/new" element={<NewCampaign />} />
             </Routes>
           </div>
