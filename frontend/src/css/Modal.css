@@ -1,6 +1,7 @@
 .modal{
     position: fixed;
     top: 10vh;
+    bottom: 10vh;
     left:1rem;
     right:1rem;
     margin:1rem;
