@@ -6,11 +6,8 @@ export interface IUser extends Document {
   name: string;
   roles: string[];
   ngoId?: string;
-  address?: string;
   phone?: string;
-  bankAccount?: string;
-  wallet?: string;
-  goals?: string;
+  approved:boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -20,12 +17,10 @@ const userSchema = new Schema<IUser>(
     email: { type: String, required: true, unique: true, index: true },
     passwordHash: { type: String, required: true },
     name: { type: String, required: true },
-    ngoId: String,
-    address: String,
     phone: String,
-    bankAccount: String,
-    wallet: String,
-    goals: String
+    roles:[String],
+    ngoId: {type:String, required:false},
+    approved:Boolean
   },
   { timestamps: true }
 );

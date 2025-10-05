@@ -2,9 +2,14 @@ import { Schema, model, Document } from 'mongoose';
 
 export interface INgo extends Document {
   name: string;
+  ngoNumber:string;
   description: string;
   website?: string;
-  contactEmail?: string;
+  bankAccount?: string;
+  wallet?: string;
+  address?: string;
+  phone?: string;
+  email?: string;
   logoUrl?: string;
   createdBy: Schema.Types.ObjectId;
   createdAt: Date;
@@ -13,9 +18,14 @@ export interface INgo extends Document {
 const ngoSchema = new Schema(
   {
     name: { type: String, required: true, index: true },
+    ngoNumber: { type: String, unique: true },
     description: String,
     website: String,
-    contactEmail: String,
+    email: String,
+    address: String,
+    phone: String,
+    bankAccount: String,
+    wallet: String,
     logoUrl: String,
     createdBy: { type: Schema.Types.ObjectId, ref: 'User' }
   },

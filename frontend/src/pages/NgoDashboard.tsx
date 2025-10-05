@@ -4,6 +4,8 @@ import { useCampaigns } from "../contexts/CampaignsContext";
 import { PlusCircle, Home, Users, LogOut, FileText, Settings } from "lucide-react";
 import NgoDonors from "../components/NgoDonors";
 import CampaignItem from "../components/CampaignItem";
+import { cardStyle, inputStyle, menuBtnStyle, primaryBtnStyle } from "../css/dashboardStyles";
+import NgoPersonalDetails from "../components/NgoPersonalDetails";
 
 const NgoDashboard: React.FC = () => {
   const { ngo } = useAuth();
@@ -64,32 +66,25 @@ const NgoDashboard: React.FC = () => {
   };
 
   const [editMode, setEditMode] = useState<"view" | "edit" | "password">("view");
-  const [formData, setFormData] = useState({
-    name: ngo?.name || "",
-    id: ngo?._id || "",
-  });
+
   const [passwords, setPasswords] = useState({
     current: "",
     newPass: "",
     confirmPass: "",
   });
 
-  const handleSaveChanges = () => {
-    if (!formData.name || !formData.id) {
-      alert("יש למלא את כל השדות");
-      return;
-    }
-  };
+
 
   const handleChangePassword = () => {
     if (passwords.newPass !== passwords.confirmPass) {
       alert("אימות סיסמה נכשל");
       return;
     }
-    if (passwords.current !== ngo?.password) {
-      alert("סיסמה נוכחית שגויה");
-      return;
-    }
+    //FIXME 
+    // if (passwords.current !== ngo?.password) {
+    //   alert("סיסמה נוכחית שגויה");
+    //   return;
+    // }
     setPasswords({ current: "", newPass: "", confirmPass: "" });
     setEditMode("view");
   };
@@ -196,56 +191,7 @@ const NgoDashboard: React.FC = () => {
           </div>
         )}
 
-        {activePage === "profile" && (
-          <div style={cardStyle}>
-            <h2 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "20px" }}>
-              פרטים אישיים
-            </h2>
-            {ngo ? (
-              <>
-                {editMode === "view" && (
-                  <div>
-                    <p><strong>שם העמותה:</strong> {ngo.name}</p>
-                    <p><strong>מספר עמותה:</strong> {ngo._id}</p>
-                    <p><strong>אימייל:</strong> {ngo.email}</p>
-                    <p><strong>טלפון:</strong> {ngo.phone}</p>
-                    <button
-                      onClick={() => setEditMode("edit")}
-                      style={{ ...primaryBtnStyle, marginTop: "15px" }}
-                    >
-                      עריכת פרטים
-                    </button>
-                  </div>
-                )}
-
-                {editMode === "edit" && (
-                  <div>
-                    <input
-                      type="text"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      placeholder="שם העמותה"
-                      style={inputStyle}
-                    />
-                    <input
-                      type="text"
-                      value={formData.id}
-                      onChange={(e) => setFormData({ ...formData, id: e.target.value })}
-                      placeholder="מספר עמותה"
-                      style={inputStyle}
-                    />
-                    <div style={{ display: "flex", gap: "10px" }}>
-                      <button onClick={handleSaveChanges} style={primaryBtnStyle}>שמור</button>
-                      <button onClick={() => setEditMode("view")} style={{ ...menuBtnStyle, background: "#f87171", color: "#fff" }}>ביטול</button>
-                    </div>
-                  </div>
-                )}
-              </>
-            ) : (
-              <p>לא נמצאו פרטים, אנא התחבר שוב.</p>
-            )}
-          </div>
-        )}
+        {activePage === "profile" && <NgoPersonalDetails editMode={editMode} setEditMode={setEditMode}/>}
 
 
         {activePage === "campaigns" && (
@@ -263,47 +209,7 @@ const NgoDashboard: React.FC = () => {
   );
 };
 
-const menuBtnStyle: React.CSSProperties = {
-  display: "flex",
-  alignItems: "center",
-  gap: "10px",
-  padding: "12px 15px",
-  background: "transparent",
-  border: "none",
-  borderRadius: "8px",
-  color: "white",
-  fontSize: "16px",
-  cursor: "pointer",
-  marginBottom: "10px",
-};
 
-const primaryBtnStyle: React.CSSProperties = {
-  width: "100%",
-  background: "linear-gradient(90deg,#10b981,#059669)",
-  color: "white",
-  padding: "12px",
-  borderRadius: "8px",
-  fontSize: "16px",
-  border: "none",
-  cursor: "pointer",
-  fontWeight: "bold",
-  marginTop: "10px",
-};
-
-const inputStyle: React.CSSProperties = {
-  width: "100%",
-  border: "1px solid #d1d5db",
-  borderRadius: "8px",
-  padding: "10px",
-  marginBottom: "10px",
-};
-
-const cardStyle: React.CSSProperties = {
-  background: "white",
-  padding: "20px",
-  borderRadius: "12px",
-  boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
-};
 
 const statCard = (title: string, value: string | number) => (
   <div style={cardStyle}>
