@@ -35,9 +35,13 @@ export default {
     return Campaign.findById(id).populate({path:'Ngo', strictPopulate:false});
   },
 
-  async getByNgo(ngoId: string) {
+  async getByNgo(ngoId: string, page = 1, limit = 10) {
     if (!mongoose.Types.ObjectId.isValid(ngoId)) return null;
-    return Campaign.find({ngo:ngoId});
+    const items = await Campaign.find({ngo:ngoId})
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .sort({ createdAt: -1 });;
+    return { items, total:items.length, page, limit }
   },
 
   // עדכון סכום ממקור מאוחד (transaction-like using session)

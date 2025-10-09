@@ -3,7 +3,6 @@ import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Campaigns from "./pages/Campaigns";
 import About from "./pages/About";
-import Registration from "./pages/Registration";
 import LoginNgo from "./pages/LoginNgo";
 import DonorsNgo from "./pages/DonorsNgo";
 import RegistrationNgo from "./pages/RegistrationNgo";
@@ -24,14 +23,13 @@ const App: React.FC = () => {
           <Navbar />
 
           {/* תוכן ראשי */}
-          <div className="flex-1 p-6 max-w-6xl mx-auto">
+          <div className="flex-1 p-4 max-w-6xl mx-auto">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/discover" element={<Discover />} />
               <Route path="/donate" element={<Donate />} />
               <Route path="/campaigns" element={<Campaigns />} />
               <Route path="/about" element={<About />} />
-              <Route path="/registration" element={<Registration />} />
               <Route path="/login/ngo" element={<LoginNgo />} />
               <Route path="/registration/ngo" element={<RegistrationNgo />} />
               <Route path="/donors/ngo" element={<DonorsNgo />} />

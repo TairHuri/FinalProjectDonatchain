@@ -1,7 +1,7 @@
 import { useState, type ChangeEvent } from "react";
 import { useCampaigns } from "../contexts/CampaignsContext";
 import { creditDonation } from "../services/api";
-import { buttonStyle, fildsPositionStyle, inputStyle, inputStyleNoWidth, labelStyle } from "../css/dashboardStyles";
+import { buttonStyle, fildsPositionStyle, inputStyle, labelStyle } from "../css/dashboardStyles";
 
 const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campaignId: string, userId: string }) => {
   const date = new Date()
@@ -50,29 +50,29 @@ const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campa
     <form onSubmit={handlePayment} style={{ width: '100%' }}>
 
       <div style={fildsPositionStyle}>
-      <label htmlFor="donorFirstName" style={labelStyle}>שם פרטי</label><input id="donorFirstName" placeholder="שם פרטי" type="text" required onChange={handleChange} style={inputStyleNoWidth} />
-      <label htmlFor="donorLastName" style={labelStyle}>שם משפחה</label><input id="donorLastName" placeholder="שם משפחה" type="text" required onChange={handleChange} style={inputStyleNoWidth} />
+      <label htmlFor="donorFirstName" style={labelStyle}>שם פרטי</label><input id="donorFirstName" placeholder="שם פרטי" type="text" required onChange={handleChange} style={inputStyle} />
+      <label htmlFor="donorLastName" style={labelStyle}>שם משפחה</label><input id="donorLastName" placeholder="שם משפחה" type="text" required onChange={handleChange} style={inputStyle} />
       </div>
       <div style={fildsPositionStyle}>
-      <label htmlFor="donorNumber" style={labelStyle}>פלאפון</label><input id="donorNumber" placeholder="מספר פלאפון" pattern="^[0-9]{3}[\-.]?[0-9]{7}$" title="incorrect be xxx.1234567" type="tel" required onChange={handleChange} style={inputStyleNoWidth} />
-      <label htmlFor="donorEmail" style={labelStyle}>מייל</label><input id="donorEmail" placeholder="מייל" type="email" required onChange={handleChange} style={inputStyleNoWidth} />
+      <label htmlFor="donorNumber" style={labelStyle}>פלאפון</label><input id="donorNumber" placeholder="מספר פלאפון" pattern="^[0-9]{3}[\-.]?[0-9]{7}$" title="incorrect be xxx.1234567" type="tel" required onChange={handleChange} style={inputStyle} />
+      <label htmlFor="donorEmail" style={labelStyle}>מייל</label><input id="donorEmail" placeholder="מייל" type="email" required onChange={handleChange} style={inputStyle} />
       </div>
       <p>credit payment</p>
       {message && <p>{message}</p>}
       <div style={fildsPositionStyle}>
-      <label htmlFor="amount" style={labelStyle}>סכום </label><input id="amount" placeholder="סכום התרומה" required onChange={handleChange} style={inputStyleNoWidth}/>
+      <label htmlFor="amount" style={labelStyle}>סכום </label><input id="amount" placeholder="סכום התרומה" required onChange={handleChange} style={inputStyle}/>
       <label htmlFor="currency" style={labelStyle}>מטבע</label><select id="currency" onChange={handleChange}><option value="ILS">ILS</option><option value="USD">USD</option><option value="EU">EU</option> </select>
       </div>
       <div style={fildsPositionStyle}>
-      <label htmlFor="ccNumber" style={labelStyle}>כרטיס אשראי</label><input id="ccNumber" placeholder="מספר כרטיס" required onChange={handleChange} style={inputStyleNoWidth}/>
+      <label htmlFor="ccNumber" style={labelStyle}>כרטיס אשראי</label><input id="ccNumber" placeholder="מספר כרטיס" required onChange={handleChange} style={inputStyle}/>
       <label style={labelStyle}>תאריך תפוגה</label>
-      <input id="expYear" type="number" min={date.getFullYear()} max={date.getFullYear() + 15} placeholder="שנה" required onChange={handleChange} style={inputStyleNoWidth}/>
-      <input id="expMonth" type="number" min="1" max="12" placeholder="חודש" required onChange={handleChange} style={inputStyleNoWidth}/>
-      <label htmlFor="cvv" style={labelStyle}>CVV code</label><input id="cvv" placeholder="cvv" required onChange={handleChange} style={inputStyleNoWidth}/>
+      <input id="expYear" type="number" min={date.getFullYear()} max={date.getFullYear() + 15} placeholder="שנה" required onChange={handleChange} style={inputStyle}/>
+      <input id="expMonth" type="number" min="1" max="12" placeholder="חודש" required onChange={handleChange} style={inputStyle}/>
+      <label htmlFor="cvv" style={labelStyle}>CVV code</label><input id="cvv" placeholder="cvv" required onChange={handleChange} style={inputStyle}/>
       </div>
       <div style={fildsPositionStyle}>
-      <label htmlFor="ownerId" style={labelStyle}>ת"ז</label><input id="ownerId" type="text" placeholder="תעודת זהות בעל הכרטיס" required onChange={handleChange} style={inputStyleNoWidth}/>
-      <label htmlFor="ownerName" style={labelStyle}>שם</label><input id="ownerName" type="text" placeholder="שם בעל הכרטיס" required onChange={handleChange} style={inputStyleNoWidth}/>
+      <label htmlFor="ownerId" style={labelStyle}>ת"ז</label><input id="ownerId" type="text" placeholder="תעודת זהות בעל הכרטיס" required onChange={handleChange} style={inputStyle}/>
+      <label htmlFor="ownerName" style={labelStyle}>שם</label><input id="ownerName" type="text" placeholder="שם בעל הכרטיס" required onChange={handleChange} style={inputStyle}/>
       </div>
       <div style={fildsPositionStyle}>
         <button type='submit' style={buttonStyle}>

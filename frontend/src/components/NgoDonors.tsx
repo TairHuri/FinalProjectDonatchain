@@ -4,11 +4,13 @@ import CampaignItem, { CampaignDonors } from "./CampaignItem";
 import type { Donation } from "../models/Donation";
 import { getDonations, getDonationsByNgo } from "../services/api";
 import { useAuth } from "../contexts/AuthContext";
+import { buttonStyle } from "../css/dashboardStyles";
+import { hover } from "framer-motion";
 
 
 
 const NgoDonors = () => {
-    const {ngo} =useAuth()
+    const {user} =useAuth()
     const {campaigns} = useCampaigns()
     const [donations, setDonations] = useState<Donation[]>([]);
     const loadDonors = async (campaignId:string) => {
@@ -16,15 +18,15 @@ const NgoDonors = () => {
         setDonations(donations);
     }
     const loadNgoDonors = async () => {
-        if(!ngo)return;
-        const donations = await getDonationsByNgo(ngo._id);
+        if(!user)return;        
+        const donations = await getDonationsByNgo(user.ngoId);
         setDonations(donations);
     }
     
     return (
         <div>
             <h2>תורמי העמותה</h2>
-            <button  type='button' onClick={loadNgoDonors}>כל התורמים</button>
+            <button  type='button' onClick={loadNgoDonors} style={buttonStyle}>כל התורמים </button>
             <div style={{height:'25vh', overflowY:'auto'}}>
                 {campaigns.map((c) => <CampaignDonors key={c._id} campaign={c} onClick={()=>loadDonors(c._id!)}/>)}
             </div>

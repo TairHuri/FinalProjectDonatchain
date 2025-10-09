@@ -2,11 +2,11 @@ import { Schema, model, Document } from 'mongoose';
 
 export interface IUser extends Document {
   email: string;
-  passwordHash: string;
+  password: string;
   name: string;
-  roles: string[];
-  ngoId?: string;
   phone?: string;
+  roles: string[];
+  ngoId: string;
   approved:boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -15,11 +15,11 @@ export interface IUser extends Document {
 const userSchema = new Schema<IUser>(
   {
     email: { type: String, required: true, unique: true, index: true },
-    passwordHash: { type: String, required: true },
+    password: { type: String, required: true },
     name: { type: String, required: true },
     phone: String,
     roles:[String],
-    ngoId: {type:String, required:false},
+    ngoId: {type:String, required:true},
     approved:Boolean
   },
   { timestamps: true }

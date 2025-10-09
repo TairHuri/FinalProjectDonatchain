@@ -28,8 +28,13 @@ export const createCampaign = async (req: Request, res: Response) => {
  * 📋 הבאת רשימת קמפיינים עם תמיכה ב־חיפוש/סינון
  */
 export const listCampaigns = async (req: Request, res: Response) => {
-  const { q, tag, page = 1, limit = 10 } = req.query as any;
+  const { q, tag, page = 1, limit = 10, ngoId } = req.query as any;
   try {
+    if(ngoId){
+      const result = await CampaignService.getByNgo(ngoId);
+      res.json(result);
+      return;
+    }
     const result = await CampaignService.search({
       q,
       tag,

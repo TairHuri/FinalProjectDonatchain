@@ -1,10 +1,11 @@
 import { Router } from 'express';
-import { register, login, me } from '../controllers/auth.controller';
+import { login, me, registerNewNgo, registerExistingNgo } from '../controllers/auth.controller';
 import authMiddleware from '../middlewares/auth.middleware';
 
 
 const router = Router();
-router.post('/register', register);
+router.post('/register/newngo', registerNewNgo);
+router.post('/register/existingngo', registerExistingNgo);
 router.post('/login', login);
 router.get('/me', authMiddleware, me);
 

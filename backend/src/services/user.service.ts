@@ -1,22 +1,23 @@
 // src/services/user.service.ts
-import User from '../models/user.model';
+import { AppError } from '../controllers/users.controller';
+import User, { IUser } from '../models/user.model';
 import * as AuthService from './auth.service';
 
 export default {
-  async register({ email, password, name, role, ngoId, address, phone, bankAccount, wallet, goals }: any) {
-    const user = await AuthService.registerUser({
-      email,
-      password,
-      name,
-      ngoId,
-      address,
-      phone,
-      bankAccount,
-      wallet,
-      goals,
-    });
-    return user;
-  },
+  // async register({ email, password, name, role, ngoId, address, phone, bankAccount, wallet, goals }: any) {
+  //   const user = await AuthService.registerUser({
+  //     email,
+  //     password,
+  //     name,
+  //     ngoId,
+  //     address,
+  //     phone,
+  //     bankAccount,
+  //     wallet,
+  //     goals,
+  //   });
+  //   return user;
+  // },
 
   async getById(id: string) {
     return User.findById(id).select('-passwordHash');
@@ -34,5 +35,27 @@ export default {
     const items = await User.find().select('-passwordHash').skip((page - 1) * limit).limit(limit);
     const total = await User.countDocuments();
     return { items, total, page, limit };
+  },
+
+   async approveUser(userId: string) {
+    try {
+
+      const user = await User.findById(userId)
+      if (!user) {
+        throw new AppError("user not found", 404)
+      }
+      user.approved = true;
+      const updatedUser = await user.save();
+      return updatedUser
+    } catch (err: any) {
+      throw err
+    }
+  },
+  async deleteUser(userId:string){
+    try{
+      await User.deleteOne({_id:userId})
+    }catch(error){
+      throw error;
+    }
   }
 };

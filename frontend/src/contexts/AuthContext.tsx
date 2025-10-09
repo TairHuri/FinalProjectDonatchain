@@ -1,99 +1,85 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
-import { loginUser, registerUser, getNgoProfile } from "../services/api";
-import type { Ngo } from "../models/Ngo";
+import { loginUser, getNgoProfile, registerUserExistingNgo } from "../services/api";
+
+import type { User } from "../models/User";
 
 
 
 interface AuthContextType {
-  ngo: Ngo | null;
-  login: (data: { email: string; password: string }) => Promise<boolean>;
+  user: User | null;
+  login: (data: { email: string; password: string }) => Promise<{success:boolean, message:string}>;
   register: (data: any) => Promise<boolean>;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
-  ngo: null,
-  login: async () => false,
+  user: null,
+  login: async () => ({success:true, message:''}),
   register: async () => false,
   logout: () => {},
 });
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [ngo, setNgo] = useState<Ngo | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+
 
 useEffect(() => {
-  const savedNgo = localStorage.getItem("ngoData");
-  if (savedNgo) {
-    setNgo(JSON.parse(savedNgo));
+  const savedUser = localStorage.getItem("userData");
+  if (savedUser) {
+    setUser(JSON.parse(savedUser));
   }
 }, []);
 
 
-  const fetchNgoData = async (token: string) => {
-  try {
-    const res = await getNgoProfile(token); // קריאת פרופיל מהשרת
-    if (res) {
-      const ngoData: Ngo = {
-        name: res.name ?? "",
-        _id: res._id ?? "",
-        ngoNumber:  "",
-        email: res.email ?? "",
-        phone: res.phone ?? "",
-        address: res.address ?? "",
-        bankAccount: res.bankAccount ?? "",
-        wallet: res.wallet ?? "",
-        description: res.description ?? "",
-        createdBy: res.createdBy,
-        createdAt: res.createdAt,
-        token, // חייב להיות כי שמרנו בלוקאל סטורג'
-      };
-      setNgo(ngoData);
-      localStorage.setItem("ngoData", JSON.stringify(ngoData));
-    }
-  } catch (err) {
-    console.error("Failed to fetch NGO profile", err);
-  }
-};
+//   const fetchNgoData = async (token: string) => {
+//   try {
+//     const res = await getNgoProfile(token); // קריאת פרופיל מהשרת
+//     if (res) {
+//       const userData: User = {
+//         name: res.name ?? "",
+//         _id: res._id ?? "",
+//         email: res.email ?? "",
+//         phone: res.phone ?? "",
 
-const login = async (data: { email: string; password: string }): Promise<boolean> => {
-  try {
-    const res = await loginUser(data);
 
-    if (res?.token && res?.user) {
+
+//         createdAt: res.createdAt,
+//         token, // חייב להיות כי שמרנו בלוקאל סטורג'
+//       };
+//       setUser(ngoData);
+//       localStorage.setItem("ngoData", JSON.stringify(ngoData));
+//     }
+//   } catch (err) {
+//     console.error("Failed to fetch NGO profile", err);
+//   }
+// };
+
+const login = async (data: { email: string; password: string }): Promise<{success:boolean, message:string}> => {
+  try {
+    const res:{user:User, token:string, success:true}|{success:false, message:string} = await loginUser(data);
+
+    if (res.success) {
       // נשמור את הנתונים שהגיעו מהשרת
-      const ngoData: Ngo = {
-        _id: res.user.id,
-        name: res.user.name,
-        email: res.user.email,
-        description: res.user.description,
-        ngoNumber: res.user.ngoId,
-        phone: res.user.phone,
-        address: res.user.address,
-        bankAccount: res.user.bankAccount,
-        wallet: res.user.wallet,
-        createdBy: res.createdBy,
-        createdAt: res.createdAt,
-        token: res.token,
-      };
-
-      setNgo(ngoData);
+      
+      setUser(res.user);
       localStorage.setItem("token", res.token);
-      localStorage.setItem("ngoData", JSON.stringify(ngoData));
+      localStorage.setItem("userData", JSON.stringify(res.user));
 
-      return true;
+      return {success:res.success, message:''};
+    }else{
+      return {success:res.success, message:res.message}; 
     }
 
-    return false;
   } catch (err) {
     console.error("Login failed", err);
-    return false;
+        return {success:false, message:"פרטי ההתחברות שגויים"}; 
   }
 };
 
 
   const register = async (data: any): Promise<boolean> => {
     try {
-      const res = await registerUser(data);
+      const res = await registerUserExistingNgo(data);
       return !!res.success;
     } catch (err) {
       console.error("Register error:", err);
@@ -102,13 +88,15 @@ const login = async (data: { email: string; password: string }): Promise<boolean
   };
 
   const logout = () => {
-    setNgo(null);
+    
+    setUser(null);
     localStorage.removeItem("token");
-    localStorage.removeItem("ngoData");
+    localStorage.removeItem("userData");
   };
+console.log(user);
 
   return (
-    <AuthContext.Provider value={{ ngo, login, register, logout }}>
+    <AuthContext.Provider value={{ user, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   );

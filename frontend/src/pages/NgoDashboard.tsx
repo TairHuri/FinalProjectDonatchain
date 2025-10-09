@@ -5,14 +5,16 @@ import { PlusCircle, Home, Users, LogOut, FileText, Settings } from "lucide-reac
 import NgoDonors from "../components/NgoDonors";
 import CampaignItem from "../components/CampaignItem";
 import { cardStyle, inputStyle, menuBtnStyle, primaryBtnStyle } from "../css/dashboardStyles";
-import NgoPersonalDetails from "../components/NgoPersonalDetails";
+import NgoPersonalDetails from "../components/UserPersonalDetails";
+import NgoUsers from "../components/NgoUsers";
+import UserPersonalDetails from "../components/UserPersonalDetails";
 
 const NgoDashboard: React.FC = () => {
-  const { ngo } = useAuth();
+  const { user } = useAuth();
   const { campaigns, addCampaign } = useCampaigns();
 
   const [activePage, setActivePage] = useState<
-    "dashboard" | "newCampaign" | "campaigns" | "profile" | "donors"
+    "dashboard" | "newCampaign" | "campaigns" | "profile" | "donors"|"ngoUsers"
   >("dashboard");
   console.log('campaigns', campaigns);
 
@@ -29,9 +31,9 @@ const NgoDashboard: React.FC = () => {
 
   const handleCreateCampaign = async () => {
     if (!form.title || !form.goal) return alert("יש למלא את כל השדות");
-    if (!ngo) return;
+    if (!user) return;
     const newCampaign = {
-      ngo: ngo._id,
+      ngo: user.ngoId,
       title: form.title,
       description: form.description,
       targetAmount: Number(form.goal),
@@ -90,7 +92,7 @@ const NgoDashboard: React.FC = () => {
   };
 
   return (
-    <div dir="rtl" style={{ display: "flex", minHeight: "100vh", backgroundColor: "#f7f9fc" }}>
+    <div dir="rtl" style={{ width: "1000px", display: "flex", minHeight: "100vh", backgroundColor: "#f7f9fc" }}>
       {/* סרגל צד */}
       <div
         style={{
@@ -128,6 +130,9 @@ const NgoDashboard: React.FC = () => {
           <button onClick={() => setActivePage("donors")} style={menuBtnStyle}>
             <Users size={20} /> תורמי העמותה
           </button>
+          <button onClick={() => setActivePage("ngoUsers")} style={menuBtnStyle}>
+            <Users size={20} /> חברי העמותה
+          </button>
         </div>
         <button style={{ ...menuBtnStyle, color: "#f87171" }}>
           <LogOut size={20} /> יציאה
@@ -136,10 +141,11 @@ const NgoDashboard: React.FC = () => {
 
       {/* תוכן */}
       <div style={{ flex: 1, padding: "30px" }}>
+        {activePage === "ngoUsers" && <NgoUsers/>}
         {activePage === "dashboard" && (
           <div>
             <h1 style={{ fontSize: "28px", fontWeight: "bold", color: "#059669" }}>
-              ברוך הבא, {ngo?.name}
+              ברוך הבא, {user?.name}
             </h1>
             <p style={{ fontSize: "18px", marginTop: "10px" }}>זהו האזור האישי שלך.</p>
 
@@ -191,7 +197,7 @@ const NgoDashboard: React.FC = () => {
           </div>
         )}
 
-        {activePage === "profile" && <NgoPersonalDetails editMode={editMode} setEditMode={setEditMode}/>}
+        {activePage === "profile" && <UserPersonalDetails editMode={editMode} setEditMode={setEditMode}/>}
 
 
         {activePage === "campaigns" && (
