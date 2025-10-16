@@ -32,48 +32,55 @@ type CreditDonation = {
   donorNumber:string, donorEmail:string, donorFirstName:string, donorLastName:string
 }
 export const creditDonate = async (req: Request, res: Response) => {
-  const { amount, ccNumber, expYear, expMonth, cvv, ownerId, ownername, currency, donorNumber, donorEmail, donorFirstName, donorLastName } = req.body;
+  const {
+    amount, ccNumber, expYear, expMonth, cvv,
+    ownerId, ownername, currency,
+    donorNumber, donorEmail, donorFirstName, donorLastName
+  } = req.body;
   const campaignId = req.params.id;
 
   try {
-    
-    
-
+    // שולחים לשרת הסליקה גם את פרטי התורם כדי שישלח מייל קבלה
     const chargeResponse = await fetch('http://localhost:8890/api/charge', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ amount, ccNumber, expYear, expMonth, cvv, ownerId, ownername, currency })
-    })
+      body: JSON.stringify({
+        amount, ccNumber, expYear, expMonth, cvv,
+        ownerId, ownername, currency,
+        donorEmail, donorFirstName, donorLastName
+      }),
+    });
 
-    if (chargeResponse.status == 200) {
+    if (chargeResponse.status === 200) {
       const data = await chargeResponse.json();
+
       const donation = new Donation({
         email: donorEmail,
         phone: donorNumber,
-        firstName: donorFirstName, 
+        firstName: donorFirstName,
         lastName: donorLastName,
         campaign: campaignId,
         amount: +data.charge,
         currency,
-        method:'card',
+        method: 'card',
       });
+
       await donation.save();
-      await CampaignService.addDonationToCampaign(campaignId, +data.charge)
-     
+      await CampaignService.addDonationToCampaign(campaignId, +data.charge);
+      await AuditLog.create({ action: 'donation_created', meta: { donationId: donation._id } });
 
-      await AuditLog.create({ action: 'donation_created',  meta: { donationId: donation._id } });
-
-      return res.status(201).json({ donation });
+      // החזרת תגובה לפרונט
+      return res.status(201).json({ message: 'Donation successful and receipt email sent', donation });
     } else {
-      res.status(502).send({ message: 'charge server error '+  chargeResponse.status})
+      const text = await chargeResponse.text();
+      res.status(502).send({ message: 'Charge server error: ' + text });
     }
   } catch (error) {
-    console.log(error);
-    
-    res.status(500).send({ message: 'charge server error ' + error })
+    console.error('❌ Error in creditDonate:', error);
+    res.status(500).send({ message: 'Charge server error ' + error });
   }
+};
 
-}
 
 export const donate = async (req: Request, res: Response) => {
   const { amount, currency, method, txHash } = req.body;
