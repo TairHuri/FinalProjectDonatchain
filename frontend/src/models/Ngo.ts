@@ -11,6 +11,5 @@ export interface Ngo {
     logoUrl?: string;
     createdBy: string;
     createdAt: Date;
-    token: string;
     ngoNumber:string;
 }

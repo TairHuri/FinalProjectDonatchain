@@ -35,7 +35,7 @@ export function CampaignsProvider({ children }: { children: ReactNode }) {
 
 const refreshCampaigns = async () => {
   try {
-    console.log("Fetching campaigns for NGO:", ngo?._id);
+    console.log("Fetching campaigns for NGO:", ngo);
     const data = await getCampaigns(ngo?._id);
     console.log("Campaigns received:", data);
     setCampaigns(data.items);
@@ -52,7 +52,7 @@ const updateCampaign = async (campaignId: string) =>{
   useEffect(()=>{
       refreshCampaigns();
     
-  }, [])
+  }, [ngo])
    const addCampaign = async (c: Omit<Campaign, "raised">) => {
     try {
       if (!ngo?.token) throw new Error("NGO not logged in");

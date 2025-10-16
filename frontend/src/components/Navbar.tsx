@@ -20,7 +20,7 @@ export default function Navbar() {
   const [darkMode, setDarkMode] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const { ngo, logout } = useAuth();
+  const { user, logout } = useAuth();
 
   const activeGradient = "linear-gradient(135deg, #3b6978, #8fa98f)";
 
@@ -107,7 +107,7 @@ export default function Navbar() {
 
       {/* עמותות */}
       <li style={{ position: "relative" }}>
-        {ngo ? (
+        {user ? (
           <Link
             to="/ngo/home"
             style={getButtonStyle(location.pathname.startsWith("/ngo"))}
@@ -205,7 +205,7 @@ export default function Navbar() {
 
         {/* לוגו + dark mode + מובייל + אייקון משתמש */}
         <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-          {ngo && (
+          {user && (
             <div style={{ position: "relative" }}>
               <button
                 onClick={() => toggleDropdown("user")}

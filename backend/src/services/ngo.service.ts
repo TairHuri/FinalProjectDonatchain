@@ -1,11 +1,12 @@
 // src/services/ngo.service.ts
-import Ngo from '../models/ngo.model';
+import Ngo, { INgo } from '../models/ngo.model';
 
 export default {
-  async create(data: any) {
-    const ngo = new Ngo(data);
-    await ngo.save();
-    return ngo;
+  async create(data: INgo) {
+    const {_id, ...rest} = data;
+    const ngo = new Ngo(rest);
+    const createdNgo =await ngo.save();
+    return createdNgo;
   },
 
   async getById(id: string) {

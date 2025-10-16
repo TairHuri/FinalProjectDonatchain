@@ -1,38 +1,88 @@
-import { useState } from "react";
-import { registerUser } from "../services/api";
-import { Building2, Mail, Lock, MapPin, Phone, CreditCard, Wallet } from "lucide-react";
+import { useEffect, useState, type ReactNode } from "react";
+import { getNgoList, registerUserExistingNgo, registerUserNewNgo } from "../services/api";
+import { Building2, Mail, Lock, Phone } from "lucide-react";
+import type { User } from "../models/User";
+import type { Ngo } from "../models/Ngo";
+import { Input, InputWithIcon } from "../components/gui/InputText";
+import NewNgo from "../components/NewNgo";
+import {useNavigate} from 'react-router-dom'
+import { buttonStyle, iconLogin, ngoListStyle, toggleGroup, toggleOff, toggleOn } from "../css/dashboardStyles";
 
 export default function RegistrationNgo() {
-  const [formData, setFormData] = useState({
+  const nav = useNavigate();
+  const [user, setUser] = useState<User>({
     name: "",
     ngoId: "",
     email: "",
-    address: "",
     phone: "",
+    password: "",
+    roles: [],
+    approved: false
+  });
+  const [ngo, setNgo] = useState<Ngo>({
+    _id: "",
+    name: "",
+    description: "",
+    website: "",
     bankAccount: "",
     wallet: "",
-    password: "",
-    goals: "",
+    address: "",
+    phone: "",
+    email: "",
+    logoUrl: "",
+    createdBy: "",
+    createdAt: new Date(),
+    //token: "",
+    ngoNumber: "",
   });
+  const [ngoList, setNgoList] = useState<Ngo[]>([])
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const [newNgo, setNewNgo] = useState<boolean>(false)
+
+
+  const handleChangeUser = (field: string, value: string | number) => {
+    setUser({ ...user, [field]: value });
   };
+  const handleChangeNgo = (field: string, value: string | number) => {
+    setNgo({ ...ngo, [field]: value });
+  };
+  const handleChangeData = (
+   field: string, value: string | number
+  ) => {
+    const ngo = ngoList.find(n => n.name == value)
+    if (!ngo) {
+      //TODO optionally create new NGO
+      return;
+    }
+    setUser({ ...user, ngoId: ngo._id });
+    console.log(field, value);
+
+  };
+
+  const loadNgoList = async () => {
+    const ngoList = await getNgoList()
+    setNgoList(ngoList.items)
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.email || !formData.password || !formData.name) {
+    if (!user.email || !user.password || !user.name) {
       alert("אנא מלאי שם, אימייל וסיסמה");
       return;
     }
 
     try {
-      const res = await registerUser(formData);
+      let res;
+      if (newNgo) {
+        res = await registerUserNewNgo(user, ngo);
+      } else {
+        res = await registerUserExistingNgo(user);
+      }
+
       if (res.success) {
         alert("עמותה נרשמה בהצלחה!");
+        nav('/login/ngo')
       } else {
         alert(res.message || "שגיאה בהרשמה");
       }
@@ -40,150 +90,78 @@ export default function RegistrationNgo() {
       alert("שגיאת שרת");
     }
   };
-
+  useEffect(() => {
+    loadNgoList()
+  }, [])
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 p-6">
-      <div className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-2xl">
-        <h1 className="text-3xl font-bold text-center text-blue-700 mb-2">
+    <div>
+      <div>
+        <h1 className="text-center"> 
           הרשמת עמותה
         </h1>
-        <p className="text-center text-gray-600 mb-8">
-          הצטרפי אלינו והשאירי חותם חיובי בעולם ✨
-        </p>
+        <p>
+          הצטרפי אלינו והשאירי חותם חיובי בעולם ✨</p>
 
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <form onSubmit={handleSubmit}>
           {/* שם עמותה */}
+          <InputWithIcon
+            label="שם חבר העמותה"
+            field="name"
+            onChange={handleChangeUser}
+            value={user.name}
+            Icon={<Building2 style={iconLogin}/>} />
+          <InputWithIcon
+            label="אימייל"
+            field="email"
+            type="email"
+            onChange={handleChangeUser}
+            value={user.email || ""}
+            Icon={<Mail style={iconLogin}/>} />
+          <InputWithIcon
+            label="טלפון"
+            field="phone"
+            onChange={handleChangeUser}
+            value={user.phone || ""}
+            Icon={<Phone style={iconLogin}/>} />
+          <InputWithIcon
+            label="סיסמה"
+            field="password"
+            type="password"
+            onChange={handleChangeUser}
+            value={user.password}
+            Icon={<Lock style={iconLogin}/>} />
+
+          <ToggleButton state={newNgo} labelOn="צור עמותה" labelOff="התחבר לעמותה קיימת" onToggle={() => setNewNgo(!newNgo)} />
+          {newNgo ? <NewNgo ngo={ngo} handleChangeNgo={handleChangeNgo} />
+            :
+            <div>
+              <Input type="text" list="ngoList" onChange={handleChangeData} label="" field="ngoId" value={user.ngoId} disabled={ngoList.length == 0} required={true} />
+              <datalist id="ngoList" >
+                {ngoList.map(n => <option key={n._id} value={n.name} />)}
+              </datalist>
+            </div>}
+
           <div>
-            <label className="block mb-1 text-sm font-medium text-gray-700">שם העמותה</label>
-            <div className="flex items-center border rounded-full p-2 focus-within:ring-2 focus-within:ring-blue-400">
-              <Building2 className="w-5 h-5 text-gray-400 mr-2" />
-              <input
-                className="w-full outline-none"
-                name="name"
-                placeholder="שם העמותה"
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-
-          {/* מספר עמותה */}
-          <div>
-            <label className="block mb-1 text-sm font-medium text-gray-700">מספר עמותה</label>
-            <input
-              className="w-full border rounded-full p-2 focus:ring-2 focus:ring-blue-400 outline-none"
-              name="ngoId"
-              placeholder="מספר עמותה"
-              onChange={handleChange}
-            />
-          </div>
-
-          {/* אימייל */}
-          <div>
-            <label className="block mb-1 text-sm font-medium text-gray-700">אימייל</label>
-            <div className="flex items-center border rounded-full p-2 focus-within:ring-2 focus-within:ring-blue-400">
-              <Mail className="w-5 h-5 text-gray-400 mr-2" />
-              <input
-                className="w-full outline-none"
-                name="email"
-                type="email"
-                placeholder="אימייל"
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-
-          {/* סיסמה */}
-          <div>
-            <label className="block mb-1 text-sm font-medium text-gray-700">סיסמה</label>
-            <div className="flex items-center border rounded-full p-2 focus-within:ring-2 focus-within:ring-blue-400">
-              <Lock className="w-5 h-5 text-gray-400 mr-2" />
-              <input
-                className="w-full outline-none"
-                name="password"
-                type="password"
-                placeholder="סיסמה"
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-
-          {/* כתובת */}
-          <div>
-            <label className="block mb-1 text-sm font-medium text-gray-700">כתובת</label>
-            <div className="flex items-center border rounded-full p-2 focus-within:ring-2 focus-within:ring-blue-400">
-              <MapPin className="w-5 h-5 text-gray-400 mr-2" />
-              <input
-                className="w-full outline-none"
-                name="address"
-                placeholder="כתובת"
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-
-          {/* טלפון */}
-          <div>
-            <label className="block mb-1 text-sm font-medium text-gray-700">טלפון</label>
-            <div className="flex items-center border rounded-full p-2 focus-within:ring-2 focus-within:ring-blue-400">
-              <Phone className="w-5 h-5 text-gray-400 mr-2" />
-              <input
-                className="w-full outline-none"
-                name="phone"
-                placeholder="טלפון"
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-
-          {/* חשבון בנק */}
-          <div>
-            <label className="block mb-1 text-sm font-medium text-gray-700">חשבון בנק</label>
-            <div className="flex items-center border rounded-full p-2 focus-within:ring-2 focus-within:ring-blue-400">
-              <CreditCard className="w-5 h-5 text-gray-400 mr-2" />
-              <input
-                className="w-full outline-none"
-                name="bankAccount"
-                placeholder="חשבון בנק"
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-
-          {/* ארנק קריפטו */}
-          <div>
-            <label className="block mb-1 text-sm font-medium text-gray-700">כתובת ארנק קריפטו</label>
-            <div className="flex items-center border rounded-full p-2 focus-within:ring-2 focus-within:ring-blue-400">
-              <Wallet className="w-5 h-5 text-gray-400 mr-2" />
-              <input
-                className="w-full outline-none"
-                name="wallet"
-                placeholder="כתובת ארנק קריפטו"
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-
-          {/* מטרות */}
-          <div className="md:col-span-2">
-            <label className="block mb-1 text-sm font-medium text-gray-700">מטרות העמותה</label>
-            <textarea
-              className="w-full border rounded-full p-3 focus:ring-2 focus:ring-blue-400 outline-none h-24 resize-none"
-              name="goals"
-              placeholder="ספרי בקצרה על מטרות העמותה"
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="md:col-span-2">
             <button
               type="submit"
               className="w-full bg-blue-600 text-white py-3 rounded-full hover:bg-blue-700 transition-colors font-semibold"
+              style={buttonStyle}
             >
-              הירשמי עכשיו
+              צור חשבון
             </button>
           </div>
         </form>
       </div>
     </div>
   );
+}
+
+const ToggleButton = ({ state, labelOn, labelOff, onToggle }: { state: boolean, labelOn: string, labelOff: string, onToggle: () => void }) => {
+
+  return (
+    <div className="md:col-span-2" style={toggleGroup}>
+      <span onClick={onToggle} style={state ? toggleOn : toggleOff}>{labelOn}</span>
+      <span onClick={onToggle} style={state ? toggleOff : toggleOn}>{labelOff}</span>
+    </div>
+  )
 }

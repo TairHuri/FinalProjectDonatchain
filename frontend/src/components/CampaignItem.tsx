@@ -1,4 +1,5 @@
 import type { Campaign } from "../contexts/CampaignsContext";
+import { buttonStyle, labelStyle } from "../css/dashboardStyles";
 
 
 const cardStyle: React.CSSProperties = {
@@ -23,6 +24,6 @@ const CampaignItem = ({ c }: { c: Campaign }) => {
 }
 
 export const CampaignDonors = ({campaign, onClick}:{campaign: Campaign, onClick:()=>Promise<void>}) => {
-    return (<p >{campaign.title} <button type="button" onClick={onClick}>תורמי הקמפיין</button></p>)
+    return (<p>{campaign.title} <button type="button" onClick={onClick} style={buttonStyle}>תורמי הקמפיין</button></p>)
 }
 export default CampaignItem;

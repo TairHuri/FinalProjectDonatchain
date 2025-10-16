@@ -1,7 +1,7 @@
 // src/routes/users.routes.ts
 import { Router } from 'express';
 import authMiddleware from '../middlewares/auth.middleware';
-import { getMe, updateMe, listUsers } from '../controllers/users.controller';
+import { getMe, updateMe, listUsers, listUsersByNgo, approveUser, deleteUse } from '../controllers/users.controller';
 import roleMiddleware from '../middlewares/role.middleware';
 import { validateUpdateProfile } from '../utils/validators';
 
@@ -12,5 +12,8 @@ router.put('/me', authMiddleware, validateUpdateProfile, updateMe);
 
 // Admin-only: list users
 router.get('/', authMiddleware, roleMiddleware(['admin']), listUsers);
+router.get('/ngo/:ngoId', authMiddleware, listUsersByNgo);
+router.patch('/approve/:userId', approveUser)
+router.delete('/:userId', deleteUse)
 
 export default router;

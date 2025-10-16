@@ -11,13 +11,13 @@ export interface INgo extends Document {
   phone?: string;
   email?: string;
   logoUrl?: string;
-  createdBy: Schema.Types.ObjectId;
+  createdBy?: Schema.Types.ObjectId|null;
   createdAt: Date;
 }
 
 const ngoSchema = new Schema(
   {
-    name: { type: String, required: true, index: true },
+    name: { type: String, required: true, index: true, unique:true },
     ngoNumber: { type: String, unique: true },
     description: String,
     website: String,

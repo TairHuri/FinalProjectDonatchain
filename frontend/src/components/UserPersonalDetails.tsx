@@ -3,11 +3,12 @@ import { useAuth } from "../contexts/AuthContext"
 import { cardStyle, inputStyle, menuBtnStyle, primaryBtnStyle } from "../css/dashboardStyles"
 import type { Ngo } from "../models/Ngo";
 import InputText from "./gui/InputText";
+import type { User } from "../models/User";
 
-const NgoPersonalDetails = ({ editMode, setEditMode }: { editMode: string, setEditMode: (mode: "view" | "edit" | "password") => void }) => {
-  const { ngo } = useAuth()
-  if (!ngo) return <p>לא בוצעה התחברות</p>
-  const [formData, setFormData] = useState<Ngo>({ ...ngo });
+const UserPersonalDetails = ({ editMode, setEditMode }: { editMode: string, setEditMode: (mode: "view" | "edit" | "password") => void }) => {
+  const { user } = useAuth()
+  if (!user) return <p>לא בוצעה התחברות</p>
+  const [formData, setFormData] = useState<User>({ ...user });
   const handleSaveChanges = () => {
     if (!formData.name || !formData._id) {
       alert("יש למלא את כל השדות");
@@ -25,14 +26,13 @@ const NgoPersonalDetails = ({ editMode, setEditMode }: { editMode: string, setEd
       <h2 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "20px" }}>
         פרטים אישיים
       </h2>
-      {ngo ? (
+      {user ? (
         <>
           {editMode === "view" && (
             <div>
-              <p><strong>שם העמותה:</strong> {ngo.name}</p>
-              <p><strong>מספר עמותה:</strong> {ngo._id}</p>
-              <p><strong>אימייל:</strong> {ngo.email}</p>
-              <p><strong>טלפון:</strong> {ngo.phone}</p>
+              <p><strong>שם חבר העמותה:</strong> {user.name}</p>
+              <p><strong>אימייל:</strong> {user.email}</p>
+              <p><strong>טלפון:</strong> {user.phone}</p>
               <button
                 onClick={() => setEditMode("edit")}
                 style={{ ...primaryBtnStyle, marginTop: "15px" }}
@@ -44,17 +44,9 @@ const NgoPersonalDetails = ({ editMode, setEditMode }: { editMode: string, setEd
 
           {editMode === "edit" && (
             <div>
-              <InputText field='name' value={formData.name} placeholder="שם העמותה" onChange={handleChange}/>
-              <InputText field='ngoNumber' value={formData.ngoNumber} placeholder="מספר העמותה" onChange={handleChange}/>
-              
+              <InputText field='name' value={formData.name} placeholder="שם חבר העמותה" onChange={handleChange}/>
               <InputText field='email' type="email" value={formData.email||""} placeholder="אימייל" onChange={handleChange}/>
               <InputText field='phone' type="tel" value={formData.phone||""} placeholder="טלפון" onChange={handleChange}/>
-              <InputText field='address' value={formData.address||""} placeholder="כתובת" onChange={handleChange}/>
-              <InputText field='description' value={formData.description||""} placeholder="תיאור" onChange={handleChange}/>
-              <InputText field='website' value={formData.website||""} placeholder="אתר" onChange={handleChange}/>
-              <InputText field='logoUrl' value={formData.logoUrl||""} placeholder="לןגן" onChange={handleChange}/>
-              <InputText field='bankAccount' value={formData.bankAccount||""} placeholder="חשבון בנק" onChange={handleChange}/>
-              <InputText field='wallet' value={formData.wallet||""} placeholder="ארנק" onChange={handleChange}/>
              
          
               <div style={{ display: "flex", gap: "10px" }}>
@@ -73,4 +65,4 @@ const NgoPersonalDetails = ({ editMode, setEditMode }: { editMode: string, setEd
 }
 
 
-export default NgoPersonalDetails;
+export default UserPersonalDetails;

@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { LogIn, Mail, Lock } from "lucide-react";
-import { loginUser } from "../services/api";
+
 import { useAuth } from "../contexts/AuthContext";
 
 const LoginNgo: React.FC = () => {
@@ -17,11 +17,11 @@ const LoginNgo: React.FC = () => {
       return;
     }
 
-    const success = await login({ email, password });
-    if (success) {
+    const res = await login({ email, password });
+    if (res.success) {
       navigate("/ngo/home");
     } else {
-      alert("פרטי ההתחברות שגויים");
+      alert(res.message);
     }
   };
 

@@ -1,49 +1,21 @@
-import User from '../models/user.model';
+import User, { IUser } from '../models/user.model';
 import bcrypt from 'bcryptjs';
 import { config } from '../config';
 import jwt, { SignOptions } from "jsonwebtoken";
 
-export async function registerUser({
-  email,
-  password,
-  name,
-  ngoId,
-  address,
-  phone,
-  bankAccount,
-  wallet,
-  goals,
-}: {
-  email: string;
-  password: string;
-  name: string;
-  ngoId?: string;
-  address?: string;
-  phone?: string;
-  bankAccount?: string;
-  wallet?: string;
-  goals?: string;
-}) {
-  const existing = await User.findOne({ email });
+export async function registerUser(user:IUser) {
+  const existing = await User.findOne({ email:user.email });
   if (existing) throw new Error("User already exists");
 
-  const passwordHash = await bcrypt.hash(password, config.bcryptSaltRounds);
-
-  const user = new User({
-    email,
-    passwordHash,
-    name,
-    ngoId,
-    address,
-    phone,
-    bankAccount,
-    wallet,
-    goals,
+  const passwordHash = await bcrypt.hash(user.password, config.bcryptSaltRounds);
+  const {_id, createdAt, updatedAt, ...newUser} = user;
+  const userToCreate = new User({
+    ...newUser, password:passwordHash,
     roles: ["ngo"], // ברירת מחדל
   });
 
-  await user.save();
-  return user;
+  const createdUser = await userToCreate.save();
+  return createdUser;
 }
 
 export function signJwt(payload: object) {
