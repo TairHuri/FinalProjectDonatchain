@@ -33,7 +33,11 @@ type CreditDonation = {
   donorNumber: string, donorEmail: string, donorFirstName: string, donorLastName: string
 }
 export const creditDonate = async (req: Request, res: Response) => {
-  const { amount, ccNumber, expYear, expMonth, cvv, ownerId, ownername, currency, donorNumber, donorEmail, donorFirstName, donorLastName } = req.body;
+  const {
+    amount, ccNumber, expYear, expMonth, cvv,
+    ownerId, ownername, currency,
+    donorNumber, donorEmail, donorFirstName, donorLastName
+  } = req.body;
   const campaignId = req.params.id;
 
   try {
@@ -44,16 +48,22 @@ export const creditDonate = async (req: Request, res: Response) => {
     const chargeResponse = await fetch('http://localhost:8890/api/charge', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ amount, ccNumber, expYear, expMonth, cvv, ownerId, ownername, currency })
-    })
+      body: JSON.stringify({
+        amount, ccNumber, expYear, expMonth, cvv,
+        ownerId, ownername, currency,
+        donorEmail, donorFirstName, donorLastName
+      }),
+    });
 
-    if (chargeResponse.status == 200) {
+    if (chargeResponse.status === 200) {
       const data = await chargeResponse.json() as {message:string, charge:number, code:string};
       
       const txHash = await blockchainService.recordFiatDonation(+(campaign?.blockchainTx), data.charge, currency, data.code )
+
       const donation = new Donation({
         email: donorEmail,
         phone: donorNumber,
+        firstName: donorFirstName,
         firstName: donorFirstName,
         lastName: donorLastName,
         campaign: campaignId,
@@ -62,23 +72,25 @@ export const creditDonate = async (req: Request, res: Response) => {
         method: 'card',
         txHash:txHash,
       });
+
       await donation.save();
       await CampaignService.addDonationToCampaign(campaignId, +data.charge)
+     
 
+      await AuditLog.create({ action: 'donation_created',  meta: { donationId: donation._id } });
 
-      await AuditLog.create({ action: 'donation_created', meta: { donationId: donation._id } });
-
-      return res.status(201).json({ donation });
+      // החזרת תגובה לפרונט
+      return res.status(201).json({ message: 'Donation successful and receipt email sent', donation });
     } else {
-      res.status(502).send({ message: 'charge server error ' + chargeResponse.status })
+      res.status(502).send({ message: 'charge server error '+  chargeResponse.status})
     }
   } catch (error) {
     console.log(error);
-
+    
     res.status(500).send({ message: 'charge server error ' + error })
   }
+};
 
-}
 
 export const donate = async (req: Request, res: Response) => {
   const { phone, email, firstName, lastName, amount, campaign, currency, method, txHash } = req.body;
