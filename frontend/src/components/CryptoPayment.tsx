@@ -77,10 +77,12 @@ const CryptoPayment = ({ close, campaignId }: { close: () => void, campaignId: s
 
   if (isLoading) return <Spinner />
   if (showConfirm) return (
-    <div>
+    <div className="result">
       <h3>התרומה התבצעה בהצלחה</h3>
       <div>Tx: <a href={`https://sepolia.etherscan.io/tx/${hash}`} target="_blank">{hash}</a></div>
+      <div>
       <button type='button' onClick={close} style={buttonStyle}>אישור</button>
+      </div>
     </div>
   )
   return (
