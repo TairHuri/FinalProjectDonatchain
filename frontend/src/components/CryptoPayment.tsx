@@ -1,6 +1,6 @@
 import { useState, type ChangeEvent, useEffect } from "react";
 import { useCampaigns } from "../contexts/CampaignsContext";
-import {  cryptoDonation } from "../services/api";
+import { cryptoDonation } from "../services/api";
 import { buttonStyle, fildsPositionStyle, inputStyle, labelStyle } from "../css/dashboardStyles";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useAccount, useSwitchChain, useWriteContract, useWaitForTransactionReceipt, useDisconnect } from 'wagmi';
@@ -8,8 +8,10 @@ import { sepolia } from 'wagmi/chains';
 import { parseEther, type Abi } from 'viem';
 import hubAbiJson from '../abi/Donatchain.json';
 import type { Donation } from "../models/Donation";
+import Spinner from "./Spinner";
+import { useSpinner } from "./Spinner";
 
-const CryptoPayment = ({ close, campaignId}: { close: () => void, campaignId: string, userId: string }) => {
+const CryptoPayment = ({ close, campaignId }: { close: () => void, campaignId: string, userId: string }) => {
 
   const { updateCampaign } = useCampaigns();
   const { disconnect } = useDisconnect();
@@ -18,6 +20,7 @@ const CryptoPayment = ({ close, campaignId}: { close: () => void, campaignId: st
   const [ccForm, setCcform] = useState<Donation>({ phone: '', email: '', firstName: '', lastName: '', amount: 0, campaign: campaignId, currency: 'ETH', method: 'crypto', txHash: '' })
   const [message, setMessage] = useState<string | null>(null)
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
+  const { isLoading, start, stop } = useSpinner()
 
   const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { id, value } = event.target;
@@ -31,35 +34,48 @@ const CryptoPayment = ({ close, campaignId}: { close: () => void, campaignId: st
   }, [isSuccess, isPending, hash])
 
   const saveDonation = async () => {
-    const chargeData = { ...ccForm, campaignId, txHash: hash }
-    const { data, status } = await cryptoDonation(chargeData, campaignId)
 
-    console.log('sent', chargeData)
-    console.log(data, status);
-    if (status == 201) {
-      updateCampaign(campaignId);
-      setShowConfirm(true)
-      disconnect();
-    } else {
-      setMessage(data.message)
+    try {
+      const chargeData = { ...ccForm, campaignId, txHash: hash }
+      const { data, status } = await cryptoDonation(chargeData, campaignId)
+
+      console.log('sent', chargeData)
+      console.log(data, status);
+      if (status == 201) {
+        updateCampaign(campaignId);
+        setShowConfirm(true)
+        disconnect();
+      } else {
+        setMessage(data.message)
+      }
+    } catch (error) {
+      console.log(error);
+
+    } finally {
+      stop();
     }
   }
 
 
   const handlePayment = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (ccForm.amount <= 0) {
-      setMessage("amount must be greater than 0")
-      return;
-    }
+    try {
+      if (ccForm.amount <= 0) {
+        setMessage("amount must be greater than 0")
+        return;
+      }
+      start();
+      console.log('start spinner');
 
-    await donateCrypto(`${ccForm.amount}`)
-    if (!isSuccess) {
-      setMessage("error performing payment")
-      return;
+      await donateCrypto(`${ccForm.amount}`)
+    } catch (error) {
+      console.log(error);
+      stop();
     }
-
   }
+  
+
+  if (isLoading) return <Spinner />
   if (showConfirm) return (
     <div>
       <h3>התרומה התבצעה בהצלחה</h3>
@@ -130,7 +146,7 @@ function Crypto({ waiting, isPending, isSuccess, error }: CryptoProps) {
   return (
     <div dir="rtl" style={{ padding: 24 }}>
       <ConnectButton accountStatus="address" />
-      
+
       <button disabled={isPending || waiting} style={buttonStyle}>
         {isPending || waiting ? 'שולח…' : 'לתרומה בקריפטו'}
       </button>

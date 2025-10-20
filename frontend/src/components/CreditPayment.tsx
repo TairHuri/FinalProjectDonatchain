@@ -2,6 +2,7 @@ import { useState, type ChangeEvent } from "react";
 import { useCampaigns } from "../contexts/CampaignsContext";
 import { creditDonation } from "../services/api";
 import { buttonStyle, fildsPositionStyle, inputStyle, labelStyle } from "../css/dashboardStyles";
+import Spinner, { useSpinner } from "./Spinner";
 
 const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campaignId: string, userId: string }) => {
   const date = new Date()
@@ -11,6 +12,7 @@ const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campa
   const [message, setMessage] = useState<string | null>(null)
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const [txHash, setTxHash] = useState<string>('')
+  const {isLoading, start, stop} = useSpinner()
 
   const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { id, value } = event.target;
@@ -28,6 +30,8 @@ const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campa
       setMessage("cvv is invalid ")
       return
     }
+    start()
+    try{
     // send post /charge
     const chargeData = { ...ccForm, campaignId, }
     const { data, status } = await creditDonation(chargeData, campaignId)
@@ -40,8 +44,16 @@ const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campa
       setShowConfirm(true)
     } else {
       setMessage(data.message)
+    }}catch(error){
+      console.log(error);
+      
+    }finally{
+
+      stop()
     }
   }
+  
+  if(isLoading) return <Spinner/>
   if (showConfirm) return (
     <div className="result">
       <h3>התרומה התבצעה בהצלחה</h3>
