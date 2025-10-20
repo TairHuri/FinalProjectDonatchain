@@ -3,13 +3,18 @@ import { useCampaigns } from "../contexts/CampaignsContext";
 import { useState } from "react";
 import CreditPayment from "../components/CreditPayment";
 import Modal from "../components/gui/Modal";
+import CryptoPayment from "../components/CryptoPayment";
+import CampaignGallery from "../components/CampaignGallery";
+
+const IMAGE_URL = import.meta.env.VITE_IMAGES_URL || "http://localhost:4000/images";
 
 const CampaignDetails: React.FC = () => {
   const { id } = useParams();
   const { campaigns } = useCampaigns();
   const campaign = campaigns.find((c) => c._id! === (id));
   const [showCreditPay, setShowCreditPay] = useState<boolean>(false)
-
+  const [showCryptoPay, setShowCryptoPay] = useState<boolean>(false)
+  // TODO load Ngo and set its logo as campaign logo
   
   const [activeTab, setActiveTab] = useState<"project" | "ngo" | "donations">("project");
 
@@ -21,7 +26,7 @@ const CampaignDetails: React.FC = () => {
     <div dir="rtl" style={{ background: "white", padding: "24px", borderRadius: "12px", maxWidth: "900px", margin: "0 auto" }}>
       {/* לוגו ושם קמפיין */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <img src={campaign.ngoLogo} alt="ngo logo" style={{ width: "60px", height: "60px", borderRadius: "50%" }} />
+        <img src={''} alt="ngo logo" style={{ width: "60px", height: "60px", borderRadius: "50%" }} />
         <h1 style={{ fontSize: "28px", fontWeight: "bold", color: "#333" }}>{campaign.title}</h1>
       </div>
 
@@ -43,18 +48,28 @@ const CampaignDetails: React.FC = () => {
           תרומה באשראי
         </button>
 
-        <button style={{ flex: 1, backgroundColor: "#4b5563", color: "white", padding: "10px", borderRadius: "8px", border: "none" }}>
+        <button style={{ flex: 1, backgroundColor: "#4b5563", color: "white", padding: "10px", borderRadius: "8px", border: "none" }}
+        onClick={() => setShowCryptoPay(true)}>
           תרומה בקריפטו
         </button>
       </div>
-      
+    <Modal show={showCryptoPay} component={<CryptoPayment close={() => setShowCryptoPay(false)} campaignId={campaign._id!} userId={campaign.ngo} />}/>  
     <Modal show={showCreditPay} component={<CreditPayment close={() => setShowCreditPay(false)} campaignId={campaign._id!} userId={campaign.ngo} />}/>
+      
       {/* תמונות וסרטון */}
       <div style={{ display: "flex", gap: "10px", marginTop: "20px", overflowX: "auto" }}>
-        <img src={campaign.image} alt="main" style={{ width: "180px", height: "120px", borderRadius: "8px", objectFit: "cover" }} />
-        {campaign.video && (
-          <video src={campaign.video} controls style={{ width: "250px", borderRadius: "8px" }} />
-        )}
+        {/* <CampaignGallery
+          images={campaign.images}
+          imageBaseUrl={IMAGE_URL}   // אם צריך
+          movie={campaign.movie}
+        /> */}
+        {/* {
+          campaign.images.map(image => <img key={image} src={`${IMAGE_URL}/${image}`} alt="main" style={{ width: "180px", height: "120px", borderRadius: "8px", objectFit: "cover" }} />)
+        }
+        
+        {campaign.movie && (
+          <video src={campaign.movie} controls style={{ width: "250px", borderRadius: "8px" }} />
+        )} */}
       </div>
 
       {/* טאבים */}

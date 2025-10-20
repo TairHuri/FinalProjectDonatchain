@@ -9,4 +9,5 @@ export interface User {
   approved:boolean;
   createdAt?: Date;
   updatedAt?: Date;
+  token?:string;
 }

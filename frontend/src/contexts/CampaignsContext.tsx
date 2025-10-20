@@ -2,26 +2,13 @@ import { createContext, useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
 import { getCampaigns, createCampaign, getCampaign } from "../services/api";
 import { useAuth } from "../contexts/AuthContext";
+import type { Campaign } from "../models/Campaign";
 
-export interface Campaign {
-  _id?: string;
-  title: string;
-  goal: number;
-  raised: number;
-  numOfDonors: number;
-  startDate: string;
-  endDate: string;
-  description: string;
-  ngoLogo?: string;
-  image?: string;
-  video?: string;
-  gallery?: string[];
-  ngo:string;
-}
+
 
 interface CampaignsContextType {
   campaigns: Campaign[];
-  addCampaign: (c: Omit<Campaign, "raised">) => Promise<boolean>; // ← פרמטר אחד בלבד
+  addCampaign: (c: Omit<Campaign, "raised">,images:File[]|null, movie:File|null) => Promise<boolean>; // ← פרמטר אחד בלבד
   refreshCampaigns: () => Promise<void>;
   updateCampaign: (campaignId:string) => Promise<void>;
 }
@@ -31,12 +18,12 @@ const CampaignsContext = createContext<CampaignsContextType | undefined>(undefin
 
 export function CampaignsProvider({ children }: { children: ReactNode }) {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
-  const { ngo } = useAuth();
+  const { user } = useAuth();
 
 const refreshCampaigns = async () => {
   try {
-    console.log("Fetching campaigns for NGO:", ngo);
-    const data = await getCampaigns(ngo?._id);
+    console.log("Fetching campaigns for NGO:", user);
+    const data = await getCampaigns(user?.ngoId);
     console.log("Campaigns received:", data);
     setCampaigns(data.items);
   } catch (err) {
@@ -52,11 +39,11 @@ const updateCampaign = async (campaignId: string) =>{
   useEffect(()=>{
       refreshCampaigns();
     
-  }, [ngo])
-   const addCampaign = async (c: Omit<Campaign, "raised">) => {
+  }, [user])
+   const addCampaign = async (c: Omit<Campaign, "raised">, images:File[]|null, movie:File|null,) => {
     try {
-      if (!ngo?.token) throw new Error("NGO not logged in");
-      const campaign =await createCampaign(c, ngo.token);
+      if (!user?.token) throw new Error("NGO not logged in");
+      const campaign =await createCampaign(c, user.token, images, movie);
       await refreshCampaigns();
       return true
     } catch (err) {

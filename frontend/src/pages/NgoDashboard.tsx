@@ -5,67 +5,21 @@ import { PlusCircle, Home, Users, LogOut, FileText, Settings } from "lucide-reac
 import NgoDonors from "../components/NgoDonors";
 import CampaignItem from "../components/CampaignItem";
 import { cardStyle, inputStyle, menuBtnStyle, primaryBtnStyle } from "../css/dashboardStyles";
-import NgoPersonalDetails from "../components/UserPersonalDetails";
+
 import NgoUsers from "../components/NgoUsers";
 import UserPersonalDetails from "../components/UserPersonalDetails";
+import CreateCampaign from "../components/CreateCampaign";
 
 const NgoDashboard: React.FC = () => {
   const { user } = useAuth();
-  const { campaigns, addCampaign } = useCampaigns();
+  const { campaigns } = useCampaigns();
 
   const [activePage, setActivePage] = useState<
-    "dashboard" | "newCampaign" | "campaigns" | "profile" | "donors"|"ngoUsers"
+    "dashboard" | "newCampaign" | "campaigns" | "profile" | "donors" | "ngoUsers"
   >("dashboard");
   console.log('campaigns', campaigns);
 
-  const [form, setForm] = useState({
-    title: "",
-    goal: "",
-    startDate: "",
-    endDate: "",
-    description: "",
-    logo: null as File | null,
-    image: null as File | null,
-    video: null as File | null,
-  });
 
-  const handleCreateCampaign = async () => {
-    if (!form.title || !form.goal) return alert("יש למלא את כל השדות");
-    if (!user) return;
-    const newCampaign = {
-      ngo: user.ngoId,
-      title: form.title,
-      description: form.description,
-      targetAmount: Number(form.goal),
-      goal: Number(form.goal),
-      startDate: form.startDate,
-      numOfDonors:0,
-      endDate: form.endDate,
-      images: form.image ? [form.image] : [],
-      ngoLogo: "form.logo",
-      video: form.title,
-      tags: [],  // אם רוצים, אפשר להוסיף שדות tags מהטופס
-    };
-
-
-    const success = await addCampaign(newCampaign); // ✅ רק זה, בלי createCampaign ישיר = 
-    if(!success){
-      alert("שגיאה ביצירת הקמפיין");
-      return;
-    }
-    alert("הקמפיין נוצר בהצלחה!");
-    setForm({
-      title: "",
-      goal: "",
-      startDate: "",
-      endDate: "",
-      description: "",
-      logo: null,
-      image: null,
-      video: null,
-    });
-    setActivePage("campaigns");
-  };
 
   const [editMode, setEditMode] = useState<"view" | "edit" | "password">("view");
 
@@ -90,6 +44,8 @@ const NgoDashboard: React.FC = () => {
     setPasswords({ current: "", newPass: "", confirmPass: "" });
     setEditMode("view");
   };
+
+
 
   return (
     <div dir="rtl" style={{ width: "1000px", display: "flex", minHeight: "100vh", backgroundColor: "#f7f9fc" }}>
@@ -141,7 +97,7 @@ const NgoDashboard: React.FC = () => {
 
       {/* תוכן */}
       <div style={{ flex: 1, padding: "30px" }}>
-        {activePage === "ngoUsers" && <NgoUsers/>}
+        {activePage === "ngoUsers" && <NgoUsers />}
         {activePage === "dashboard" && (
           <div>
             <h1 style={{ fontSize: "28px", fontWeight: "bold", color: "#059669" }}>
@@ -159,45 +115,10 @@ const NgoDashboard: React.FC = () => {
         )}
         {activePage == "donors" && <NgoDonors />}
         {activePage === "newCampaign" && (
-          <div style={cardStyle}>
-            <h2 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "20px" }}>
-              יצירת קמפיין
-            </h2>
-            <input type="text" placeholder="שם הקמפיין" value={form.title}
-              onChange={(e) => setForm({ ...form, title: e.target.value })} style={inputStyle} />
-            <input type="number" placeholder="סכום יעד" value={form.goal}
-              onChange={(e) => setForm({ ...form, goal: e.target.value })} style={inputStyle} />
-            <label style={{ fontWeight: "bold" }}>תאריך התחלה:</label>
-            <input type="date" value={form.startDate}
-              onChange={(e) => setForm({ ...form, startDate: e.target.value })} style={inputStyle} />
-            <label style={{ fontWeight: "bold" }}>תאריך סיום:</label>
-            <input type="date" value={form.endDate}
-              onChange={(e) => setForm({ ...form, endDate: e.target.value })} style={inputStyle} />
-            <textarea placeholder="תיאור הקמפיין" value={form.description}
-              onChange={(e) => setForm({ ...form, description: e.target.value })} style={{ ...inputStyle, height: "80px" }} />
-
-            <label>לוגו העמותה:</label>
-            <input type="file" accept="image/*"
-              onChange={(e) => setForm({ ...form, logo: e.target.files ? e.target.files[0] : null })} style={inputStyle} />
-            {form.logo && <img src={URL.createObjectURL(form.logo)} alt="לוגו" style={{ width: "50px", height: "50px", borderRadius: "50%", marginBottom: "10px" }} />}
-
-            <label>תמונת קמפיין:</label>
-            <input type="file" accept="image/*"
-              onChange={(e) => setForm({ ...form, image: e.target.files ? e.target.files[0] : null })} style={inputStyle} />
-            {form.image && <img src={URL.createObjectURL(form.image)} alt="תמונה" style={{ width: "100px", height: "70px", borderRadius: "8px", marginBottom: "10px" }} />}
-
-            <label>סרטון:</label>
-            <input type="file" accept="video/*"
-              onChange={(e) => setForm({ ...form, video: e.target.files ? e.target.files[0] : null })} style={inputStyle} />
-            {form.video && <video src={URL.createObjectURL(form.video)} controls style={{ width: "150px", marginBottom: "10px" }} />}
-
-            <button onClick={handleCreateCampaign} style={primaryBtnStyle}>
-              צור קמפיין
-            </button>
-          </div>
+          <CreateCampaign postSave={()=>setActivePage("campaigns")}/>
         )}
 
-        {activePage === "profile" && <UserPersonalDetails editMode={editMode} setEditMode={setEditMode}/>}
+        {activePage === "profile" && <UserPersonalDetails editMode={editMode} setEditMode={setEditMode} />}
 
 
         {activePage === "campaigns" && (
@@ -206,7 +127,7 @@ const NgoDashboard: React.FC = () => {
               הקמפיינים שלי
             </h2>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: "20px" }}>
-              {campaigns.map((c) => <CampaignItem key={c._id} c={c}/>)}
+              {campaigns.map((c) => <CampaignItem key={c._id} c={c} />)}
             </div>
           </div>
         )}

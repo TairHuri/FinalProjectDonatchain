@@ -61,9 +61,9 @@ const login = async (data: { email: string; password: string }): Promise<{succes
     if (res.success) {
       // נשמור את הנתונים שהגיעו מהשרת
       
-      setUser(res.user);
+      setUser({...res.user, 'token':res.token});
       localStorage.setItem("token", res.token);
-      localStorage.setItem("userData", JSON.stringify(res.user));
+      localStorage.setItem("userData", JSON.stringify({...res.user, 'token':res.token}));
 
       return {success:res.success, message:''};
     }else{

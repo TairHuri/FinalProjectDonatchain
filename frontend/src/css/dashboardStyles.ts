@@ -65,12 +65,13 @@ export const buttonStyle = {
   fontFamily: 'calibri',
   fontWeight: 600,
   fontSize: '0.9rem',
-  flex: 1,
+  flex: 0.5,
   backgroundColor: "green",
   color: "white",
   padding: "10px",
   borderRadius: "8px",
   border: "none",
+ 
 }
 
 export const cardStyle: React.CSSProperties = {

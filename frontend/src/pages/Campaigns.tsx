@@ -3,6 +3,7 @@ import { Grid, List } from "lucide-react";
 import { useCampaigns } from "../contexts/CampaignsContext";
 import { Link } from "react-router-dom";
 import { getCampaigns } from "../services/api";
+import CampaignItem from "../components/CampaignItem";
 
 
 export default function Campaigns() {
@@ -114,9 +115,8 @@ const filtered = (Array.isArray(campaigns) ? campaigns : [])
         >
           {filtered.map((c) => {
             const percent = Math.min((c.raised / c.goal) * 100, 100);
-
-            return (
-              <Link
+            return(
+             <Link
                 to={`/campaign/${c._id}`}
                 key={c._id}
                 style={{
@@ -128,45 +128,62 @@ const filtered = (Array.isArray(campaigns) ? campaigns : [])
                   textDecoration: "none",
                   color: "inherit",
                 }}
-              >
-                <img
-                  src={c.image}
-                  alt={c.title}
-                  style={{ width: "100%", height: "160px", objectFit: "cover" }}
-                />
-                <div style={{ padding: "16px", display: "flex", flexDirection: "column", gap: "10px" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                    <img
-                      src={c.ngoLogo}
-                      alt="ngo logo"
-                      style={{
-                        width: "40px",
-                        height: "40px",
-                        objectFit: "contain",
-                        borderRadius: "50%",
-                      }}
-                    />
-                    <h2 style={{ fontWeight: "bold", fontSize: "18px" }}>{c.title}</h2>
-                  </div>
-                  <p style={{ fontSize: "14px", color: "#4b5563" }}>
-                    {(c.raised||0).toLocaleString()} ₪ מתוך {(c.goal||0).toLocaleString()} ₪
-                  </p>
+              >              
+            <CampaignItem c={c}/>
+            </Link>
+          )
+            // return (
+            //   <Link
+            //     to={`/campaign/${c._id}`}
+            //     key={c._id}
+            //     style={{
+            //       display: "block",
+            //       background: "white",
+            //       borderRadius: "12px",
+            //       boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+            //       overflow: "hidden",
+            //       textDecoration: "none",
+            //       color: "inherit",
+            //     }}
+            //   >
+            //     <img
+            //       src={c.image}
+            //       alt={c.title}
+            //       style={{ width: "100%", height: "160px", objectFit: "cover" }}
+            //     />
+            //     <div style={{ padding: "16px", display: "flex", flexDirection: "column", gap: "10px" }}>
+            //       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            //         <img
+            //           src={c.ngoLogo}
+            //           alt="ngo logo"
+            //           style={{
+            //             width: "40px",
+            //             height: "40px",
+            //             objectFit: "contain",
+            //             borderRadius: "50%",
+            //           }}
+            //         />
+            //         <h2 style={{ fontWeight: "bold", fontSize: "18px" }}>{c.title}</h2>
+            //       </div>
+            //       <p style={{ fontSize: "14px", color: "#4b5563" }}>
+            //         {(c.raised||0).toLocaleString()} ₪ מתוך {(c.goal||0).toLocaleString()} ₪
+            //       </p>
 
-                  {/* פס התקדמות */}
-                  <div style={{ width: "100%", background: "#e5e7eb", borderRadius: "10px", height: "12px" }}>
-                    <div
-                      style={{
-                        width: `${percent}%`,
-                        height: "12px",
-                        background: "#22c55e",
-                        borderRadius: "10px",
-                        transition: "width 0.4s ease",
-                      }}
-                    />
-                  </div>
-                </div>
-              </Link>
-            );
+            //       {/* פס התקדמות */}
+            //       <div style={{ width: "100%", background: "#e5e7eb", borderRadius: "10px", height: "12px" }}>
+            //         <div
+            //           style={{
+            //             width: `${percent}%`,
+            //             height: "12px",
+            //             background: "#22c55e",
+            //             borderRadius: "10px",
+            //             transition: "width 0.4s ease",
+            //           }}
+            //         />
+            //       </div>
+            //     </div>
+            //   </Link>
+            // );
           })}
         </div>
       ) : (

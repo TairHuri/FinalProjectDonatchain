@@ -1,12 +1,21 @@
 .modal{
     position: fixed;
-    top: 10vh;
-    bottom: 10vh;
-    left:1rem;
-    right:1rem;
+    top: 17vh;
+    bottom: 1vh;
+    left:15vw;
+    right:15vw;
     margin:1rem;
     padding: 1rem;
-    box-shadow: 0.5rem 0.5rem 5px 0.5rem #62a096;
+    border-radius: 10px;
     z-index: 100;
     background-color: #fff;
 }
+ 
+.modal .result{
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
