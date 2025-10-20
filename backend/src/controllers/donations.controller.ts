@@ -64,7 +64,6 @@ export const creditDonate = async (req: Request, res: Response) => {
         email: donorEmail,
         phone: donorNumber,
         firstName: donorFirstName,
-        firstName: donorFirstName,
         lastName: donorLastName,
         campaign: campaignId,
         amount: +data.charge,
@@ -75,19 +74,19 @@ export const creditDonate = async (req: Request, res: Response) => {
 
       await donation.save();
       await CampaignService.addDonationToCampaign(campaignId, +data.charge)
-     
 
-      await AuditLog.create({ action: 'donation_created',  meta: { donationId: donation._id } });
+
+      await AuditLog.create({ action: 'donation_created', meta: { donationId: donation._id } });
 
       // החזרת תגובה לפרונט
       return res.status(201).json({ message: 'Donation successful and receipt email sent', donation });
     } else {
-      res.status(502).send({ message: 'charge server error '+  chargeResponse.status})
+      const text = await chargeResponse.text();
+      res.status(502).send({ message: 'Charge server error: ' + text });
     }
   } catch (error) {
-    console.log(error);
-    
-    res.status(500).send({ message: 'charge server error ' + error })
+    console.error('❌ Error in creditDonate:', error);
+    res.status(500).send({ message: 'Charge server error ' + error });
   }
 };
 
