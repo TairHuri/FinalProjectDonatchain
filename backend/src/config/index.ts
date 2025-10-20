@@ -13,6 +13,7 @@ interface Config {
   contractPrivateKey: string;
   aiProvider: string;
   aiApiKey: string;
+  maxUploadFiles:number;
 }
 
 export const config: Config = {
@@ -23,7 +24,8 @@ export const config: Config = {
   bcryptSaltRounds: Number(process.env.BCRYPT_SALT_ROUNDS || 10),
   rpcProvider: process.env.RPC_PROVIDER_URL || '',
   contractAddress: process.env.CONTRACT_ADDRESS || '',
-  contractPrivateKey: process.env.CONTRACT_PRIVATE_KEY || '',
+  contractPrivateKey: process.env.PRIVATE_KEY || '',
   aiProvider: process.env.AI_PROVIDER || 'mock',
-  aiApiKey: process.env.AI_API_KEY || ''
+  aiApiKey: process.env.AI_API_KEY || '',
+  maxUploadFiles:Number(process.env.MAX_UPLOAD_FILES) || 10
 };

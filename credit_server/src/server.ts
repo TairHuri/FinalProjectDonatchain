@@ -18,7 +18,7 @@ app.post('/api/charge', (req, res) => {
     }else if(currency == 'EU'){
         charge *= 4.2;
     }
-    res.send({message:'ok', charge});
+    res.send({message:'ok', charge, code:`PAY${Date.now()}`});
 })
 
 app.listen(PORT, () => {

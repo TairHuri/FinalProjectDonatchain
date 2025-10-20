@@ -5,7 +5,6 @@ export interface IDonation extends Document {
   phone:string;
   firstName: string;
   lastName: string;
-  donor: Schema.Types.ObjectId | null;
   campaign: Schema.Types.ObjectId;
   amount: number;
   currency: string;
@@ -20,10 +19,9 @@ const donationSchema = new Schema(
     phone:{type:String},
     firstName:{type:String},
     lastName:{type:String},
-    donor: { type: Schema.Types.ObjectId, ref: 'User', default: null },
     campaign: { type: Schema.Types.ObjectId, ref: 'Campaign', required: true },
     amount: { type: Number, required: true },
-    currency: { type: String, default: 'USD' },
+    currency: { type: String, default: 'ILS' },
     method: { type: String, default: 'card' },
     txHash: String
   },

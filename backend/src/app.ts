@@ -6,6 +6,10 @@ import morgan from 'morgan';
 import routes from './routes';
 import errorMiddleware from './middlewares/error.middleware';
 import authRoutes from "./routes/auth.routes";
+import fileUpload from './middlewares/multer.middleware';
+import { config } from './config';
+import path from 'path';
+import fs from 'fs'
 
 
 const app = express();
@@ -16,6 +20,15 @@ app.use(express.json({ limit: '5mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('combined'));
 
+if(!fs.existsSync('images')){
+  fs.mkdirSync('images')
+}
+app.get("/images/:image", (req, res)=>{
+  const {image} = req.params;
+  res.set("Cross-Origin-Resource-Policy", "cross-origin");
+  res.sendFile(path.join(__dirname, '../', 'images', image))
+})
+
 app.use(
   rateLimit({
     windowMs: 1 * 60 * 1000,
@@ -23,7 +36,7 @@ app.use(
   })
 );
 
-app.use('/api', routes);
+app.use('/api', fileUpload.array('images', config.maxUploadFiles), routes);
 
 // error handler
 app.use(errorMiddleware);

@@ -5,15 +5,7 @@ import mongoose from 'mongoose';
 
 export default {
   async create(payload: any) {
-    const campaign = new Campaign({
-      title: payload.title,
-      description: payload.description,
-      ngo: payload.ngoId,
-      goal: payload.goal,
-      currency: payload.currency || 'USD',
-      images: payload.images || [],
-      tags: payload.tags || []
-    });
+    const campaign = new Campaign(payload);
     await campaign.save();
     return campaign;
   },
@@ -50,7 +42,7 @@ export default {
     try {
       const campaign = await Campaign.findById(campaignId);
       if (!campaign) throw new Error('Campaign not found');
-      campaign.raised = (campaign.raised || 0) + amount;
+      campaign.raised = (+campaign.raised || 0) + +amount;
       campaign.numOfDonors = (campaign.numOfDonors || 0) + 1;
 
       await campaign.save();

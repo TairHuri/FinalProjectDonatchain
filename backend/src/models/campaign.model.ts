@@ -3,12 +3,15 @@ import { Schema, model, Document } from 'mongoose';
 export interface ICampaign extends Document {
   title: string;
   description: string;
-  ngo:  { type: Schema.Types.ObjectId, ref: 'Ngo' };
+  ngo: { type: Schema.Types.ObjectId, ref: 'Ngo' };
   goal: number;
   currency: string;
   raised: number;
   numOfDonors: number;
+  startDate: string;
+  endDate: string;
   images: string[];
+  movie: string;
   tags: string[]; // for recommendations
   blockchainTx?: string; // optional tx that created campaign on-chain
   isActive: boolean;
@@ -23,8 +26,11 @@ const campaignSchema = new Schema(
     goal: { type: Number, required: true },
     currency: { type: String, default: 'USD' },
     raised: { type: Number, default: 0 },
-    numOfDonors: {type: Number, default: 0},
+    numOfDonors: { type: Number, default: 0 },
+    startDate: { type: Date },
+    endDate: { type: Date },
     images: [String],
+    movie: { type: String },
     tags: [String],
     blockchainTx: String,
     isActive: { type: Boolean, default: true }

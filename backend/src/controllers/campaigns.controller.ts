@@ -5,18 +5,26 @@ import CampaignService from '../services/campaign.service';
  * ➕ יצירת קמפיין חדש
  */
 export const createCampaign = async (req: Request, res: Response) => {
-  const { title, description, targetAmount, currency, tags, images, goal } = req.body;
-  const user = (req as any).user;
+  
+  const { title, description, startDate, endDate, movie, tags, goal, isActive, blockchainTx } = req.body;
+
+  const user :{_id:string, ngoId:string}= (req as any).user;
+  const images:string[] = req.files? (req.files as Express.Multer.File[]).map((file:Express.Multer.File) => file.filename) : []
+  console.log('images', images, user)
   try {
     const campaign = await CampaignService.create({
       title,
       description,
-      targetAmount,
-      currency,
+      raised:0,
+      startDate, 
+      endDate,
+      blockchainTx,
       goal,
       tags,
       images,
-      ngoId: user._id
+      movie,
+      ngo: user.ngoId,
+      isActive
     });
     res.status(201).json(campaign);
   } catch (err: any) {

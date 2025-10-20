@@ -1,14 +1,17 @@
 import axios from "axios";
 import type { Ngo } from "../models/Ngo";
 import type { User } from "../models/User";
+import type { Campaign } from "../models/Campaign";
+import type { Donation } from "../models/Donation";
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
 
-export async function registerUserNewNgo(user:User, ngo:Ngo) {
+
+export async function registerUserNewNgo(user: User, ngo: Ngo) {
   try {
     const res = await fetch(`${API_URL}/auth/register/newngo`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({user, ngo}),
+      body: JSON.stringify({ user, ngo }),
     });
 
     const json = await res.json(); // נקרא תמיד את התגובה, גם אם status != 200
@@ -22,12 +25,12 @@ export async function registerUserNewNgo(user:User, ngo:Ngo) {
     return { success: false, message: err.message ?? "שגיאה לא צפויה" };
   }
 }
-export async function registerUserExistingNgo(user:User) {
+export async function registerUserExistingNgo(user: User) {
   try {
     const res = await fetch(`${API_URL}/auth/register/existingngo`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({user}),
+      body: JSON.stringify({ user }),
     });
 
     const json = await res.json(); // נקרא תמיד את התגובה, גם אם status != 200
@@ -43,14 +46,14 @@ export async function registerUserExistingNgo(user:User) {
 }
 
 
-export const getNgoList = async (): Promise<{items:Ngo[]}> => {
-  const res = await axios.get<{items:Ngo[]}>(`${API_URL}/ngos`);
+export const getNgoList = async (): Promise<{ items: Ngo[] }> => {
+  const res = await axios.get<{ items: Ngo[] }>(`${API_URL}/ngos`);
 
   return res.data; // ✅ עכשיו TypeScript יודע שזה NgoProfileResponse
 };
 
-export const getNgoProfile = async (token: string): Promise<Ngo> => {
-  const res = await axios.get<Ngo>(`${API_URL}/auth/profile`, {
+export const getNgoProfile = async (token: string, ngoId:string): Promise<Ngo> => {
+  const res = await axios.get<Ngo>(`${API_URL}/ngos/${ngoId}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 
@@ -64,32 +67,50 @@ export async function loginUser(data: { email: string; password: string }) {
   });
   return res.json();
 }
-export async function getUsers(ngoId:string) {
+export async function getUsers(ngoId: string) {
   const token = localStorage.getItem("token")
-  const res = await fetch(`${API_URL}/users/ngo/${ngoId}`, {headers:{"Authorization": `Bearer ${token}`}})
+  const res = await fetch(`${API_URL}/users/ngo/${ngoId}`, { headers: { "Authorization": `Bearer ${token}` } })
   return res.json();
 }
-export async function approveUserApi(userId:string) {
+export async function approveUserApi(userId: string) {
   const token = localStorage.getItem("token")
-  const res = await fetch(`${API_URL}/users/approve/${userId}`, {method:'PATCH', headers:{"Authorization": `Bearer ${token}`}})
+  const res = await fetch(`${API_URL}/users/approve/${userId}`, { method: 'PATCH', headers: { "Authorization": `Bearer ${token}` } })
   return res.json();
 }
-export async function deleteUserApi(userId:string) {
+export async function deleteUserApi(userId: string) {
   const token = localStorage.getItem("token")
-  const res = await fetch(`${API_URL}/users/${userId}`, {method:'DELETE', headers:{"Authorization": `Bearer ${token}`}})
+  const res = await fetch(`${API_URL}/users/${userId}`, { method: 'DELETE', headers: { "Authorization": `Bearer ${token}` } })
   return res.json();
 }
 
-export async function createCampaign(data: any, token: string) {
+export async function createCampaign(data: Omit<Campaign, "raised">, token: string, images: File[]|null, movie: File|null,) {
+  // content type: multipart/formdata
+  
+  const formData = new FormData()
+  formData.append("title", data.title)
+  formData.append("description", data.description)
+  formData.append("ngo", data.ngo)
+  formData.append("blockchainTx", data.blockchainTx!)
+  formData.append("goal", `${data.goal}`)
+  if (images) {
+    for (const image of images) {
+      formData.append("images", image)
+    }
+  }
+  if (movie) {
+    formData.append("movie", movie)
+  }
+  formData.append("startDate", data.startDate)
+  formData.append("endDate", data.endDate)
+  formData.append("isActive", `${data.isActive}`)
   const res = await fetch(`${API_URL}/campaigns`, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
       "Authorization": `Bearer ${token}`,
     },
-    body: JSON.stringify(data),
+    body: formData,
   });
-  if(res.status != 201){
+  if (res.status != 201) {
     throw new Error(await res.text())
   }
   return res.json();
@@ -161,6 +182,18 @@ type CreditDonation = {
 }
 export const creditDonation = async (chargeData: CreditDonation, campaignId: string) => {
   const res = await fetch(`${API_URL}/donations/${campaignId}/credit-donate`, {
+    method: 'POST',
+    headers: {
+      "Content-Type": "application/json",
+      //"Authorization": `Bearer ${ngo?.token}`,
+    },
+    body: JSON.stringify(chargeData),
+  })
+  const data = await res.json();
+  return { data, status: res.status };
+}
+export const cryptoDonation = async (chargeData: Donation, campaignId: string) => {
+  const res = await fetch(`${API_URL}/donations/${campaignId}/donate`, {
     method: 'POST',
     headers: {
       "Content-Type": "application/json",
