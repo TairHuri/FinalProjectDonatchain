@@ -8,7 +8,7 @@ import type { Campaign } from "../models/Campaign";
 
 interface CampaignsContextType {
   campaigns: Campaign[];
-  addCampaign: (c: Omit<Campaign, "raised">,images:File[]|null, movie:File|null,  mainImage:File|null) => Promise<boolean>; // ← פרמטר אחד בלבד
+  addCampaign: (c: Omit<Campaign, "raised">,images:File[]|null, movie:File|null) => Promise<boolean>; // ← פרמטר אחד בלבד
   refreshCampaigns: () => Promise<void>;
   updateCampaign: (campaignId:string) => Promise<void>;
 }
@@ -40,11 +40,10 @@ const updateCampaign = async (campaignId: string) =>{
       refreshCampaigns();
     
   }, [user])
-   const addCampaign = async (c: Omit<Campaign, "raised">, images:File[]|null, movie:File|null,mainImage:File|null) => {
+   const addCampaign = async (c: Omit<Campaign, "raised">, images:File[]|null, movie:File|null,) => {
     try {
       if (!user?.token) throw new Error("NGO not logged in");
-      const campaign =await createCampaign(c, user.token, images, movie, mainImage);
-      console.log("campaign:",campaign)
+      const campaign =await createCampaign(c, user.token, images, movie);
       await refreshCampaigns();
       return true
     } catch (err) {

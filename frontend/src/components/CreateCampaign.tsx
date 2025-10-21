@@ -120,7 +120,6 @@ async function ensureSepolia() {
             description: "",
             images: null as FileList | null,
             movie: null as File | null,
-            mainImage: null as File | null,
         });
 
         useEffect(() => {
@@ -171,7 +170,7 @@ async function ensureSepolia() {
             console.log(blockchainTx);
             
             newCampaign.blockchainTx = blockchainTx.toString();
-            const success = await addCampaign(newCampaign, images, form.movie, form.mainImage); // ✅ רק זה, בלי createCampaign ישיר = 
+            const success = await addCampaign(newCampaign, images, form.movie); // ✅ רק זה, בלי createCampaign ישיר = 
             if (!success) {
                 alert("שגיאה ביצירת הקמפיין");
                 return;
@@ -185,7 +184,6 @@ async function ensureSepolia() {
                 description: "",
                 images: null as FileList | null,
                 movie: null as File | null,
-                mainImage: null as File | null,
             });
             postSave()
         };
@@ -219,12 +217,6 @@ async function ensureSepolia() {
                     onChange={(e) => setForm({ ...form, description: e.target.value })} style={{ ...inputStyle, height: "80px" }} />
 
                 <label>תמונת קמפיין:</label>
-                <input type="file" accept="image/*" 
-                    onChange={(e) => setForm({ ...form, mainImage: e.target.files ? e.target.files![0] : null })} style={inputStyle} />
-
-                 {form.mainImage && <img src={URL.createObjectURL(form.mainImage)} alt="תמונה" style={{ width: "100px", height: "70px", borderRadius: "8px", marginBottom: "10px" }} />}
-
-                <label>תמונות קמפיין:</label>
                 <input type="file" accept="image/*" multiple
                     onChange={(e) => setForm({ ...form, images: e.target.files ? e.target.files : null })} style={inputStyle} />
 

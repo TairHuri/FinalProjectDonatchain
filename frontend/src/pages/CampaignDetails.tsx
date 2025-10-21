@@ -4,6 +4,7 @@ import { useState } from "react";
 import CreditPayment from "../components/CreditPayment";
 import Modal from "../components/gui/Modal";
 import CryptoPayment from "../components/CryptoPayment";
+import CampaignGallery from "../components/CampaignGallery";
 import SimpleGallery from "../components/SimpleGallery";
 
 const IMAGE_URL = import.meta.env.VITE_IMAGES_URL || "http://localhost:4000/images";
@@ -58,12 +59,11 @@ const CampaignDetails: React.FC = () => {
       
       {/* תמונות וסרטון */}
       <div style={{ display: "flex", gap: "10px", marginTop: "20px", overflowX: "hidden" }}>
-        {<SimpleGallery
+        <SimpleGallery
           images={campaign.images}
-          imageBaseUrl={IMAGE_URL}
+          imageBaseUrl={IMAGE_URL}   // אם צריך
           movie={campaign.movie}
-          rtl={true}
-        />}
+        /> 
         {/* {
           campaign.images.map(image => <img key={image} src={`${IMAGE_URL}/${image}`} alt="main" style={{ width: "180px", height: "120px", borderRadius: "8px", objectFit: "cover" }} />)
         }

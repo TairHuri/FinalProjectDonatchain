@@ -5,16 +5,11 @@ export interface Donation {
   phone:string;
   firstName: string;
   lastName: string;
+  // donor: string;
   campaign: string;
   amount: number;
   currency: string;
-  method?: string; // e.g. 'card','wallet','onchain'
+  method: string; // e.g. 'card','wallet','onchain'
   txHash?: string; // blockchain tx if onchain
-  comment?: string
   createdAt?: Date;
-}
-
-export interface CreditDonation extends Donation {
-  ccNumber: string, expYear: number, expMonth: number, cvv: number, ownerId: string, ownername: string;
-  
 }
