@@ -57,9 +57,9 @@ const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campa
   if(isLoading) return <Spinner/>
   if (showConfirm) return (
     <div className="result">
-      <h3>התרומה התבצעה בהצלחה</h3>
-      <div>Tx: <a href={`https://sepolia.etherscan.io/tx/${txHash}`} target="_blank">{txHash}</a></div>
-      <div>
+      <h3 className="resultTitle">התרומה התבצעה בהצלחה</h3>
+      <h3 className="resultSecondTitle">כתובת hash של התרומה: {txHash}</h3>
+      <div className="resultLink"><a href={`https://sepolia.etherscan.io/tx/${txHash}`} target="_blank">מעבר לתיעוד התרומה</a></div>      <div>
         <button type='button' onClick={close} style={buttonStyle}>אישור</button>
       </div>
     </div>
@@ -83,7 +83,7 @@ const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campa
          <label htmlFor="comment" style={labelStyle}>תגובה</label>
          <textarea id="comment" placeholder="כמה מילים על תרומתך" onChange={handleChange} style={inputStyle} ></textarea>
       </div>
-      <p>credit payment</p>
+      <p style={{textAlign: 'center', fontFamily: 'calibri'}}>פרטי אשראי</p>
       {message && <p>{message}</p>}
       <div style={fildsPositionStyle}>
         <label htmlFor="amount" style={labelStyle}>סכום </label><input id="amount" placeholder="סכום התרומה" required onChange={handleChange} style={inputStyle} />

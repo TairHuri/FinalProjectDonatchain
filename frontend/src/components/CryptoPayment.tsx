@@ -13,6 +13,7 @@ import { useSpinner } from "./Spinner";
 
 
 
+
 const CryptoPayment = ({ close, campaignId }: { close: () => void, campaignId: string, userId: string }) => {
 
   const { updateCampaign } = useCampaigns();
@@ -80,8 +81,9 @@ const CryptoPayment = ({ close, campaignId }: { close: () => void, campaignId: s
   if (isLoading) return <Spinner />
   if (showConfirm) return (
     <div className="result">
-      <h3 className="confirmTransactionTitle">התרומה התבצעה בהצלחה</h3>
-      <div>Tx: <a href={`https://sepolia.etherscan.io/tx/${hash}`} target="_blank">{hash}</a></div>
+      <h3 className="resultTitle">תרומתך התבצעה בהצלחה</h3>
+      <h3 className="resultSecondTitle">כתובת hash של התרומה: {hash}</h3>
+      <div className="resultLink"><a href={`https://sepolia.etherscan.io/tx/${hash}`} target="_blank">מעבר לתיעוד התרומה</a></div>
       <div>
       <button type='button' onClick={close} style={buttonStyle}>אישור</button>
       </div>

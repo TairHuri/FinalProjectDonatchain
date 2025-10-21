@@ -14,9 +14,6 @@ const CampaignItem = ({ c }: { c: Campaign }) => {
     return (
         <div key={c._id} style={cardStyle}>
             <img src={`${IMAGE_URL}/${c.mainImage}`} alt="קמפיין" style={{ width: "100%", height: "150px", objectFit: "cover", borderRadius: "8px" }} />
-            {/* {
-                c.images.map( image => <img key={image} src={`${IMAGE_URL}/${image}`} alt="קמפיין" style={{ width: "100%", height: "150px", objectFit: "cover", borderRadius: "8px" }} />)
-            } */}
             
             <h3 style={{ fontSize: "20px", fontWeight: "bold", marginTop: "10px" }}>{c.title}</h3>
             <p>{c.raised.toLocaleString()} ₪ מתוך {c.goal.toLocaleString()} ₪</p>

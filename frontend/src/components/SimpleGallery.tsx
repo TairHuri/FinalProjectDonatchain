@@ -32,9 +32,9 @@ export default function SimpleGallery({ images, imageBaseUrl = "", movie, rtl = 
   }, [zoomSrc]);
 
   return (
-    <section style={{ display: "grid", gap: 12, width:'100%' }}>
+    <section style={{ display: "grid", gap: 12, }}>
       {/* קרוסלה */}
-      <div style={{ position: "relative", display:'flex', justifyContent:'center', }}>
+      <div style={{ position: "relative", display:'flex', justifyContent:'center', width:'80vw'}}>
         {/* חץ שמאל */}
         <button
           onClick={() => scroll(rtl ? "right" : "left")}
@@ -54,8 +54,6 @@ export default function SimpleGallery({ images, imageBaseUrl = "", movie, rtl = 
             scrollSnapType: "x mandatory",
             padding: "4px 40px",
             direction: rtl ? "rtl" : "ltr",
-            width:'50vw',
-            justifyContent:'center',
           }}
         >
           {images.map((img) => (
@@ -141,15 +139,16 @@ const arrowStyle = (side: "start" | "end"): React.CSSProperties => ({
 const videoFrameStyle: React.CSSProperties = {
   border: "1px solid #e5e7eb",
   borderRadius: 12,
-  padding: 8,
+  padding: '8 2',
   background: "#fff",
   boxShadow: "0 6px 18px rgba(0,0,0,.06)",
   marginTop: 8,
+  width:'100%',
 };
 
 const videoElStyle: React.CSSProperties = {
   width: "100%",
-  maxHeight: "40vh",
+  maxHeight: "50vh",
   borderRadius: 8,
   display: "block",
 };

@@ -72,7 +72,7 @@ export const buttonStyle = {
   padding: "10px",
   borderRadius: "8px",
   border: "none",
-  
+  cursor: 'pointer',
 }
 
 export const cardStyle: React.CSSProperties = {

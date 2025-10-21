@@ -19,3 +19,30 @@
     height: 100%;
 }
 
+.modal .resultTitle{
+    font-family: 'calibri';
+    font-weight: bold;
+    font-size: 2rem;        /* ~32px */
+    line-height: 1.2;
+    color: #a74f23;
+    margin: 0 0 8px;
+}
+
+.modal .resultSecondTitle{
+    font-family: 'calibri';
+    font-weight: 700;
+    font-size: 1rem;        /* ~32px */
+    line-height: 1.2;
+    color: #040404;
+    margin: 0 0 8px;
+}
+
+.modal .resultLink{
+    font-family: 'calibri';
+    font-weight: 700;
+    font-size: 1rem;        /* ~32px */
+    line-height: 1.2;
+    color: #060606;
+    margin: 0 0 8px;
+}
+

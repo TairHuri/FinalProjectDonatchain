@@ -23,11 +23,11 @@ const CampaignDetails: React.FC = () => {
   const percent = Math.min((campaign.raised / campaign.goal) * 100, 100);
 
   return (
-    <div dir="rtl" style={{ background: "white", padding: "24px", borderRadius: "12px", margin: "0 auto", width: "60vw" }}>
+    <div dir="rtl" style={{ justifyContent:'center',background: "white", padding: "24px", borderRadius: "12px", margin: "0 auto", width: "80vw" }}>
       {/* לוגו ושם קמפיין */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <div style={{ display: "flex", alignItems: "center" }}>
         <img src={''} alt="ngo logo" style={{ width: "60px", height: "60px", borderRadius: "50%" }} />
-        <h1 style={{ fontSize: "28px", fontWeight: "bold", color: "#333" }}>{campaign.title}</h1>
+        <h1 style={{ flex:1, fontSize: '3rem', color: "#000000ff", textAlign: 'center'}}>{campaign.title}</h1>
       </div>
 
       {/* פס התקדמות */}
@@ -57,7 +57,7 @@ const CampaignDetails: React.FC = () => {
     <Modal show={showCreditPay} component={<CreditPayment close={() => setShowCreditPay(false)} campaignId={campaign._id!} userId={campaign.ngo} />}/>
       
       {/* תמונות וסרטון */}
-      <div style={{ display: "flex", gap: "10px", marginTop: "20px", overflowX: "auto" }}>
+      <div style={{ display: "flex", gap: "10px", marginTop: "20px", overflowX: "hidden" }}>
         {<SimpleGallery
           images={campaign.images}
           imageBaseUrl={IMAGE_URL}
