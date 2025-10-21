@@ -9,7 +9,8 @@ _id?: string;
   raised: number;
   numOfDonors: number;
   images: string[];
-  movie:string
+  movie?:string;
+  mainImage?:string;
   tags: string[]; // for recommendations
   blockchainTx?: string; // optional tx that created campaign on-chain
   isActive: boolean;

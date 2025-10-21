@@ -20,12 +20,12 @@ const CryptoPayment = ({ close, campaignId }: { close: () => void, campaignId: s
   const { disconnect } = useDisconnect();
   const { donateCrypto, waiting, isPending, isSuccess, error, hash } = useCryptoPayment()
   //const { ngo } = useAuth();
-  const [ccForm, setCcform] = useState<Donation>({ phone: '', email: '', firstName: '', lastName: '', amount: 0, campaign: campaignId, currency: 'ETH', method: 'crypto', txHash: '' })
+  const [ccForm, setCcform] = useState<Donation>({comment:'', phone: '', email: '', firstName: '', lastName: '', amount: 0, campaign: campaignId, currency: 'ETH', method: 'crypto', txHash: '' })
   const [message, setMessage] = useState<string | null>(null)
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const { isLoading, start, stop } = useSpinner()
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (event: ChangeEvent<HTMLInputElement|HTMLTextAreaElement | HTMLSelectElement>) => {
     const { id, value } = event.target;
     setCcform({ ...ccForm, [id]: value })
   }
@@ -76,7 +76,7 @@ const CryptoPayment = ({ close, campaignId }: { close: () => void, campaignId: s
       stop();
     }
   }
-  
+
 
   if (isLoading) return <Spinner />
   if (showConfirm) return (
@@ -85,7 +85,7 @@ const CryptoPayment = ({ close, campaignId }: { close: () => void, campaignId: s
       <h3 className="resultSecondTitle">כתובת hash של התרומה: {hash}</h3>
       <div className="resultLink"><a href={`https://sepolia.etherscan.io/tx/${hash}`} target="_blank">מעבר לתיעוד התרומה</a></div>
       <div>
-      <button type='button' onClick={close} style={buttonStyle}>אישור</button>
+        <button type='button' onClick={close} style={buttonStyle}>אישור</button>
       </div>
     </div>
   )
@@ -99,6 +99,10 @@ const CryptoPayment = ({ close, campaignId }: { close: () => void, campaignId: s
       <div style={fildsPositionStyle}>
         <label htmlFor="phone" style={labelStyle}>פלאפון</label><input id="phone" placeholder="מספר פלאפון" pattern="^[0-9]{3}[\-.]?[0-9]{7}$" title="incorrect be xxx.1234567" type="tel" required onChange={handleChange} style={inputStyle} />
         <label htmlFor="email" style={labelStyle}>מייל</label><input id="email" placeholder="מייל" type="email" required onChange={handleChange} style={inputStyle} />
+      </div>
+      <div>
+        <label htmlFor="comment" style={labelStyle}>תגובה</label>
+        <textarea id="comment" placeholder="כמה מילים על תרומתך" onChange={handleChange} style={inputStyle} ></textarea>
       </div>
       <div style={fildsPositionStyle}>
         <label htmlFor="amount" style={labelStyle}>סכום </label><input id="amount" placeholder="סכום התרומה" required onChange={handleChange} style={inputStyle} />

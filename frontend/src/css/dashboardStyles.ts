@@ -1,5 +1,4 @@
 import { hover } from "framer-motion";
-import { hover } from "framer-motion";
 import { AirVent, AlignRight } from "lucide-react";
 
 export const menuBtnStyle: React.CSSProperties = {
