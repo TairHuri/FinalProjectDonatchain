@@ -1,4 +1,5 @@
 import { hover } from "framer-motion";
+import { hover } from "framer-motion";
 import { AirVent, AlignRight } from "lucide-react";
 
 export const menuBtnStyle: React.CSSProperties = {
@@ -72,7 +73,7 @@ export const buttonStyle = {
   padding: "10px",
   borderRadius: "8px",
   border: "none",
-  cursor: 'pointer',
+ 
 }
 
 export const cardStyle: React.CSSProperties = {
