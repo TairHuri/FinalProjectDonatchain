@@ -1,12 +1,8 @@
 import { Request, Response } from 'express';
 import Donation from '../models/donation.model';
-import Campaign from '../models/campaign.model';
-import AuditLog from '../models/auditlog.model';
-import blockchainService from '../services/blockchain.service';
-import CampaignService from '../services/campaign.service';
 import donationService from '../services/donation.service';
-import fetch from 'node-fetch'
-import campaignService from '../services/campaign.service';
+import { ServerError } from '../middlewares/error.middleware';
+
 
 export const getDonationsByCampaign = async (req: Request, res: Response) => {
   try {
@@ -28,98 +24,43 @@ export const getDonationsByNgo = async (req: Request, res: Response) => {
   }
 }
 
-type CreditDonation = {
-  amount: number, currency: string, ccNumber: string, expYear: number, expMonth: number, cvv: number, ownerId: string, ownername: string;
-  donorNumber: string, donorEmail: string, donorFirstName: string, donorLastName: string
-}
+
 export const creditDonate = async (req: Request, res: Response) => {
   const {
     amount, ccNumber, expYear, expMonth, cvv,
     ownerId, ownername, currency,
-    donorNumber, donorEmail, donorFirstName, donorLastName
+    phone, email, firstName, lastName, comment
   } = req.body;
   const campaignId = req.params.id;
-
   try {
-    const campaign = await campaignService.getById(campaignId);
-    if(!campaign?.blockchainTx){
-      return res.status(400).send({message:'campaing in insuitable for crypto'})
-    }
-    const chargeResponse = await fetch('http://localhost:8890/api/charge', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        amount, ccNumber, expYear, expMonth, cvv,
-        ownerId, ownername, currency,
-        donorEmail, donorFirstName, donorLastName
-      }),
-    });
+    const donation = await donationService.creditDonate({
+      amount, ccNumber, expYear, expMonth, cvv, ownerId, ownername, currency,
+      phone, email, firstName, lastName, comment, campaign: campaignId
+    }, campaignId)
 
-    if (chargeResponse.status === 200) {
-      const data = await chargeResponse.json() as {message:string, charge:number, code:string};
-      
-      const txHash = await blockchainService.recordFiatDonation(+(campaign?.blockchainTx), data.charge, currency, data.code )
+    // החזרת תגובה לפרונט
+    return res.status(201).json({ message: 'Donation successful and receipt email sent', donation });
 
-      const donation = new Donation({
-        email: donorEmail,
-        phone: donorNumber,
-        firstName: donorFirstName,
-        lastName: donorLastName,
-        campaign: campaignId,
-        amount: +data.charge,
-        currency,
-        method: 'card',
-        txHash:txHash,
-      });
-
-      await donation.save();
-      await CampaignService.addDonationToCampaign(campaignId, +data.charge)
-
-
-      await AuditLog.create({ action: 'donation_created', meta: { donationId: donation._id } });
-
-      // החזרת תגובה לפרונט
-      return res.status(201).json({ message: 'Donation successful and receipt email sent', donation });
-    } else {
-      const text = await chargeResponse.text();
-      res.status(502).send({ message: 'Charge server error: ' + text });
-    }
   } catch (error) {
     console.error('❌ Error in creditDonate:', error);
-    res.status(500).send({ message: 'Charge server error ' + error });
+    res.status((error as ServerError).statusCode||500).send({ message: (error as any).message });
   }
 };
 
-
-export const donate = async (req: Request, res: Response) => {
-  const { phone, email, firstName, lastName, amount, campaign, currency, method, txHash } = req.body;
+export const cryptoDonate = async (req: Request, res: Response) => {
+  const { phone, email, firstName, lastName, amount,  currency, method, txHash, comment } = req.body;
   const campaignId = req.params.id;
-  
+
   try {
-    const campaign = await Campaign.findById(campaignId);
-    if (!campaign) return res.status(404).json({ message: 'Campaign not found' });
-
-    // Optional: if method === 'onchain' then verify txHash
-    if (method === 'crypto' && txHash) {
-      const receipt = await blockchainService.getTransaction(txHash);
-      if (!receipt || receipt.status !== 1) {
-        return res.status(400).json({ message: 'Invalid transaction' });
-      }
-    }
-
-    const donation = new Donation({
-      campaign: campaign._id, phone, email, firstName, lastName, amount, currency, method, txHash
-    });
-    await donation.save();
-
-    await CampaignService.addDonationToCampaign(campaignId, amount)
-    await AuditLog.create({ action: 'donation_created', meta: { donationId: donation._id } });
+   const donation = await  donationService.cryptoDonate(
+      { phone, email, firstName, lastName, amount, campaign:campaignId, currency, method, txHash, comment },
+      campaignId
+    )
 
     return res.status(201).json({ donation });
 
-    return res.status(201).json({ donation });
-  } catch (err: any) {
-    return res.status(500).json({ message: err.message });
+  } catch (error: any) {
+    res.status((error as ServerError).statusCode||500).send({ message: (error as any).message });
   }
 };
 

@@ -2,7 +2,7 @@ import axios from "axios";
 import type { Ngo } from "../models/Ngo";
 import type { User } from "../models/User";
 import type { Campaign } from "../models/Campaign";
-import type { Donation } from "../models/Donation";
+import type { CreditDonation, Donation } from "../models/Donation";
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
 
 
@@ -83,7 +83,7 @@ export async function deleteUserApi(userId: string) {
   return res.json();
 }
 
-export async function createCampaign(data: Omit<Campaign, "raised">, token: string, images: File[]|null, movie: File|null,) {
+export async function createCampaign(data: Omit<Campaign, "raised">, token: string, images: File[]|null, movie: File|null,mainImage: File|null) {
   // content type: multipart/formdata
   
   const formData = new FormData()
@@ -99,6 +99,9 @@ export async function createCampaign(data: Omit<Campaign, "raised">, token: stri
   }
   if (movie) {
     formData.append("movie", movie)
+  }
+  if (mainImage) {
+    formData.append("mainImage", mainImage)
   }
   formData.append("startDate", data.startDate)
   formData.append("endDate", data.endDate)
@@ -176,10 +179,7 @@ export const getCampaign = async (campaignId: string) => {
   return data;
 };
 
-type CreditDonation = {
-  amount: number, currency: string, ccNumber: string, expYear: number, expMonth: number, cvv: number, ownerId: string, ownername: string;
-  donorNumber: string, donorEmail: string, donorFirstName: string, donorLastName: string
-}
+
 export const creditDonation = async (chargeData: CreditDonation, campaignId: string) => {
   const res = await fetch(`${API_URL}/donations/${campaignId}/credit-donate`, {
     method: 'POST',

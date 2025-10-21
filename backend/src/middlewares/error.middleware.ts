@@ -2,6 +2,13 @@
 import { Request, Response, NextFunction } from 'express';
 import logger from '../utils/logger';
 
+export class ServerError extends Error{
+  statusCode:number;
+  constructor(message:string, statusCode:number){
+    super(message)
+    this.statusCode=statusCode;
+  }
+}
 export default (err: any, req: Request, res: Response, next: NextFunction) => {
   // Normalize error
   const status = err.status || err.statusCode || 500;

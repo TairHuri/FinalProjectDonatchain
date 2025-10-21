@@ -4,7 +4,7 @@ import { useState } from "react";
 import CreditPayment from "../components/CreditPayment";
 import Modal from "../components/gui/Modal";
 import CryptoPayment from "../components/CryptoPayment";
-import CampaignGallery from "../components/CampaignGallery";
+import SimpleGallery from "../components/SimpleGallery";
 
 const IMAGE_URL = import.meta.env.VITE_IMAGES_URL || "http://localhost:4000/images";
 
@@ -23,7 +23,7 @@ const CampaignDetails: React.FC = () => {
   const percent = Math.min((campaign.raised / campaign.goal) * 100, 100);
 
   return (
-    <div dir="rtl" style={{ background: "white", padding: "24px", borderRadius: "12px", maxWidth: "900px", margin: "0 auto" }}>
+    <div dir="rtl" style={{ background: "white", padding: "24px", borderRadius: "12px", margin: "0 auto", width: "60vw" }}>
       {/* לוגו ושם קמפיין */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <img src={''} alt="ngo logo" style={{ width: "60px", height: "60px", borderRadius: "50%" }} />
@@ -58,11 +58,12 @@ const CampaignDetails: React.FC = () => {
       
       {/* תמונות וסרטון */}
       <div style={{ display: "flex", gap: "10px", marginTop: "20px", overflowX: "auto" }}>
-        {/* <CampaignGallery
+        {<SimpleGallery
           images={campaign.images}
-          imageBaseUrl={IMAGE_URL}   // אם צריך
+          imageBaseUrl={IMAGE_URL}
           movie={campaign.movie}
-        /> */}
+          rtl={true}
+        />}
         {/* {
           campaign.images.map(image => <img key={image} src={`${IMAGE_URL}/${image}`} alt="main" style={{ width: "180px", height: "120px", borderRadius: "8px", objectFit: "cover" }} />)
         }

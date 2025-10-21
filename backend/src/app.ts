@@ -36,7 +36,7 @@ app.use(
   })
 );
 
-app.use('/api', fileUpload.array('images', config.maxUploadFiles), routes);
+app.use('/api', fileUpload.fields([{name:'mainImage', maxCount:1},{name:'images', maxCount:config.maxUploadFiles}, {name:'movie', maxCount:1}]),  routes);
 
 // error handler
 app.use(errorMiddleware);

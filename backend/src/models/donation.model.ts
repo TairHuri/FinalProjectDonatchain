@@ -1,29 +1,38 @@
 import { Schema, model, Document } from 'mongoose';
 
-export interface IDonation extends Document {
-  email:string;
-  phone:string;
+export interface DonationIF {
+  email: string;
+  phone: string;
   firstName: string;
   lastName: string;
-  campaign: Schema.Types.ObjectId;
+  campaign: Schema.Types.ObjectId | string;
   amount: number;
   currency: string;
   method: string; // e.g. 'card','wallet','onchain'
   txHash?: string; // blockchain tx if onchain
+  comment?: string
+}
+
+export interface IDonation extends Document, DonationIF {
   createdAt: Date;
+}
+
+export interface CreditDonation extends DonationIF {
+  ccNumber: string, expYear: number, expMonth: number, cvv: number, ownerId: string, ownername: string;
 }
 
 const donationSchema = new Schema(
   {
-    email:{type:String},
-    phone:{type:String},
-    firstName:{type:String},
-    lastName:{type:String},
+    email: { type: String },
+    phone: { type: String },
+    firstName: { type: String },
+    lastName: { type: String },
     campaign: { type: Schema.Types.ObjectId, ref: 'Campaign', required: true },
     amount: { type: Number, required: true },
     currency: { type: String, default: 'ILS' },
     method: { type: String, default: 'card' },
-    txHash: String
+    txHash: { type: String },
+    comment: { type: String }
   },
   { timestamps: true }
 );

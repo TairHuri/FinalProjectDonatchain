@@ -72,6 +72,7 @@ export const buttonStyle = {
   padding: "10px",
   borderRadius: "8px",
   border: "none",
+  
 }
 
 export const cardStyle: React.CSSProperties = {

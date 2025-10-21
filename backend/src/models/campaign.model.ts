@@ -11,7 +11,8 @@ export interface ICampaign extends Document {
   startDate: string;
   endDate: string;
   images: string[];
-  movie: string;
+  movie?: string;
+  mainImage?: string;
   tags: string[]; // for recommendations
   blockchainTx?: string; // optional tx that created campaign on-chain
   isActive: boolean;
@@ -31,6 +32,7 @@ const campaignSchema = new Schema(
     endDate: { type: Date },
     images: [String],
     movie: { type: String },
+    mainImage: { type: String },
     tags: [String],
     blockchainTx: String,
     isActive: { type: Boolean, default: true }

@@ -1,17 +1,27 @@
 import { Request, Response } from 'express';
 import CampaignService from '../services/campaign.service';
 
+type MediaFiles={
+  images:Express.Multer.File[];
+  movie:Express.Multer.File[];
+  mainImage:Express.Multer.File[];
+}
 /**
  * ➕ יצירת קמפיין חדש
  */
 export const createCampaign = async (req: Request, res: Response) => {
   
-  const { title, description, startDate, endDate, movie, tags, goal, isActive, blockchainTx } = req.body;
+  const { title, description, startDate, endDate, tags, goal, isActive, blockchainTx } = req.body;
 
   const user :{_id:string, ngoId:string}= (req as any).user;
-  const images:string[] = req.files? (req.files as Express.Multer.File[]).map((file:Express.Multer.File) => file.filename) : []
-  console.log('images', images, user)
+  console.log('req.files', req.files);
+  
+  
   try {
+    const mediaFiles = req.files as MediaFiles
+    const images:string[] = mediaFiles.images? mediaFiles.images.map((file:Express.Multer.File) => file.filename) : []
+    const movie:string|null = mediaFiles.movie? mediaFiles.movie[0].filename : null
+    const mainImage:string|null = mediaFiles.mainImage? mediaFiles.mainImage[0].filename : null
     const campaign = await CampaignService.create({
       title,
       description,
@@ -23,11 +33,14 @@ export const createCampaign = async (req: Request, res: Response) => {
       tags,
       images,
       movie,
+      mainImage,
       ngo: user.ngoId,
       isActive
     });
     res.status(201).json(campaign);
   } catch (err: any) {
+    console.log(err);
+    
     res.status(400).json({ message: err.message });
   }
 };
