@@ -15,7 +15,7 @@ export default function Home() {
     <div
       style={{
         minHeight: "100vh",
-        width: "100%",
+         width: "100%",
          background: "linear-gradient(135deg, #e4d8e3ff, #f0f0f0)",
         display: "flex",
         flexDirection: "column",

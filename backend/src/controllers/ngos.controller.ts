@@ -2,6 +2,7 @@
 import { Request, Response } from 'express';
 import Ngo from '../models/ngo.model';
 import AuditLog from '../models/auditlog.model';
+import { MediaFiles } from '../middlewares/multer.middleware';
 
 export const createNgo = async (req: Request, res: Response) => {
   const { name, description, website, contactEmail, logoUrl } = req.body;
@@ -50,6 +51,10 @@ export const updateNgo = async (req: Request, res: Response) => {
 
     const updates = req.body;
     Object.assign(ngo, updates);
+    const mediaFiles = req.files as MediaFiles;
+    if(mediaFiles.logo){
+      ngo.logoUrl = mediaFiles.logo[0].filename
+    }
     await ngo.save();
     await AuditLog.create({ action: 'ngo_updated', user: user._id, meta: { ngoId: ngo._id } });
     res.json(ngo);

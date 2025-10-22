@@ -109,7 +109,7 @@ async function ensureSepolia() {
     }
 
 
-    const CreateCampaign = ({ postSave }: { postSave: () => void }) => {
+    const EditCampaign = ({ postSave }: { postSave: () => void }) => {
         const { user } = useAuth();
         const {isLoading, start, stop} = useSpinner()
         const { addCampaign } = useCampaigns();
@@ -209,7 +209,7 @@ async function ensureSepolia() {
         return (
             <div style={cardStyle}>
                 <h2 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "20px" }}>
-                    יצירת קמפיין
+                    עריכת קמפיין
                 </h2>
                 <input type="text" placeholder="שם הקמפיין" value={form.title}
                     onChange={(e) => setForm({ ...form, title: e.target.value })} style={inputStyle} />
@@ -249,4 +249,4 @@ async function ensureSepolia() {
         )
     }
 
-    export default CreateCampaign
+    export default EditCampaign

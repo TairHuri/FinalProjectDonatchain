@@ -19,7 +19,7 @@ const App: React.FC = () => {
   return (
     <AuthProvider>
       <CampaignsProvider>
-        <div className="min-h-screen bg-gray-100 text-gray-900 flex flex-col">
+        <div className="min-h-screen bg-gray-100 text-gray-900 flex flex-col" style={{width:'100vw', overflowX:'hidden'}} >
           {/* סרגל ניווט עליון */}
           <Navbar />
 
