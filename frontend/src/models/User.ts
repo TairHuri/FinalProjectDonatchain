@@ -1,4 +1,7 @@
+import type { Ngo } from "./Ngo";
+
 export interface User {
+  ngo?: Ngo;
   _id?:string
   email: string;
   password: string;

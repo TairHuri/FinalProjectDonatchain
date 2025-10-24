@@ -36,7 +36,8 @@ app.use(
   })
 );
 
-app.use('/api', fileUpload.fields([{name:'mainImage', maxCount:1},{name:'images', maxCount:config.maxUploadFiles}, {name:'movie', maxCount:1}]),  routes);
+// http://localhost:5567/api/ngos
+app.use('/api', fileUpload.fields([{name:'logo', maxCount:1},{name:'mainImage', maxCount:1},{name:'images', maxCount:config.maxUploadFiles}, {name:'movie', maxCount:1}]),  routes);
 
 // error handler
 app.use(errorMiddleware);

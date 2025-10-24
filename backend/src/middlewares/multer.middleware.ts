@@ -14,3 +14,10 @@ const storage = multer.diskStorage({
 
 const fileUpload = multer({storage})
 export default fileUpload
+
+export type MediaFiles={
+  images:Express.Multer.File[];
+  movie:Express.Multer.File[];
+  mainImage:Express.Multer.File[];
+  logo:Express.Multer.File[];
+}

@@ -4,7 +4,6 @@ import { useState } from "react";
 import CreditPayment from "../components/CreditPayment";
 import Modal from "../components/gui/Modal";
 import CryptoPayment from "../components/CryptoPayment";
-import CampaignGallery from "../components/CampaignGallery";
 import SimpleGallery from "../components/SimpleGallery";
 import type { Ngo } from "../models/Ngo";
 

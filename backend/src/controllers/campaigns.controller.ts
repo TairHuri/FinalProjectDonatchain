@@ -1,11 +1,8 @@
 import { Request, Response } from 'express';
 import CampaignService from '../services/campaign.service';
+import { MediaFiles } from '../middlewares/multer.middleware';
 
-type MediaFiles={
-  images:Express.Multer.File[];
-  movie:Express.Multer.File[];
-  mainImage:Express.Multer.File[];
-}
+
 /**
  * ➕ יצירת קמפיין חדש
  */
@@ -15,7 +12,6 @@ export const createCampaign = async (req: Request, res: Response) => {
 
   const user :{_id:string, ngoId:string}= (req as any).user;
   console.log('req.files', req.files);
-  
   
   try {
     const mediaFiles = req.files as MediaFiles

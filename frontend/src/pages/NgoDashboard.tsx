@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useCampaigns } from "../contexts/CampaignsContext";
 import { PlusCircle, Home, Users, LogOut, FileText, Settings } from "lucide-react";
@@ -9,17 +9,18 @@ import { cardStyle, inputStyle, menuBtnStyle, primaryBtnStyle } from "../css/das
 import NgoUsers from "../components/NgoUsers";
 import UserPersonalDetails from "../components/UserPersonalDetails";
 import CreateCampaign from "../components/CreateCampaign";
+import NgoDetails from "../components/NgoDetails";
 
 const NgoDashboard: React.FC = () => {
   const { user } = useAuth();
   const { campaigns } = useCampaigns();
 
   const [activePage, setActivePage] = useState<
-    "dashboard" | "newCampaign" | "campaigns" | "profile" | "donors" | "ngoUsers"
+    "dashboard" | "newCampaign" | "campaigns" | "profile" | "donors" | "ngoUsers" | "ngoDetails"
   >("dashboard");
   console.log('campaigns', campaigns);
 
-
+  //const showCampaigns = useCallback(() => setActivePage("campaigns"), [])
 
   const [editMode, setEditMode] = useState<"view" | "edit" | "password">("view");
 
@@ -48,11 +49,11 @@ const NgoDashboard: React.FC = () => {
 
 
   return (
-    <div dir="rtl" style={{ width: "1000px", display: "flex", minHeight: "100vh", backgroundColor: "#f7f9fc" }}>
+    <div dir="rtl" style={{ display: "flex", minHeight: "100vh", backgroundColor: "#f7f9fc", width:'80vw' }}>
       {/* סרגל צד */}
       <div
         style={{
-          width: "240px",
+          width: "20vw",
           background: "#1f2937",
           color: "white",
           padding: "20px",
@@ -83,11 +84,14 @@ const NgoDashboard: React.FC = () => {
           <button onClick={() => setActivePage("profile")} style={menuBtnStyle}>
             <Settings size={20} /> פרטים אישיים
           </button>
+          <button onClick={() => setActivePage("ngoDetails")} style={menuBtnStyle}>
+            <Users size={20} /> פרטי העמותה
+          </button>
+           <button onClick={() => setActivePage("ngoUsers")} style={menuBtnStyle}>
+            <Users size={20} /> חברי העמותה
+          </button>
           <button onClick={() => setActivePage("donors")} style={menuBtnStyle}>
             <Users size={20} /> תורמי העמותה
-          </button>
-          <button onClick={() => setActivePage("ngoUsers")} style={menuBtnStyle}>
-            <Users size={20} /> חברי העמותה
           </button>
         </div>
         <button style={{ ...menuBtnStyle, color: "#f87171" }}>
@@ -97,6 +101,7 @@ const NgoDashboard: React.FC = () => {
 
       {/* תוכן */}
       <div style={{ flex: 1, padding: "30px" }}>
+        {activePage === "ngoDetails" && <NgoDetails editMode={editMode} setEditMode={setEditMode} />}
         {activePage === "ngoUsers" && <NgoUsers />}
         {activePage === "dashboard" && (
           <div>
@@ -117,9 +122,7 @@ const NgoDashboard: React.FC = () => {
         {activePage === "newCampaign" && (
           <CreateCampaign postSave={()=>setActivePage("campaigns")}/>
         )}
-
         {activePage === "profile" && <UserPersonalDetails editMode={editMode} setEditMode={setEditMode} />}
-
 
         {activePage === "campaigns" && (
           <div>

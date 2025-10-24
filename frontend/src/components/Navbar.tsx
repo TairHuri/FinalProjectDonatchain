@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import {
   Menu,
@@ -67,9 +67,23 @@ export default function Navbar() {
     fontFamily: "'Heebo', sans-serif",
   };
 
+  const handlBottonClick = (event:React.MouseEvent<HTMLButtonElement>, name: string) => {
+    event.stopPropagation();
+    toggleDropdown(name)
+  }
   const toggleDropdown = (name: string) => {
     setOpenDropdown(openDropdown === name ? null : name);
   };
+  const autoClose = () =>{    
+    if(openDropdown!==null)toggleDropdown(openDropdown)
+  }
+  useEffect(()=>{
+    document.addEventListener('click',  autoClose) 
+
+    return(() =>{
+      document.removeEventListener('click',autoClose )
+    })
+  }, [openDropdown])
 
   const MenuItems = () => (
     <>
@@ -83,7 +97,7 @@ export default function Navbar() {
       {/* תורמים */}
       <li style={{ position: "relative" }}>
         <button
-          onClick={() => toggleDropdown("donors")}
+          onClick={(event) => handlBottonClick(event, "donors")}
           style={getButtonStyle(location.pathname.startsWith("/donors"))}
         >
           <Users size={18} />
@@ -117,7 +131,7 @@ export default function Navbar() {
         ) : (
           <>
             <button
-              onClick={() => toggleDropdown("ngo")}
+              onClick={(event) => handlBottonClick(event, "ngo")}
               style={getButtonStyle(location.pathname.startsWith("/ngo"))}
             >
               עמותות ⌄
@@ -143,7 +157,7 @@ export default function Navbar() {
       {/* עלינו */}
       <li style={{ position: "relative" }}>
         <button
-          onClick={() => toggleDropdown("about")}
+          onClick={(event) => handlBottonClick(event, "about")}
           style={getButtonStyle(location.pathname.startsWith("/about"))}
         >
           <Info size={18} />
@@ -172,6 +186,8 @@ export default function Navbar() {
       <nav
         dir="rtl"
         style={{
+          left:0,
+          right:0,
           position: "sticky",
           top: 0,
           zIndex: 50,
@@ -208,7 +224,7 @@ export default function Navbar() {
           {user && (
             <div style={{ position: "relative" }}>
               <button
-                onClick={() => toggleDropdown("user")}
+                onClick={(event) => handlBottonClick(event, "user")}
                 style={{
                   background: "transparent",
                   border: "none",

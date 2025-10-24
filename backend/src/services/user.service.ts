@@ -1,5 +1,5 @@
 // src/services/user.service.ts
-import { AppError } from '../controllers/users.controller';
+import { ServerError } from '../middlewares/error.middleware';
 import User, { IUser } from '../models/user.model';
 import * as AuthService from './auth.service';
 
@@ -23,9 +23,9 @@ export default {
     return User.findById(id).select('-passwordHash');
   },
 
-  async updateProfile(id: string, updates: any) {
+  async updateUser(id: string, updates: any) {
     const user = await User.findById(id);
-    if (!user) throw new Error('User not found');
+    if (!user) throw new ServerError('User not found', 400);
     Object.assign(user, updates);
     await user.save();
     return user;
@@ -42,7 +42,7 @@ export default {
 
       const user = await User.findById(userId)
       if (!user) {
-        throw new AppError("user not found", 404)
+        throw new ServerError("user not found", 404)
       }
       user.approved = true;
       const updatedUser = await user.save();
