@@ -5,97 +5,134 @@ import AuditLog from '../models/auditlog.model';
 import blockchainService from './blockchain.service';
 import campaignService from './campaign.service';
 import { ServerError } from '../middlewares/error.middleware';
-import fetch from 'node-fetch'
+import fetch from 'node-fetch';
+import { sendReceiptEmail } from "../utils/receiptEmail";  // ✅ נוספה שליחה במייל
 
 export default {
 
-cryptoDonate : async (donation:DonationIF, campaignId:string) => {
-  
-  try {
-    const campaign = await Campaign.findById(campaignId);
-    
-    if (!campaign) throw new ServerError('Campaign not found', 404)
+  // -------------------- תרומת קריפטו --------------------
+  cryptoDonate: async (donation: DonationIF, campaignId: string) => {
+    try {
+      const campaign = await Campaign.findById(campaignId);
+      if (!campaign) throw new ServerError('Campaign not found', 404);
 
-    // Optional: if method === 'onchain' then verify txHash
-    if (donation.method === 'crypto' && donation.txHash) {
-      const receipt = await blockchainService.getTransaction(donation.txHash);
-      if (!receipt || receipt.status !== 1) {
-         throw new ServerError('Invalid transaction', 400)
+      // אימות עסקת קריפטו אם יש txHash
+      if (donation.method === 'crypto' && donation.txHash) {
+        const receipt = await blockchainService.getTransaction(donation.txHash);
+        if (!receipt || receipt.status !== 1) {
+          throw new ServerError('Invalid transaction', 400);
+        }
       }
+
+      // שמירת התרומה במסד הנתונים
+      const createdDonation = new Donation({
+        ...donation,
+        campaign: campaign._id,
+      });
+      await createdDonation.save();
+
+      await campaignService.addDonationToCampaign(campaignId, donation.amount);
+      await AuditLog.create({ action: 'donation_created', meta: { donationId: createdDonation._id } });
+
+      await sendReceiptEmail({
+        donorEmail: donation.email,
+        donorFirstName: donation.firstName,
+        donorLastName: donation.lastName,
+        amount: donation.amount,
+        currency: donation.currency,
+        method: "crypto",
+        txHash: donation.txHash,
+
+      });
+
+      return donation;
+
+    } catch (err: any) {
+      throw err;
     }
-
-    const createdDonation = new Donation({...donation, campaign: campaign._id, });
-    await createdDonation.save();
-
-    await campaignService.addDonationToCampaign(campaignId, donation.amount)
-    await AuditLog.create({ action: 'donation_created', meta: { donationId: createdDonation._id } });
-    return donation;
-    
-  } catch (err: any) {
-    throw err;
-  }
-},
+  },
 
 
-  creditDonate: async (creditDonation: Omit<CreditDonation, "method">, campaignId:string) => {
+  // -------------------- תרומת אשראי --------------------
+  creditDonate: async (creditDonation: Omit<CreditDonation, "method">, campaignId: string) => {
+    try {
+      const campaign = await campaignService.getById(campaignId);
+      if (!campaign?.blockchainTx) {
+        throw new ServerError('Campaign unsuitable for crypto', 400);
+      }
 
-  try {
-    const campaign = await campaignService.getById(campaignId);
-    if(!campaign?.blockchainTx){
-      throw new ServerError('campaing in insuitable for crypto', 400);
-    }
-
-    const {amount, ccNumber, expYear, expMonth, cvv,
-        ownerId, ownername, currency,
-        email, firstName, lastName} = creditDonation;
-    const chargeResponse = await fetch('http://localhost:8890/api/charge', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
+      const {
         amount, ccNumber, expYear, expMonth, cvv,
         ownerId, ownername, currency,
         email, firstName, lastName
-      }),
-    });
+      } = creditDonation;
 
-    if (chargeResponse.status === 200) {
-      const data = await chargeResponse.json() as {message:string, charge:number, code:string};
-      
-      const txHash = await blockchainService.recordFiatDonation(+(campaign?.blockchainTx), data.charge, currency, data.code )
-
-      const donation = new Donation({
-        email: creditDonation.email,
-        phone: creditDonation.phone,
-        firstName: creditDonation.firstName,
-        lastName: creditDonation.lastName,
-        campaign: campaignId,
-        amount: +data.charge,
-        currency,
-        method: 'card',
-        txHash:txHash,
-        comment:creditDonation.comment,
+      const chargeResponse = await fetch('http://localhost:8890/api/charge', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount, ccNumber, expYear, expMonth, cvv,
+          ownerId, ownername, currency,
+          email, firstName, lastName
+        }),
       });
 
-      await donation.save();
-      await campaignService.addDonationToCampaign(campaignId, +data.charge)
+      if (chargeResponse.status === 200) {
+        const data = await chargeResponse.json() as { message: string, charge: number, code: string };
 
+        // רישום התרומה בבלוקצ'יין
+        const txHash = await blockchainService.recordFiatDonation(
+          +(campaign?.blockchainTx),
+          data.charge,
+          currency,
+          data.code
+        );
 
-      await AuditLog.create({ action: 'donation_created', meta: { donationId: donation._id } });
+        // יצירת התרומה במסד
+        const donation = new Donation({
+          email: creditDonation.email,
+          phone: creditDonation.phone,
+          firstName: creditDonation.firstName,
+          lastName: creditDonation.lastName,
+          campaign: campaignId,
+          amount: +data.charge,
+          currency,
+          method: 'card',
+          txHash: txHash,
+          comment: creditDonation.comment,
+        });
 
-      // החזרת תגובה לפרונט
-      return donation ;
-    } else {
-      const text = await chargeResponse.text();
-      throw new ServerError( 'Charge server error: ' + text, 502)
+        await donation.save();
+        await campaignService.addDonationToCampaign(campaignId, +data.charge);
+        await AuditLog.create({ action: 'donation_created', meta: { donationId: donation._id } });
+
+        // שליחת קבלה במייל
+        await sendReceiptEmail({
+          donorEmail: donation.email,
+          donorFirstName: donation.firstName,
+          donorLastName: donation.lastName,
+          amount: donation.amount,
+          currency: donation.currency,
+          method: "credit",
+          txHash: txHash,
+        });
+
+        // החזרת תגובה לפרונט
+        return donation;
+      } else {
+        const text = await chargeResponse.text();
+        throw new ServerError('Charge server error: ' + text, 502);
+      }
+
+    } catch (error) {
+      console.error('❌ Error in creditDonate:', error);
+      throw error;
     }
-  } catch (error) {
-    console.error('❌ Error in creditDonate:', error);
-    throw error;
-  }
-},
-  // creates donation record, validates onchain tx if needed, updates campaign.returns donation
+  },
+
+
+  // -------------------- יצירת תרומה רגילה --------------------
   async createDonation({ donorId, campaignId, amount, currency = 'USD', method = 'card', txHash }: any) {
-    // optional: verify onchain tx
     if (method === 'crypto' && txHash) {
       const receipt = await blockchainService.getTransaction(txHash);
       if (!receipt || (receipt as any).status !== 1) throw new Error('Invalid onchain transaction');
@@ -111,25 +148,37 @@ cryptoDonate : async (donation:DonationIF, campaignId:string) => {
     });
     await donation.save();
 
-    // update campaign. Use Campaign service (or direct)
     const campaign = await Campaign.findById(campaignId);
     if (!campaign) throw new Error('Campaign not found');
     campaign.raised = (campaign.raised || 0) + amount;
     await campaign.save();
 
-    await AuditLog.create({ action: 'donation_created', user: donorId || null, meta: { donationId: donation._id } });
+    await AuditLog.create({
+      action: 'donation_created',
+      user: donorId || null,
+      meta: { donationId: donation._id },
+    });
 
     return donation;
   },
 
+
+  // -------------------- רשימות תרומות --------------------
   async listByUser(userId: string) {
-    return Donation.find({ donor: userId }).populate('campaign').sort({ createdAt: -1 });
+    return Donation.find({ donor: userId })
+      .populate('campaign')
+      .sort({ createdAt: -1 });
   },
+
   async listByNgo(ngoId: string) {
-    return Donation.find().populate({path:'campaign', match:{ngo:ngoId}}).sort({ createdAt: -1 });
+    return Donation.find()
+      .populate({ path: 'campaign', match: { ngo: ngoId } })
+      .sort({ createdAt: -1 });
   },
 
   async listByCampaign(campaignId: string) {
-    return Donation.find({ campaign: campaignId }).populate('donor').sort({ createdAt: -1 });
+    return Donation.find({ campaign: campaignId })
+      .populate('donor')
+      .sort({ createdAt: -1 });
   }
 };
