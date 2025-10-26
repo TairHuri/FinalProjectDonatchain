@@ -7,8 +7,9 @@ import UserItem from "./UserItem"
 
 const NgoUsers = () => {
     const [users, setUsers] = useState<User[]>([])
+    console.log("all users=",users);
     const { user } = useAuth();
-    console.log(user);
+    console.log("user=",user);
     
     const approveUser = async (userId: string) => {
         const res = await approveUserApi(userId)

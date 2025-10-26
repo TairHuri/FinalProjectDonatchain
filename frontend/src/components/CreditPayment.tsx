@@ -4,6 +4,7 @@ import { creditDonation } from "../services/api";
 import { buttonStyle, fildsPositionStyle, inputStyle, labelStyle } from "../css/dashboardStyles";
 import Spinner, { useSpinner } from "./Spinner";
 import type { Phone } from "lucide-react";
+import type { style } from "framer-motion/client";
 
 const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campaignId: string, userId: string }) => {
   const date = new Date()
@@ -14,6 +15,7 @@ const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campa
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const [txHash, setTxHash] = useState<string>('')
   const {isLoading, start, stop} = useSpinner()
+  const [agree, setAgree] = useState(false);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement| HTMLTextAreaElement | HTMLSelectElement>) => {
     const { id, value } = event.target;
@@ -65,7 +67,7 @@ const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campa
     </div>
   )
   return (
-    <form onSubmit={handlePayment} style={{ width: '100%' }}>
+    <form onSubmit={handlePayment} style={{ width: '100%', lineHeight: '1.5'}}>
 
       <div style={fildsPositionStyle}>
         <label htmlFor="firstName" style={labelStyle}>שם פרטי</label>
@@ -78,6 +80,11 @@ const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campa
         <input id="phone" placeholder="מספר פלאפון" pattern="^[0-9]{3}[\-.]?[0-9]{7}$" title="incorrect be xxx.1234567" type="tel" required onChange={handleChange} style={inputStyle} />
         <label htmlFor="email" style={labelStyle}>מייל</label>
         <input id="email" placeholder="מייל" type="email" required onChange={handleChange} style={inputStyle} />
+      </div>
+      <div dir="rtl">
+      <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", fontFamily: 'calibri'}}>
+        <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)}/>
+        הישארו אנונימיים - אני רוצה שבעמוד הקמפיין יופיע רק סכום התרומה</label>
       </div>
       <div>
          <label htmlFor="comment" style={labelStyle}>תגובה</label>

@@ -11,6 +11,7 @@ interface CampaignsContextType {
   addCampaign: (c: Omit<Campaign, "raised">,images:File[]|null, movie:File|null, mainImage:File|null) => Promise<boolean>; // ← פרמטר אחד בלבד
   refreshCampaigns: () => Promise<void>;
   updateCampaign: (campaignId:string) => Promise<void>;
+  postUpdateCampaign: (campaign: Campaign) =>void;
 }
 
 
@@ -35,6 +36,10 @@ const updateCampaign = async (campaignId: string) =>{
   const campaign:Campaign = await getCampaign(campaignId)
   setCampaigns(prev => [...prev.filter(c => c._id !== campaignId), campaign])
 }
+const postUpdateCampaign = (campaign: Campaign) =>{
+  
+  setCampaigns(prev => [...prev.filter(c => c._id !== campaign._id), campaign])
+}
 
   useEffect(()=>{
       refreshCampaigns();
@@ -53,7 +58,7 @@ const updateCampaign = async (campaignId: string) =>{
   }
 
   return (
-    <CampaignsContext.Provider value={{ campaigns, addCampaign, refreshCampaigns, updateCampaign }}>
+    <CampaignsContext.Provider value={{ campaigns, addCampaign, refreshCampaigns, updateCampaign, postUpdateCampaign }}>
       {children}
     </CampaignsContext.Provider>
   );

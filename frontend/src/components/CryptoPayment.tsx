@@ -24,6 +24,7 @@ const CryptoPayment = ({ close, campaignId }: { close: () => void, campaignId: s
   const [message, setMessage] = useState<string | null>(null)
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const { isLoading, start, stop } = useSpinner()
+  const [agree, setAgree] = useState(false);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement|HTMLTextAreaElement | HTMLSelectElement>) => {
     const { id, value } = event.target;
@@ -99,6 +100,11 @@ const CryptoPayment = ({ close, campaignId }: { close: () => void, campaignId: s
       <div style={fildsPositionStyle}>
         <label htmlFor="phone" style={labelStyle}>פלאפון</label><input id="phone" placeholder="מספר פלאפון" pattern="^[0-9]{3}[\-.]?[0-9]{7}$" title="incorrect be xxx.1234567" type="tel" required onChange={handleChange} style={inputStyle} />
         <label htmlFor="email" style={labelStyle}>מייל</label><input id="email" placeholder="מייל" type="email" required onChange={handleChange} style={inputStyle} />
+      </div>
+      <div dir="rtl">
+      <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", fontFamily: 'calibri'}}>
+        <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)}/>
+        הישארו אנונימיים - אני רוצה שבעמוד הקמפיין יופיע רק סכום התרומה</label>
       </div>
       <div>
         <label htmlFor="comment" style={labelStyle}>תגובה</label>

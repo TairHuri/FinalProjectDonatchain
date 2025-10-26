@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useCampaigns } from "../contexts/CampaignsContext";
 import { PlusCircle, Home, Users, LogOut, FileText, Settings } from "lucide-react";
@@ -10,14 +10,20 @@ import NgoUsers from "../components/NgoUsers";
 import UserPersonalDetails from "../components/UserPersonalDetails";
 import CreateCampaign from "../components/CreateCampaign";
 import NgoDetails from "../components/NgoDetails";
+import { getDonationsByNgo } from "../services/api";
+import { useNavigate } from "react-router-dom";
+import EditCampaign from "../components/EditCampaign";
+
+
 
 const NgoDashboard: React.FC = () => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const { campaigns } = useCampaigns();
-
+  const navigate = useNavigate();
   const [activePage, setActivePage] = useState<
-    "dashboard" | "newCampaign" | "campaigns" | "profile" | "donors" | "ngoUsers" | "ngoDetails"
+    "dashboard" | "newCampaign" | "campaigns" |"editCampaign"| "profile" | "donors" | "ngoUsers" | "ngoDetails"
   >("dashboard");
+  const [campaignId, setCampaignId] = useState<string|null>(null)
   console.log('campaigns', campaigns);
 
   //const showCampaigns = useCallback(() => setActivePage("campaigns"), [])
@@ -29,9 +35,22 @@ const NgoDashboard: React.FC = () => {
     newPass: "",
     confirmPass: "",
   });
+  const [donationsCount, setDonationsCount] = useState<number>(0)
 
+  useEffect(() => {
+    getDonationsCount();
+  }, [])
 
+  const getDonationsCount = async () => {
+    if (!user) return;
+    const donations = await getDonationsByNgo(user.ngoId);
+    setDonationsCount(donations.length);
+  }
 
+  const editCampaign = (id:string) => {
+setActivePage("editCampaign");
+setCampaignId(id);
+  }
   const handleChangePassword = () => {
     if (passwords.newPass !== passwords.confirmPass) {
       alert("אימות סיסמה נכשל");
@@ -49,7 +68,7 @@ const NgoDashboard: React.FC = () => {
 
 
   return (
-    <div dir="rtl" style={{ display: "flex", minHeight: "100vh", backgroundColor: "#f7f9fc", width:'80vw' }}>
+    <div dir="rtl" style={{ display: "flex", minHeight: "100vh", backgroundColor: "#f7f9fc", width: '80vw' }}>
       {/* סרגל צד */}
       <div
         style={{
@@ -87,14 +106,14 @@ const NgoDashboard: React.FC = () => {
           <button onClick={() => setActivePage("ngoDetails")} style={menuBtnStyle}>
             <Users size={20} /> פרטי העמותה
           </button>
-           <button onClick={() => setActivePage("ngoUsers")} style={menuBtnStyle}>
+          <button onClick={() => setActivePage("ngoUsers")} style={menuBtnStyle}>
             <Users size={20} /> חברי העמותה
           </button>
           <button onClick={() => setActivePage("donors")} style={menuBtnStyle}>
             <Users size={20} /> תורמי העמותה
           </button>
         </div>
-        <button style={{ ...menuBtnStyle, color: "#f87171" }}>
+        <button style={{ ...menuBtnStyle, color: "#f87171" }} onClick={() => {logout();navigate("/");}}>
           <LogOut size={20} /> יציאה
         </button>
       </div>
@@ -114,14 +133,12 @@ const NgoDashboard: React.FC = () => {
             <div style={{ display: "flex", gap: "20px", marginTop: "30px" }}>
               {statCard("קמפיינים פעילים", campaigns.length)}
               {statCard("סכום כולל", "₪" + campaigns.reduce((a, c) => a + c.raised, 0))}
-              {statCard("תורמים", 120)}
+              {statCard("תורמים", donationsCount)}
             </div>
           </div>
         )}
         {activePage == "donors" && <NgoDonors />}
-        {activePage === "newCampaign" && (
-          <CreateCampaign postSave={()=>setActivePage("campaigns")}/>
-        )}
+        {activePage === "newCampaign" && (<CreateCampaign postSave={() => setActivePage("campaigns")} />)}
         {activePage === "profile" && <UserPersonalDetails editMode={editMode} setEditMode={setEditMode} />}
 
         {activePage === "campaigns" && (
@@ -130,10 +147,16 @@ const NgoDashboard: React.FC = () => {
               הקמפיינים שלי
             </h2>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: "20px" }}>
-              {campaigns.map((c) => <CampaignItem key={c._id} c={c} />)}
+              {campaigns.map((c) => (
+                <div key={c._id}>
+                  <CampaignItem c={c} showButtons={true} edit={editCampaign}/>
+                 
+                </div>
+              ))}
             </div>
           </div>
         )}
+        {activePage == "editCampaign" && <EditCampaign campaignId={campaignId!} editMode={editMode} setEditMode={setEditMode} /> }
       </div>
     </div>
   );

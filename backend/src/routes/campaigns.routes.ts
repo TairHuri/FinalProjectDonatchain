@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createCampaign, listCampaigns, getCampaign, getCampagnsByNgo } from '../controllers/campaigns.controller';
+import { createCampaign, updateCampaign, listCampaigns, getCampaign, getCampagnsByNgo } from '../controllers/campaigns.controller';
 import authMiddleware from '../middlewares/auth.middleware';
 import roleMiddleware from '../middlewares/role.middleware';
 
@@ -13,5 +13,6 @@ router.get('/:id', getCampaign);
 
 // ➕ יצירת קמפיין (מאובטח - רק NGO/Admin)
 router.post('/', authMiddleware, roleMiddleware(['ngo', 'admin']), createCampaign);
+router.put('/:campaignId', authMiddleware, roleMiddleware(['ngo', 'admin']), updateCampaign);
 
 export default router;

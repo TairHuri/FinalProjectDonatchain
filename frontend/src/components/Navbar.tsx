@@ -106,7 +106,7 @@ export default function Navbar() {
         {openDropdown === "donors" && (
           <ul style={dropdownStyle}>
             <li>
-              <Link to="/donors/ngo" style={linkStyle}>
+              <Link to="/ngos" style={linkStyle}>
                 רשימת עמותות
               </Link>
             </li>
@@ -258,7 +258,9 @@ export default function Navbar() {
               )}
             </div>
           )}
-          <img src="/logo.png" alt="לוגו" style={{ height: "56px" }} />
+          <Link to="/" >
+          <img src="/logo.png" alt="לוגו" style={{ width: "200px",height: "auto"}} />
+          </Link>
           <button
             onClick={() => setDarkMode(!darkMode)}
             style={{

@@ -107,7 +107,7 @@ export default function Home() {
           gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
           gap: "1.5rem",
           marginTop: "2rem",
-          width: "90%",
+          width: "100%",
           maxWidth: "1200px",
         }}
       >
@@ -171,6 +171,7 @@ export default function Home() {
       {/* How it Works Section */}
       <div
         style={{
+         
           marginTop: "5rem",
           padding: "2rem",
           maxWidth: "900px",

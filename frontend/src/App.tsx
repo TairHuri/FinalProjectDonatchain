@@ -15,6 +15,9 @@ import CampaignDetails from "./pages/CampaignDetails";
 import NewCampaign from "./pages/NewCampaign";
 import AboutRules from "./pages/AboutRules"
 
+import './App.css'
+import Ngos from "./pages/Ngos";
+
 const App: React.FC = () => {
   return (
     <AuthProvider>
@@ -38,6 +41,7 @@ const App: React.FC = () => {
               <Route path="/campaign/:id" element={<CampaignDetails />} />
               <Route path="/about/rules" element={<AboutRules />} />
               <Route path="/campaigns/new" element={<NewCampaign />} />
+              <Route path="/ngos" element={<Ngos />} />
             </Routes>
           </div>
         </div>

@@ -10,6 +10,7 @@ import { buttonStyle, iconLogin, ngoListStyle, toggleGroup, toggleOff, toggleOn 
 
 export default function RegistrationNgo() {
   const nav = useNavigate();
+  const [agree, setAgree] = useState(false);
   const [user, setUser] = useState<User>({
     name: "",
     ngoId: "",
@@ -140,9 +141,18 @@ export default function RegistrationNgo() {
                 {ngoList.map(n => <option key={n._id} value={n.name} />)}
               </datalist>
             </div>}
-
-          <div>
+          
+          <div dir="rtl">
+            <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
+        <input
+          type="checkbox"
+          checked={agree}
+          onChange={(e) => setAgree(e.target.checked)}
+        />
+        אני מאשר/ת את <a href="/about/rules" target="_blank" rel="noopener noreferrer">תקנון האתר</a>
+      </label>
             <button
+             disabled={!agree}
               type="submit"
               className="w-full bg-blue-600 text-white py-3 rounded-full hover:bg-blue-700 transition-colors font-semibold"
               style={buttonStyle}

@@ -36,7 +36,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const updateUser = (updatedUser: User) => {
     const token = user?.token ||updatedUser.token
     if(!token)return;
-    localStorage.setItem("userData", JSON.stringify({updatedUser, 'token': token }));
+    localStorage.setItem("userData", JSON.stringify({...updatedUser, 'token': token }));
+     // localStorage.setItem("userData", JSON.stringify({ ...res.user, 'token': res.token }));
     setUser(updatedUser)
   }
 

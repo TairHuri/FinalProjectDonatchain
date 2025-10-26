@@ -9,12 +9,17 @@ export default {
     await campaign.save();
     return campaign;
   },
+  async update(payload: any) {
+    const campaign = await Campaign.findByIdAndUpdate(payload._id, payload, {new:true}).populate('ngo')
+  
+    return campaign;
+  },
 
   async search({ q, tag, page = 1, limit = 10 }: any) {
     const filter: any = { isActive: true };
     if (tag) filter.tags = tag;
     if (q) filter.$text = { $search: q };
-    const items = await Campaign.find(filter)
+    const items = await Campaign.find(filter).populate('ngo')
       .skip((page - 1) * limit)
       .limit(limit)
       .sort({ createdAt: -1 });
@@ -24,7 +29,7 @@ export default {
 
   async getById(id: string) {
     if (!mongoose.Types.ObjectId.isValid(id)) return null;
-    return Campaign.findById(id).populate({path:'Ngo', strictPopulate:false});
+    return Campaign.findById(id).populate("ngo");
   },
 
   async getByNgo(ngoId: string, page = 1, limit = 10) {

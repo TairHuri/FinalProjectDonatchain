@@ -1,36 +1,57 @@
 import { useParams } from "react-router-dom";
 import { useCampaigns } from "../contexts/CampaignsContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CreditPayment from "../components/CreditPayment";
 import Modal from "../components/gui/Modal";
 import CryptoPayment from "../components/CryptoPayment";
 import SimpleGallery from "../components/SimpleGallery";
 import type { Ngo } from "../models/Ngo";
+import { type Campaign } from "../models/Campaign";
+import { getCampaign } from "../services/api";
+import { useAuth } from "../contexts/AuthContext";
 
 const IMAGE_URL = import.meta.env.VITE_IMAGES_URL || "http://localhost:4000/images";
 
 const CampaignDetails: React.FC = () => {
-  const { id } = useParams();
+  const params = useParams();
   const { campaigns } = useCampaigns();
-  const campaign = campaigns.find((c) => c._id! === (id));
+  const {user} = useAuth()
+
   const [showCreditPay, setShowCreditPay] = useState<boolean>(false)
   const [showCryptoPay, setShowCryptoPay] = useState<boolean>(false)
   // TODO load Ngo and set its logo as campaign logo
-  
+
   const [activeTab, setActiveTab] = useState<"project" | "ngo" | "donations">("project");
+  const [campaign, setCampaign] = useState<Campaign | null>(null)
+
+  const loadCampaign = async (id:string) => {
+    const campaign = await getCampaign(id);
+    setCampaign(campaign)
+  }
+
+  useEffect(() => {
+    if(!params.id)return;
+
+    const campaign = campaigns.find((c) => c._id! === (params.id));
+    if (campaign) {
+      setCampaign(campaign)
+    }else{
+    loadCampaign(params.id)
+    }
+      
+  }, [params])
 
   if (!campaign) return <p>קמפיין לא נמצא</p>;
 
   const percent = Math.min((campaign.raised / campaign.goal) * 100, 100);
-
   return (
-    <div dir="rtl" style={{ justifyContent:'center',background: "white", padding: "24px", borderRadius: "12px", margin: "0 auto", width: "80vw" }}>
+    <div dir="rtl" style={{ justifyContent: 'center', background: "white", padding: "24px", borderRadius: "12px", margin: "0 auto", width: "80vw" }}>
       {/* לוגו ושם קמפיין */}
       <div style={{ display: "flex", alignItems: "center" }}>
-        <img src={`${IMAGE_URL}/${(campaign.ngo as unknown as Ngo).logoUrl}`} alt="ngo logo" style={{ width: "60px", height: "60px", borderRadius: "50%" }} />
-        <h1 style={{ flex:1, fontSize: '3rem', color: "#000000ff", textAlign: 'center'}}>{campaign.title}</h1>
+        <img src={`${IMAGE_URL}/${(campaign.ngo as unknown as Ngo).logoUrl}`} alt="ngo logo" style={{ width: "130px", height: "auto", borderRadius: "50%" }} />
+        <h1 style={{ flex: 1, fontSize: '3rem', color: "#000000ff", textAlign: 'center' }}>{campaign.title}</h1>
       </div>
-
+      
       {/* פס התקדמות */}
       <div style={{ marginTop: "20px" }}>
         <div style={{ width: "100%", background: "#e5e7eb", borderRadius: "10px", height: "14px" }}>
@@ -50,27 +71,20 @@ const CampaignDetails: React.FC = () => {
         </button>
 
         <button style={{ flex: 1, backgroundColor: "#4b5563", color: "white", padding: "10px", borderRadius: "8px", border: "none" }}
-        onClick={() => setShowCryptoPay(true)}>
+          onClick={() => setShowCryptoPay(true)}>
           תרומה בקריפטו
         </button>
       </div>
-    <Modal show={showCryptoPay} component={<CryptoPayment close={() => setShowCryptoPay(false)} campaignId={campaign._id!} userId={campaign.ngo} />}/>  
-    <Modal show={showCreditPay} component={<CreditPayment close={() => setShowCreditPay(false)} campaignId={campaign._id!} userId={campaign.ngo} />}/>
-      
+      <Modal show={showCryptoPay} component={<CryptoPayment close={() => setShowCryptoPay(false)} campaignId={campaign._id!} userId={campaign.ngo} />} />
+      <Modal show={showCreditPay} component={<CreditPayment close={() => setShowCreditPay(false)} campaignId={campaign._id!} userId={campaign.ngo} />} />
+
       {/* תמונות וסרטון */}
       <div style={{ display: "flex", gap: "10px", marginTop: "20px", overflowX: "hidden" }}>
         <SimpleGallery
           images={campaign.images}
           imageBaseUrl={IMAGE_URL}   // אם צריך
           movie={campaign.movie}
-        /> 
-        {/* {
-          campaign.images.map(image => <img key={image} src={`${IMAGE_URL}/${image}`} alt="main" style={{ width: "180px", height: "120px", borderRadius: "8px", objectFit: "cover" }} />)
-        }
-        
-        {campaign.movie && (
-          <video src={campaign.movie} controls style={{ width: "250px", borderRadius: "8px" }} />
-        )} */}
+        />
       </div>
 
       {/* טאבים */}

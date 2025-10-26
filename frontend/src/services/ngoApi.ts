@@ -32,3 +32,9 @@ export async function editNgo(ngo: Ngo, token: string, logo: File|null) {
   }
   return res.json();
 }
+
+export const getNgoList = async (): Promise<{ items: Ngo[] }> => {
+  const res = await axios.get<{ items: Ngo[] }>(`${API_URL}/ngos`);
+
+  return res.data; // ✅ עכשיו TypeScript יודע שזה NgoProfileResponse
+};

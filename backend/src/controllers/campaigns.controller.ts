@@ -39,7 +39,52 @@ export const createCampaign = async (req: Request, res: Response) => {
     
     res.status(400).json({ message: err.message });
   }
-};
+}
+
+/**
+ * עדכון קמפיין
+ * 
+ * @param req 
+ * @param res 
+ */
+export const updateCampaign = async (req: Request, res: Response) => {
+  const {campaignId} = req.params;
+  const { title, description, startDate, endDate, tags, goal, raised, isActive, blockchainTx, existingImages:images, existingMovie: movie, existingMainImage: mainImage } = req.body;
+
+  const user :{_id:string, ngoId:string}= (req as any).user;
+  console.log('existingImages', images);
+  
+  try {
+    const mediaFiles = req.files as MediaFiles
+    const newImages:string[] = mediaFiles.images? mediaFiles.images.map((file:Express.Multer.File) => file.filename) : []
+    const newMovie:string|null = mediaFiles.movie? mediaFiles.movie[0].filename : null
+    const newMainImage:string|null = mediaFiles.mainImage? mediaFiles.mainImage[0].filename : null
+    
+    console.log('movie', movie,newMovie, movie?movie:newMovie);
+    console.log('mainImage',mainImage,newMainImage,  mainImage||newMainImage);
+    const campaign = await CampaignService.update({
+      _id:campaignId,
+      title,
+      description,
+      raised,
+      startDate, 
+      endDate,
+      blockchainTx,
+      goal,
+      tags,
+      images: [...images, ...newImages],
+      movie: movie?movie:newMovie,
+      mainImage: mainImage?mainImage:newMainImage,
+      ngo: user.ngoId,
+      isActive
+    });
+    res.status(201).json(campaign);
+  } catch (err: any) {
+    console.log(err);
+    
+    res.status(400).json({ message: err.message });
+  }
+}
 
 /**
  * 📋 הבאת רשימת קמפיינים עם תמיכה ב־חיפוש/סינון
