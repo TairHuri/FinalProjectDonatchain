@@ -9,6 +9,7 @@ export interface Ngo {
     phone?: string;
     email?: string;
     logoUrl?: string;
+    certificate:string;
     createdBy: string;
     createdAt: Date;
     ngoNumber:string;

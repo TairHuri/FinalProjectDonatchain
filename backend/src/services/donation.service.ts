@@ -170,6 +170,40 @@ export default {
 },
 
   async listByCampaign(campaignId: string) {
-  return Donation.find({ campaign: campaignId }).populate('donor').sort({ createdAt: -1 });
+    const objId = new mongoose.Types.ObjectId(campaignId);
+    return Donation.aggregate([
+      {
+        $match:{campaign: objId}
+      },
+      {
+        $addFields:{
+          firstName:{
+            $cond:{
+              if:{$eq:["$anonymous", true]},
+              then: 'anonymous',
+              else: '$firstName'
+            }
+          },
+          lastName:{
+            $cond:{
+              if:{$eq:["$anonymous", true]},
+              then: 'anonymous',
+              else: '$lastName'
+            },
+          }
+        }
+      },
+      {
+        $project:{
+          firstName: 1,
+          lastName: 1,
+          amount:1,
+          currency:1,
+          comment:1,
+          txHash: 1,
+        }
+      }
+    ])
+  
 }
 };

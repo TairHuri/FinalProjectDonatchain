@@ -3,25 +3,25 @@ import { useCampaigns } from "../contexts/CampaignsContext";
 import { creditDonation } from "../services/api";
 import { buttonStyle, fildsPositionStyle, inputStyle, labelStyle } from "../css/dashboardStyles";
 import Spinner, { useSpinner } from "./Spinner";
-import type { Phone } from "lucide-react";
-import type { style } from "framer-motion/client";
+
 
 const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campaignId: string, userId: string }) => {
   const date = new Date()
   const { updateCampaign } = useCampaigns();
   //const { ngo } = useAuth();
-  const [ccForm, setCcform] = useState({phone: '', email: '', firstName: '', lastName: '', comment: '', amount: 0, currency: 'ILS', ccNumber: '', expYear: date.getFullYear(), expMonth: 1, cvv: 0, ownerId: '', ownername: '' })
+  const [ccForm, setCcform] = useState({phone: '', email: '', firstName: '', lastName: '', comment: '', amount: 0, currency: 'ILS', ccNumber: '', expYear: date.getFullYear(), expMonth: 1, cvv: 0, ownerId: '', ownername: '', anonymous:false })
   const [message, setMessage] = useState<string | null>(null)
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const [txHash, setTxHash] = useState<string>('')
   const {isLoading, start, stop} = useSpinner()
-  const [agree, setAgree] = useState(false);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement| HTMLTextAreaElement | HTMLSelectElement>) => {
     const { id, value } = event.target;
     setCcform({ ...ccForm, [id]: value })
   }
-
+  const handleAnonymouse = (checked:boolean) => {
+    setCcform({...ccForm, anonymous:checked})
+  }
   const handlePayment = async (event: React.FormEvent) => {
     event.preventDefault();
 
@@ -83,7 +83,7 @@ const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campa
       </div>
       <div dir="rtl">
       <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", fontFamily: 'calibri'}}>
-        <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)}/>
+        <input type="checkbox" checked={ccForm.anonymous} onChange={(e) => handleAnonymouse(e.target.checked)}/>
         הישארו אנונימיים - אני רוצה שבעמוד הקמפיין יופיע רק סכום התרומה</label>
       </div>
       <div>

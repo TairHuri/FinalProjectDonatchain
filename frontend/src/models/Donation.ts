@@ -10,8 +10,9 @@ export interface Donation {
   currency: string;
   method?: string; // e.g. 'card','wallet','onchain'
   txHash?: string; // blockchain tx if onchain
-  comment?: string
+  comment?: string;
   createdAt?: Date;
+  anonymous?: boolean
 }
 
 export interface CreditDonation extends Donation {

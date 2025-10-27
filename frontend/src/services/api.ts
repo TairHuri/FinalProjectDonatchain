@@ -3,16 +3,32 @@ import type { Ngo } from "../models/Ngo";
 import type { User } from "../models/User";
 import type { Campaign } from "../models/Campaign";
 import type { CreditDonation, Donation } from "../models/Donation";
+import type { NgoMediaType } from "../pages/RegistrationNgo";
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
 
 
-export async function registerUserNewNgo(user: User, ngo: Ngo) {
+export async function registerUserNewNgo(user: User, ngo: Ngo, media: NgoMediaType) {
+  const formData = new FormData();
+  formData.append("userJson", JSON.stringify(user));
+  formData.append("name", ngo.name);
+  formData.append("description", ngo.description);
+  formData.append("ngoNumber", ngo.ngoNumber);
+  formData.append("certificate", media.certificate!);
+  if (ngo.website) formData.append("website", ngo.website);
+  if (ngo.bankAccount) formData.append("bankAccount", ngo.bankAccount);
+  if (ngo.wallet) formData.append("wallet", ngo.wallet);
+  if (ngo.address) formData.append("address", ngo.address);
+  if (ngo.phone) formData.append("phone", ngo.phone);
+  if (ngo.email) formData.append("email", ngo.email);
+
+  if (media.logoUrl) formData.append("logo", media.logoUrl);
+
+
   try {
     const res = await fetch(`${API_URL}/auth/register/newngo`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ user, ngo }),
-    });
+      body: formData,
+    })
 
     const json = await res.json(); // נקרא תמיד את התגובה, גם אם status != 200
 
@@ -52,13 +68,13 @@ export const getNgoList = async (): Promise<{ items: Ngo[] }> => {
   return res.data; // ✅ עכשיו TypeScript יודע שזה NgoProfileResponse
 };
 
-export const getNgoProfile = async (token: string, ngoId:string): Promise<Ngo> => {
-  const res = await axios.get<Ngo>(`${API_URL}/ngos/${ngoId}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+// export const getNgoProfile = async (token: string, ngoId:string): Promise<Ngo> => {
+//   const res = await axios.get<Ngo>(`${API_URL}/ngos/${ngoId}`, {
+//     headers: { Authorization: `Bearer ${token}` },
+//   });
 
-  return res.data; // ✅ עכשיו TypeScript יודע שזה NgoProfileResponse
-};
+//   return res.data; // ✅ עכשיו TypeScript יודע שזה NgoProfileResponse
+// };
 export async function loginUser(data: { email: string; password: string }) {
   const res = await fetch("http://localhost:4000/api/auth/login", {
     method: "POST",
@@ -83,9 +99,9 @@ export async function deleteUserApi(userId: string) {
   return res.json();
 }
 
-export async function createCampaign(data: Omit<Campaign, "raised">, token: string, images: File[]|null, movie: File|null,mainImage: File|null) {
+export async function createCampaign(data: Omit<Campaign, "raised">, token: string, images: File[] | null, movie: File | null, mainImage: File | null) {
   // content type: multipart/formdata
-  
+
   const formData = new FormData()
   formData.append("title", data.title)
   formData.append("description", data.description)
@@ -133,38 +149,8 @@ export const getCampaigns = async (ngoId?: string) => {
   const data = await res.json();
   return data;
 }
-export const getDonations = async (campaignId: string) => {
-  const url = `${API_URL}/donations/campaign?campaignId=${campaignId}`  // שים לב לשימוש ב-query param
-  try {
-    const res = await fetch(url);
-    if (!res.ok) {
-      const text = await res.text();
-      console.error("Failed fetching campaigns:", text);
-      return [];
-    }
-    const data = await res.json();
-    return data;
-  } catch (error) {
-    console.log(error);
-    return []
-  }
-}
-export const getDonationsByNgo = async (ngoId: string) => {
-  const url = `${API_URL}/donations/ngo?ngoId=${ngoId}`  // שים לב לשימוש ב-query param
-  try {
-    const res = await fetch(url);
-    if (!res.ok) {
-      const text = await res.text();
-      console.error("Failed fetching donations per ngo:", text);
-      return [];
-    }
-    const data = await res.json();
-    return data;
-  } catch (error) {
-    console.log(error);
-    return []
-  }
-}
+
+
 export const getCampaign = async (campaignId: string) => {
   const url = `${API_URL}/campaigns/${campaignId}`
 

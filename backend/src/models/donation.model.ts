@@ -10,7 +10,8 @@ export interface DonationIF {
   currency: string;
   method: string; // e.g. 'card','wallet','onchain'
   txHash?: string; // blockchain tx if onchain
-  comment?: string
+  comment?: string;
+  anonymous?:boolean;
 }
 
 export interface IDonation extends Document, DonationIF {
@@ -32,7 +33,8 @@ const donationSchema = new Schema(
     currency: { type: String, default: 'ILS' },
     method: { type: String, default: 'card' },
     txHash: { type: String },
-    comment: { type: String }
+    comment: { type: String },
+    anonymouse: { type: Boolean, default:false },
   },
   { timestamps: true }
 );

@@ -10,7 +10,7 @@ import NgoUsers from "../components/NgoUsers";
 import UserPersonalDetails from "../components/UserPersonalDetails";
 import CreateCampaign from "../components/CreateCampaign";
 import NgoDetails from "../components/NgoDetails";
-import { getDonationsByNgo } from "../services/api";
+import { getDonationsByNgo } from "../services/donationApi";
 import { useNavigate } from "react-router-dom";
 import EditCampaign from "../components/EditCampaign";
 

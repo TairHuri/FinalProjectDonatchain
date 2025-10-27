@@ -11,12 +11,12 @@ export interface InputTextProps {
   value: string | number,
   className?: string
   isMultiLine?: boolean
-  list?:string
-  disabled?:boolean
-  required?:boolean
+  list?: string
+  disabled?: boolean
+  required?: boolean
 }
 
-const InputText = ({ disabled=false, required=true, list, className, field, value, placeholder, onChange, type = "text", isMultiLine = false }: InputTextProps) => {
+const InputText = ({ disabled = false, required = true, list, className, field, value, placeholder, onChange, type = "text", isMultiLine = false }: InputTextProps) => {
   if (isMultiLine) {
     return (
       <textarea
@@ -46,9 +46,9 @@ const InputText = ({ disabled=false, required=true, list, className, field, valu
 export interface InputProps extends InputTextProps {
   Icon?: ReactNode;
   label: string
-  
+
 }
-export const Input = ({disabled, list, field, value, label, placeholder, onChange, type, Icon, isMultiLine = false }: InputProps) => {
+export const Input = ({ disabled, list, field, value, label, placeholder, onChange, type, Icon, isMultiLine = false }: InputProps) => {
   return (
     <div style={{ direction: 'rtl' }}>
       <label>{label}</label>
@@ -62,19 +62,23 @@ export const Input = ({disabled, list, field, value, label, placeholder, onChang
 
 
 
-export interface InputWithIconProps {
+export interface InputIconProps {
   placeholder?: string,
-  field: string,
+  field: string|any,
+  className?: string
+  Icon?: ReactNode;
+  label: string;
+}
+export interface InputWithIconProps extends InputIconProps {
+
   onChange: (field: string, value: string | number) => void,
   type?: "text" | 'number' | 'email' | 'tel' | 'password',
   value: string | number,
-  className?: string
-  isMultiLine?: boolean
-  Icon?: ReactNode;
-  label: string
+  isMultiLine?: boolean;
+  field: string;
 }
 
-export const InputWithIcon = ({ Icon, label, className, field, value, placeholder, onChange, type = "text", isMultiLine = false }: InputWithIconProps) => {
+export const InputWithIcon = ({ Icon, label, className, field, value, placeholder, onChange, type = "text", isMultiLine = false, }: InputWithIconProps) => {
   const multiLine = (<textarea
     value={value}
     className={className}
@@ -92,14 +96,40 @@ export const InputWithIcon = ({ Icon, label, className, field, value, placeholde
   />)
 
   return (
-    <div style={{ position: "relative", display:'flex', alignItems:'center', gap:'0.7rem' }}>
+    <div style={{ position: "relative", display: 'flex', alignItems: 'center', gap: '0.7rem' }}>
       {Icon}
       {isMultiLine ? multiLine : singleLine}
-      <label style={{minWidth:'16vw'}}>{label}</label>
+      <label style={{ minWidth: '16vw' }}>{label}</label>
     </div>
 
   )
 }
 
+export interface InputFileWithIconProps <T,> extends InputIconProps {
+  onChange: (field: keyof T, value: FileList | null) => void,
+  value: FileList|File|null ,
+  multiple?: boolean
+  accept?: string
+  field: keyof T;
+}
+export const InputFileWithIcon =<T,>({ Icon, label, className, field, value, placeholder, onChange, accept, multiple = false, }: InputFileWithIconProps<T>) => {
+  return (
+    <div style={{ position: "relative", display: 'flex', alignItems: 'center', gap: '0.7rem' }}>
+      {Icon}
+      <input
+        type="file"
+        // file={value}
+        className={className}
+        onChange={(e) => onChange(field, e.target.files)}
+        placeholder={placeholder || label}
+        style={inputLogin}
+        accept={accept}
+        multiple={multiple}
+      />
+      <label style={{ minWidth: '16vw' }}>{label}</label>
+    </div>
+
+  )
+}
 
 export default InputText

@@ -17,6 +17,7 @@ import AboutRules from "./pages/AboutRules"
 
 import './App.css'
 import Ngos from "./pages/Ngos";
+import NgoPageForUsers from "./components/NgoPageForUsers";
 
 const App: React.FC = () => {
   return (
@@ -32,7 +33,6 @@ const App: React.FC = () => {
               <Route path="/" element={<Home />} />
               <Route path="/discover" element={<Discover />} />
               <Route path="/donate" element={<Donate />} />
-              <Route path="/campaigns" element={<Campaigns />} />
               <Route path="/about" element={<About />} />
               <Route path="/login/ngo" element={<LoginNgo />} />
               <Route path="/registration/ngo" element={<RegistrationNgo />} />
@@ -40,8 +40,11 @@ const App: React.FC = () => {
               <Route path="/ngo/home" element={<NgoDashboard />} />
               <Route path="/campaign/:id" element={<CampaignDetails />} />
               <Route path="/about/rules" element={<AboutRules />} />
+              <Route path="/campaigns" element={<Campaigns />} />
               <Route path="/campaigns/new" element={<NewCampaign />} />
+              <Route path="/campaigns/:ngoId" element={<Campaigns />} />
               <Route path="/ngos" element={<Ngos />} />
+              <Route path="/ngos/:id" element={<NgoPageForUsers />} />
             </Routes>
           </div>
         </div>

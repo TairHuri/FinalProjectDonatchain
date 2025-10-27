@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Grid, List } from "lucide-react"; // אייקונים
+import { Link } from "react-router-dom";
 import NgoItem, { NgoFlexItem } from "../components/NgoItem";
 import { getNgoList } from "../services/ngoApi";
 import type { Ngo } from "../models/Ngo";
@@ -24,13 +25,17 @@ export default function DonorsNgo() {
     }, [])
     const filteredNgos = ngos
         .filter((ngo) => ngo.name.toLowerCase().includes(search.toLowerCase()))
-        .sort((a, b) =>{
-            if(sortBy === "name"){
+        .sort((a, b) => {
+            if (sortBy === "name") {
                 return a.name.localeCompare(b.name)
-            }else if(sortBy === "createdOld"){
+            } else if (sortBy === "createdOld") {
                 return a.createdAt.toString().localeCompare(b.createdAt.toString())
-            }else{
+            } else if(sortBy === 'createdNew') {
                 return b.createdAt.toString().localeCompare(a.createdAt.toString())
+            }else{
+                const ngoa = (a as any)
+                const ngob = (b as any)
+                return ngob.ngoCampaignsCount - ngoa.ngoCampaignsCount
             }
         }
         );
@@ -54,6 +59,7 @@ export default function DonorsNgo() {
                     <option value="name">מיין לפי שם</option>
                     <option value="createdOld">מיין לפי תאריך הקמה מהישן</option>
                     <option value="createdNew">מיין לפי תאריך הקמה מהחדש</option>
+                    <option value="ngoCampaignsCount">מיין לפי מספר קמפיינים  </option>
                 </select>
 
                 <input
@@ -107,9 +113,24 @@ export default function DonorsNgo() {
                         gap: "20px",
                     }}
                 >
-                    {filteredNgos.map((ngo) =>
-                        <NgoItem key={ngo._id} ngo={ngo} />
-                    )}
+                    {filteredNgos.map((ngo) => {
+                        return (
+                            <Link
+                                to={`/ngos/${ngo._id}`}
+                                key={ngo._id}
+                                style={{
+                                    display: "block",
+                                    background: "white",
+                                    borderRadius: "12px",
+                                    boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+                                    overflow: "hidden",
+                                    textDecoration: "none",
+                                    color: "inherit",
+                                }}
+                            >
+                                <NgoItem ngo={ngo} />
+                            </Link>)
+                    })}
                 </div>
             ) : (
                 <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>

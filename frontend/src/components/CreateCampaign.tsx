@@ -6,7 +6,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { useCampaigns } from "../contexts/CampaignsContext";
 
 import { cardStyle, inputStyle, primaryBtnStyle } from "../css/dashboardStyles";
-import { getNgoProfile } from "../services/api";
+import { getNgoById } from "../services/ngoApi";
 import type { Ngo } from "../models/Ngo";
 import type { User } from "../models/User";
 import Spinner, { useSpinner } from "./Spinner";
@@ -127,7 +127,7 @@ async function ensureSepolia() {
 
         useEffect(() => {
             const loadNgo = async (user: User) => {
-                const ngo = await getNgoProfile(user?.token!, user?.ngoId)
+                const ngo = await getNgoById(user?.ngoId)
                 setNgo(ngo)
             }
             if (user && user.token) {

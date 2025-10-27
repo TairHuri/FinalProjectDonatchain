@@ -7,9 +7,12 @@ import { ServerError } from '../middlewares/error.middleware';
 export const getDonationsByCampaign = async (req: Request, res: Response) => {
   try {
     const { campaignId } = req.query;
-    const donatios = await Donation.find({ campaign: campaignId })
+    if(!campaignId)return res.status(400).send({message: 'missing campaignId'})
+    const donatios = await donationService.listByCampaign(campaignId.toString())  //Donation.find({ campaign: campaignId })
     res.send(donatios)
   } catch (error) {
+    console.log(error);
+    
     res.status(500).send(error)
   }
 }
@@ -29,13 +32,13 @@ export const creditDonate = async (req: Request, res: Response) => {
   const {
     amount, ccNumber, expYear, expMonth, cvv,
     ownerId, ownername, currency,
-    phone, email, firstName, lastName, comment
+    phone, email, firstName, lastName, comment, anonymous
   } = req.body;
   const campaignId = req.params.id;
   try {
     const donation = await donationService.creditDonate({
       amount, ccNumber, expYear, expMonth, cvv, ownerId, ownername, currency,
-      phone, email, firstName, lastName, comment, campaign: campaignId
+      phone, email, firstName, lastName, comment, campaign: campaignId, anonymous
     }, campaignId)
 
     // החזרת תגובה לפרונט
@@ -48,12 +51,12 @@ export const creditDonate = async (req: Request, res: Response) => {
 };
 
 export const cryptoDonate = async (req: Request, res: Response) => {
-  const { phone, email, firstName, lastName, amount,  currency, method, txHash, comment } = req.body;
+  const { phone, email, firstName, lastName, amount,  currency, method, txHash, comment, anonymous } = req.body;
   const campaignId = req.params.id;
 
   try {
    const donation = await  donationService.cryptoDonate(
-      { phone, email, firstName, lastName, amount, campaign:campaignId, currency, method, txHash, comment },
+      { phone, email, firstName, lastName, amount, campaign:campaignId, currency, method, txHash, comment, anonymous },
       campaignId
     )
 

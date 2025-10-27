@@ -1,6 +1,6 @@
 import { Schema, model, Document } from 'mongoose';
 
-export interface INgo extends Document {
+export interface BaseNgo {
   name: string;
   ngoNumber:string;
   description: string;
@@ -11,6 +11,9 @@ export interface INgo extends Document {
   phone?: string;
   email?: string;
   logoUrl?: string;
+  certificate: string;
+}
+export interface INgo extends Document, BaseNgo {
   createdBy?: Schema.Types.ObjectId|null;
   createdAt: Date;
 }
@@ -27,6 +30,7 @@ const ngoSchema = new Schema(
     bankAccount: String,
     wallet: String,
     logoUrl: String,
+    certificate: {type: String, required:true},
     createdBy: { type: Schema.Types.ObjectId, ref: 'User' }
   },
   { timestamps: true }

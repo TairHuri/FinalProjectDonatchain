@@ -38,3 +38,11 @@ export const getNgoList = async (): Promise<{ items: Ngo[] }> => {
 
   return res.data; // ✅ עכשיו TypeScript יודע שזה NgoProfileResponse
 };
+
+export const getNgoById = async ( ngoId:string): Promise<Ngo> => {
+  const res = await axios.get<Ngo>(`${API_URL}/ngos/${ngoId}`, {
+
+  });
+
+  return res.data; // ✅ עכשיו TypeScript יודע שזה NgoProfileResponse
+};

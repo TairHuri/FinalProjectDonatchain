@@ -5,7 +5,7 @@ import type { Ngo } from "../models/Ngo";
 import InputText from "./gui/InputText";
 import { editNgo } from "../services/ngoApi";
 
-const UserPersonalDetails = ({ editMode, setEditMode }: { editMode: string, setEditMode: (mode: "view" | "edit" | "password") => void }) => {
+const NgoPersonalDetails = ({ editMode, setEditMode }: { editMode: string, setEditMode: (mode: "view" | "edit" | "password") => void }) => {
     const { ngo: ngoDetails, user, updateNgo } = useAuth()
     
     if (!user || !ngoDetails) return <p>לא בוצעה התחברות לעמותה</p>
@@ -97,4 +97,4 @@ const UserPersonalDetails = ({ editMode, setEditMode }: { editMode: string, setE
 }
 
 
-export default UserPersonalDetails;
+export default NgoPersonalDetails;

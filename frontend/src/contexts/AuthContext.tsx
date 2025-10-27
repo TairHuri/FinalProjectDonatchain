@@ -1,8 +1,9 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
-import { loginUser, getNgoProfile, registerUserExistingNgo } from "../services/api";
+import { loginUser, registerUserExistingNgo } from "../services/api";
 
 import type { User } from "../models/User";
 import type { Ngo } from "../models/Ngo";
+import { getNgoById } from "../services/ngoApi";
 
 
 interface AuthContextType {
@@ -64,7 +65,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // setUser({ ...res.user, 'token': res.token });
         // localStorage.setItem("userData", JSON.stringify({ ...res.user, 'token': res.token }));
 
-        const ngo: Ngo = await getNgoProfile(res.token, res.user?.ngoId);
+        const ngo: Ngo = await getNgoById(res.user?.ngoId);
         if (ngo) {
           updateNgo(ngo)
         }

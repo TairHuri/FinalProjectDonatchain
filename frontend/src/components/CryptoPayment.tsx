@@ -20,7 +20,7 @@ const CryptoPayment = ({ close, campaignId }: { close: () => void, campaignId: s
   const { disconnect } = useDisconnect();
   const { donateCrypto, waiting, isPending, isSuccess, error, hash } = useCryptoPayment()
   //const { ngo } = useAuth();
-  const [ccForm, setCcform] = useState<Donation>({comment:'', phone: '', email: '', firstName: '', lastName: '', amount: 0, campaign: campaignId, currency: 'ETH', method: 'crypto', txHash: '' })
+  const [ccForm, setCcform] = useState<Donation>({comment:'', phone: '', email: '', firstName: '', lastName: '', amount: 0, campaign: campaignId, currency: 'ETH', method: 'crypto', txHash: '', anonymous:false })
   const [message, setMessage] = useState<string | null>(null)
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const { isLoading, start, stop } = useSpinner()
@@ -30,7 +30,9 @@ const CryptoPayment = ({ close, campaignId }: { close: () => void, campaignId: s
     const { id, value } = event.target;
     setCcform({ ...ccForm, [id]: value })
   }
-
+  const handleAnonymouse = (checked:boolean) => {
+    setCcform({...ccForm, anonymous:checked})
+  }
   useEffect(() => {
     if (isSuccess && !isPending && hash) {
       saveDonation()
@@ -103,7 +105,7 @@ const CryptoPayment = ({ close, campaignId }: { close: () => void, campaignId: s
       </div>
       <div dir="rtl">
       <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", fontFamily: 'calibri'}}>
-        <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)}/>
+        <input type="checkbox" checked={ccForm.anonymous} onChange={(e) => handleAnonymouse(e.target.checked)}/>
         הישארו אנונימיים - אני רוצה שבעמוד הקמפיין יופיע רק סכום התרומה</label>
       </div>
       <div>

@@ -25,6 +25,7 @@ const NgoItem = ({ ngo, isFlex=false }: { ngo: Ngo, isFlex?:boolean }) => {
                 style={{ height: "80px", objectFit: "contain", marginBottom: "12px" }}
             />
             <h2 style={{ fontWeight: "bold", fontSize: "18px" }}>{ngo.name}</h2>
+            
             <p style={{ fontSize: "14px", color: "#6b7280" }}>{ngo.website}</p>
             <p style={{ fontSize: "14px", color: "#6b7280" }}>📍 {ngo.address}</p>
         </div>

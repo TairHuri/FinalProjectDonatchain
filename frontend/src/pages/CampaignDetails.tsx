@@ -9,6 +9,7 @@ import type { Ngo } from "../models/Ngo";
 import { type Campaign } from "../models/Campaign";
 import { getCampaign } from "../services/api";
 import { useAuth } from "../contexts/AuthContext";
+import CampaignDonations from "../components/campaign/CampaignDonations";
 
 const IMAGE_URL = import.meta.env.VITE_IMAGES_URL || "http://localhost:4000/images";
 
@@ -75,8 +76,8 @@ const CampaignDetails: React.FC = () => {
           תרומה בקריפטו
         </button>
       </div>
-      <Modal show={showCryptoPay} component={<CryptoPayment close={() => setShowCryptoPay(false)} campaignId={campaign._id!} userId={campaign.ngo} />} />
-      <Modal show={showCreditPay} component={<CreditPayment close={() => setShowCreditPay(false)} campaignId={campaign._id!} userId={campaign.ngo} />} />
+      <Modal show={showCryptoPay} onClose={() => setShowCryptoPay(false)} component={<CryptoPayment close={() => setShowCryptoPay(false)} campaignId={campaign._id!} userId={campaign.ngo} />} />
+      <Modal show={showCreditPay} onClose={() => setShowCreditPay(false)}component={<CreditPayment close={() => setShowCreditPay(false)} campaignId={campaign._id!} userId={campaign.ngo} />} />
 
       {/* תמונות וסרטון */}
       <div style={{ display: "flex", gap: "10px", marginTop: "20px", overflowX: "hidden" }}>
@@ -103,8 +104,8 @@ const CampaignDetails: React.FC = () => {
 
         <div style={{ padding: "16px" }}>
           {activeTab === "project" && <p>{campaign.description}</p>}
-          {activeTab === "ngo" && <p>מידע על העמותה (נמשוך בעתיד מפרופיל העמותה).</p>}
-          {activeTab === "donations" && <p>רשימת תרומות אחרונות (נבנה טבלה).</p>}
+          {activeTab === "ngo" && <p>{(campaign.ngo as unknown as Ngo).description}</p>}
+          {activeTab === "donations" && <CampaignDonations campaignId={campaign._id!}/>}
         </div>
       </div>
     </div>

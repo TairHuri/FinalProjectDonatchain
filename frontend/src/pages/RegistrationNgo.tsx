@@ -8,6 +8,7 @@ import NewNgo from "../components/NewNgo";
 import {useNavigate} from 'react-router-dom'
 import { buttonStyle, iconLogin, ngoListStyle, toggleGroup, toggleOff, toggleOn } from "../css/dashboardStyles";
 
+export type NgoMediaType={logoUrl:File|null, certificate:File|null}
 export default function RegistrationNgo() {
   const nav = useNavigate();
   const [agree, setAgree] = useState(false);
@@ -35,7 +36,9 @@ export default function RegistrationNgo() {
     createdAt: new Date(),
     //token: "",
     ngoNumber: "",
+    certificate:'',
   });
+  const [media, setMedia] = useState<NgoMediaType>({logoUrl: null, certificate:null})
   const [ngoList, setNgoList] = useState<Ngo[]>([])
 
   const [newNgo, setNewNgo] = useState<boolean>(false)
@@ -46,6 +49,9 @@ export default function RegistrationNgo() {
   };
   const handleChangeNgo = (field: string, value: string | number) => {
     setNgo({ ...ngo, [field]: value });
+  };
+  const handleChangeMedia = (field: keyof NgoMediaType, value: FileList|null) => {
+    setMedia({ ...media, [field]: value?value[0]:null });
   };
   const handleChangeData = (
    field: string, value: string | number
@@ -76,7 +82,7 @@ export default function RegistrationNgo() {
     try {
       let res;
       if (newNgo) {
-        res = await registerUserNewNgo(user, ngo);
+        res = await registerUserNewNgo(user, ngo, media);
       } else {
         res = await registerUserExistingNgo(user);
       }
@@ -133,7 +139,7 @@ export default function RegistrationNgo() {
             Icon={<Lock style={iconLogin}/>} />
 
           <ToggleButton state={newNgo} labelOn="צור עמותה" labelOff="התחבר לעמותה קיימת" onToggle={() => setNewNgo(!newNgo)} />
-          {newNgo ? <NewNgo ngo={ngo} handleChangeNgo={handleChangeNgo} />
+          {newNgo ? <NewNgo ngo={ngo} media={media} handleChangeNgo={handleChangeNgo} handleChangeMedia={handleChangeMedia}/>
             :
             <div>
               <Input type="text" list="ngoList" onChange={handleChangeData} label="" field="ngoId" value={user.ngoId} disabled={ngoList.length == 0} required={true} />

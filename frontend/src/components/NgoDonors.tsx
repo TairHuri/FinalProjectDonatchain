@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useCampaigns } from "../contexts/CampaignsContext";
 import CampaignItem, { CampaignDonors } from "./CampaignItem";
 import type { Donation } from "../models/Donation";
-import { getDonations, getDonationsByNgo } from "../services/api";
+
+import { getDonationsByCampaign, getDonationsByNgo} from "../services/donationApi";
 import { useAuth } from "../contexts/AuthContext";
 import { buttonStyle } from "../css/dashboardStyles";
 import { hover } from "framer-motion";
@@ -14,7 +15,7 @@ const NgoDonors = () => {
     const {campaigns} = useCampaigns()
     const [donations, setDonations] = useState<Donation[]>([]);
     const loadDonors = async (campaignId:string) => {
-        const donations = await getDonations(campaignId);
+        const donations = await getDonationsByCampaign(campaignId);
         setDonations(donations);
     }
     const loadNgoDonors = async () => {
