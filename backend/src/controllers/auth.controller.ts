@@ -93,7 +93,11 @@ export const login = async (req: Request, res: Response) => {
       return res.status(400).json({ success: false, message: "אימייל או סיסמה שגויים" });
     }
 
-    const token = AuthService.signJwt({ sub: user._id.toString(), ngoId: user.ngoId.toString(), role: user.roles });
+    const token = AuthService.signJwt({
+  sub: user._id.toString(),
+  ngoId: user.ngoId ? user.ngoId.toString() : null,
+  role: user.roles,
+});
     const { password: pwd, ...rest } = (user as any)._doc as IUser;
     res.json({ success: true, token, user: rest });
   } catch (err: any) {
