@@ -17,7 +17,7 @@ const LoginNgo: React.FC = () => {
 
     const res = await login({ email, password });
     if (res.success) {
-      // ✅ נבדוק אם המשתמש הוא מנהל מערכת
+      //  נבדוק אם המשתמש הוא מנהל מערכת
       const storedUser = localStorage.getItem("userData");
       const user = storedUser ? JSON.parse(storedUser) : null;
 

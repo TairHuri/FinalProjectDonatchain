@@ -15,7 +15,7 @@ import CampaignDetails from "./pages/CampaignDetails";
 import NewCampaign from "./pages/NewCampaign";
 import AboutRules from "./pages/AboutRules";
 import AdminDashboard from "./pages/admin/AdminDashboard";
-import AdminRoute from "./components/AdminRoute"; // ✅ נוספה שורה זו
+import AdminRoute from "./components/AdminRoute"; 
 
 import "./App.css";
 import Ngos from "./pages/Ngos";
