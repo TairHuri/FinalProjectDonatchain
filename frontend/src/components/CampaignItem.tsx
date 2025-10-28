@@ -21,7 +21,7 @@ const CampaignItem = ({ c, showButtons = false, edit = (id: string) => { }, view
     const FlexContainer = ({isGrid, children}:{isGrid:boolean, children:ReactNode[]}) => isGrid?<>{children}</> :<div className='flex-container_flex' >{children}</div>
     return (
         <div className={view == 'grid' ? 'grid_container_grid' : 'grid_container_flex'}>
-            <img src={`${IMAGE_URL}/${c.mainImage || c.ngo && (c.ngo as unknown as Ngo).logoUrl}`  } alt="קמפיין" className={view == 'grid' ? 'image-grid' : 'image-flex'} />
+            <img src={`${IMAGE_URL}/${c.mainImage || c.ngo && (c.ngo as unknown as Ngo).logoUrl || 'default-logo.png'}`  } alt="קמפיין" className={view == 'grid' ? 'image-grid' : 'image-flex'} />
             <FlexContainer isGrid={view == 'grid'}>
                 {
                     view == 'grid' ? (<h3 className='title-grid'>{c.title}</h3>)
