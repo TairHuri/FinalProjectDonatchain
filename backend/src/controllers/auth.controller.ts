@@ -20,7 +20,7 @@ export const registerNewNgo = async (req: Request, res: Response) => {
     if (ngoMediaFiles.certificate) {
       ngo.certificate = ngoMediaFiles.certificate[0].filename
     }
-    // ✅ ולידציה בסיסית לפני שמנסים ליצור משתמש
+    //  ולידציה בסיסית לפני שמנסים ליצור משתמש
     if (!user.email || !user.password || !user.name) {
       return res.status(400).json({ success: false, message: "חובה למלא שם, אימייל וסיסמה" });
     }
@@ -43,7 +43,7 @@ export const registerNewNgo = async (req: Request, res: Response) => {
       token,
     });
   } catch (err: any) {
-    console.error("❌ שגיאה בהרשמה:", err.message);
+    console.error(" שגיאה בהרשמה:", err.message);
     res.status(400).json({ success: false, message: err.message });
   }
 };
@@ -51,7 +51,7 @@ export const registerExistingNgo = async (req: Request, res: Response) => {
   try {
     const { user }: { user: IUser } = req.body;
 
-    // ✅ ולידציה בסיסית לפני שמנסים ליצור משתמש
+    // ולידציה בסיסית לפני שמנסים ליצור משתמש
     if (!user.email || !user.password || !user.name) {
       return res.status(400).json({ success: false, message: "חובה למלא שם, אימייל וסיסמה" });
     }
@@ -68,7 +68,7 @@ export const registerExistingNgo = async (req: Request, res: Response) => {
       token,
     });
   } catch (err: any) {
-    console.error("❌ שגיאה בהרשמה:", err.message);
+    console.error(" שגיאה בהרשמה:", err.message);
     res.status(400).json({ success: false, message: err.message });
   }
 };
@@ -101,7 +101,7 @@ export const login = async (req: Request, res: Response) => {
     const { password: pwd, ...rest } = (user as any)._doc as IUser;
     res.json({ success: true, token, user: rest });
   } catch (err: any) {
-    console.error("❌ שגיאה בהתחברות:", err.message);
+    console.error(" שגיאה בהתחברות:", err.message);
     res.status(500).json({ success: false, message: err.message });
   }
 };
