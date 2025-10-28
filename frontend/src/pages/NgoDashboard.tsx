@@ -13,9 +13,13 @@ import NgoDetails from "../components/NgoDetails";
 import { getDonationsByNgo } from "../services/donationApi";
 import { useNavigate } from "react-router-dom";
 import EditCampaign from "../components/EditCampaign";
+import TabsButtons, { useTabsButtons } from "../components/gui/TabsButtons";
+
+import '../css/NgoDashboard.css'
+import type { Campaign } from "../models/Campaign";
 
 
-
+const tabs = [{id:0, label:"כל הקמפיינים"}, {id:1, label:"קמפיינים פעילים"}, {id:2, label:"קמפיינים מתוכננים"}, {id:3, label:"קמפיינים לא פעילים"}, ]
 const NgoDashboard: React.FC = () => {
   const { user, logout } = useAuth();
   const { campaigns } = useCampaigns();
@@ -25,7 +29,15 @@ const NgoDashboard: React.FC = () => {
   >("dashboard");
   const [campaignId, setCampaignId] = useState<string|null>(null)
   console.log('campaigns', campaigns);
-
+  const {active, setActive} = useTabsButtons()
+  const now = new Date()
+    const campaignFilters :{[n: number]:(campaign:Campaign)=>boolean} = {
+    0:(campaign:Campaign) => true,
+    1: (campaign:Campaign) => campaign.startDate.toString().localeCompare(now.toISOString()) <= 0 && campaign.endDate.toString().localeCompare(now.toISOString()) >= 0,
+    2: (campaign:Campaign) => campaign.startDate.toString().localeCompare(now.toISOString()) >= 0 , 
+    3: (campaign:Campaign) => campaign.endDate.toString().localeCompare(now.toISOString ()) <= 0 , 
+    
+  }
   //const showCampaigns = useCallback(() => setActivePage("campaigns"), [])
 
   const [editMode, setEditMode] = useState<"view" | "edit" | "password">("view");
@@ -142,12 +154,16 @@ setCampaignId(id);
         {activePage === "profile" && <UserPersonalDetails editMode={editMode} setEditMode={setEditMode} />}
 
         {activePage === "campaigns" && (
-          <div>
+          <div className="ngo-campaigns-container">
             <h2 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "20px" }}>
               הקמפיינים שלי
             </h2>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+             
+              <TabsButtons active={active} setActive={setActive} tabs={tabs}/>
+            </div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: "20px" }}>
-              {campaigns.map((c) => (
+              {campaigns.filter(campaignFilters[active]).map((c) => (
                 <div key={c._id}>
                   <CampaignItem c={c} showButtons={true} edit={editCampaign}/>
                  
@@ -163,12 +179,12 @@ setCampaignId(id);
 };
 
 
-
 const statCard = (title: string, value: string | number) => (
   <div style={cardStyle}>
     <h3 style={{ fontSize: "16px", fontWeight: "bold" }}>{title}</h3>
     <p style={{ fontSize: "24px", color: "#059669", marginTop: "10px" }}>{value}</p>
   </div>
 );
+
 
 export default NgoDashboard;

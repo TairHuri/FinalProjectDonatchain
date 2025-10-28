@@ -10,13 +10,16 @@ import { type Campaign } from "../models/Campaign";
 import { getCampaign } from "../services/api";
 import { useAuth } from "../contexts/AuthContext";
 import CampaignDonations from "../components/campaign/CampaignDonations";
+import NgoDetailsCard from "../components/ngo/NgoDetailsCard";
+import ShareCampaign from "../components/campaign/ShareCampaign";
 
 const IMAGE_URL = import.meta.env.VITE_IMAGES_URL || "http://localhost:4000/images";
 
 const CampaignDetails: React.FC = () => {
   const params = useParams();
   const { campaigns } = useCampaigns();
-  const {user} = useAuth()
+  const { user } = useAuth()
+
 
   const [showCreditPay, setShowCreditPay] = useState<boolean>(false)
   const [showCryptoPay, setShowCryptoPay] = useState<boolean>(false)
@@ -25,24 +28,26 @@ const CampaignDetails: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"project" | "ngo" | "donations">("project");
   const [campaign, setCampaign] = useState<Campaign | null>(null)
 
-  const loadCampaign = async (id:string) => {
+
+  const loadCampaign = async (id: string) => {
     const campaign = await getCampaign(id);
     setCampaign(campaign)
   }
 
   useEffect(() => {
-    if(!params.id)return;
+    if (!params.id) return;
 
     const campaign = campaigns.find((c) => c._id! === (params.id));
     if (campaign) {
       setCampaign(campaign)
-    }else{
-    loadCampaign(params.id)
+    } else {
+      loadCampaign(params.id)
     }
-      
+
   }, [params])
 
   if (!campaign) return <p>קמפיין לא נמצא</p>;
+
 
   const percent = Math.min((campaign.raised / campaign.goal) * 100, 100);
   return (
@@ -52,7 +57,7 @@ const CampaignDetails: React.FC = () => {
         <img src={`${IMAGE_URL}/${(campaign.ngo as unknown as Ngo).logoUrl}`} alt="ngo logo" style={{ width: "130px", height: "auto", borderRadius: "50%" }} />
         <h1 style={{ flex: 1, fontSize: '3rem', color: "#000000ff", textAlign: 'center' }}>{campaign.title}</h1>
       </div>
-      
+
       {/* פס התקדמות */}
       <div style={{ marginTop: "20px" }}>
         <div style={{ width: "100%", background: "#e5e7eb", borderRadius: "10px", height: "14px" }}>
@@ -77,8 +82,8 @@ const CampaignDetails: React.FC = () => {
         </button>
       </div>
       <Modal show={showCryptoPay} onClose={() => setShowCryptoPay(false)} component={<CryptoPayment close={() => setShowCryptoPay(false)} campaignId={campaign._id!} userId={campaign.ngo} />} />
-      <Modal show={showCreditPay} onClose={() => setShowCreditPay(false)}component={<CreditPayment close={() => setShowCreditPay(false)} campaignId={campaign._id!} userId={campaign.ngo} />} />
-
+      <Modal show={showCreditPay} onClose={() => setShowCreditPay(false)} component={<CreditPayment close={() => setShowCreditPay(false)} campaignId={campaign._id!} userId={campaign.ngo} />} />
+    <ShareCampaign campaign={campaign}/>
       {/* תמונות וסרטון */}
       <div style={{ display: "flex", gap: "10px", marginTop: "20px", overflowX: "hidden" }}>
         <SimpleGallery
@@ -104,8 +109,10 @@ const CampaignDetails: React.FC = () => {
 
         <div style={{ padding: "16px" }}>
           {activeTab === "project" && <p>{campaign.description}</p>}
-          {activeTab === "ngo" && <p>{(campaign.ngo as unknown as Ngo).description}</p>}
-          {activeTab === "donations" && <CampaignDonations campaignId={campaign._id!}/>}
+          {activeTab === "ngo" && (
+            <NgoDetailsCard ngo={campaign.ngo as unknown as Ngo} />
+          )}
+          {activeTab === "donations" && <CampaignDonations campaignId={campaign._id!} />}
         </div>
       </div>
     </div>

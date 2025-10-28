@@ -76,7 +76,7 @@ export const getNgoList = async (): Promise<{ items: Ngo[] }> => {
 //   return res.data; // ✅ עכשיו TypeScript יודע שזה NgoProfileResponse
 // };
 export async function loginUser(data: { email: string; password: string }) {
-  const res = await fetch("http://localhost:4000/api/auth/login", {
+  const res = await fetch(`${API_URL}/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),

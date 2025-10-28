@@ -34,7 +34,7 @@ const donationSchema = new Schema(
     method: { type: String, default: 'card' },
     txHash: { type: String },
     comment: { type: String },
-    anonymouse: { type: Boolean, default:false },
+    anonymous: { type: Boolean, default:false },
   },
   { timestamps: true }
 );

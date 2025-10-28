@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { Grid, List } from "lucide-react"; // אייקונים
 import { Link } from "react-router-dom";
-import NgoItem, { NgoFlexItem } from "../components/NgoItem";
+import NgoItem from "../components/NgoItem";
 import { getNgoList } from "../services/ngoApi";
 import type { Ngo } from "../models/Ngo";
 
-export default function DonorsNgo() {
+import '../css/Ngos.css'
+
+export default function Ngos() {
     const [search, setSearch] = useState("");
     const [sortBy, setSortBy] = useState("name");
     const [ngos, setNgos] = useState<Ngo[]>([])
@@ -105,40 +107,10 @@ export default function DonorsNgo() {
             </div>
 
             {/* רשימת עמותות */}
-            {view === "grid" ? (
-                <div
-                    style={{
-                        display: "grid",
-                        gridTemplateColumns: "repeat(3, 1fr)", // 3 בעמודה
-                        gap: "20px",
-                    }}
-                >
-                    {filteredNgos.map((ngo) => {
-                        return (
-                            <Link
-                                to={`/ngos/${ngo._id}`}
-                                key={ngo._id}
-                                style={{
-                                    display: "block",
-                                    background: "white",
-                                    borderRadius: "12px",
-                                    boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
-                                    overflow: "hidden",
-                                    textDecoration: "none",
-                                    color: "inherit",
-                                }}
-                            >
-                                <NgoItem ngo={ngo} />
-                            </Link>)
-                    })}
-                </div>
-            ) : (
-                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                    {filteredNgos.map((ngo) => (
-                        <NgoFlexItem key={ngo._id} ngo={ngo} />
-                    ))}
-                </div>
-            )}
+            
+                <div className={view == 'grid'?'ngos-container_grid':'ngos-container_flex'}>
+                    {filteredNgos.map((ngo) => <NgoItem key={ngo._id} ngo={ngo} view={view}/>)}
+                </div> 
         </div>
     );
 }

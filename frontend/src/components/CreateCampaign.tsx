@@ -204,7 +204,23 @@ async function ensureSepolia() {
             }
             return images;
         }
-
+        const handleChange = (event: React.ChangeEvent<HTMLInputElement>) =>{
+            const {name, value} = event.target
+            if(name == "endDate" && form.startDate != "" && value.localeCompare(form.startDate) < 0){
+                alert("תאריך סיום קמפיין חייב להיות אחרי תאריך התחלה")
+                return;
+            }
+            if(name == 'goal' && +value <= 0){
+                alert("סכום יעד חייב להיות חיובי ")
+                return;
+            }
+            if(name == 'startDate' && value.localeCompare(new Date().toISOString()) < 0){
+                alert("תאריך התחלה לא יכול להיות בעבר ")
+                return;
+            }
+            setForm({ ...form, [name]:value })
+        }
+        
         if(isLoading) return (<Spinner/>)
         return (
             <div style={cardStyle}>
@@ -213,14 +229,14 @@ async function ensureSepolia() {
                 </h2>
                 <input type="text" placeholder="שם הקמפיין" value={form.title}
                     onChange={(e) => setForm({ ...form, title: e.target.value })} style={inputStyle} />
-                <input type="number" placeholder="סכום יעד" value={form.goal}
-                    onChange={(e) => setForm({ ...form, goal: e.target.value })} style={inputStyle} />
+                <input type="number" placeholder="סכום יעד" value={form.goal}  name="goal"
+                    onChange={handleChange} style={inputStyle} />
                 <label style={{ fontWeight: "bold" }}>תאריך התחלה:</label>
-                <input type="date" value={form.startDate}
+                <input type="date" value={form.startDate} 
                     onChange={(e) => setForm({ ...form, startDate: e.target.value })} style={inputStyle} />
                 <label style={{ fontWeight: "bold" }}>תאריך סיום:</label>
-                <input type="date" value={form.endDate}
-                    onChange={(e) => setForm({ ...form, endDate: e.target.value })} style={inputStyle} />
+                <input type="date" value={form.endDate} name="endDate"
+                    onChange={handleChange} style={inputStyle} />
                 <textarea placeholder="תיאור הקמפיין" value={form.description}
                     onChange={(e) => setForm({ ...form, description: e.target.value })} style={{ ...inputStyle, height: "80px" }} />
 
