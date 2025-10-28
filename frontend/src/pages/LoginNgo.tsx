@@ -1,8 +1,6 @@
-
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { LogIn, Mail, Lock } from "lucide-react";
-
 import { useAuth } from "../contexts/AuthContext";
 
 const LoginNgo: React.FC = () => {
@@ -19,23 +17,28 @@ const LoginNgo: React.FC = () => {
 
     const res = await login({ email, password });
     if (res.success) {
-      navigate("/ngo/home");
+      //  נבדוק אם המשתמש הוא מנהל מערכת
+      const storedUser = localStorage.getItem("userData");
+      const user = storedUser ? JSON.parse(storedUser) : null;
+
+      if (user?.roles?.includes("admin")) {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/ngo/home");
+      }
     } else {
       alert(res.message);
     }
   };
 
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-100 to-green-200">
       <div className="bg-white shadow-2xl rounded-3xl p-10 w-full max-w-md animate-fadeIn">
-        {/* כותרת */}
         <h1 className="text-3xl font-extrabold text-green-700 text-center mb-6">
-          התחברות עמותה
+          התחברות
         </h1>
 
         <div className="flex flex-col gap-5">
-          {/* אימייל */}
           <div style={{ position: "relative" }}>
             <Mail
               style={{
@@ -63,7 +66,6 @@ const LoginNgo: React.FC = () => {
             />
           </div>
 
-          {/* סיסמה */}
           <div style={{ position: "relative" }}>
             <Lock
               style={{
@@ -91,7 +93,6 @@ const LoginNgo: React.FC = () => {
             />
           </div>
 
-          {/* כפתור התחברות */}
           <button
             onClick={handleLogin}
             style={{
@@ -114,7 +115,6 @@ const LoginNgo: React.FC = () => {
             התחבר
           </button>
 
-          {/* שכחתי סיסמה */}
           <div className="text-center mt-4">
             <Link
               to="/forgot-password"

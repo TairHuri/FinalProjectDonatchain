@@ -54,31 +54,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
 
-  const login = async (data: { email: string; password: string }): Promise<{ success: boolean, message: string }> => {
-    try {
-      const res: { user: User, token: string, success: true } | { success: false, message: string } = await loginUser(data);
+const login = async (data: { email: string; password: string }): Promise<{ success: boolean, message: string }> => {
+  try {
+    const res: { user: User, token: string, success: true } | { success: false, message: string } = await loginUser(data);
 
-      if (res.success) {
-        // נשמור את הנתונים שהגיעו מהשרת
-        updateUser({ ...res.user, 'token': res.token })
-        localStorage.setItem("token", res.token);
-        // setUser({ ...res.user, 'token': res.token });
-        // localStorage.setItem("userData", JSON.stringify({ ...res.user, 'token': res.token }));
+    if (res.success) {
+      updateUser({ ...res.user, 'token': res.token });
+      localStorage.setItem("token", res.token);
 
-        const ngo: Ngo = await getNgoById(res.user?.ngoId);
-        if (ngo) {
-          updateNgo(ngo)
-        }
-        return { success: res.success, message: '' };
-      } else {
-        return { success: res.success, message: res.message };
+      //  נוסיף בדיקה - רק אם למשתמש יש ngoId
+      if (res.user?.ngoId) {
+        const ngo: Ngo = await getNgoById(res.user.ngoId);
+        if (ngo) updateNgo(ngo);
       }
 
-    } catch (err) {
-      console.error("Login failed", err);
-      return { success: false, message: "פרטי ההתחברות שגויים" };
+      return { success: true, message: '' };
+    } else {
+      return { success: false, message: res.message };
     }
-  };
+  } catch (err) {
+    console.error("Login failed", err);
+    return { success: false, message: "פרטי ההתחברות שגויים" };
+  }
+};
+
 
 
   const register = async (data: any): Promise<boolean> => {

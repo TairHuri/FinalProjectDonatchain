@@ -13,9 +13,11 @@ import Discover from "./pages/Discover";
 import Donate from "./pages/Donate";
 import CampaignDetails from "./pages/CampaignDetails";
 import NewCampaign from "./pages/NewCampaign";
-import AboutRules from "./pages/AboutRules"
+import AboutRules from "./pages/AboutRules";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminRoute from "./components/AdminRoute"; 
 
-import './App.css'
+import "./App.css";
 import Ngos from "./pages/Ngos";
 import NgoPageForUsers from "./components/NgoPageForUsers";
 
@@ -23,7 +25,10 @@ const App: React.FC = () => {
   return (
     <AuthProvider>
       <CampaignsProvider>
-        <div className="min-h-screen bg-gray-100 text-gray-900 flex flex-col" style={{width:'100vw', overflowX:'hidden'}} >
+        <div
+          className="min-h-screen bg-gray-100 text-gray-900 flex flex-col"
+          style={{ width: "100vw", overflowX: "hidden" }}
+        >
           {/* סרגל ניווט עליון */}
           <Navbar />
 
@@ -45,6 +50,16 @@ const App: React.FC = () => {
               <Route path="/campaigns/:ngoId" element={<Campaigns />} />
               <Route path="/ngos" element={<Ngos />} />
               <Route path="/ngos/:id" element={<NgoPageForUsers />} />
+
+              {/* ✅ נתיב מוגן — רק מנהל מורשה */}
+              <Route
+                path="/admin/dashboard"
+                element={
+                  <AdminRoute>
+                    <AdminDashboard />
+                  </AdminRoute>
+                }
+              />
             </Routes>
           </div>
         </div>
