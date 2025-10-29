@@ -7,41 +7,74 @@ export interface InputTextProps {
   placeholder?: string,
   field: string,
   onChange: (field: string, value: string | number) => void,
-  type?: "text" | 'number' | 'email' | 'tel' | 'password',
+  type?: "text" | 'number' | 'email' | 'tel' | 'password' | 'date',
   value: string | number,
   className?: string
   isMultiLine?: boolean
   list?: string
   disabled?: boolean
   required?: boolean
+  label?: string
+  style?: React.CSSProperties
 }
 
-const InputText = ({ disabled = false, required = true, list, className, field, value, placeholder, onChange, type = "text", isMultiLine = false }: InputTextProps) => {
-  if (isMultiLine) {
-    return (
-      <textarea
-        value={value}
-        className={className}
-        onChange={(e) => onChange(field, e.target.value)}
-        placeholder={placeholder}
-        style={className ? {} : inputStyle}
-      ></textarea>
-    )
+const InputText = ({ disabled = false, required = true, list, className, field, value, placeholder, onChange, type = "text", isMultiLine = false, label, style={} }: InputTextProps) => {
+  const Textarea = (<textarea
+    value={value}
+    className={className}
+    onChange={(e) => onChange(field, e.target.value)}
+    placeholder={placeholder}
+    style={{...inputStyle, ...style}}
+  ></textarea>)
+
+  const Input = (<input
+    type={type}
+    value={value}
+    className={className}
+    onChange={(e) => onChange(field, e.target.value)}
+    placeholder={placeholder}
+    style={{...inputStyle, ...style}}
+    list={list}
+    disabled={disabled}
+    required={required}
+  />)
+  const Label = <label style={{ fontWeight: "bold" }}>{label}</label>
+
+  if (label) {
+    return <>{Label} {isMultiLine ? Textarea : Input}</>
   }
-  return (
-    <input
-      type={type}
-      value={value}
-      className={className}
-      onChange={(e) => onChange(field, e.target.value)}
-      placeholder={placeholder}
-      style={className ? {} : inputStyle}
-      list={list}
-      disabled={disabled}
-      required={required}
-    />
-  )
+  return isMultiLine ? Textarea : Input;
 }
+
+export interface InputFileProps {
+  onChange: (field: string, value: FileList | null, multiple:boolean) => void,
+  // value: FileList | File | null,
+  multiple?: boolean
+  accept?: string
+  placeholder?: string,
+  field: string,
+  className?: string
+  disabled?: boolean
+  required?: boolean
+  label?: string
+  style?: React.CSSProperties;
+
+}
+export const InputFile= ({ label, className, field, placeholder, onChange, accept, multiple = false,style={} }: InputFileProps) => {
+  const Label = <label style={{ minWidth: '16vw' }}>{label}</label>
+  const Input = <input
+        type="file"
+        className={className}
+        style={{...inputStyle, ...style}}
+        onChange={(e) => onChange(field, e.target.files, multiple)}
+        placeholder={placeholder || label}
+
+        accept={accept}
+        multiple={multiple}
+      />
+  return label? <>{Label} {Input}</> : Input
+}
+
 
 export interface InputProps extends InputTextProps {
   Icon?: ReactNode;
@@ -64,7 +97,7 @@ export const Input = ({ disabled, list, field, value, label, placeholder, onChan
 
 export interface InputIconProps {
   placeholder?: string,
-  field: string|any,
+  field: string | any,
   className?: string
   Icon?: ReactNode;
   label: string;
@@ -105,20 +138,19 @@ export const InputWithIcon = ({ Icon, label, className, field, value, placeholde
   )
 }
 
-export interface InputFileWithIconProps <T,> extends InputIconProps {
+export interface InputFileWithIconProps<T,> extends InputIconProps {
   onChange: (field: keyof T, value: FileList | null) => void,
-  value: FileList|File|null ,
+  value: FileList | File | null,
   multiple?: boolean
   accept?: string
   field: keyof T;
 }
-export const InputFileWithIcon =<T,>({ Icon, label, className, field, value, placeholder, onChange, accept, multiple = false, }: InputFileWithIconProps<T>) => {
+export const InputFileWithIcon = <T,>({ Icon, label, className, field, value, placeholder, onChange, accept, multiple = false, }: InputFileWithIconProps<T>) => {
   return (
     <div style={{ position: "relative", display: 'flex', alignItems: 'center', gap: '0.7rem' }}>
       {Icon}
       <input
         type="file"
-        // file={value}
         className={className}
         onChange={(e) => onChange(field, e.target.files)}
         placeholder={placeholder || label}
