@@ -5,6 +5,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import { getNgoById } from "../services/ngoApi";
 import Spinner, { useSpinner } from "./Spinner";
 
+
+const CERTIFICATE_URL = import.meta.env.VITE_CERTIFICATES_URL || "http://localhost:4000/certificates";
+
 const NgoPublicProfile: React.FC = () => {
     const nav = useNavigate()
     const params = useParams();
@@ -150,8 +153,8 @@ const NgoPublicProfile: React.FC = () => {
                         >
                             עמותה רשומה מס' {ngo.ngoNumber}
                             <br />
-                            פעילה משנת{" "}
-                            {new Date(ngo.createdAt).getFullYear()}
+                            פעילה באתר מתאריך{" "}
+                            {new Date(ngo.createdAt).toLocaleDateString("he")}
                         </p>
                     </div>
 
@@ -244,7 +247,7 @@ const NgoPublicProfile: React.FC = () => {
                                 <p style={valueStyle}>
                                     {/* קישור למסמך */}
                                     <a
-                                        href={ngo.certificate}
+                                        href={`${CERTIFICATE_URL}/${ngo.certificate}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         style={{

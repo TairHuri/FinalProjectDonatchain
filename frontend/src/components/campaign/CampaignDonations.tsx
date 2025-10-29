@@ -4,25 +4,25 @@ import Spinner, { useSpinner } from "../Spinner";
 import { getDonationsByCampaign } from "../../services/donationApi";
 
 
-const CampaignDonations = ({campaignId}:{campaignId:string}) => {
-    const [donations, setDonations] = useState<Pick<Donation, "_id"|"firstName" | "lastName" | "amount" | "currency" | "comment" | "txHash">[]>([])
-    const {isLoading, start,stop} = useSpinner();
+const CampaignDonations = ({ campaignId }: { campaignId: string }) => {
+    const [donations, setDonations] = useState<Pick<Donation, "_id" | "firstName" | "lastName" | "amount" | "currency" | "comment" | "txHash">[]>([])
+    const { isLoading, start, stop } = useSpinner();
 
-    const loadDonations = async() => {
+    const loadDonations = async () => {
         start()
-        try{
+        try {
             const donations = await getDonationsByCampaign(campaignId)
             setDonations(donations)
-        }catch(error){
+        } catch (error) {
 
-        }finally{
+        } finally {
             stop();
         }
     }
     useEffect(() => {
         loadDonations();
     }, [])
-    if(isLoading) return <Spinner/>
+    if (isLoading) return <Spinner />
     if (!donations || donations.length === 0) {
         return (
             <div
@@ -139,6 +139,38 @@ const CampaignDonations = ({campaignId}:{campaignId:string}) => {
                                 </span>
                             </div>
 
+                            {/* ✅ חדש: תגובת התורם אם קיימת */}
+                            {donation.comment && donation.comment.trim() !== "" && (
+                                <div
+                                    style={{
+                                        backgroundColor: "#f9fafb",
+                                        border: "1px solid #e5e7eb",
+                                        borderRadius: "8px",
+                                        padding: "8px 10px",
+                                        fontSize: "0.8rem",
+                                        color: "#374151",
+                                        lineHeight: 1.4,
+                                        maxHeight: "6rem",
+                                        overflowY: "auto",
+                                        whiteSpace: "pre-wrap",
+                                    }}
+                                >
+                                    <div
+                                        style={{
+                                            fontWeight: 600,
+                                            fontSize: "0.75rem",
+                                            color: "#4b5563",
+                                            marginBottom: "4px",
+                                            lineHeight: 1.3,
+                                            textAlign: "right",
+                                        }}
+                                    >
+                                        הודעה מהתורם:
+                                    </div>
+                                    <div dir="rtl">{donation.comment}</div>
+                                </div>
+                            )}
+
                             {/* לינק לבלוקצ'יין */}
                             <div
                                 style={{
@@ -152,7 +184,7 @@ const CampaignDonations = ({campaignId}:{campaignId:string}) => {
                                     rowGap: "4px",
                                 }}
                             >
-                                <span>טרנזקציה:</span>
+                                <span>קישור לטרנזקציה:</span>
 
                                 <a
                                     href={`https://sepolia.etherscan.io/tx/${donation.txHash}`}

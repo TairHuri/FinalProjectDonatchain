@@ -1,18 +1,19 @@
 import { useEffect, useState } from "react";
 import { Grid, List } from "lucide-react";
 import { useParams } from "react-router-dom";
-import { useCampaigns } from "../contexts/CampaignsContext";
 import { Link } from "react-router-dom";
 import { getCampaigns } from "../services/api";
 import CampaignItem from "../components/CampaignItem";
 
 import '../css/Campaigns.css'
+import type { Campaign } from "../models/Campaign";
 
 
+type SortByType = "title"|"raised"|"goalLowToHigh"|"goalHighToLow"|"creationDateOldToNew" | "creationDateNewToOld" | "endDateOldToNew" | "endDateNewToOld";
 export default function Campaigns() {
   const [campaigns, setCampaigns] = useState<any[]>([]);
   const [query, setQuery] = useState("");
-  const [sortBy, setSortBy] = useState("title");
+  const [sortBy, setSortBy] = useState<SortByType>("title");
   const [view, setView] = useState<"grid" | "list">("grid");
   const params = useParams();
   const fetchData = async () => {
@@ -42,13 +43,21 @@ export default function Campaigns() {
       fetchData();
     }
   }, [params]);
-
-
+  const sortMap:Record<SortByType, (a:Campaign, b:Campaign) =>number>= {
+    title: (a:Campaign, b:Campaign)=>a.title.localeCompare(b.title),
+    raised:(a:Campaign, b:Campaign)=>b.raised - a.raised,
+    goalLowToHigh:(a:Campaign, b:Campaign)=> a.goal - b.goal,
+    goalHighToLow:(a:Campaign, b:Campaign)=> b.goal - a.goal,
+    creationDateOldToNew:(a:Campaign, b:Campaign)=> (b.createdAt||"").toString().localeCompare((a.createdAt||"").toString()),
+    creationDateNewToOld:(a:Campaign, b:Campaign)=> (a.createdAt||"").toString().localeCompare((b.createdAt||"").toString()),
+    endDateOldToNew:(a:Campaign, b:Campaign)=> (b.endDate||"").toString().localeCompare((a.endDate||"").toString()),
+    endDateNewToOld:(a:Campaign, b:Campaign)=> (a.endDate||"").toString().localeCompare((b.endDate||"").toString()),
+    
+  }
+  
   const filtered = (Array.isArray(campaigns) ? campaigns : [])
     .filter((c) => c.title?.toLowerCase().includes(query.toLowerCase()))
-    .sort((a, b) =>
-      sortBy === "title" ? a.title.localeCompare(b.title) : b.raised - a.raised
-    );
+    .sort((a, b) =>sortMap[sortBy](a,b));
 
 
   return (
@@ -61,7 +70,7 @@ export default function Campaigns() {
         {/* מיון */}
         <select
           value={sortBy}
-          onChange={(e) => setSortBy(e.target.value)}
+          onChange={(e) => setSortBy(e.target.value as SortByType)}
           style={{
             border: "1px solid #d1d5db",
             borderRadius: "8px",
@@ -70,6 +79,12 @@ export default function Campaigns() {
         >
           <option value="title">מיין לפי שם</option>
           <option value="raised">מיין לפי סכום שגויס</option>
+          <option value="goalLowToHigh">מיין לפי יעד - נמוך לגבוה</option>
+          <option value="goalHighToLow">מיין לפי יעד - גבוה לנמוך</option>
+          <option value="creationDateOldToNew">מיין לפי תאריך יצירה מהישן לחדש</option>
+          <option value="creationDateNewToOld">מיין לפי יצירה מהחדש לישן</option>
+          <option value="endDateOldToNew">מיין לפי תאריך סיום - מהישן לחדש</option>
+          <option value="endDateNewToOld">מיין לפי תאריך סיום - מהחדש לישן</option>
         </select>
 
         {/* חיפוש */}
