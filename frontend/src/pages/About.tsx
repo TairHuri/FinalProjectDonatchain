@@ -1,7 +1,33 @@
-import { motion } from "framer-motion"
-import { ShieldCheck, Brain, HeartHandshake, Globe } from "lucide-react"
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { ShieldCheck, Brain, HeartHandshake, Globe } from "lucide-react";
+import axios from "axios";
 
 export default function About() {
+  // ✅ State לטקסטים מהשרת
+  const [about, setAbout] = useState<{
+    heroTitle: string;
+    heroText: string;
+    visionTitle: string;
+    visionText: string;
+    features: { title: string; text: string }[];
+    closingText: string;
+  } | null>(null);
+
+  useEffect(() => {
+    const fetchAbout = async () => {
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/about`);
+        setAbout(res.data);
+      } catch (err) {
+        console.error("שגיאה בטעינת עמוד עלינו:", err);
+      }
+    };
+    fetchAbout();
+  }, []);
+
+  if (!about) return <p className="text-center mt-10">טוען תוכן...</p>;
+
   return (
     <div className="bg-white min-h-screen text-right">
       {/* Hero Section */}
@@ -12,7 +38,7 @@ export default function About() {
           transition={{ duration: 1 }}
           className="text-5xl font-bold mb-4"
         >
-          מי אנחנו
+          {about.heroTitle}
         </motion.h1>
         <motion.p
           initial={{ opacity: 0, y: 20 }}
@@ -20,8 +46,7 @@ export default function About() {
           transition={{ duration: 1.3 }}
           className="text-lg max-w-2xl mx-auto"
         >
-          מערכת חדשנית לגיוס תרומות בשילוב טכנולוגיית בלוקצ'יין ובינה מלאכותית —
-          למען עתיד חברתי חכם, מאובטח ושקוף יותר
+          {about.heroText}
         </motion.p>
       </section>
 
@@ -33,51 +58,30 @@ export default function About() {
           transition={{ delay: 0.2 }}
           className="text-3xl font-bold text-blue-700 mb-6 text-center"
         >
-          החזון שלנו
+          {about.visionTitle}
         </motion.h2>
         <p className="text-lg leading-relaxed text-gray-700 mb-10 text-center">
-          אנו שואפים לשנות את הדרך שבה אנשים תורמים – להפוך כל תרומה לחוויה שקופה,
-          אמינה ומבוססת נתונים. שילוב של טכנולוגיה מתקדמת עם ערכים חברתיים הוא
-          הלב של הפרויקט שלנו
+          {about.visionText}
         </p>
 
         {/* Feature Cards */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mt-8">
-          {[
-            {
-              icon: <ShieldCheck size={40} className="text-blue-600 mb-3" />,
-              title: "שקיפות וביטחון",
-              text: "באמצעות טכנולוגיית הבלוקצ'יין, כל תרומה נרשמת ומאומתת בצורה מאובטחת ובלתי ניתנת לשינוי",
-            },
-            {
-              icon: <Brain size={40} className="text-blue-600 mb-3" />,
-              title: "בינה מלאכותית חכמה",
-              text: "המערכת מנתחת טקסטים וממליצה לתורמים על פרויקטים שמתאימים לערכים ולתחומי העניין שלהם",
-            },
-            {
-              icon: <HeartHandshake size={40} className="text-blue-600 mb-3" />,
-              title: "חיבור אמיתי",
-              text: "יצירת מערכת יחסים מבוססת אמון בין תורמים לארגונים – מתוך מטרה משותפת להשפעה חברתית חיובית",
-            },
-            {
-              icon: <Globe size={40} className="text-blue-600 mb-3" />,
-              title: "השפעה עולמית",
-              text: "חזון גלובלי שמחבר בין טכנולוגיה וקהילה, ומאפשר לתרום מכל מקום בעולם בצורה פשוטה ושקופה",
-            },
-          ].map((feature, i) => (
+          {about.features.map((feature, i) => (
             <motion.div
               key={i}
               whileHover={{ scale: 1.05 }}
               className="bg-white rounded-2xl shadow-md p-6 text-center border border-gray-200 hover:shadow-lg transition"
             >
-              {feature.icon}
+              {i === 0 && <ShieldCheck size={40} className="text-blue-600 mb-3" />}
+              {i === 1 && <Brain size={40} className="text-blue-600 mb-3" />}
+              {i === 2 && <HeartHandshake size={40} className="text-blue-600 mb-3" />}
+              {i === 3 && <Globe size={40} className="text-blue-600 mb-3" />}
               <h3 className="font-semibold text-xl mb-2 text-gray-800">{feature.title}</h3>
               <p className="text-gray-600">{feature.text}</p>
             </motion.div>
           ))}
         </div>
       </section>
-
 
       {/* Closing Message */}
       <section className="py-16 text-center px-6 bg-white">
@@ -87,10 +91,9 @@ export default function About() {
           transition={{ duration: 1 }}
           className="text-xl text-gray-700 max-w-3xl mx-auto"
         >
-         . אנו מאמינים שטכנולוגיה יכולה להפוך כל תרומה לסיפור של אמון, השפעה ונתינה
-         . הצטרפו אלינו למסע אל עתיד של שקיפות, אחריות וחדשנות חברתית
+          {about.closingText}
         </motion.p>
       </section>
     </div>
-  )
+  );
 }

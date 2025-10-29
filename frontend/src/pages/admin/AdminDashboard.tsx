@@ -15,6 +15,7 @@ import AdminDonors from "../../components/AdminDonors"; // ← הוספת הקו
 import CampaignList from "../../components/CampaignList";
 import NgoList from "../admin/NgoList"; // מתוך src/pages/admin
 import NgoDetails from "../../components/admin/NgoDetails"; // מתוך src/components/admin
+import AdminAboutEditor from "./AdminAboutEditor";
 
 
 interface Stats {
@@ -207,11 +208,8 @@ const [selectedNgo, setSelectedNgo] = useState<any | null>(null);
           </h2>
         )}
 
-        {activePage === "about" && (
-          <h2 style={{ fontSize: "24px", fontWeight: "bold" }}>
-            עריכת עמוד "עלינו"
-          </h2>
-        )}
+{activePage === "about" && <AdminAboutEditor />}
+
       </div>
     </div>
   );
