@@ -13,6 +13,9 @@ import { useNavigate } from "react-router-dom";
 import { cardStyle, menuBtnStyle } from "../../css/dashboardStyles";
 import AdminDonors from "../../components/AdminDonors"; // ← הוספת הקומפוננטה החדשה
 import CampaignList from "../../components/CampaignList";
+import NgoList from "../admin/NgoList"; // מתוך src/pages/admin
+import NgoDetails from "../../components/admin/NgoDetails"; // מתוך src/components/admin
+
 
 interface Stats {
   usersCount: number;
@@ -28,6 +31,9 @@ const AdminDashboard: React.FC = () => {
     "dashboard" | "donors" | "ngos" | "campaigns" | "terms" | "about"
   >("dashboard");
   const navigate = useNavigate();
+const [selectedNgo, setSelectedNgo] = useState<any | null>(null);
+
+
 
   useEffect(() => {
     fetchStats();
@@ -176,9 +182,14 @@ const AdminDashboard: React.FC = () => {
         {activePage === "donors" && <AdminDonors />}
 
         {activePage === "ngos" && (
-          <h2 style={{ fontSize: "24px", fontWeight: "bold" }}>
-            רשימת עמותות
-          </h2>
+          <div>
+            <h2 className="text-2xl font-bold mb-4">רשימת עמותות</h2>
+            {!selectedNgo ? (
+              <NgoList onSelectNgo={(ngo) => setSelectedNgo(ngo)} />
+            ) : (
+              <NgoDetails ngo={selectedNgo} onBack={() => setSelectedNgo(null)} />
+            )}
+          </div>
         )}
 
 {activePage === "campaigns" && (
