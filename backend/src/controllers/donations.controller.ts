@@ -49,7 +49,18 @@ export const creditDonate = async (req: Request, res: Response) => {
     res.status((error as ServerError).statusCode||500).send({ message: (error as any).message });
   }
 };
+export const getAllDonations = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const donations = await Donation.find()
+      .populate("ngoId", "name")
+      .populate("campaignId", "title");
 
+    res.json(donations);
+  } catch (error) {
+    console.error("Error fetching all donations:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
 export const cryptoDonate = async (req: Request, res: Response) => {
   const { phone, email, firstName, lastName, amount,  currency, method, txHash, comment, anonymous } = req.body;
   const campaignId = req.params.id;

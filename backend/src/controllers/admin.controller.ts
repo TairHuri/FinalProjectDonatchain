@@ -1,8 +1,42 @@
-// src/controllers/admin.controller.ts
 import { Request, Response } from 'express';
 import User from '../models/user.model';
 import Campaign from '../models/campaign.model';
 import Donation from '../models/donation.model';
+
+export const getAllDonors = async (req: Request, res: Response) => {
+  try {
+    const donors = await User.aggregate([
+      { $match: { role: 'donor' } },
+      {
+        $lookup: {
+          from: 'donations',
+          localField: '_id',
+          foreignField: 'donorId',
+          as: 'donations',
+        },
+      },
+      {
+        $addFields: {
+          totalDonated: { $sum: '$donations.amount' },
+        },
+      },
+      {
+        $project: {
+          firstName: 1,
+          lastName: 1,
+          email: 1,
+          totalDonated: 1,
+        },
+      },
+    ]);
+
+    res.json(donors);
+  } catch (err) {
+    console.error('שגיאה בשליפת התורמים:', err);
+    res.status(500).send('שגיאה בשליפת רשימת התורמים');
+  }
+};
+
 
 export const getStats = async (req: Request, res: Response) => {
   try {
