@@ -124,6 +124,15 @@ export const getCampaign = async (req: Request, res: Response) => {
   }
 };
 
+export const getAllCampaigns = async (req: Request, res: Response) => {
+  try {
+    const campaigns = await CampaignService.getAll();
+    res.json(campaigns);
+  } catch (err: any) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 export const getCampagnsByNgo = async (req: Request, res: Response) => {
   try {
     const { ngoId } = req.query;

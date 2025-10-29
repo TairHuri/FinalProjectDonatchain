@@ -12,6 +12,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { cardStyle, menuBtnStyle } from "../../css/dashboardStyles";
 import AdminDonors from "../../components/AdminDonors"; // ← הוספת הקומפוננטה החדשה
+import CampaignList from "../../components/CampaignList";
 
 interface Stats {
   usersCount: number;
@@ -180,11 +181,14 @@ const AdminDashboard: React.FC = () => {
           </h2>
         )}
 
-        {activePage === "campaigns" && (
-          <h2 style={{ fontSize: "24px", fontWeight: "bold" }}>
-            רשימת קמפיינים
-          </h2>
-        )}
+{activePage === "campaigns" && (
+  <div>
+    <h2 style={{ fontSize: "24px", fontWeight: "bold" }}>רשימת קמפיינים</h2>
+
+    <CampaignList />
+  </div>
+)}
+
 
         {activePage === "terms" && (
           <h2 style={{ fontSize: "24px", fontWeight: "bold" }}>

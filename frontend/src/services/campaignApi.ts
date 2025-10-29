@@ -49,3 +49,10 @@ export async function updateCampaign(data: Campaign, token: string, images: File
     }
     return res.json();
 }
+export async function getAllCampaigns(token: string) {
+  const res = await fetch(`${API_URL}/campaigns/admin/all`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}

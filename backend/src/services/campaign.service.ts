@@ -26,7 +26,11 @@ export default {
     const total = await Campaign.countDocuments(filter);
     return { items, total, page, limit };
   },
-
+  async getAll() {
+    return await Campaign.find()
+      .populate('ngo')
+      .sort({ createdAt: -1 });
+  },
   async getById(id: string) {
     if (!mongoose.Types.ObjectId.isValid(id)) return null;
     return Campaign.findById(id).populate("ngo");
