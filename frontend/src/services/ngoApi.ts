@@ -33,10 +33,23 @@ export async function editNgo(ngo: Ngo, token: string, logo: File|null) {
   return res.json();
 }
 
+export async function toggleNgoStatus(id: string, token: string) {
+  const res = await fetch(`${API_URL}/ngos/${id}/toggle-status`, {
+    method: "PATCH",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.message || "שגיאה בעדכון הסטטוס");
+  }
+  return res.json();
+}
+
 export const getNgoList = async (): Promise<{ items: Ngo[] }> => {
   const res = await axios.get<{ items: Ngo[] }>(`${API_URL}/ngos`);
 
-  return res.data; // ✅ עכשיו TypeScript יודע שזה NgoProfileResponse
+  return res.data; 
 };
 
 export const getNgoById = async ( ngoId:string): Promise<Ngo> => {
@@ -44,5 +57,5 @@ export const getNgoById = async ( ngoId:string): Promise<Ngo> => {
 
   });
 
-  return res.data; // ✅ עכשיו TypeScript יודע שזה NgoProfileResponse
+  return res.data; 
 };

@@ -76,11 +76,12 @@ export const registerExistingNgo = async (req: Request, res: Response) => {
 export const login = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
-    
+
     if (!email || !password) {
       return res.status(400).json({ success: false, message: "חובה למלא אימייל וסיסמה" });
     }
-    const user = await User.findOne({ email })
+
+    const user = await User.findOne({ email });
 
     if (!user) {
       return res.status(400).json({ success: false, message: "אימייל או סיסמה שגויים" });
@@ -89,16 +90,29 @@ export const login = async (req: Request, res: Response) => {
     if (!user.approved) {
       return res.status(400).json({ success: false, message: "משתמש ממתין לאישור" });
     }
+
     const ok = await AuthService.comparePassword(password, user.password);
     if (!ok) {
       return res.status(400).json({ success: false, message: "אימייל או סיסמה שגויים" });
     }
 
+    // ✅ בדיקה האם העמותה פעילה
+    if (user.ngoId) {
+      const ngo = await ngoService.getById(user.ngoId.toString());
+      if (ngo && !ngo.isActive) {
+        return res.status(403).json({
+          success: false,
+          message: "העמותה שלך מושהית זמנית על ידי מנהל המערכת. לא ניתן להתחבר כרגע.",
+        });
+      }
+    }
+
     const token = AuthService.signJwt({
-  sub: user._id.toString(),
-  ngoId: user.ngoId ? user.ngoId.toString() : null,
-  role: user.roles,
-});
+      sub: user._id.toString(),
+      ngoId: user.ngoId ? user.ngoId.toString() : null,
+      role: user.roles,
+    });
+
     const { password: pwd, ...rest } = (user as any)._doc as IUser;
     res.json({ success: true, token, user: rest });
   } catch (err: any) {
@@ -106,6 +120,7 @@ export const login = async (req: Request, res: Response) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
 
 export const me = async (req: Request, res: Response) => {
   const user = (req as any).user;
