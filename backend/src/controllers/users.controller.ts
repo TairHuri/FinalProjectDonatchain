@@ -5,10 +5,11 @@ import * as AuthService from '../services/auth.service';
 import AuditLog from '../models/auditlog.model';
 import userService from '../services/user.service';
 import { ServerError } from '../middlewares/error.middleware';
+import { log } from 'console';
 
 export const getMe = async (req: Request, res: Response) => {
   const user = (req as any).user;
-  res.json({ user: { id: user._id, name: user.name, email: user.email, roles: user.roles, profile: user.profile } });
+  res.json({ user: { id: user._id, name: user.name, email: user.email, role: user.role, profile: user.profile } });
 };
 
 export const updateMe = async (req: Request, res: Response) => {
@@ -58,6 +59,27 @@ export const approveUser = async (req: Request, res: Response) => {
     const {password, ...rest} = updatedUser
     res.json({ success:true, user:rest });
   } catch (err: any) {
+    if(err instanceof ServerError){
+      res.status(err.statusCode).json({ message: err.message });
+    }else{
+      res.status(500).json({success:false, message: err.message });
+    }
+  }
+};
+
+export const changeUserRole = async (req: Request, res: Response) => {
+  try {
+    const {userId} = req.params
+    const {role} = req.body;
+          console.log('role', req.body);
+    const updatedUser = await userService.updateRole(userId, role)
+    if(!updatedUser){
+      return res.status(404).json({ success: false, message:"משתמש לא קיים" });
+    }
+    const {password, ...rest} = updatedUser
+    res.json({ success:true, user:rest });
+  } catch (err: any) {
+    console.log(err)
     if(err instanceof ServerError){
       res.status(err.statusCode).json({ message: err.message });
     }else{

@@ -1,0 +1,179 @@
+/* רקע מלא */
+.login-page {
+ display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: none;
+  font-family: 'Segoe UI', Calibri, sans-serif;
+}
+
+/* כרטיס מרכזי */
+.login-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 50px 40px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  width: 400px;
+  animation: fadeIn 0.8s ease;
+}
+
+.login-title {
+  text-align: center;
+  font-size: 28px;
+  font-weight: 800;
+  color: #14532d;
+  margin-bottom: 25px;
+}
+
+.login-error {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+  text-align: center;
+  padding: 10px;
+  margin-bottom: 15px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* שדות קלט */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 14px;
+  color: #16a34a;
+}
+
+.input-field {
+  width: 100%;
+  padding: 12px 40px 12px 42px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 9999px;
+  font-size: 15px;
+  transition: all 0.2s ease;
+}
+
+.input-field:focus {
+  border-color: #16a34a;
+  box-shadow: 0 0 0 2px #bbf7d0;
+  outline: none;
+}
+
+/* הצגת סיסמה */
+.pass-toggle {
+  position: absolute;
+  right: 14px;
+  border: none;
+  background: none;
+  color: #6b7280;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.pass-toggle:hover {
+  color: #16a34a;
+}
+
+/* כפתור התחברות */
+.login-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(to right, #16a34a, #15803d);
+  color: #fff;
+  border: none;
+  border-radius: 9999px;
+  padding: 12px;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.login-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.25);
+}
+
+.login-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Loader */
+.loader {
+  border: 3px solid #d1fae5;
+  border-top: 3px solid #16a34a;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  animation: spin 0.8s linear infinite;
+}
+
+/* קישור תחתון */
+.login-footer {
+  text-align: center;
+  margin-top: 15px;
+}
+.login-footer a {
+  color: #15803d;
+  text-decoration: none;
+  font-weight: 600;
+}
+.login-footer a:hover {
+  text-decoration: underline;
+}
+
+/* אנימציות */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ✅ התאמה רספונסיבית למסכים קטנים */
+@media (max-width: 768px) {
+  .login-card {
+    width: 90vw;
+    padding: 30px 20px;
+    border-radius: 16px;
+  }
+
+  .login-title {
+    font-size: 22px;
+  }
+
+  .input-field {
+    font-size: 15px;
+    padding: 10px 36px;
+  }
+
+  .login-btn {
+    font-size: 15px;
+    padding: 10px;
+  }
+}

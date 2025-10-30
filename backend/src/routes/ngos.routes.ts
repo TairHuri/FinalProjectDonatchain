@@ -17,11 +17,28 @@ const router = Router();
 router.get("/", listNgos);
 router.get("/:id", getNgo);
 
-// ניהול סטטוס עמותה (מנהל מערכת בלבד)
-router.patch("/:id/toggle-status", authMiddleware, roleMiddleware(["admin"]), toggleNgoStatus);
+// ✅ ניהול סטטוס עמותה (מנהל מערכת בלבד)
+router.patch(
+  "/:id/toggle-status",
+  authMiddleware,
+  roleMiddleware(["admin"]),
+  toggleNgoStatus
+);
 
-// יצירה ועדכון עמותה (עמותה עצמה או אדמין)
-router.post("/", authMiddleware, roleMiddleware(["ngo", "admin"]), validateCreateNgo, createNgo);
-router.put("/:id", authMiddleware, roleMiddleware(["ngo", "admin"]), updateNgo);
+// ✅ יצירה ועדכון עמותה (עמותה עצמה או אדמין)
+router.post(
+  "/",
+  authMiddleware,
+  roleMiddleware(["ngo", "admin"]),
+  validateCreateNgo,
+  createNgo
+);
+
+router.put(
+  "/:id",
+  authMiddleware,
+  roleMiddleware(["ngo", "admin"]),
+  updateNgo
+);
 
 export default router;

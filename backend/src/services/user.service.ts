@@ -1,6 +1,6 @@
 // src/services/user.service.ts
 import { ServerError } from '../middlewares/error.middleware';
-import User, { IUser } from '../models/user.model';
+import User, { IUser, UserRoleType } from '../models/user.model';
 import * as AuthService from './auth.service';
 
 export default {
@@ -45,6 +45,21 @@ export default {
         throw new ServerError("user not found", 404)
       }
       user.approved = true;
+      const updatedUser = await user.save();
+      return updatedUser
+    } catch (err: any) {
+      throw err
+    }
+  },
+   async updateRole(userId: string, role: UserRoleType) {
+    try {
+
+      const user = await User.findById(userId)
+      if (!user) {
+        throw new ServerError("user not found", 404)
+      }
+      
+      user.role = role;
       const updatedUser = await user.save();
       return updatedUser
     } catch (err: any) {

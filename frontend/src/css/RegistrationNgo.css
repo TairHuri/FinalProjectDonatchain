@@ -1,0 +1,254 @@
+/* ממחזר את ההתחברות — אפשר להשאיר כמו שיש לך כבר: */
+.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: none;
+  font-family: 'Segoe UI', Calibri, sans-serif;
+}
+
+.login-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 50px 40px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  width: 420px; /* מעט רחב יותר כי הרשמה ארוכה יותר */
+  animation: fadeIn 0.8s ease;
+}
+
+.login-title {
+  text-align: center;
+  font-size: 28px;
+  font-weight: 800;
+  color: #14532d;
+  margin-bottom: 20px;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 14px;
+  color: #16a34a;
+}
+
+.input-field {
+  width: 100%;
+  padding: 12px 40px 12px 42px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 9999px;
+  font-size: 15px;
+  transition: all 0.2s ease;
+  background: #fff;
+}
+
+.input-field:focus {
+  border-color: #16a34a;
+  box-shadow: 0 0 0 2px #bbf7d0;
+  outline: none;
+}
+
+.login-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(to right, #16a34a, #15803d);
+  color: #fff;
+  border: none;
+  border-radius: 9999px;
+  padding: 12px;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.login-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.25);
+}
+
+.login-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* תגית התקנון בשורה אחת אלגנטית */
+.agree-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #374151;
+  margin-top: 4px;
+}
+.agree-inline a {
+  color: #15803d;
+  font-weight: 700;
+  text-decoration: none;
+}
+.agree-inline a:hover {
+  text-decoration: underline;
+}
+
+/* סגמנטד-טוגל נקי (RTL) */
+.segmented {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: #f3f4f6;
+  border-radius: 9999px;
+  padding: 4px;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+.seg-item {
+  border: none;
+  border-radius: 9999px;
+  padding: 8px 12px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  background: transparent;
+  color: #374151;
+  transition: background .15s ease, color .15s ease, transform .1s ease;
+}
+.seg-item:hover {
+  transform: translateY(-1px);
+}
+.seg-item.active {
+  background: #ffffff;
+  color: #14532d;
+  box-shadow: 0 2px 10px rgba(0,0,0,.05);
+}
+
+/* רספונסיביות */
+@media (max-width: 768px) {
+  .login-card {
+    width: 92vw;
+    padding: 30px 20px;
+    border-radius: 16px;
+  }
+  .login-title {
+    font-size: 22px;
+  }
+  .input-field {
+    font-size: 15px;
+    padding: 10px 36px;
+  }
+  .login-btn {
+    font-size: 15px;
+    padding: 10px;
+  }
+}
+
+/* אנימציות (כמו בהתחברות) */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+
+/* בתוך RegistrationNgo.css שכבר מיובא */
+.textarea-like {
+  min-height: 90px;
+  border-radius: 16px;      /* פחות עגול מטקסט רגיל כדי שיהיה נעים לעין */
+  padding-top: 12px;
+  padding-bottom: 12px;
+  resize: vertical;
+  font-family: 'Segoe UI', Calibri, sans-serif;
+  font-size: 14px;
+  
+}
+
+.file-field {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  cursor: pointer;          /* נראה לחיץ */
+}
+/* כפתור העלאת קובץ מעוצב */
+.file-upload {
+  position: relative;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.file-upload input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.file-upload .fake-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 14px;
+  border-radius: 9999px;
+  border: 1.5px solid #d1d5db;
+  background: #fff;
+  font-weight: 600;
+  font-size: 14px;
+  color: #14532d;
+  transition: transform .15s ease, box-shadow .15s ease, border-color .2s ease;
+}
+
+.file-upload .fake-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(20, 83, 45, 0.10);
+  border-color: #16a34a;
+}
+
+.file-upload .file-name {
+  font-size: 14px;
+  color: #374151;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px;
+}
+
+.input-group.file-upload-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* כותרת/הפרדה פנימית */
+.section-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: #065f46; /* ירוק כהה */
+  margin: 6px 6px 2px;
+}
+
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 10px 0 4px;
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 700;
+}
+.section-divider::before,
+.section-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to left, transparent, #e5e7eb 40%, #e5e7eb 60%, transparent);
+}

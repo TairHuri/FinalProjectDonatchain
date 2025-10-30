@@ -1,0 +1,351 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    direction: rtl;
+    font-family: system-ui, sans-serif;
+    color: #1a1a1a;
+}
+
+/* כרטיס עליון של פרטי העמותה */
+.headerCard {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    padding: 1.25rem 1.5rem;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.headerTopRow {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.ngoName {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 .25rem;
+    color: #111;
+}
+
+.ngoDesc {
+    font-size: .9rem;
+    color: #444;
+    margin: 0 0 .5rem;
+    line-height: 1.4;
+    max-width: 60ch;
+}
+
+.websiteLink {
+    font-size: .8rem;
+    text-decoration: underline;
+    color: #2563eb;
+    word-break: break-all;
+}
+
+.ngoActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+
+.editNgoForm {
+    margin-top: 1rem;
+    display: grid;
+    gap: .75rem;
+}
+
+.input {
+    width: 100%;
+    background: #f9fafb;
+    border: 1px solid #d1d5db;
+    border-radius: .5rem;
+    padding: .6rem .75rem;
+    font-size: .9rem;
+}
+
+.textarea {
+    width: 100%;
+    min-height: 80px;
+    background: #f9fafb;
+    border: 1px solid #d1d5db;
+    border-radius: .5rem;
+    padding: .6rem .75rem;
+    font-size: .9rem;
+    line-height: 1.4;
+    resize: vertical;
+}
+
+/* הטאבים */
+.tabsRow {
+    display: flex;
+    gap: .5rem;
+    flex-wrap: wrap;
+}
+
+.tabBtn {
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid transparent;
+    border-radius: .75rem;
+    padding: .5rem .9rem;
+    font-size: .8rem;
+    line-height: 1.2;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    cursor: pointer;
+    transition: all .15s;
+}
+
+.tabBtn:hover {
+    background: #e5e7eb;
+}
+
+.tabActive {
+    background: #111827;
+    color: #fff;
+}
+
+.tabCount {
+    background: rgba(255,255,255,0.12);
+    color: inherit;
+    min-width: 1.5rem;
+    text-align: center;
+    font-size: .7rem;
+    line-height: 1.2rem;
+    border-radius: .5rem;
+    padding: 0 .4rem;
+    font-weight: 500;
+}
+
+/* כרטיס התוכן של הטאב */
+.tabContentCard {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    border: 1px solid rgba(0,0,0,0.05);
+    padding: 1rem 1.25rem;
+}
+
+/* טבלאות */
+.tableWrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .9rem;
+}
+
+.table thead th {
+    text-align: right;
+    font-weight: 600;
+    font-size: .8rem;
+    color: #6b7280;
+    border-bottom: 1px solid #e5e7eb;
+    padding: .5rem .75rem;
+    white-space: nowrap;
+    background: #f9fafb;
+}
+
+.table tbody tr {
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.table tbody td {
+    padding: .75rem .75rem;
+    vertical-align: middle;
+    color: #1f2937;
+}
+
+.rowActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+}
+
+/* באדג' של התפקיד */
+.roleBadgeAdmin {
+    background: #111827;
+    color: #fff;
+    font-size: .7rem;
+    font-weight: 500;
+    padding: .3rem .5rem;
+    border-radius: .5rem;
+    display: inline-block;
+}
+
+.roleBadgeMember {
+    background: #e5e7eb;
+    color: #111827;
+    font-size: .7rem;
+    font-weight: 500;
+    padding: .3rem .5rem;
+    border-radius: .5rem;
+    display: inline-block;
+}
+
+/* כפתורים */
+.primaryBtn {
+    background: #111827;
+    color: #fff;
+    border: 1px solid #111827;
+    border-radius: .6rem;
+    font-size: .8rem;
+    font-weight: 500;
+    padding: .5rem .8rem;
+    cursor: pointer;
+    line-height: 1.2;
+}
+.primaryBtn:hover {
+    filter: brightness(1.1);
+}
+
+.secondaryBtn {
+    background: #fff;
+    color: #111827;
+    border: 1px solid #9ca3af;
+    border-radius: .6rem;
+    font-size: .8rem;
+    font-weight: 500;
+    padding: .5rem .8rem;
+    cursor: pointer;
+    line-height: 1.2;
+}
+.secondaryBtn:hover {
+    background: #f9fafb;
+}
+
+.dangerGhostBtn {
+    background: #fff;
+    color: #dc2626;
+    border: 1px solid #dc2626;
+    border-radius: .6rem;
+    font-size: .8rem;
+    font-weight: 500;
+    padding: .5rem .8rem;
+    cursor: pointer;
+    line-height: 1.2;
+}
+.dangerGhostBtn:hover {
+    background: #fff1f2;
+}
+
+.smallBtn {
+    background: #111827;
+    color: #fff;
+    border: 1px solid #111827;
+    border-radius: .5rem;
+    font-size: .7rem;
+    font-weight: 500;
+    padding: .4rem .6rem;
+    line-height: 1.1;
+    cursor: pointer;
+}
+.smallBtn:hover {
+    filter: brightness(1.1);
+}
+
+.smallGhostBtn {
+    background: #fff;
+    color: #111827;
+    border: 1px solid #6b7280;
+    border-radius: .5rem;
+    font-size: .7rem;
+    font-weight: 500;
+    padding: .4rem .6rem;
+    line-height: 1.1;
+    cursor: pointer;
+}
+.smallGhostBtn:hover {
+    background: #f9fafb;
+}
+
+.smallDangerBtn {
+    background: #fff;
+    color: #dc2626;
+    border: 1px solid #dc2626;
+    border-radius: .5rem;
+    font-size: .7rem;
+    font-weight: 500;
+    padding: .4rem .6rem;
+    line-height: 1.1;
+    cursor: pointer;
+}
+.smallDangerBtn:hover {
+    background: #fff1f2;
+}
+
+/* מצבים ריקים */
+.emptyState {
+    text-align: center;
+    color: #6b7280;
+    font-size: .9rem;
+    padding: 2rem 0;
+}
+
+/* לוח הודעות */
+.boardWrapper {
+    display: grid;
+    gap: 1rem;
+}
+
+.messagesList {
+    display: grid;
+    gap: .75rem;
+    max-height: 250px;
+    overflow-y: auto;
+    padding-right: .5rem;
+}
+
+.messageCard {
+    background: #f9fafb;
+    border-radius: .75rem;
+    border: 1px solid #e5e7eb;
+    padding: .75rem .9rem;
+}
+
+.messageHeader {
+    display: flex;
+    justify-content: space-between;
+    font-size: .7rem;
+    color: #6b7280;
+    margin-bottom: .4rem;
+}
+
+.messageAuthor {
+    font-weight: 600;
+    color: #111827;
+    font-size: .8rem;
+}
+
+.messageTime {
+    font-size: .7rem;
+    color: #6b7280;
+}
+
+.messageBody {
+    color: #1f2937;
+    font-size: .85rem;
+    line-height: 1.4;
+    white-space: pre-wrap;
+}
+
+.messageComposer {
+    display: grid;
+    gap: .5rem;
+}
+
+.user-role{
+    display: inline-block;
+    padding: 2px;
+    margin: 2px;
+}

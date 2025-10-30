@@ -4,7 +4,7 @@ export interface IUser extends Document {
   email: string;
   passwordHash: string;
   name: string;
-  roles: string[];
+  role: 'admin'|'member';
   ngoId?: string;
   address?: string;
   phone?: string;

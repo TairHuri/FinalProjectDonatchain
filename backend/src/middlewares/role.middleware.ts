@@ -7,7 +7,7 @@ export default function(allowedRoles: string[]) {
     if (!user) return res.status(401).json({ message: 'Unauthorized' });
     //user.roles = ['ngo']
     
-    const has = user.roles.some((r: string) => allowedRoles.includes(r));
+    const has = allowedRoles.includes(user.role);
     if (!has) return res.status(403).json({ message: 'Forbidden' });
     next();
   };

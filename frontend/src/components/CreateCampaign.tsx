@@ -4,17 +4,17 @@ import hubAbi from '../abi/Donatchain.json';    // ← ה-ABI שהעתקת
 import { useEffect, useState, type FormEvent } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useCampaigns } from "../contexts/CampaignsContext";
-
-import { cardStyle, inputStyle, primaryBtnStyle } from "../css/dashboardStyles";
+import { cardStyle, primaryBtnStyle } from "../css/dashboardStyles";
 import { getNgoById } from "../services/ngoApi";
 import type { Ngo } from "../models/Ngo";
 import type { User } from "../models/User";
 import Spinner, { useSpinner } from "./Spinner";
 
 import '../css/AlertDialog.css'
-import AlertDialog from "./gui/AlertDialog";
-import type { Campaign } from "../models/Campaign";
+
+
 import InputText, { InputFile } from "./gui/InputText";
+import AlertDialog, { useAlertDialog } from "./gui/AlertDialog";
 const CONTRACT = import.meta.env.VITE_CONTRACT_ADDRESS as `0x${string}`;
 const TARGET_CHAIN_ID = BigInt(import.meta.env.VITE_CHAIN_ID ?? "11155111"); // Sepolia
 
@@ -130,8 +130,7 @@ const CreateCampaign = ({ postSave }: { postSave: () => void }) => {
         mainImage: null as File | null,
     });
 
-    const [errorMessage, setErrorMessage] = useState<string>("");
-    const [showError, setShowError] = useState<boolean>(false);
+    const {message, setMessage, showAlert, setShowAlert, isFailure, setIsFailure} = useAlertDialog()
 
     useEffect(() => {
         const loadNgo = async (user: User) => {
@@ -191,11 +190,15 @@ const CreateCampaign = ({ postSave }: { postSave: () => void }) => {
         const success = await addCampaign(newCampaign, images, form.movie, form.mainImage);
         if (!success) {
             stop();
-            alert("שגיאה ביצירת הקמפיין");
+            setIsFailure(true)
+            setMessage("שגיאה ביצירת הקמפיין");
+            setShowAlert(true);
             return;
         }
         stop();
-        alert("הקמפיין נוצר בהצלחה!");
+        setIsFailure(false)
+        setMessage("הקמפיין נוצר בהצלחה!");
+        setShowAlert(true);        
         setForm({
             title: "",
             goal: "",
@@ -254,8 +257,9 @@ const CreateCampaign = ({ postSave }: { postSave: () => void }) => {
     }
     const validateFormCreateCampaign = (name: keyof typeof form, value: string, status:StatusType) => {
         if (validations[name] && (validations[name].status == 'both' ||validations[name].status ==status) && validations[name].validate(value)) {
-            setErrorMessage(validations[name].message);
-            setShowError(true);
+            setIsFailure(true)
+            setMessage(validations[name].message);
+            setShowAlert(true);
             return false;
         }
 
@@ -297,12 +301,14 @@ const CreateCampaign = ({ postSave }: { postSave: () => void }) => {
                     צור קמפיין
                 </button>
             </form>
-            <AlertDialog
-                show={showError}
-                title="שגיאה"
-                message={errorMessage}
-                onClose={() => setShowError(false)}
-            />
+      <AlertDialog
+        show={showAlert}
+        failureTitle="שגיאה"
+        successTitle=""
+        message={message}
+        failureOnClose={() => setShowAlert(false)}
+        isFailure={isFailure}
+      />
         </>
 
     )

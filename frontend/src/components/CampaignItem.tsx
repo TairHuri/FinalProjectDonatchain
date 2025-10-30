@@ -28,8 +28,8 @@ const CampaignItem = ({ c, showButtons = false, edit = (id: string) => { }, view
                         :
                         (<h2 className='title-flex'>{c.title}</h2>)
                 }
-                <p>Start: {c.startDate?.split("T")[0]}</p>
-                <p>end: {c.endDate?.split("T")[0]}</p>
+                <p>תאריך תחילת הקמפיין: {c.startDate?.split("T")[0]}</p>
+                <p>תאריך סיום הקמפיין: {c.endDate?.split("T")[0]}</p>
                 <p className={view == 'grid' ? '' : 'amount-flex'}>{c.raised.toLocaleString()} ₪ מתוך {c.goal.toLocaleString()} ₪</p>
                 <div className={view == 'grid' ? '.progress-grid' : '.progress-flex'}>
                     <div style={{ width: `${percent}%` }} className={view == 'grid' ? 'progress-grid_bar' : 'progress-flex_bar'}></div>

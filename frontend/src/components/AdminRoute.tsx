@@ -6,8 +6,8 @@ const AdminRoute: React.FC<{ children: React.ReactElement }> = ({ children }) =>
   const storedUser = localStorage.getItem("userData"); // ← אותו מפתח בדיוק כמו ב-AuthContext
   const user = storedUser ? JSON.parse(storedUser) : null;
 
-  if (!token || !user?.roles?.includes("admin")) {
-    return <Navigate to="/login/ngo" replace />; // אפשר לשנות לנתיב שאת רוצה
+  if (!token || !(user.role == "admin")) {
+    return <Navigate to="/admin/login" replace />;
   }
 
   return children;

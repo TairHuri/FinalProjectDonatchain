@@ -5,6 +5,7 @@ import AuditLog from "../models/auditlog.model";
 import { NgoMediaFiles } from "../middlewares/multer.middleware";
 import nodemailer from "nodemailer";
 import Campaign from "../models/campaign.model";
+
 /**
  * יצירת עמותה חדשה
  */
@@ -75,6 +76,8 @@ export const getNgo = async (req: Request, res: Response) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+// ✅ הגדרת transporter לשליחת מיילים
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -83,6 +86,9 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+/**
+ * הפעלת / השהיית עמותה
+ */
 export const toggleNgoStatus = async (req: Request, res: Response) => {
   try {
     const ngo = await Ngo.findById(req.params.id);
@@ -92,10 +98,7 @@ export const toggleNgoStatus = async (req: Request, res: Response) => {
     await ngo.save({ validateModifiedOnly: true });
 
     // ✅ השהיית / הפעלת קמפיינים בהתאם לסטטוס החדש
-    await Campaign.updateMany(
-      { ngo: ngo._id },
-      { isActive: ngo.isActive }
-    );
+    await Campaign.updateMany({ ngo: ngo._id }, { isActive: ngo.isActive });
 
     await AuditLog.create({
       action: ngo.isActive ? "ngo_reactivated" : "ngo_suspended",
@@ -181,8 +184,8 @@ export const updateNgo = async (req: Request, res: Response) => {
     const ngo = await Ngo.findById(req.params.id);
     if (!ngo) return res.status(404).json({ message: "עמותה לא נמצאה" });
 
-    // אם המשתמש אינו היוצר ולא admin — אין הרשאה
-    if (ngo.createdBy?.toString() !== user._id.toString() && !user.roles.includes("admin")) {
+    // ✅ בדיקה אם המשתמש הוא היוצר או admin
+    if (ngo.createdBy?.toString() !== user._id.toString() && !user.roles?.includes("admin")) {
       return res.status(403).json({ message: "אין הרשאה לעדכן עמותה זו" });
     }
 

@@ -1,36 +1,61 @@
 import { Request, Response } from "express";
 import * as AuthService from "../services/auth.service";
-import ngoService from '../services/ngo.service'
+import ngoService from "../services/ngo.service";
 import User, { IUser } from "../models/user.model";
-import { BaseNgo, INgo } from "../models/ngo.model";
-import { NodeGCPerformanceDetail } from "perf_hooks";
+import { BaseNgo } from "../models/ngo.model";
 import { NgoMediaFiles } from "../middlewares/multer.middleware";
 
 export const registerNewNgo = async (req: Request, res: Response) => {
   try {
-    
-    const { userJson, name, description, ngoNumber, website, bankAccount, wallet, address, phone, email } = req.body;
-    const ngo:BaseNgo={name, description, ngoNumber, website, bankAccount, wallet, address, phone, email, logoUrl:'', certificate:''}
-    const ngoMediaFiles = req.files as NgoMediaFiles
-    
+    const {
+      userJson,
+      name,
+      description,
+      ngoNumber,
+      website,
+      bankAccount,
+      wallet,
+      address,
+      phone,
+      email,
+    } = req.body;
+
+    const ngo: BaseNgo = {
+      name,
+      description,
+      ngoNumber,
+      website,
+      bankAccount,
+      wallet,
+      address,
+      phone,
+      email,
+      logoUrl: "",
+      certificate: "",
+    };
+
+    const ngoMediaFiles = req.files as NgoMediaFiles;
     const user = JSON.parse(userJson);
+
     if (ngoMediaFiles.logo) {
-      ngo.logoUrl = ngoMediaFiles.logo[0].filename
+      ngo.logoUrl = ngoMediaFiles.logo[0].filename;
     }
     if (ngoMediaFiles.certificate) {
-      ngo.certificate = ngoMediaFiles.certificate[0].filename
+      ngo.certificate = ngoMediaFiles.certificate[0].filename;
     }
-    //  ולידציה בסיסית לפני שמנסים ליצור משתמש
+
+    // ✅ ולידציה בסיסית
     if (!user.email || !user.password || !user.name) {
-      return res.status(400).json({ success: false, message: "חובה למלא שם, אימייל וסיסמה" });
+      return res
+        .status(400)
+        .json({ success: false, message: "חובה למלא שם, אימייל וסיסמה" });
     }
-    
-    const createdNgo = await ngoService.create(ngo)
-    user.ngoId = createdNgo._id
 
+    const createdNgo = await ngoService.create(ngo);
+    user.ngoId = createdNgo._id;
     user.approved = true;
-    const createdUser = await AuthService.registerUser(user);
 
+    const createdUser = await AuthService.registerUser(user);
     createdNgo.createdBy = createdUser._id;
     await ngoService.update(createdNgo._id, createdNgo);
 
@@ -38,37 +63,47 @@ export const registerNewNgo = async (req: Request, res: Response) => {
 
     res.status(201).json({
       success: true,
-      message: "רישום התבצע בהצלחה",
-      user: { id: createdUser._id, email: createdUser.email, name: createdUser.name },
+      message: "הרישום התבצע בהצלחה",
+      user: {
+        id: createdUser._id,
+        email: createdUser.email,
+        name: createdUser.name,
+      },
       token,
     });
   } catch (err: any) {
-    console.error(" שגיאה בהרשמה:", err.message);
+    console.error("❌ שגיאה בהרשמה:", err.message);
     res.status(400).json({ success: false, message: err.message });
   }
 };
+
 export const registerExistingNgo = async (req: Request, res: Response) => {
   try {
     const { user }: { user: IUser } = req.body;
 
-    // ולידציה בסיסית לפני שמנסים ליצור משתמש
     if (!user.email || !user.password || !user.name) {
-      return res.status(400).json({ success: false, message: "חובה למלא שם, אימייל וסיסמה" });
+      return res
+        .status(400)
+        .json({ success: false, message: "חובה למלא שם, אימייל וסיסמה" });
     }
 
     user.approved = false;
     const createdUser = await AuthService.registerUser(user);
 
-    const token = AuthService.signJwt({ user: createdUser._id.toString() });
+    const token = AuthService.signJwt({ sub: createdUser._id.toString() });
 
     res.status(201).json({
       success: true,
-      message: "משתמש נרשמה בהצלחה",
-      user: { id: createdUser._id, email: createdUser.email, name: createdUser.name },
+      message: "המשתמש נרשם בהצלחה",
+      user: {
+        id: createdUser._id,
+        email: createdUser.email,
+        name: createdUser.name,
+      },
       token,
     });
   } catch (err: any) {
-    console.error(" שגיאה בהרשמה:", err.message);
+    console.error("❌ שגיאה בהרשמה:", err.message);
     res.status(400).json({ success: false, message: err.message });
   }
 };
@@ -78,35 +113,44 @@ export const login = async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ success: false, message: "חובה למלא אימייל וסיסמה" });
+      return res
+        .status(400)
+        .json({ success: false, message: "חובה למלא אימייל וסיסמה" });
     }
 
     const user = await User.findOne({ email });
-
     if (!user) {
-      return res.status(400).json({ success: false, message: "אימייל או סיסמה שגויים" });
+      return res
+        .status(400)
+        .json({ success: false, message: "אימייל או סיסמה שגויים" });
     }
 
     if (!user.approved) {
-      return res.status(400).json({ success: false, message: "משתמש ממתין לאישור" });
+      return res
+        .status(400)
+        .json({ success: false, message: "המשתמש ממתין לאישור מנהל" });
     }
 
     const ok = await AuthService.comparePassword(password, user.password);
     if (!ok) {
-      return res.status(400).json({ success: false, message: "אימייל או סיסמה שגויים" });
+      return res
+        .status(400)
+        .json({ success: false, message: "אימייל או סיסמה שגויים" });
     }
 
-    // ✅ בדיקה האם העמותה פעילה
+    // ✅ בדיקה אם העמותה פעילה
     if (user.ngoId) {
       const ngo = await ngoService.getById(user.ngoId.toString());
       if (ngo && !ngo.isActive) {
         return res.status(403).json({
           success: false,
-          message: "העמותה שלך מושהית זמנית על ידי מנהל המערכת. לא ניתן להתחבר כרגע.",
+          message:
+            "העמותה שלך מושהית זמנית על ידי מנהל המערכת. לא ניתן להתחבר כרגע.",
         });
       }
     }
 
+    // ✅ שימוש בשדה roles (מערך)
     const token = AuthService.signJwt({
       sub: user._id.toString(),
       ngoId: user.ngoId ? user.ngoId.toString() : null,
@@ -116,11 +160,10 @@ export const login = async (req: Request, res: Response) => {
     const { password: pwd, ...rest } = (user as any)._doc as IUser;
     res.json({ success: true, token, user: rest });
   } catch (err: any) {
-    console.error(" שגיאה בהתחברות:", err.message);
+    console.error("❌ שגיאה בהתחברות:", err.message);
     res.status(500).json({ success: false, message: err.message });
   }
 };
-
 
 export const me = async (req: Request, res: Response) => {
   const user = (req as any).user;
@@ -130,7 +173,7 @@ export const me = async (req: Request, res: Response) => {
       id: user._id,
       email: user.email,
       name: user.name,
-      roles: user.roles,
+      role: user.roles,
     },
   });
 };
