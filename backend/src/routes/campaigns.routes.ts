@@ -8,6 +8,8 @@ import {
 } from '../controllers/campaigns.controller';
 import authMiddleware from '../middlewares/auth.middleware';
 import roleMiddleware from '../middlewares/role.middleware';
+import { toggleCampaignStatus } from '../controllers/campaigns.controller';
+
 
 const router = Router();
 
@@ -25,5 +27,11 @@ router.post('/', authMiddleware, roleMiddleware(['ngo', 'admin']), createCampaig
 
 // ✏️ עדכון קמפיין קיים
 router.put('/:campaignId', authMiddleware, roleMiddleware(['ngo', 'admin']), updateCampaign);
+router.put(
+  "/:id/toggle-status",
+  authMiddleware,
+  roleMiddleware(["admin"]),
+  toggleCampaignStatus
+);
 
 export default router;

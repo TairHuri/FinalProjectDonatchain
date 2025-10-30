@@ -133,6 +133,24 @@ export const getAllCampaigns = async (req: Request, res: Response) => {
   }
 };
 
+export const toggleCampaignStatus = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const campaign = await CampaignService.getById(id);
+    if (!campaign) return res.status(404).json({ message: "Campaign not found" });
+
+    campaign.isActive = !campaign.isActive;
+    await campaign.save();
+
+    res.json({
+      message: `קמפיין ${campaign.isActive ? "הופעל מחדש ✅" : "הושהה ⏸️"}`,
+      campaign,
+    });
+  } catch (err: any) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 export const getCampagnsByNgo = async (req: Request, res: Response) => {
   try {
     const { ngoId } = req.query;
