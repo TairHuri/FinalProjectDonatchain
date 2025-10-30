@@ -11,7 +11,7 @@ export async function registerUser(user:IUser) {
   const {_id, createdAt, updatedAt, ...newUser} = user;
   const userToCreate = new User({
     ...newUser, password:passwordHash,
-    roles: ["ngo"], // ברירת מחדל
+    role: 'member', // ברירת מחדל
   });
 
   const createdUser = await userToCreate.save();

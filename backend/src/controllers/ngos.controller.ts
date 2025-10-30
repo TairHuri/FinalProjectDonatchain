@@ -67,7 +67,7 @@ export const updateNgo = async (req: Request, res: Response) => {
     if (!ngo) return res.status(404).json({ message: 'NGO not found' });
 
     // אם המשתמש אינו היוצר ולא admin — Forbidden
-    if (ngo.createdBy?.toString() !== user._id.toString() && !user.roles.includes('admin')) {
+    if (ngo.createdBy?.toString() !== user._id.toString() && !(user.role == 'admin')) {
       return res.status(403).json({ message: 'Forbidden' });
     }
 

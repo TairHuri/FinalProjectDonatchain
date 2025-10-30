@@ -26,8 +26,7 @@ const App: React.FC = () => {
     <AuthProvider>
       <CampaignsProvider>
         <div
-          className="min-h-screen bg-gray-100 text-gray-900 flex flex-col"
-          style={{ width: "100vw", overflowX: "hidden" }}
+          className="min-h-screen bg-gray-100 text-gray-900 flex flex-col w-full"
         >
           {/* סרגל ניווט עליון */}
           <Navbar />

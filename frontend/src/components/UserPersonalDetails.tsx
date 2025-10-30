@@ -42,7 +42,7 @@ const UserPersonalDetails = ({ editMode, setEditMode }: { editMode: string, setE
               <p><strong>שם חבר העמותה:</strong> {user.name}</p>
               <p><strong>אימייל:</strong> {user.email}</p>
               <p><strong>טלפון:</strong> {user.phone}</p>
-              <p><strong>תפקיד:</strong> {user.roles}</p>
+              <p><strong>תפקיד:</strong> {user.role}</p>
               <p><strong>סיסמה:</strong> {user.password}</p>
               <button
                 onClick={() => setEditMode("edit")}

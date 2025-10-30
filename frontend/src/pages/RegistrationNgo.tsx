@@ -1,26 +1,35 @@
-import { useEffect, useState, type ReactNode } from "react";
+
+import { useEffect, useState } from "react";
 import { getNgoList, registerUserExistingNgo, registerUserNewNgo } from "../services/api";
 import { Building2, Mail, Lock, Phone } from "lucide-react";
 import type { User } from "../models/User";
 import type { Ngo } from "../models/Ngo";
-import { Input, InputWithIcon } from "../components/gui/InputText";
 import NewNgo from "../components/NewNgo";
-import {useNavigate} from 'react-router-dom'
-import { buttonStyle, iconLogin, ngoListStyle, toggleGroup, toggleOff, toggleOn } from "../css/dashboardStyles";
+import { useNavigate } from 'react-router-dom';
+import "../css/RegistrationNgo.css"; 
+import AlertDialog, { useAlertDialog } from "../components/gui/AlertDialog";
 
-export type NgoMediaType={logoUrl:File|null, certificate:File|null}
+export type NgoMediaType = { logoUrl: File | null, certificate: File | null }
+
 export default function RegistrationNgo() {
   const nav = useNavigate();
   const [agree, setAgree] = useState(false);
+  const [newNgo, setNewNgo] = useState<boolean>(false);
+  const [ngoList, setNgoList] = useState<Ngo[]>([]);
+  const [media, setMedia] = useState<NgoMediaType>({ logoUrl: null, certificate: null });
+
+
+  const {message, setMessage, showAlert, setShowAlert, isFailure, setIsFailure} = useAlertDialog()
   const [user, setUser] = useState<User>({
     name: "",
     ngoId: "",
     email: "",
     phone: "",
     password: "",
-    roles: [],
+    role: 'member',
     approved: false
   });
+
   const [ngo, setNgo] = useState<Ngo>({
     _id: "",
     name: "",
@@ -34,15 +43,9 @@ export default function RegistrationNgo() {
     logoUrl: "",
     createdBy: "",
     createdAt: new Date(),
-    //token: "",
     ngoNumber: "",
-    certificate:'',
+    certificate: '',
   });
-  const [media, setMedia] = useState<NgoMediaType>({logoUrl: null, certificate:null})
-  const [ngoList, setNgoList] = useState<Ngo[]>([])
-
-  const [newNgo, setNewNgo] = useState<boolean>(false)
-
 
   const handleChangeUser = (field: string, value: string | number) => {
     setUser({ ...user, [field]: value });
@@ -50,134 +53,194 @@ export default function RegistrationNgo() {
   const handleChangeNgo = (field: string, value: string | number) => {
     setNgo({ ...ngo, [field]: value });
   };
-  const handleChangeMedia = (field: keyof NgoMediaType, value: FileList|null) => {
-    setMedia({ ...media, [field]: value?value[0]:null });
+  const handleChangeMedia = (field: keyof NgoMediaType, value: FileList | null) => {
+    setMedia({ ...media, [field]: value ? value[0] : null });
   };
-  const handleChangeData = (
-   field: string, value: string | number
-  ) => {
-    const ngo = ngoList.find(n => n.name == value)
-    if (!ngo) {
-      //TODO optionally create new NGO
-      return;
-    }
-    setUser({ ...user, ngoId: ngo._id });
-    console.log(field, value);
 
+  const handleChangeData = (field: string, value: string | number) => {
+    const n = ngoList.find(x => x.name === value);
+    if (!n) return;
+    setUser({ ...user, ngoId: n._id });
   };
 
   const loadNgoList = async () => {
-    const ngoList = await getNgoList()
-    setNgoList(ngoList.items)
-  }
+    const res = await getNgoList();
+    setNgoList(res.items);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!user.email || !user.password || !user.name) {
-      alert("אנא מלאי שם, אימייל וסיסמה");
+      setIsFailure(true);
+      setMessage("אנא מלאי שם, אימייל וסיסמה");
+      setShowAlert(true);
       return;
     }
-
     try {
       let res;
       if (newNgo) {
-        res = await registerUserNewNgo(user, ngo, media);
+        const u = { ...user, role: 'admin' as 'admin'|'member'};
+        res = await registerUserNewNgo(u, ngo, media);
       } else {
         res = await registerUserExistingNgo(user);
       }
-
       if (res.success) {
-        alert("עמותה נרשמה בהצלחה!");
-        nav('/login/ngo')
+        setIsFailure(false);
+        setMessage("עמותה נרשמה בהצלחה");
+        setShowAlert(true);
+
       } else {
-        alert(res.message || "שגיאה בהרשמה");
+        setIsFailure(true);
+        setMessage("שגיאה בהרשמה");
+        setShowAlert(true);
+        alert(res.message);
       }
     } catch (err) {
-      alert("שגיאת שרת");
+      setIsFailure(true);
+      setMessage("שגיאת שרת");
+      setShowAlert(true);
     }
   };
-  useEffect(() => {
-    loadNgoList()
-  }, [])
+
+  useEffect(() => { loadNgoList(); }, []);
+
   return (
-    <div>
-      <div>
-        <h1 className="text-center"> 
-          הרשמת עמותה
-        </h1>
-        <p>
-          הצטרפי אלינו והשאירי חותם חיובי בעולם ✨</p>
+    <>
+      <div className="login-page" dir="rtl">{/* 📌 שימוש באותה עטיפה כמו ההתחברות */}
+        <div className="login-card">{/* 📌 אותו כרטיס כמו בהתחברות */}
+          <h1 className="login-title">הרשמת עמותה</h1>{/* 📌 אותו סטייל כותרת */}
 
-        <form onSubmit={handleSubmit}>
-          {/* שם עמותה */}
-          <InputWithIcon
-            label="שם חבר העמותה"
-            field="name"
-            onChange={handleChangeUser}
-            value={user.name}
-            Icon={<Building2 style={iconLogin}/>} />
-          <InputWithIcon
-            label="אימייל"
-            field="email"
-            type="email"
-            onChange={handleChangeUser}
-            value={user.email || ""}
-            Icon={<Mail style={iconLogin}/>} />
-          <InputWithIcon
-            label="טלפון"
-            field="phone"
-            onChange={handleChangeUser}
-            value={user.phone || ""}
-            Icon={<Phone style={iconLogin}/>} />
-          <InputWithIcon
-            label="סיסמה"
-            field="password"
-            type="password"
-            onChange={handleChangeUser}
-            value={user.password}
-            Icon={<Lock style={iconLogin}/>} />
-
-          <ToggleButton state={newNgo} labelOn="צור עמותה" labelOff="התחבר לעמותה קיימת" onToggle={() => setNewNgo(!newNgo)} />
-          {newNgo ? <NewNgo ngo={ngo} media={media} handleChangeNgo={handleChangeNgo} handleChangeMedia={handleChangeMedia}/>
-            :
-            <div>
-              <Input type="text" list="ngoList" onChange={handleChangeData} label="" field="ngoId" value={user.ngoId} disabled={ngoList.length == 0} required={true} />
-              <datalist id="ngoList" >
-                {ngoList.map(n => <option key={n._id} value={n.name} />)}
-              </datalist>
-            </div>}
-          
-          <div dir="rtl">
-            <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
-        <input
-          type="checkbox"
-          checked={agree}
-          onChange={(e) => setAgree(e.target.checked)}
-        />
-        אני מאשר/ת את <a href="/about/rules" target="_blank" rel="noopener noreferrer">תקנון האתר</a>
-      </label>
+          {/* 📌 טוגל בסגנון פשוט ונקי, כמו שני כפתורי צ'יפס */}
+          <div className="segmented" dir="rtl">
             <button
-             disabled={!agree}
-              type="submit"
-              className="w-full bg-blue-600 text-white py-3 rounded-full hover:bg-blue-700 transition-colors font-semibold"
-              style={buttonStyle}
+              type="button"
+              className={`seg-item ${newNgo ? "active" : ""}`}
+              onClick={() => setNewNgo(true)}
             >
-              צור חשבון
+              צור עמותה חדשה
+            </button>
+            <button
+              type="button"
+              className={`seg-item ${!newNgo ? "active" : ""}`}
+              onClick={() => setNewNgo(false)}
+            >
+              הצטרף לעמותה קיימת
             </button>
           </div>
-        </form>
+
+          <form onSubmit={handleSubmit} className="login-form">{/* 📌 אותה מחלקה של טופס כמו בהתחברות */}
+            {/* שם משתמש */}
+            <div className="input-group">{/* 📌 אותו מבנה כמו ההתחברות */}
+              <Building2 className="input-icon" />
+              <input
+                type="text"
+                placeholder="שם חבר/ת העמותה"
+                value={user.name}
+                onChange={(e) => handleChangeUser("name", e.target.value)}
+                className="input-field"
+                required
+              />
+            </div>
+
+            {/* אימייל */}
+            <div className="input-group">
+              <Mail className="input-icon" />
+              <input
+                type="email"
+                placeholder="אימייל"
+                value={user.email || ""}
+                onChange={(e) => handleChangeUser("email", e.target.value)}
+                className="input-field"
+                required
+              />
+            </div>
+
+            {/* טלפון */}
+            <div className="input-group">
+              <Phone className="input-icon" />
+              <input
+                type="tel"
+                placeholder="טלפון"
+                value={user.phone || ""}
+                onChange={(e) => handleChangeUser("phone", e.target.value)}
+                className="input-field"
+              />
+            </div>
+
+            {/* סיסמה */}
+            <div className="input-group">
+              <Lock className="input-icon" />
+              <input
+                type="password"
+                placeholder="סיסמה"
+                value={user.password}
+                onChange={(e) => handleChangeUser("password", e.target.value)}
+                className="input-field"
+                required
+              />
+            </div>
+
+            {/* בחירת מצב */}
+            {newNgo ? (
+              <>
+                <div className="section-divider"><span>פרטי עמותה חדשה</span></div>
+                <NewNgo
+                  ngo={ngo}
+                  media={media}
+                  handleChangeNgo={handleChangeNgo}
+                  handleChangeMedia={handleChangeMedia}
+                />
+
+              </>
+            ) : (
+              <div className="input-group">{/* 📌 שורת בחירת עמותה קיימת בסגנון ההתחברות */}
+                <Building2 className="input-icon" />
+                <input
+                  type="text"
+                  list="ngoList"
+                  placeholder="חפשי ובחרי עמותה קיימת…"
+                  onChange={(e) => handleChangeData("ngoId", e.target.value)}
+                  className="input-field"
+                />
+                <datalist id="ngoList">
+                  {ngoList.map(n => (
+                    <option key={n._id} value={n.name} />
+                  ))}
+                </datalist>
+              </div>
+            )}
+
+            {/* תקנון + כפתור */}
+            <label className="agree-inline">
+              <input
+                type="checkbox"
+                checked={agree}
+                onChange={(e) => setAgree(e.target.checked)}
+              />
+              אני מאשר/ת את{" "}
+              <a href="/about/rules" target="_blank" rel="noopener noreferrer">
+                תקנון האתר
+              </a>
+            </label>
+
+            <button type="submit" className="login-btn" disabled={!agree}>
+              צור חשבון
+            </button>
+          </form>
+        </div>
       </div>
-    </div>
+
+      <AlertDialog
+        show={showAlert}
+        failureTitle="שגיאה"
+        successTitle=""
+        message={message}
+        failureOnClose={() => setShowAlert(false)}
+        successOnClose={() => nav('/login/ngo')}
+        isFailure={isFailure}
+      />
+    </>
   );
-}
 
-const ToggleButton = ({ state, labelOn, labelOff, onToggle }: { state: boolean, labelOn: string, labelOff: string, onToggle: () => void }) => {
 
-  return (
-    <div className="md:col-span-2" style={toggleGroup}>
-      <span onClick={onToggle} style={state ? toggleOn : toggleOff}>{labelOn}</span>
-      <span onClick={onToggle} style={state ? toggleOff : toggleOn}>{labelOff}</span>
-    </div>
-  )
 }

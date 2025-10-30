@@ -7,7 +7,7 @@ export interface User {
   password: string;
   name: string;
   phone?: string;
-  roles: string[];
+  role: 'admin'|'member';
   ngoId: string;
   approved:boolean;
   createdAt?: Date;

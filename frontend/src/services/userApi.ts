@@ -14,3 +14,11 @@ export async function editUser(user:User) {
   }
   return res.json();
 }
+
+export async function setUserRoleApi(userId: string, role:string) {
+  const token = localStorage.getItem("token")
+  const res = await fetch(`${API_URL}/users/role/${userId}`,
+    { method: 'PATCH', headers: { "Authorization": `Bearer ${token}`, 'Content-Type':'application/json' },
+  body:JSON.stringify({role}) })
+  return res.json();
+}

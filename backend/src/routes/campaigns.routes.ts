@@ -12,7 +12,7 @@ router.get('/', listCampaigns);
 router.get('/:id', getCampaign);
 
 // ➕ יצירת קמפיין (מאובטח - רק NGO/Admin)
-router.post('/', authMiddleware, roleMiddleware(['ngo', 'admin']), createCampaign);
-router.put('/:campaignId', authMiddleware, roleMiddleware(['ngo', 'admin']), updateCampaign);
+router.post('/', authMiddleware, roleMiddleware(['member', 'admin']), createCampaign);
+router.put('/:campaignId', authMiddleware, roleMiddleware(['member', 'admin']), updateCampaign);
 
 export default router;

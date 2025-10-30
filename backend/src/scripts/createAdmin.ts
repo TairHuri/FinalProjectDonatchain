@@ -30,7 +30,7 @@ async function createAdmin() {
       name: "System Admin",
       email,
       password: hashedPassword,
-      roles: ["admin"],
+      role: "admin",
       approved: true,
     });
 
