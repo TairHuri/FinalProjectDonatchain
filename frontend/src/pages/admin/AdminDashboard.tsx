@@ -16,7 +16,8 @@ import CampaignList from "../../components/CampaignList";
 import NgoList from "../admin/NgoList"; // מתוך src/pages/admin
 import NgoDetails from "../../components/admin/NgoDetails"; // מתוך src/components/admin
 import AdminAboutEditor from "./AdminAboutEditor";
-
+import RulesViewer from "./RulesViewer";
+import AdminRulesEditor from "./AdminRulesEditor";
 
 interface Stats {
   usersCount: number;
@@ -202,11 +203,19 @@ const [selectedNgo, setSelectedNgo] = useState<any | null>(null);
 )}
 
 
-        {activePage === "terms" && (
-          <h2 style={{ fontSize: "24px", fontWeight: "bold" }}>
-            ניהול תקנון האתר
-          </h2>
-        )}
+{activePage === "terms" && (
+  <div>
+    <h2 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "16px" }}>
+      ניהול תקנון האתר
+    </h2>
+
+    {/* רכיב לצפייה */}
+    <RulesViewer />
+
+    {/* רכיב לעריכה */}
+    <AdminRulesEditor />
+  </div>
+)}
 
 {activePage === "about" && <AdminAboutEditor />}
 
