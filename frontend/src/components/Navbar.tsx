@@ -377,24 +377,30 @@ export default function Navbar() {
       </li>
 
       {/* עמותות */}
-      <li className="dropdownWrapper">
-        {user ? (
-          <Link
-            to="/ngo/home"
-            className={`navBtn ${location.pathname.startsWith("/ngo") ? "navBtnActive" : ""}`}
-          >
-            אזור אישי
-          </Link>
-        ) : (
-          <>
-            <button
-              onClick={(event) => handlBottonClick(event, "ngo")}
-              className={`navBtn ${location.pathname.startsWith("/ngo") ? "navBtnActive" : ""}`}
-              aria-expanded={openDropdown === "ngo"}
-              aria-haspopup="menu"
-            >
-              עמותות ⌄
-            </button>
+     <li className="dropdownWrapper">
+  {user ? (
+    <Link
+      to={user.role === "admin" ? "/admin/dashboard" : "/ngo/home"}
+      className={`navBtn ${
+        location.pathname.startsWith("/ngo") || location.pathname.startsWith("/admin")
+          ? "navBtnActive"
+          : ""
+      }`}
+    >
+      אזור אישי
+    </Link>
+  ) : (
+    <>
+      <button
+        onClick={(event) => handlBottonClick(event, "ngo")}
+        className={`navBtn ${
+          location.pathname.startsWith("/ngo") ? "navBtnActive" : ""
+        }`}
+        aria-expanded={openDropdown === "ngo"}
+        aria-haspopup="menu"
+      >
+        עמותות
+      </button>
             {openDropdown === "ngo" && (
               <ul className="dropdown" role="menu">
                 <li><Link to="/registration/ngo" className="dropdownLink">הרשמה</Link></li>

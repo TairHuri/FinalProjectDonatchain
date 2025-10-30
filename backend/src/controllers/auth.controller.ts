@@ -154,7 +154,7 @@ export const login = async (req: Request, res: Response) => {
     const token = AuthService.signJwt({
       sub: user._id.toString(),
       ngoId: user.ngoId ? user.ngoId.toString() : null,
-      role: user.roles,
+      role: user.role,
     });
 
     const { password: pwd, ...rest } = (user as any)._doc as IUser;
@@ -173,7 +173,7 @@ export const me = async (req: Request, res: Response) => {
       id: user._id,
       email: user.email,
       name: user.name,
-      role: user.roles,
+      role: user.role,
     },
   });
 };

@@ -53,11 +53,12 @@ const NgoDashboard: React.FC = () => {
     getDonationsCount();
   }, [])
 
-  const getDonationsCount = async () => {
-    if (!user) return;
-    const donations = await getDonationsByNgo(user.ngoId);
-    setDonationsCount(donations.length);
-  }
+const getDonationsCount = async () => {
+  if (!user || !user.ngoId) return;
+  const donations = await getDonationsByNgo(user.ngoId);
+  setDonationsCount(donations.length);
+};
+
 
   const editCampaign = (id:string) => {
 setActivePage("editCampaign");
