@@ -5,7 +5,7 @@ export interface DonationIF {
   phone: string;
   firstName: string;
   lastName: string;
-  campaign: Schema.Types.ObjectId | string;
+  campaign: Schema.Types.ObjectId | string 
   amount: number;
   currency: string;
   method: string; // e.g. 'card','wallet','onchain'
