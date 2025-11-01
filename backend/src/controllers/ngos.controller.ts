@@ -36,26 +36,29 @@ export const createNgo = async (req: Request, res: Response) => {
  */
 export const listNgos = async (_req: Request, res: Response) => {
   try {
-    const items = await Ngo.aggregate([
-      {
-        $lookup: {
-          from: "campaigns",
-          localField: "_id",
-          foreignField: "ngo",
-          as: "campaigns",
-        },
-      },
-      {
-        $addFields: {
-          ngoCampaignsCount: { $size: "$campaigns" },
-        },
-      },
-      {
-        $project: {
-          campaigns: 0,
-        },
-      },
-    ]);
+const items = await Ngo.aggregate([
+  {
+    $match: { isActive: true } 
+  },
+  {
+    $lookup: {
+      from: "campaigns",
+      localField: "_id",
+      foreignField: "ngo",
+      as: "campaigns",
+    },
+  },
+  {
+    $addFields: {
+      ngoCampaignsCount: { $size: "$campaigns" },
+    },
+  },
+  {
+    $project: {
+      campaigns: 0,
+    },
+  },
+]);
 
     res.json({ items });
   } catch (err: any) {
