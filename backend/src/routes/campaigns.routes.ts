@@ -25,5 +25,6 @@ router.get('/:id', getCampaign);
 // ➕ יצירת קמפיין (מאובטח - רק NGO/Admin)
 router.post('/', authMiddleware, roleMiddleware(['member', 'admin']), createCampaign);
 router.put('/:campaignId', authMiddleware, roleMiddleware(['member', 'admin']), updateCampaign);
+router.put('/:id/toggle-status', authMiddleware, roleMiddleware(['admin']), toggleCampaignStatus);
 
 export default router;
