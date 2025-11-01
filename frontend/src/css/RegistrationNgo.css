@@ -1,9 +1,10 @@
 /* ממחזר את ההתחברות — אפשר להשאיר כמו שיש לך כבר: */
 .login-page {
+  margin-top: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  /* min-height: 100vh; */
   background: none;
   font-family: 'Segoe UI', Calibri, sans-serif;
 }
@@ -136,7 +137,7 @@
 /* רספונסיביות */
 @media (max-width: 768px) {
   .login-card {
-    width: 92vw;
+    width: 80vw;
     padding: 30px 20px;
     border-radius: 16px;
   }

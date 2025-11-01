@@ -15,7 +15,7 @@ import CampaignDetails from "./pages/CampaignDetails";
 import NewCampaign from "./pages/NewCampaign";
 import AboutRules from "./pages/AboutRules";
 import AdminDashboard from "./pages/admin/AdminDashboard";
-import AdminRoute from "./components/AdminRoute"; 
+import AdminRoute from "./components/AdminRoute";
 
 import "./App.css";
 import Ngos from "./pages/Ngos";
@@ -26,13 +26,15 @@ const App: React.FC = () => {
     <AuthProvider>
       <CampaignsProvider>
         <div
-          className="min-h-screen bg-gray-100 text-gray-900 flex flex-col w-full"
+          className=" h-screen bg-gray-100 text-gray-900 flex flex-col"
         >
           {/* סרגל ניווט עליון */}
           <Navbar />
 
           {/* תוכן ראשי */}
-          <div className="flex-1 p-4 max-w-6xl mx-auto">
+          <div className="mx-auto max-w-6xl px-4
+            min-h-[calc(100dvh-65px)]
+            grid place-items-center">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/discover" element={<Discover />} />

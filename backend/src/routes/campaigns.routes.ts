@@ -22,8 +22,8 @@ router.get('/', listCampaigns);
 // 🔎 קמפיין בודד לפי ID
 router.get('/:id', getCampaign);
 
-// ➕ יצירת קמפיין (מאובטח - רק NGO/Admin)
-router.post('/', authMiddleware, roleMiddleware(['member', 'admin']), createCampaign);
-router.put('/:campaignId', authMiddleware, roleMiddleware(['member', 'admin']), updateCampaign);
+// ➕ יצירת קמפיין (מאובטח - רק member/manger)
+router.post('/', authMiddleware, roleMiddleware(['member', 'manger']), createCampaign);
+router.put('/:campaignId', authMiddleware, roleMiddleware(['member', 'manger']), updateCampaign);
 
 export default router;

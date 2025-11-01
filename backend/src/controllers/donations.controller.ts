@@ -13,7 +13,20 @@ export const getDonationsByCampaign = async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error);
     
-    res.status(500).send(error)
+    res.status((error as ServerError).statusCode||500).send({ message: (error as any).message });
+  }
+}
+
+export const getFullDonationsByCampaign = async (req: Request, res: Response) => {
+  try {
+    const { campaignId } = req.query;
+    if(!campaignId)return res.status(400).send({message: 'missing campaignId'})
+    const donatios = await donationService.fullListByCampaign(campaignId.toString())  //Donation.find({ campaign: campaignId })
+    res.send(donatios)
+  } catch (error) {
+    console.log(error);
+    
+    res.status((error as ServerError).statusCode||500).send({ message: (error as any).message });
   }
 }
 export const getDonationsByNgo = async (req: Request, res: Response) => {
@@ -23,7 +36,7 @@ export const getDonationsByNgo = async (req: Request, res: Response) => {
     const donatios = await donationService.listByNgo(ngoId.toString())
     res.send(donatios)
   } catch (error) {
-    res.status(500).send(error)
+    res.status((error as ServerError).statusCode||500).send({ message: (error as any).message });
   }
 }
 

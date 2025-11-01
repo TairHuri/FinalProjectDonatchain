@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Grid, List } from "lucide-react"; // אייקונים
-import { Link } from "react-router-dom";
 import NgoItem from "../components/NgoItem";
 import { getNgoList } from "../services/ngoApi";
 import type { Ngo } from "../models/Ngo";
@@ -114,3 +113,6 @@ export default function Ngos() {
         </div>
     );
 }
+
+
+

@@ -80,7 +80,7 @@ const NgoPublicProfile: React.FC = () => {
     if (isLoading) return (<Spinner />)
     if (!ngo) return <>שגיאה בטעינת העמותה, אנא נסו שנית מאוחר יותר</>
     return (
-        <div dir="rtl" style={{ padding: "24px", background: "#f3f4f6", minHeight: "100vh" }}>
+        <div dir="rtl" style={{ padding: "24px", background: "#f3f4f6" }}>
             {/* כרטיס מרכזי */}
             <div style={cardStyle}>
                 {/* ראש העמותה: לוגו + שם + מספר עמותה */}

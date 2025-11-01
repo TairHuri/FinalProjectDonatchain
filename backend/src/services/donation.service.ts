@@ -163,30 +163,33 @@ export default {
           'cDoc.ngo': objId
         }
       }
-      
+
     ])
 
-  //return Donation.find().populate({ path: 'campaign', match: { ngo: ngoId } }).sort({ createdAt: -1 });
-},
-
+    //return Donation.find().populate({ path: 'campaign', match: { ngo: ngoId } }).sort({ createdAt: -1 });
+  },
+  async fullListByCampaign(campaignId: string) {
+    const objId = new mongoose.Types.ObjectId(campaignId);
+    return Donation.find({ campaign: objId })
+  },
   async listByCampaign(campaignId: string) {
     const objId = new mongoose.Types.ObjectId(campaignId);
     return Donation.aggregate([
       {
-        $match:{campaign: objId}
+        $match: { campaign: objId }
       },
       {
-        $addFields:{
-          firstName:{
-            $cond:{
-              if:{$eq:["$anonymous", true]},
+        $addFields: {
+          firstName: {
+            $cond: {
+              if: { $eq: ["$anonymous", true] },
               then: 'anonymous',
               else: '$firstName'
             }
           },
-          lastName:{
-            $cond:{
-              if:{$eq:["$anonymous", true]},
+          lastName: {
+            $cond: {
+              if: { $eq: ["$anonymous", true] },
               then: 'anonymous',
               else: '$lastName'
             },
@@ -194,16 +197,16 @@ export default {
         }
       },
       {
-        $project:{
+        $project: {
           firstName: 1,
           lastName: 1,
-          amount:1,
-          currency:1,
-          comment:1,
+          amount: 1,
+          currency: 1,
+          comment: 1,
           txHash: 1,
         }
       }
     ])
-  
-}
+
+  }
 };

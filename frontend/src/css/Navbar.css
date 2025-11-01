@@ -6,7 +6,9 @@
   --accent-2:#22c55e;
   --border:#e5e7eb;
   --card:#ffffff;
+  --drawer-w: 280px; /* width of the drawer on mobile */
 }
+
 [data-theme="dark"]{
   --bg:#0b1220;
   --fg:#e5e7eb;
@@ -30,6 +32,18 @@
   direction:rtl;
   font-family:"Heebo",system-ui,Segoe UI,Roboto,"Noto Sans",sans-serif;
 }
+/* .navbar{
+  position: sticky;    או fixed אם את מעדיפה 
+  top: 0;
+  z-index: 100;
+  height: var(--nav-h);           ← חשוב! 
+  display: flex;
+  align-items: center;
+  inset-inline: 0;                ימני/שמאלי 
+  background: #ffffffcc;        שקיפות עדינה 
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid #d9e2de;
+} */
 .menu{
   display:flex;
   gap:.5rem;margin:0;
@@ -151,6 +165,100 @@
   .desktopOnly{display:flex}
   .mobileOnly{display:none}
   .logo{height:40px}
+}
+/* Only show drawer on mobile */
+@media (min-width: 1025px){
+  .drawer, .scrim { display: none !important; }
+  .hamburgerBtn{ display: none !important; }
+}
+
+.hamburgerBtn{
+  order: -999;                 /* first in the row */
+  margin-inline-end: auto;     /* pushes the rest away so it's flush-left */
+}
+
+/* just in case some layout flips to row-reverse somewhere */
+[dir="rtl"] .hamburgerBtn{
+  order: -999;
+}
+
+/* Drawer panel (left) */
+.drawer{
+  position: fixed;
+  top: 0;
+  right: 0;                 /* ⟵ anchor to right */
+  left: auto;
+  width: var(--drawer-w);
+  height: 100dvh;
+  background: var(--card);
+  border-inline-start: 1px solid var(--border);  /* border on the left side of the drawer */
+  box-shadow: 0 10px 24px rgba(2,6,23,.12);
+  z-index: 60;
+
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+
+  /* start off-screen to the RIGHT */
+  translate: 100% 0;        /* ⟵ key change */
+  transition: translate .35s ease;
+}
+
+/* Open state */
+.drawer[data-open="true"]{
+  translate: 0 0;
+}
+
+/* Drawer header */
+.drawerHeader{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 4px 10px;
+  border-bottom: 1px solid var(--border);
+}
+.drawerTitle{
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--fg);
+}
+.drawerClose{ margin-inline-start: auto; }
+
+/* Drawer list (reuse your button/link styles) */
+.drawerList{
+  margin: 0;
+  padding: 10px 4px 8px;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.drawerList .navBtn{
+inline-size: auto;                 /* was 100% implicitly */
+  min-inline-size: max-content;      /* fit label + icon */
+  max-inline-size: calc(var(--drawer-w) - 24px);
+  padding: .45rem .75rem;            /* a bit tighter */
+  border-radius: .5rem;
+  gap: .5rem;
+  white-space: nowrap;               /* don't wrap long labels */
+  overflow: hidden;
+  text-overflow: ellipsis; 
+}
+
+/* Light scrim that doesn't cover the page entirely visually */
+.scrim{
+  position: fixed;
+  inset: 0;
+  background: rgba(2,6,23,.18);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s ease;
+  z-index: 55;
+}
+.scrim[data-open="true"]{
+  opacity: 1;
+  pointer-events: auto;
 }
 
 

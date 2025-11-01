@@ -1,47 +1,3 @@
-// import { useEffect, useState } from "react";
-// import { useCampaigns } from "../contexts/CampaignsContext";
-// import CampaignItem, { CampaignDonors } from "./CampaignItem";
-// import type { Donation } from "../models/Donation";
-
-// import { getDonationsByCampaign, getDonationsByNgo} from "../services/donationApi";
-// import { useAuth } from "../contexts/AuthContext";
-// import { buttonStyle } from "../css/dashboardStyles";
-
-
-
-
-// const NgoDonors = () => {
-//     const {user} =useAuth()
-//     const {campaigns} = useCampaigns()
-//     const [donations, setDonations] = useState<Donation[]>([]);
-//     const loadDonors = async (campaignId:string) => {
-//         const donations = await getDonationsByCampaign(campaignId);
-//         setDonations(donations);
-//     }
-//     const loadNgoDonors = async () => {
-//         if(!user)return;        
-//         const donations = await getDonationsByNgo(user.ngoId);
-//         setDonations(donations);
-//     }
-    
-//     return (
-//         <div>
-//             <h2>תורמי העמותה</h2>
-//             <button  type='button' onClick={loadNgoDonors} style={buttonStyle}>כל התורמים </button>
-//             <div style={{height:'25vh', overflowY:'auto'}}>
-//                 {campaigns.map((c) => <CampaignDonors key={c._id} campaign={c} onClick={()=>loadDonors(c._id!)}/>)}
-//             </div>
-//             <div style={{height:'30vh', overflowY:'auto'}}>
-//                 {donations.map(d => <p key={d._id}>{`${d.firstName} ${d.lastName} ${d.email} ${d.phone}`}</p>)}
-//             </div>
-//         </div>
-//     )
-// }
-
-// export default NgoDonors
-
-// src/components/NgoDonors.tsx
-
 import '../css/NgoDonors.css'
 
 import { useEffect, useMemo, useState } from "react";
@@ -55,12 +11,12 @@ const NgoDonors = () => {
   const { user } = useAuth();
   const { campaigns } = useCampaigns();
 
-  // ✅ חדש: בחירת קמפיין / חיפוש
+
   const [selectedCampaignId, setSelectedCampaignId] = useState<string | "all">("all");
   const [openPicker, setOpenPicker] = useState(false);
   const [query, setQuery] = useState("");
 
-  // ✅ קיים: תרומות
+
   const [donations, setDonations] = useState<Donation[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -91,12 +47,12 @@ const NgoDonors = () => {
     }
   };
 
-  // ברירת-מחדל: טען את כל התורמים
+
   useEffect(() => {
     loadNgoDonors();
   }, []);
 
-  // כאשר המשתמש בוחר קמפיין / “כל הקמפיינים”
+ 
   useEffect(() => {
     if (selectedCampaignId === "all") {
       loadNgoDonors();
@@ -107,12 +63,12 @@ const NgoDonors = () => {
 
   return (
     <div className="ngo-donors" dir="rtl">
-      {/* כותרת + בר כלים אינטראקטיבי */}
+
       <div className="ngo-donors__header">
         <h2 className="ngo-donors__title"><Users size={18}/> תורמי העמותה</h2>
 
         <div className="toolbar">
-          {/* בורר קמפיין (פתיח/סגירה) */}
+
           <div className="picker">
             <button
               type="button"
@@ -121,7 +77,6 @@ const NgoDonors = () => {
               aria-expanded={openPicker}
               aria-haspopup="listbox"
             >
-              <Gift size={16}/>
               <span className="picker__label">
                 {selectedCampaignId === "all" ? "כל הקמפיינים" : (campaigns.find(c => c._id === selectedCampaignId)?.title ?? "בחרו קמפיין")}
               </span>
@@ -130,7 +85,7 @@ const NgoDonors = () => {
 
             {openPicker && (
               <div className="picker__panel" role="listbox">
-                {/* חיפוש בתוך הרשימה */}
+
                 <div className="picker__search">
                   <Search size={16} />
                   <input
@@ -173,7 +128,7 @@ const NgoDonors = () => {
             )}
           </div>
 
-          {/* ניקוי בחירה */}
+
           {selectedCampaignId !== "all" && (
             <button
               type="button"
@@ -187,7 +142,7 @@ const NgoDonors = () => {
         </div>
       </div>
 
-      {/* תוכן: רשימת תורמים */}
+ 
       <div className="panel">
         <div className="panel__title">
           <Users size={18}/> {selectedCampaignId === "all" ? "כל התורמים" : "תורמי הקמפיין"}

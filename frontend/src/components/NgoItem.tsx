@@ -37,3 +37,5 @@ const NgoItem = ({ ngo, view }: { ngo: Ngo, view: "grid" | "list" }) => {
 }
 
 export default NgoItem;
+
+

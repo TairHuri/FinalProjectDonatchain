@@ -21,7 +21,7 @@ type NgoMessage = {
 
 type Tab = "members" | "pending" | "board";
 
-const NgoAdminUser = ({ users, loadUsers }: { users: User[], loadUsers: () => void }) => {
+const NgoMembers = ({ users, loadUsers }: { users: User[], loadUsers: () => void }) => {
     const [message, setMessage] = useState<string>('')
     const { user } = useAuth();
     console.log("user=", user);
@@ -80,52 +80,50 @@ const NgoAdminUser = ({ users, loadUsers }: { users: User[], loadUsers: () => vo
     // חיתוכים לטאבים
     const activeMembers = users.filter(u => u.approved == true);
     const pendingMembers = users.filter(u => u.approved == false);
+    const isCurrentManger = user?.role == 'manger';
     if (!user) return null;
     return (
         <div className={'container'}>
             <AlertDialog show={message != ""} message={message} failureOnClose={() => setMessage("")} />
 
             {/* טאבים */}
-            <div className={'tabsRow'}>
+            {/* TABS */}
+            <div className='tabsRow'>
                 <button
-                    className={`${'tabBtn'} ${activeTab === "members" ? 'tabActive' : ""
-                        }`}
+                    className={`tabBtn ${activeTab === "pending" ? 'tabActive' : ""}`}
                     onClick={() => setActiveTab("members")}
                 >
                     חברי עמותה
-                    <span className={'tabCount'}>
-                        {activeMembers.length}
-                    </span>
+                    <span className='tabCount'>{activeMembers.length}</span>
                 </button>
 
-                <button
-                    className={`${'tabBtn'} ${activeTab === "pending" ? 'tabActive' : ""
-                        }`}
-                    onClick={() => setActiveTab("pending")}
-                >
-                    בקשות הצטרפות
-                    <span className={'tabCount'}>
-                        {pendingMembers.length}
-                    </span>
-                </button>
+                {/* טאב בקשות — מנהל בלבד */}
+                {isCurrentManger && (
+                    <button
+                        className={`tabBtn ${activeTab === "pending" ? 'tabActive' : ""}`}
+                        onClick={() => setActiveTab("pending")}
+                    >
+                        בקשות הצטרפות
+                        <span className='tabCount'>{pendingMembers.length}</span>
+                    </button>
+                )}
 
                 <button
-                    className={`${'tabBtn'} ${activeTab === "board" ? 'tabActive' : ""
-                        }`}
+                    className={`tabBtn ${activeTab === "board" ? 'tabActive' : ""}`}
                     onClick={() => setActiveTab("board")}
                 >
                     לוח הודעות
-                    <span className={'tabCount'}>{messages.length}</span>
+                    <span className='tabCount'>{messages.length}</span>
                 </button>
             </div>
 
-            {/* תוכן של הטאב הנבחר */}
-            <div className={'tabContentCard'}>
+            {/* TAB CONTENT */}
+            <div className='tabContentCard'>
                 {activeTab === "members" && (
-                    <MembersTable members={activeMembers} loggedinUser={user} changeUserRole={changeUserRole} declineUser={declineUser} />
+                    <MembersTable members={activeMembers} loggedinUser={user} changeUserRole={changeUserRole} declineUser={declineUser} isCurrentManger={isCurrentManger}/>
                 )}
 
-                {activeTab === "pending" && (
+                {activeTab === "pending" && isCurrentManger && (
                     <PendingTable requests={pendingMembers} approveUser={approveUser} declineUser={declineUser} />
                 )}
 
@@ -137,18 +135,20 @@ const NgoAdminUser = ({ users, loadUsers }: { users: User[], loadUsers: () => vo
                     />
                 )}
             </div>
-        </div>
+        </div>            
+
     );
 };
 
-export default NgoAdminUser;
+export default NgoMembers;
 
 // ------------------------------------------------------------------
 // subcomponents (ויזואלי בלבד, בלי קריאות לשרת)
 // ------------------------------------------------------------------
 
-function MembersTable({ members, loggedinUser, changeUserRole, declineUser }: { members: User[], loggedinUser: User, changeUserRole: (userId: string, role: string) => void, declineUser: (userId: string) => void }) {
-    const canDemote = members.find(m => m._id != loggedinUser._id && m.role == 'admin')
+function MembersTable({ members, loggedinUser, changeUserRole, declineUser, isCurrentManger }: { members: User[], loggedinUser: User, changeUserRole: (userId: string, role: string) => void, declineUser: (userId: string) => void, isCurrentManger:boolean }) {
+    const canDemote = members.find(m => m._id != loggedinUser._id && m.role == 'manger')
+    
     return (
         <div className={'tableWrapper'}>
             <table className={'table'}>
@@ -169,24 +169,24 @@ function MembersTable({ members, loggedinUser, changeUserRole, declineUser }: { 
                             <td>{m.phone}</td>
                             <td>
                                 <span className="user-role">{m.role}</span><br />
-                                {loggedinUser._id == m._id && <span className={'roleBadgeAdmin'}>{" (את/ה)"}</span>}
+                                {loggedinUser._id == m._id && <span className={'roleBadgeManger'}>{" (את/ה)"}</span>}
                             </td>
                             <td>
                                 <div className={'rowActions'}>
 
-                                    {m.role != 'admin' && loggedinUser._id != m._id &&
+                                    {isCurrentManger && m.role != 'manger' && loggedinUser._id != m._id &&
                                         <button
                                             className={'smallBtn'}
-                                            onClick={() => changeUserRole(m._id!, 'admin')}>הפוך למנהל
+                                            onClick={() => changeUserRole(m._id!, 'Manger')}>הפוך למנהל
                                         </button>}
 
-                                    {m.role == 'admin' && canDemote && loggedinUser._id != m._id && 
-                                    <button
-                                        className={'smallGhostBtn'}
-                                        onClick={() => changeUserRole(m._id!, 'member')}                                    >
-                                        הורד מניהול
-                                    </button>}
-                                    {(canDemote || loggedinUser._id != m._id) && <button
+                                    {isCurrentManger && m.role == 'manger' && canDemote && loggedinUser._id != m._id &&
+                                        <button
+                                            className={'smallGhostBtn'}
+                                            onClick={() => changeUserRole(m._id!, 'member')}                                    >
+                                            הורד מניהול
+                                        </button>}
+                                    {(isCurrentManger && loggedinUser._id != m._id) && <button
                                         className={'smallDangerBtn'}
                                         onClick={() => declineUser(m._id!)}
                                     >
@@ -234,21 +234,13 @@ function PendingTable({
     );
 }
 
-function MessageBoard({
-    messages,
-    newMessage,
-    setNewMessage,
-}: {
-    messages: NgoMessage[];
-    newMessage: string;
-    setNewMessage: (val: string) => void;
-}) {
+function MessageBoard({messages,newMessage,setNewMessage,}: {messages: NgoMessage[];newMessage: string;setNewMessage: (val: string) => void;}) {
     return (
         <div className={'boardWrapper'}>
             <div className={'messagesList'}>
                 {messages.length === 0 && (
                     <div className={'emptyState'}>
-                        אין הודעות עדיין. תהיי הראשונה לכתוב משהו ✍️
+                        אין הודעות עדיין. תהיי הראשונה לכתוב משהו 
                     </div>
                 )}
 

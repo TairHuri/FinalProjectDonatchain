@@ -80,14 +80,14 @@ setCampaignId(id);
 
 
   return (
-    <div dir="rtl" style={{ display: "flex", minHeight: "100vh", backgroundColor: "#f7f9fc", width: '80vw' }}>
+    <div dir="rtl" style={{ display: "flex", backgroundColor: "#f7f9fc", width: '90vw',marginTop: '5px' }}>
       {/* סרגל צד */}
       <div
         style={{
           width: "20vw",
           background: "#1f2937",
           color: "white",
-          padding: "20px",
+          padding: "5px 20px",
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",

@@ -10,8 +10,8 @@ const router = Router();
 router.get('/', listNgos);
 router.get('/:id', getNgo);
 
-// יצירה ועדכון — רק NGO או admin
-router.post('/', authMiddleware, roleMiddleware(['member','admin']), validateCreateNgo, createNgo);
-router.put('/:id', authMiddleware, roleMiddleware(['member','admin']), updateNgo);
+// יצירה ועדכון — רק member או manger
+router.post('/', authMiddleware, roleMiddleware(['member','manger']), validateCreateNgo, createNgo);
+router.put('/:id', authMiddleware, roleMiddleware(['member','manger']), updateNgo);
 
 export default router;

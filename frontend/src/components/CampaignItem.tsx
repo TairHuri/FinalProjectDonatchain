@@ -48,3 +48,5 @@ export const CampaignDonors = ({ campaign, onClick }: { campaign: Campaign, onCl
     return (<p>{campaign.title} <button type="button" onClick={onClick} style={buttonStyle}>תורמי הקמפיין</button></p>)
 }
 export default CampaignItem;
+
+

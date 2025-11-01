@@ -1,7 +1,7 @@
 import { Schema, model, Document } from 'mongoose';
 import { INgo } from './ngo.model';
 
-export type UserRoleType = 'admin'|'member';
+export type UserRoleType = 'manger'|'member';
 export interface IUser extends Document {
   ngo?:INgo;
   email: string;
@@ -21,7 +21,7 @@ const userSchema = new Schema<IUser>(
     password: { type: String, required: true },
     name: { type: String, required: true },
     phone: String,
-    role:{type:String, enum:['admin','member'], default:'member', required:true},
+    role:{type:String, enum:['manger','member'], default:'member', required:true},
     ngoId: { type: Schema.Types.ObjectId, ref: 'Ngo', required: true },
     approved:Boolean
   },

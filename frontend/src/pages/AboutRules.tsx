@@ -33,7 +33,7 @@ export default function AboutRules() {
   if (loading) return <p className="text-center mt-10">טוען תקנון...</p>;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white py-12 px-6">
+    <div className="bg-gradient-to-b from-blue-50 to-white py-12 px-6">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}

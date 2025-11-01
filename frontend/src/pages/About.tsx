@@ -29,7 +29,7 @@ export default function About() {
   if (!about) return <p className="text-center mt-10">טוען תוכן...</p>;
 
   return (
-    <div className="bg-white min-h-screen text-right">
+    <div className="bg-white text-right">
       {/* Hero Section */}
       <section className="relative text-center py-20 bg-blue-700 text-white overflow-hidden shadow-md">
         <motion.h1

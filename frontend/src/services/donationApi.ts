@@ -18,7 +18,7 @@ export const getAllDonations = async () => {
 };
 
 export const getDonationsByCampaign = async (campaignId: string) => {
-    const url = `${API_URL}/donations/campaign?campaignId=${campaignId}`  // שים לב לשימוש ב-query param
+    const url = `${API_URL}/donations/campaign/ngomember?campaignId=${campaignId}`  // שים לב לשימוש ב-query param
     try {
         const res = await fetch(url);
         if (!res.ok) {

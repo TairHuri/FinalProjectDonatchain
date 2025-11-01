@@ -79,7 +79,7 @@ export default function RegistrationNgo() {
     try {
       let res;
       if (newNgo) {
-        const u = { ...user, role: 'admin' as 'admin'|'member'};
+        const u = { ...user, role: 'manger' as 'manger'|'member'};
         res = await registerUserNewNgo(u, ngo, media);
       } else {
         res = await registerUserExistingNgo(user);

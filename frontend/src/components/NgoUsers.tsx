@@ -2,8 +2,8 @@ import { useEffect, useState } from "react"
 import type { User } from "../models/User"
 import { getUsers } from "../services/api"
 import { useAuth } from "../contexts/AuthContext"
-import NgoAdminUser from "./ngo/NgoAdminUser"
-import NgoMemberUser from "./ngo/NgoMemberUser"
+import NgoMembers from "./ngo/NgoMembers"
+
 
 
 const NgoUsers = () => {
@@ -24,16 +24,7 @@ const NgoUsers = () => {
         loadUsers()
     }, [])
 
-    // return (
-    //     <div>
-    //         <h3>חברי העמותה</h3>
-    //         <div>
-    //             {users.map(user => <UserItem key={user._id!} user={user} approveUser={approveUser} declineUser={declineUser} />)}
-
-    //         </div>
-    //     </div>
-    // )
-    return user?.role == "admin" ?  <NgoAdminUser users={users} loadUsers={loadUsers}/>: <NgoMemberUser users={users.filter(u => u.approved)}/>
+    return  <NgoMembers users={users} loadUsers={loadUsers}/>
 
 }
         
