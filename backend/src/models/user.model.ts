@@ -1,16 +1,16 @@
 import { Schema, model, Document } from 'mongoose';
 import { INgo } from './ngo.model';
 
-export type UserRoleType = 'manger'|'member';
+export type UserRoleType = 'admin'|'manager'|'member';
 export interface IUser extends Document {
-  ngo?:INgo;
+  ngo?: INgo;
   email: string;
   password: string;
   name: string;
   phone?: string;
   role: UserRoleType;
-  ngoId: { type: Schema.Types.ObjectId, ref: 'Ngo' };
-  approved:boolean;
+  ngoId?: Schema.Types.ObjectId; // ✅ לא חובה
+  approved: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -20,10 +20,24 @@ const userSchema = new Schema<IUser>(
     email: { type: String, required: true, unique: true, index: true },
     password: { type: String, required: true },
     name: { type: String, required: true },
-    phone: String,
-    role:{type:String, enum:['manger','member'], default:'member', required:true},
-    ngoId: { type: Schema.Types.ObjectId, ref: 'Ngo', required: true },
-    approved:Boolean
+    phone: { type: String },
+
+    // ✅ תמיכה בכל סוגי המשתמשים + ברירת מחדל member
+    role: { 
+      type: String, 
+      enum: ['admin', 'manager', 'member'], 
+      default: 'member', 
+      required: true 
+    },
+
+    // ✅ מנהל מערכת לא חייב עמותה
+    ngoId: { 
+      type: Schema.Types.ObjectId, 
+      ref: 'Ngo', 
+      required: false 
+    },
+
+    approved: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

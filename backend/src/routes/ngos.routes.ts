@@ -1,17 +1,44 @@
 // src/routes/ngos.routes.ts
-import { Router } from 'express';
-import { createNgo, listNgos, getNgo, updateNgo } from '../controllers/ngos.controller';
-import authMiddleware from '../middlewares/auth.middleware';
-import roleMiddleware from '../middlewares/role.middleware';
-import { validateCreateNgo } from '../utils/validators';
+import { Router } from "express";
+import {
+  createNgo,
+  listNgos,
+  getNgo,
+  updateNgo,
+  toggleNgoStatus,
+} from "../controllers/ngos.controller";
+import authMiddleware from "../middlewares/auth.middleware";
+import roleMiddleware from "../middlewares/role.middleware";
+import { validateCreateNgo } from "../utils/validators";
 
 const router = Router();
 
-router.get('/', listNgos);
-router.get('/:id', getNgo);
+// רשימת עמותות וצפייה בעמותה
+router.get("/", listNgos);
+router.get("/:id", getNgo);
 
-// יצירה ועדכון — רק member או manger
-router.post('/', authMiddleware, roleMiddleware(['member','manger']), validateCreateNgo, createNgo);
-router.put('/:id', authMiddleware, roleMiddleware(['member','manger']), updateNgo);
+// ✅ ניהול סטטוס עמותה (מנהל מערכת בלבד)
+router.patch(
+  "/:id/toggle-status",
+  authMiddleware,
+  roleMiddleware(["admin"]),
+  toggleNgoStatus
+);
+
+// ✅ יצירה ועדכון עמותה (עמותה עצמה או אדמין)
+router.post(
+  "/",
+  authMiddleware,
+  roleMiddleware(["manager", "admin"]),
+  validateCreateNgo,
+  createNgo
+);
+
+router.put(
+  "/:id",
+  authMiddleware,
+  roleMiddleware(["manager", "admin"]),
+  updateNgo
+);
 
 export default router;

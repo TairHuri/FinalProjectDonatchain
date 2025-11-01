@@ -1,8 +1,9 @@
-import { Schema, model, Document } from 'mongoose';
+// src/models/ngo.model.ts
+import { Schema, model, Document } from "mongoose";
 
 export interface BaseNgo {
   name: string;
-  ngoNumber:string;
+  ngoNumber?: string;
   description: string;
   website?: string;
   bankAccount?: string;
@@ -13,16 +14,18 @@ export interface BaseNgo {
   logoUrl?: string;
   certificate: string;
 }
+
 export interface INgo extends Document, BaseNgo {
-  createdBy?: Schema.Types.ObjectId|null;
+  createdBy?: Schema.Types.ObjectId | null;
   createdAt: Date;
+  isActive: boolean;
 }
 
 const ngoSchema = new Schema(
   {
-    name: { type: String, required: true, index: true, unique:true },
-    ngoNumber: { type: String, unique: true },
-    description: String,
+    name: { type: String, required: true, unique: true, index: true },
+    ngoNumber: { type: String, unique: true, sparse: true },
+    description: { type: String, required: true },
     website: String,
     email: String,
     address: String,
@@ -30,10 +33,11 @@ const ngoSchema = new Schema(
     bankAccount: String,
     wallet: String,
     logoUrl: String,
-    certificate: {type: String, required:true},
-    createdBy: { type: Schema.Types.ObjectId, ref: 'User' }
+    certificate: { type: String, required: true },
+    createdBy: { type: Schema.Types.ObjectId, ref: "User" },
+    isActive: { type: Boolean, default: true },
   },
   { timestamps: true }
 );
 
-export default model<INgo>('Ngo', ngoSchema);
+export default model<INgo>("Ngo", ngoSchema);
