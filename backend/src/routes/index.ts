@@ -6,7 +6,7 @@ import ngoRoutes from "./ngos.routes";
 import usersRoutes from "./users.routes";
 import adminRoutes from "./admin.routes";
 import aboutRoutes from "./about.routes";
-import rulesRoutes from "./rules.routes"; // ✅ הוספנו כאן את ה‑rules
+import rulesRoutes from "./rules.routes";
 
 const router = Router();
 

@@ -27,7 +27,7 @@ export default {
     const tx = await contract.recordFiatDonation(campaignId, amountFiat, currency, refCode);
     console.log("tx sent:", tx.hash);
     await tx.wait();
-    console.log("התרומה נרשמה בבלוקצ’יין ✅");
+    console.log("התרומה נרשמה בבלוקצ’יין✅");
     return tx.hash;
   },
   async getTransaction(txHash: string) {
@@ -36,7 +36,7 @@ export default {
   async waitForTx(txHash: string) {
     return provider.waitForTransaction(txHash);
   },
-  // אם תרצי לשלוח tx מה backend (לרישום קמפות/רשומות), תעשי בזהירות:
+
   async sendTx(tx: ethers.TransactionRequest) {
     if (!wallet) throw new Error('No wallet configured to send tx');
     return wallet.sendTransaction(tx);

@@ -8,7 +8,6 @@ import { getAdminStats } from "../controllers/admin.controller";
 
 const router = Router();
 
-// רק admin יכול לקרוא
 router.get('/stats', authMiddleware, roleMiddleware(['admin']), getStats);
 router.get(
   '/donors',

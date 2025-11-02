@@ -13,16 +13,13 @@ import { toggleCampaignStatus } from '../controllers/campaigns.controller';
 
 const router = Router();
 
-// 📋 רשימת כל הקמפיינים (מנהל בלבד)
 router.get('/admin/all', authMiddleware, roleMiddleware(['admin']), getAllCampaigns);
 
-// 📋 רשימת קמפיינים רגילה (ציבורית)
 router.get('/', listCampaigns);
 
-// 🔎 קמפיין בודד לפי ID
+
 router.get('/:id', getCampaign);
 
-// ➕ יצירת קמפיין (מאובטח - רק NGO/Admin)
 router.post('/', authMiddleware, roleMiddleware(['member', 'admin']), createCampaign);
 router.put('/:campaignId', authMiddleware, roleMiddleware(['member', 'admin']), updateCampaign);
 router.put('/:id/toggle-status', authMiddleware, roleMiddleware(['admin']), toggleCampaignStatus);

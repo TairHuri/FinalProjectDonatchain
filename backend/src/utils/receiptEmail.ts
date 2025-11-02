@@ -25,9 +25,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-/**
- * הפונקציה יוצרת קובץ PDF עם טקסט בעברית מימין לשמאל
- */
 
 async function generateReceiptPDF(data: DonationData): Promise<string> {
   const pdfPath = path.join(__dirname, `receipt_${Date.now()}.pdf`);
@@ -35,7 +32,6 @@ async function generateReceiptPDF(data: DonationData): Promise<string> {
   const writeStream = fs.createWriteStream(pdfPath);
   doc.pipe(writeStream);
 
-  // 🖋️ גופן עברי
   const fontPath = path.resolve(process.cwd(), "src/utils/fonts/NotoSansHebrew.ttf");
   if (fs.existsSync(fontPath)) {
     doc.registerFont("HebrewFont", fontPath);
@@ -45,34 +41,30 @@ async function generateReceiptPDF(data: DonationData): Promise<string> {
   const right: PDFKit.Mixins.TextOptions = { align: "right" };
   doc.fillColor("#000000");
 
-  // 🧩 פונקציה לתיקון טקסט עברי (ימין לשמאל)
   const fixHebrew = (text: string) =>
     text
       .split(" ")
       .reverse()
       .map((w) => (/\d/.test(w) ? w.split("").reverse().join("") : w))
       .join(" ");
-// ✳️ מסגרת עדינה
+
 doc.lineWidth(1).strokeColor("#aaaaaa");
 doc.rect(40, 40, doc.page.width - 80, doc.page.height - 80).stroke();
 
-// 🖼️ לוגו בצד שמאל למעלה
+
 const logoPath = path.resolve(__dirname, "../../../frontend/public/log.png");
 
 if (fs.existsSync(logoPath)) {
-  doc.image(logoPath, 60, 50, { width: 90 }); // הצבה למעלה בצד שמאל
+  doc.image(logoPath, 60, 50, { width: 90 }); 
 } else {
-  console.warn("⚠️ לוגו לא נמצא בנתיב:", logoPath);
+  console.warn(" לוגו לא נמצא בנתיב:", logoPath);
 }
 
-  
-
-  // 🏷️ כותרת
   doc.fontSize(26).text(fixHebrew(" קבלה על תרומה"), 60, 70, right);
   doc.moveDown(0.3);
   doc.fontSize(12).text(fixHebrew(" מסמך רשמי מאת DonatChain"), right);
 
-  // קו הפרדה
+ 
   doc.moveTo(60, 115).lineTo(doc.page.width - 60, 115).strokeColor("#dddddd").stroke();
 
   const receiptNumber = `DC-${Date.now().toString().slice(-6)}`;
@@ -87,7 +79,7 @@ if (fs.existsSync(logoPath)) {
     [" מספר קבלה", receiptNumber ],
   ];
 
-  // 📋 טבלת פרטים
+
   doc.moveDown(1.2);
   const startY = doc.y;
   const colLabelX = doc.page.width - 200;
@@ -98,7 +90,7 @@ if (fs.existsSync(logoPath)) {
 details.forEach(([label, value]) => {
   const fixedLabel = fixHebrew(`${label}:`);
 
-  // אם הערך כולל אותיות לועזיות או מספרים בלבד — לא נהפוך
+
   const fixedValue = /[A-Za-z0-9@.:]/.test(value) ? value : fixHebrew(value);
 
   doc.text(fixedLabel, colLabelX, doc.y, { align: "right" });
@@ -107,11 +99,9 @@ details.forEach(([label, value]) => {
 });
 
 
-  // קו הפרדה שני
   doc.moveDown(1);
   doc.moveTo(60, doc.y).lineTo(doc.page.width - 60, doc.y).strokeColor("#dddddd").stroke();
 
-  // 💬 הודיית סיום
   doc.moveDown(1.5);
   doc.fontSize(18).text(fixHebrew(" תודה רבה על תרומתך!"), { align: "center" });
   doc.moveDown(0.3);
@@ -120,25 +110,23 @@ details.forEach(([label, value]) => {
     { align: "center" }
   );
 
-  // ✍️ חתימה
+
   doc.moveDown(2);
   doc.fontSize(12).text(fixHebrew("בברכה,"), right);
   doc.text(fixHebrew("צוות DonatChain"), right);
 
-// 🔲 QR Code עם כיתוב
 let qrData = "https://www.donatchain.org";
 if (data.txHash) qrData = `https://sepolia.etherscan.io/tx/${data.txHash}`;
 const qrImage = await QRCode.toDataURL(qrData);
 const qrBuffer = Buffer.from(qrImage.split(",")[1], "base64");
 
-// נציב את ה־QR קצת מעל הסוף כדי שלא יגלוש לעמוד שני
+
 const qrX = 70;
-const qrY = doc.page.height - 240; // היה 180 → הורדנו טיפה למעלה
+const qrY = doc.page.height - 240;
 
 doc.roundedRect(qrX - 5, qrY - 5, 110, 110, 8).stroke("#cccccc");
 doc.image(qrBuffer, qrX, qrY, { width: 100 });
 
-// נוודא שהכיתוב מתחת ל־QR לא עובר לגבול הדף
 doc.fontSize(10)
   .fillColor("#000000")
   .text(fixHebrew(" סרוק למעקב אחר התרומה"), qrX - 10, qrY + 115, {
@@ -155,10 +143,6 @@ doc.fontSize(10)
   });
 }
 
-
-/**
- * שליחת מייל עם קבלה מצורפת
- */
 export async function sendReceiptEmail(data: DonationData): Promise<void> {
   const pdfPath = await generateReceiptPDF(data);
 

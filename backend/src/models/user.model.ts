@@ -1,7 +1,7 @@
 import { Schema, model, Document } from 'mongoose';
 import { INgo } from './ngo.model';
 
-// ✅ הגדרת כל סוגי התפקידים האפשריים
+
 export type UserRoleType = 'admin' | 'ngo' | 'donor' | 'member';
 
 export interface IUser extends Document {
@@ -11,7 +11,7 @@ export interface IUser extends Document {
   name: string;
   phone?: string;
   role: UserRoleType;
-  ngoId?: Schema.Types.ObjectId; // ✅ לא חובה
+  ngoId?: Schema.Types.ObjectId; 
   approved: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -28,7 +28,6 @@ const userSchema = new Schema<IUser>(
     resetCode: { type: String },
 resetCodeExpires: { type: Date },
 
-    //  תמיכה בכל סוגי המשתמשים + ברירת מחדל member
     role: { 
       type: String, 
       enum: ['admin', 'ngo', 'donor', 'member'], 
@@ -36,7 +35,6 @@ resetCodeExpires: { type: Date },
       required: true 
     },
 
-    //  מנהל מערכת לא חייב עמותה
     ngoId: { 
       type: Schema.Types.ObjectId, 
       ref: 'Ngo', 
