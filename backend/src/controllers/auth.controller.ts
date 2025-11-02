@@ -70,7 +70,7 @@ export const registerNewNgo = async (req: Request, res: Response) => {
       token,
     });
   } catch (err: any) {
-    console.error("❌ שגיאה בהרשמה:", err.message);
+    console.error(" שגיאה בהרשמה:", err.message);
     res.status(400).json({ success: false, message: err.message });
   }
 };
@@ -101,7 +101,7 @@ export const registerExistingNgo = async (req: Request, res: Response) => {
       token,
     });
   } catch (err: any) {
-    console.error("❌ שגיאה בהרשמה:", err.message);
+    console.error(" שגיאה בהרשמה:", err.message);
     res.status(400).json({ success: false, message: err.message });
   }
 };
@@ -151,7 +151,7 @@ export const login = async (req: Request, res: Response) => {
     const { password: _, ...rest } = (user as any)._doc as IUser;
     res.json({ success: true, token, user: rest });
   } catch (err: any) {
-    console.error("❌ שגיאה בהתחברות:", err.message);
+    console.error(" שגיאה בהתחברות:", err.message);
     res.status(500).json({ success: false, message: err.message });
   }
 };
@@ -172,7 +172,6 @@ export const me = async (req: Request, res: Response) => {
 
 /* ----------------------------- שכחתי סיסמה ----------------------------- */
 
-// יצירת transporter לשליחת מיילים
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -181,7 +180,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// שלב 1 - שליחת קוד למייל
+
 export const forgotPassword = async (req: Request, res: Response) => {
   try {
     const { email } = req.body;
@@ -221,7 +220,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
   }
 };
 
-// שלב 2 - אימות קוד
+
 export const verifyResetCode = async (req: Request, res: Response) => {
   try {
     const { email, code } = req.body;
@@ -238,7 +237,7 @@ export const verifyResetCode = async (req: Request, res: Response) => {
   }
 };
 
-// שלב 3 - שינוי סיסמה
+
 export const resetPassword = async (req: Request, res: Response) => {
   try {
     const { email, code, newPassword } = req.body;

@@ -8,7 +8,7 @@ export const getDonationsByCampaign = async (req: Request, res: Response) => {
   try {
     const { campaignId } = req.query;
     if(!campaignId)return res.status(400).send({message: 'missing campaignId'})
-    const donatios = await donationService.listByCampaign(campaignId.toString())  //Donation.find({ campaign: campaignId })
+    const donatios = await donationService.listByCampaign(campaignId.toString())  
     res.send(donatios)
   } catch (error) {
     console.log(error);
@@ -41,11 +41,11 @@ export const creditDonate = async (req: Request, res: Response) => {
       phone, email, firstName, lastName, comment, campaign: campaignId, anonymous
     }, campaignId)
 
-    // החזרת תגובה לפרונט
+
     return res.status(201).json({ message: 'Donation successful and receipt email sent', donation });
 
   } catch (error) {
-    console.error('❌ Error in creditDonate:', error);
+    console.error(' Error in creditDonate:', error);
     res.status((error as ServerError).statusCode||500).send({ message: (error as any).message });
   }
 };
@@ -63,7 +63,7 @@ export const getAllDonations = async (req: Request, res: Response): Promise<void
 
     res.json(donations);
   } catch (error) {
-    console.error("❌ Error fetching all donations:", error);
+    console.error(" Error fetching all donations:", error);
     res.status(500).json({ message: error instanceof Error ? error.message : "Server error" });
   }
 };

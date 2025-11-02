@@ -6,9 +6,6 @@ import { NgoMediaFiles } from "../middlewares/multer.middleware";
 import nodemailer from "nodemailer";
 import Campaign from "../models/campaign.model";
 
-/**
- * יצירת עמותה חדשה
- */
 export const createNgo = async (req: Request, res: Response) => {
   const { name, description, website, contactEmail, logoUrl, certificate } = req.body;
   const user = (req as any).user;
@@ -19,7 +16,7 @@ export const createNgo = async (req: Request, res: Response) => {
       website,
       email: contactEmail,
       logoUrl,
-      certificate, // ✅ חובה לפי הסכמה
+      certificate, 
       createdBy: user._id,
     });
 
@@ -31,9 +28,7 @@ export const createNgo = async (req: Request, res: Response) => {
   }
 };
 
-/**
- * רשימת עמותות
- */
+
 export const listNgos = async (_req: Request, res: Response) => {
   try {
 const items = await Ngo.aggregate([
@@ -67,9 +62,7 @@ const items = await Ngo.aggregate([
   }
 };
 
-/**
- * צפייה בעמותה ספציפית
- */
+
 export const getNgo = async (req: Request, res: Response) => {
   try {
     const ngo = await Ngo.findById(req.params.id).populate("createdBy", "name email");
@@ -80,7 +73,6 @@ export const getNgo = async (req: Request, res: Response) => {
   }
 };
 
-// ✅ הגדרת transporter לשליחת מיילים
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -89,9 +81,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-/**
- * הפעלת / השהיית עמותה
- */
+
 export const toggleNgoStatus = async (req: Request, res: Response) => {
   try {
     const ngo = await Ngo.findById(req.params.id);
@@ -100,7 +90,7 @@ export const toggleNgoStatus = async (req: Request, res: Response) => {
     ngo.isActive = !ngo.isActive;
     await ngo.save({ validateModifiedOnly: true });
 
-    // ✅ השהיית / הפעלת קמפיינים בהתאם לסטטוס החדש
+
     await Campaign.updateMany({ ngo: ngo._id }, { isActive: ngo.isActive });
 
     await AuditLog.create({
@@ -109,7 +99,7 @@ export const toggleNgoStatus = async (req: Request, res: Response) => {
       meta: { ngoId: ngo._id, newStatus: ngo.isActive },
     });
 
-    // ✅ שליחת מייל לעמותה
+
     if (ngo.email) {
       await sendNgoStatusEmail({
         to: ngo.email,
@@ -117,14 +107,14 @@ export const toggleNgoStatus = async (req: Request, res: Response) => {
         isActive: ngo.isActive,
       });
     } else {
-      console.warn("⚠️ לא נמצא אימייל לעמותה:", ngo.name);
+      console.warn(" לא נמצא אימייל לעמותה:", ngo.name);
     }
 
     res.json({
       success: true,
       message: ngo.isActive
-        ? "העמותה הופעלה מחדש ✅ וכל הקמפיינים הופעלו ונשלח מייל לעמותה"
-        : "העמותה הושהתה ❌ וכל הקמפיינים הושבתו ונשלח מייל לעמותה",
+        ? "העמותה הופעלה מחדש  וכל הקמפיינים הופעלו ונשלח מייל לעמותה"
+        : "העמותה הושהתה  וכל הקמפיינים הושבתו ונשלח מייל לעמותה",
       ngo,
     });
   } catch (err: any) {
@@ -133,9 +123,7 @@ export const toggleNgoStatus = async (req: Request, res: Response) => {
   }
 };
 
-/**
- * ✅ שליחת מייל לעמותה עם עיצוב יפה ותמיכה בעברית
- */
+
 async function sendNgoStatusEmail({
   to,
   ngoName,
@@ -146,8 +134,8 @@ async function sendNgoStatusEmail({
   isActive: boolean;
 }) {
   const subject = isActive
-    ? `✅ העמותה "${ngoName}" הופעלה מחדש`
-    : `⚠️ העמותה "${ngoName}" הושהתה זמנית`;
+    ? ` העמותה "${ngoName}" הופעלה מחדש`
+    : ` העמותה "${ngoName}" הושהתה זמנית`;
 
   const html = `
     <div style="direction: rtl; text-align: right; font-family: 'Assistant', Arial; background-color:#f9f9f9; padding:25px;">
@@ -172,22 +160,19 @@ async function sendNgoStatusEmail({
       html,
     });
 
-    console.log(`📨 מייל נשלח בהצלחה לעמותה: ${to} (${ngoName})`);
+    console.log(` מייל נשלח בהצלחה לעמותה: ${to} (${ngoName})`);
   } catch (err) {
-    console.error("❌ שגיאה בשליחת מייל לעמותה:", err);
+    console.error(" שגיאה בשליחת מייל לעמותה:", err);
   }
 }
 
-/**
- * עדכון פרטי עמותה
- */
 export const updateNgo = async (req: Request, res: Response) => {
   const user = (req as any).user;
   try {
     const ngo = await Ngo.findById(req.params.id);
     if (!ngo) return res.status(404).json({ message: "עמותה לא נמצאה" });
 
-    // ✅ בדיקה אם המשתמש הוא היוצר או admin
+  
     if (ngo.createdBy?.toString() !== user._id.toString() && !user.roles?.includes("admin")) {
       return res.status(403).json({ message: "אין הרשאה לעדכן עמותה זו" });
     }
