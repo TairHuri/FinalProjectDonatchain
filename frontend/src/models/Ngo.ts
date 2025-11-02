@@ -13,4 +13,5 @@ export interface Ngo {
     createdBy: string;
     createdAt: Date;
     ngoNumber:string;
+    isActive: boolean; 
 }
