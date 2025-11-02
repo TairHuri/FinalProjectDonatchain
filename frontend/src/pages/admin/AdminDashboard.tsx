@@ -37,10 +37,12 @@ const AdminDashboard: React.FC = () => {
 const [selectedNgo, setSelectedNgo] = useState<any | null>(null);
 
 
+useEffect(() => {
+  fetchStats();
+  const interval = setInterval(fetchStats, 10000); 
+  return () => clearInterval(interval);
+}, []);
 
-  useEffect(() => {
-    fetchStats();
-  }, []);
 
   const fetchStats = async () => {
     try {
@@ -171,11 +173,12 @@ const [selectedNgo, setSelectedNgo] = useState<any | null>(null);
                   flexWrap: "wrap",
                 }}
               >
-                {statCard("משתמשים", stats.usersCount)}
-                {statCard("עמותות", stats.ngosCount)}
-                {statCard("קמפיינים", stats.campaignsCount)}
-                {statCard("תרומות", stats.donationsCount)}
-                {statCard("סה״כ גויס", `${stats.totalRaised.toLocaleString()} ₪`)}
+{statCard("משתמשים", stats?.usersCount ?? 0)}
+{statCard("עמותות", stats?.ngosCount ?? 0)}
+{statCard("קמפיינים", stats?.campaignsCount ?? 0)}
+{statCard("תרומות", stats?.donationsCount ?? 0)}
+{statCard("סה״כ גויס", `${(stats?.totalRaised ?? 0).toLocaleString()} ₪`)}
+
               </div>
             )}
           </div>

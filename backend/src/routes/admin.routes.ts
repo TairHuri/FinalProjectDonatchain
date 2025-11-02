@@ -4,6 +4,7 @@ import authMiddleware from '../middlewares/auth.middleware';
 import roleMiddleware from '../middlewares/role.middleware';
 import { getStats } from '../controllers/admin.controller';
 import { getAllDonors } from '../controllers/admin.controller';
+import { getAdminStats } from "../controllers/admin.controller";
 
 const router = Router();
 
@@ -15,5 +16,6 @@ router.get(
   roleMiddleware(['admin']),
   getAllDonors
 );
+router.get("/stats", authMiddleware,  getAdminStats);
 
 export default router;
