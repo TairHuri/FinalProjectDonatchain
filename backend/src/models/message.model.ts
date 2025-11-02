@@ -4,7 +4,6 @@ export interface Message {
     authorName: string;
     text: string;
     createdBy: string;
-    
 }
 
 export interface IMessage extends Document, Message {

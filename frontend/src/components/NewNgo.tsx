@@ -172,7 +172,7 @@ const NewNgo = ({ ngo, media, handleChangeNgo, handleChangeMedia }: Props) => {
         <input
           type="text"
           placeholder="קישור לאתר העמותה"
-          value={ngo.phone || ""}
+          value={ngo.website || ""}
           onChange={(e) => handleChangeNgo("website", e.target.value)}
           className="input-field"
         />

@@ -1,5 +1,6 @@
 import type { Ngo } from "./Ngo";
 
+export type UserRoleType = 'admin'|'manager'|'member';
 export interface User {
   ngo?: Ngo;
   _id?:string
@@ -7,7 +8,7 @@ export interface User {
   password: string;
   name: string;
   phone?: string;
-  role: 'manger'|'member';
+  role: UserRoleType;
   ngoId: string;
   approved:boolean;
   createdAt?: Date;

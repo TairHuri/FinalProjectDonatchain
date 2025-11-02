@@ -16,10 +16,10 @@
 
   min-height: calc(100dvh - var(--nav-h));
   padding: clamp(16px, 2.4vw, 28px);
-  background:
+  /* background:
     radial-gradient(800px 420px at 8% -6%, #e4eeec 0%, transparent 60%),
     radial-gradient(900px 450px at 95% -10%, #eaf3f6 0%, transparent 55%),
-    var(--bg);
+    var(--bg); */
   color: var(--ink);
   font-family: "Rubik", "Heebo", system-ui, Segoe UI, Arial, sans-serif;
 }

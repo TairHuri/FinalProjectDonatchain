@@ -1,29 +1,78 @@
 
 import type { User } from "../../models/User";
 import { useAuth } from "../../contexts/AuthContext";
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { approveUserApi, deleteUserApi, getUsers } from "../../services/api";
 import UserItem from "../UserItem";
 
 import "../../css/NgoUsers.css";
 import { setUserRoleApi } from "../../services/userApi";
 import AlertDialog from "../gui/AlertDialog";
+import type { Message } from "../../models/Message";
+import { getMessagesByNgoId, saveMessage } from "../../services/messageApi";
 
 
 // ----- טיפוסים בסיסיים -----
 
-type NgoMessage = {
-    _id: string;
-    authorName: string;
-    text: string;
-    createdAt: string;
-};
-
 type Tab = "members" | "pending" | "board";
 
-const NgoMembers = ({ users, loadUsers }: { users: User[], loadUsers: () => void }) => {
-    const [message, setMessage] = useState<string>('')
+const NgoUsers = () => {
     const { user } = useAuth();
+    if (!user) return null;
+
+    const defaultMessage = useMemo(() => ({ ngoId: user.ngoId!, text: '', authorName: user.name!, createdBy: user._id! }), [user])
+    const [users, setUsers] = useState<User[]>([])
+    // דאטה  להודעות עמותה
+    const [messages, setMessages] = useState<Message[]>([]);
+
+    // state של טאב
+    const [activeTab, setActiveTab] = useState<Tab>("members");
+
+    // הודעה חדשה (וירטואלי)
+    const [newMessage, setNewMessage] = useState<Message>(defaultMessage);
+    console.log("all users=", users);
+    console.log("user=", user);
+
+
+    const loadMesaages = async () => {
+        if (!user || !user.ngoId || !user.token) return;
+
+        try {
+            const messages = await getMessagesByNgoId(user?.ngoId, user?.token);
+            setMessages(messages)
+        } catch (error) {
+            setMessage('שגיאה בטעינת הודעות')
+            console.log(error);
+        }
+    }
+
+    const createMessage = async () => {
+        try {
+            const res = await saveMessage(newMessage, user.token!)
+            if (res) {
+                setMessages([...messages, res])
+                setNewMessage(defaultMessage)
+            }
+        } catch (error) {
+            setMessage('שגיאה בשליחת הודעה')
+            console.log(error);
+        }
+    }
+
+    const loadUsers = async () => {
+
+        if (!user) return;
+
+        const users = await getUsers(user?.ngoId)
+        setUsers(users.items)
+    }
+    useEffect(() => {
+        loadUsers();
+        loadMesaages();
+    }, [])
+
+    const [message, setMessage] = useState<string>('')
+
     console.log("user=", user);
 
     const approveUser = async (userId: string) => {
@@ -52,39 +101,14 @@ const NgoMembers = ({ users, loadUsers }: { users: User[], loadUsers: () => void
     }
 
 
-    // דאטה דמיוני להודעות עמותה
-    const [messages] = useState<NgoMessage[]>([
-        {
-            _id: "m1",
-            authorName: "דנה לוי",
-            text: "הי כולם 👋 מחר (רביעי) ב-20:00 יש לייב בוידאו על הקמפיין החדש. חובה למי שאחראי על שיווק.",
-            createdAt: "2025-10-28T21:15:00Z",
-        },
-        {
-            _id: "m2",
-            authorName: "רועי כהן",
-            text: "עדכנתי את הפלייר עם הסכום המעודכן, בבקשה אל תשלחו את הגרסה הקודמת 🙏",
-            createdAt: "2025-10-27T10:03:00Z",
-        },
-    ]);
-
-    // state של טאב
-    const [activeTab, setActiveTab] = useState<Tab>("members");
-
-
-
-
-    // הודעה חדשה (וירטואלי)
-    const [newMessage, setNewMessage] = useState("");
-
     // חיתוכים לטאבים
     const activeMembers = users.filter(u => u.approved == true);
     const pendingMembers = users.filter(u => u.approved == false);
-    const isCurrentManger = user?.role == 'manger';
+    const isCurrentManager = user?.role == 'manager';
     if (!user) return null;
     return (
         <div className={'container'}>
-            <AlertDialog show={message != ""} message={message} failureOnClose={() => setMessage("")} />
+            <AlertDialog show={message != ""} isFailure={true} message={message} failureOnClose={() => setMessage("")} />
 
             {/* טאבים */}
             {/* TABS */}
@@ -98,7 +122,7 @@ const NgoMembers = ({ users, loadUsers }: { users: User[], loadUsers: () => void
                 </button>
 
                 {/* טאב בקשות — מנהל בלבד */}
-                {isCurrentManger && (
+                {isCurrentManager && (
                     <button
                         className={`tabBtn ${activeTab === "pending" ? 'tabActive' : ""}`}
                         onClick={() => setActiveTab("pending")}
@@ -120,10 +144,10 @@ const NgoMembers = ({ users, loadUsers }: { users: User[], loadUsers: () => void
             {/* TAB CONTENT */}
             <div className='tabContentCard'>
                 {activeTab === "members" && (
-                    <MembersTable members={activeMembers} loggedinUser={user} changeUserRole={changeUserRole} declineUser={declineUser} isCurrentManger={isCurrentManger}/>
+                    <MembersTable members={activeMembers} loggedinUser={user} changeUserRole={changeUserRole} declineUser={declineUser} isCurrentManager={isCurrentManager} />
                 )}
 
-                {activeTab === "pending" && isCurrentManger && (
+                {activeTab === "pending" && isCurrentManager && (
                     <PendingTable requests={pendingMembers} approveUser={approveUser} declineUser={declineUser} />
                 )}
 
@@ -132,23 +156,24 @@ const NgoMembers = ({ users, loadUsers }: { users: User[], loadUsers: () => void
                         messages={messages}
                         newMessage={newMessage}
                         setNewMessage={setNewMessage}
+                        createMessage={createMessage}
                     />
                 )}
             </div>
-        </div>            
+        </div>
 
     );
 };
 
-export default NgoMembers;
+export default NgoUsers;
 
 // ------------------------------------------------------------------
 // subcomponents (ויזואלי בלבד, בלי קריאות לשרת)
 // ------------------------------------------------------------------
 
-function MembersTable({ members, loggedinUser, changeUserRole, declineUser, isCurrentManger }: { members: User[], loggedinUser: User, changeUserRole: (userId: string, role: string) => void, declineUser: (userId: string) => void, isCurrentManger:boolean }) {
-    const canDemote = members.find(m => m._id != loggedinUser._id && m.role == 'manger')
-    
+function MembersTable({ members, loggedinUser, changeUserRole, declineUser, isCurrentManager }: { members: User[], loggedinUser: User, changeUserRole: (userId: string, role: string) => void, declineUser: (userId: string) => void, isCurrentManager: boolean }) {
+    const canDemote = members.find(m => m._id != loggedinUser._id && m.role == 'manager')
+
     return (
         <div className={'tableWrapper'}>
             <table className={'table'}>
@@ -169,24 +194,24 @@ function MembersTable({ members, loggedinUser, changeUserRole, declineUser, isCu
                             <td>{m.phone}</td>
                             <td>
                                 <span className="user-role">{m.role}</span><br />
-                                {loggedinUser._id == m._id && <span className={'roleBadgeManger'}>{" (את/ה)"}</span>}
+                                {loggedinUser._id == m._id && <span className={'roleBadgeManager'}>{" (את/ה)"}</span>}
                             </td>
                             <td>
                                 <div className={'rowActions'}>
 
-                                    {isCurrentManger && m.role != 'manger' && loggedinUser._id != m._id &&
+                                    {isCurrentManager && m.role != 'manager' && loggedinUser._id != m._id &&
                                         <button
                                             className={'smallBtn'}
-                                            onClick={() => changeUserRole(m._id!, 'Manger')}>הפוך למנהל
+                                            onClick={() => changeUserRole(m._id!, 'Manager')}>הפוך למנהל
                                         </button>}
 
-                                    {isCurrentManger && m.role == 'manger' && canDemote && loggedinUser._id != m._id &&
+                                    {isCurrentManager && m.role == 'manager' && canDemote && loggedinUser._id != m._id &&
                                         <button
                                             className={'smallGhostBtn'}
                                             onClick={() => changeUserRole(m._id!, 'member')}                                    >
                                             הורד מניהול
                                         </button>}
-                                    {(isCurrentManger && loggedinUser._id != m._id) && <button
+                                    {(isCurrentManager && loggedinUser._id != m._id) && <button
                                         className={'smallDangerBtn'}
                                         onClick={() => declineUser(m._id!)}
                                     >
@@ -233,14 +258,20 @@ function PendingTable({
         </div>
     );
 }
+type MessageBoardProps = {
+    messages: Message[];
+    newMessage: Message;
+    setNewMessage: (msg: Message) => void;
+    createMessage: () => void;
+};
 
-function MessageBoard({messages,newMessage,setNewMessage,}: {messages: NgoMessage[];newMessage: string;setNewMessage: (val: string) => void;}) {
+function MessageBoard({ messages, newMessage, setNewMessage,createMessage }: MessageBoardProps) {
     return (
         <div className={'boardWrapper'}>
             <div className={'messagesList'}>
                 {messages.length === 0 && (
                     <div className={'emptyState'}>
-                        אין הודעות עדיין. תהיי הראשונה לכתוב משהו 
+                        אין הודעות עדיין. תהיי הראשונה לכתוב משהו
                     </div>
                 )}
 
@@ -252,7 +283,7 @@ function MessageBoard({messages,newMessage,setNewMessage,}: {messages: NgoMessag
                             </span>
                             <span className={'messageTime'}>
                                 {new Date(
-                                    msg.createdAt
+                                    msg.createdAt!
                                 ).toLocaleString("he-IL")}
                             </span>
                         </div>
@@ -265,13 +296,13 @@ function MessageBoard({messages,newMessage,setNewMessage,}: {messages: NgoMessag
                 <textarea
                     className={'textarea'}
                     placeholder="להשאיר הודעה לחברי העמותה..."
-                    value={newMessage}
-                    onChange={e => setNewMessage(e.target.value)}
+                    value={newMessage.text}
+                    onChange={e => setNewMessage({ ...newMessage, text: e.target.value })}
                 />
 
                 <button
                     className={'primaryBtn'}
-                    onClick={() => alert("כאן יהיה פרסום הודעה")}
+                    onClick={createMessage}
                 >
                     פרסום הודעה
                 </button>

@@ -27,6 +27,8 @@ const NgoPersonalDetails = ({ editMode, setEditMode }: { editMode: string, setEd
         try{const res = await editNgo(ngo, token, logo);
         if (res) {
             updateNgo(res);
+            setNgo(res)
+            setLogo(null)
             setEditMode('view');
         }}catch(error){
             console.log((error as any).message);

@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { getNgoList, registerUserExistingNgo, registerUserNewNgo } from "../services/api";
 import { Building2, Mail, Lock, Phone } from "lucide-react";
-import type { User } from "../models/User";
+import type { User, UserRoleType } from "../models/User";
 import type { Ngo } from "../models/Ngo";
 import NewNgo from "../components/NewNgo";
 import { useNavigate } from 'react-router-dom';
@@ -79,7 +79,7 @@ export default function RegistrationNgo() {
     try {
       let res;
       if (newNgo) {
-        const u = { ...user, role: 'manger' as 'manger'|'member'};
+        const u = { ...user, role: 'manager' as UserRoleType};
         res = await registerUserNewNgo(u, ngo, media);
       } else {
         res = await registerUserExistingNgo(user);

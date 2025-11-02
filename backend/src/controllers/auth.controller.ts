@@ -44,7 +44,7 @@ export const registerNewNgo = async (req: Request, res: Response) => {
     if (ngoMediaFiles.certificate)
       ngo.certificate = ngoMediaFiles.certificate[0].filename;
 
-    if (!user.email || !user.password || !user.name)
+    if (!user.email || !user.password || !user.name || !user.role)
       return res
         .status(400)
         .json({ success: false, message: "חובה למלא שם, אימייל וסיסמה" });
@@ -80,12 +80,13 @@ export const registerExistingNgo = async (req: Request, res: Response) => {
   try {
     const { user }: { user: IUser } = req.body;
 
-    if (!user.email || !user.password || !user.name)
+    if (!user.email || !user.password || !user.name )
       return res
         .status(400)
         .json({ success: false, message: "חובה למלא שם, אימייל וסיסמה" });
 
     user.approved = false;
+    user.role='member';
     const createdUser = await AuthService.registerUser(user);
 
     const token = AuthService.signJwt({ sub: createdUser._id.toString() });

@@ -6,7 +6,7 @@ import NgoDonors from "../components/NgoDonors";
 import CampaignItem from "../components/CampaignItem";
 import { cardStyle, inputStyle, menuBtnStyle, primaryBtnStyle } from "../css/dashboardStyles";
 
-import NgoUsers from "../components/NgoUsers";
+import NgoUsers from "../components/ngo/NgoUsers";
 import UserPersonalDetails from "../components/UserPersonalDetails";
 import CreateCampaign from "../components/CreateCampaign";
 import NgoDetails from "../components/NgoDetails";

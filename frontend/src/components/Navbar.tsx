@@ -68,7 +68,7 @@ export default function Navbar() {
      <li className="dropdownWrapper">
   {user ? (
     <Link
-      to={user.role === "admin" ? "/admin/dashboard" : "/ngo/home"}
+      to={user.role === 'admin' ? "/admin/dashboard" : "/ngo/home"}
       className={`navBtn ${
         location.pathname.startsWith("/ngo") || location.pathname.startsWith("/admin")
           ? "navBtnActive"

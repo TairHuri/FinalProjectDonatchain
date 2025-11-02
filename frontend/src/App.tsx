@@ -38,7 +38,7 @@ const App: React.FC = () => {
           <Navbar />
 
           {/* תוכן ראשי */}
-          <div className="mx-auto max-w-6xl px-4
+          <div className=" max-w-6xl px-4
             min-h-[calc(100dvh-70px)]
             max-h-[calc(100dvh-70px)]
             grid place-items-center"

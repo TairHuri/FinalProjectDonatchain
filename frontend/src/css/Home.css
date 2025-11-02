@@ -1,6 +1,6 @@
 /* ===== Palette (יותר רוויה ועדיין עדין) ===== */
 :root{
-  --nav-h: 64px;                 /* עדכני אם ה־Navbar שלך גבוה/נמוך יותר */
+  --nav-h: 65px;                 /* עדכני אם ה־Navbar שלך גבוה/נמוך יותר */
   --bg: #e8eeec;                 /* היה בהיר יותר; חיזקנו מעט */
   --ink: #273331;                /* טקסט כהה רך */
   --muted:#5e726e;               /* טקסט משני */
@@ -15,7 +15,7 @@
 
 /* ===== Base ===== */
 .home{
-  min-height: calc(195dvh - var(--nav-h));
+  min-height: calc(190dvh - var(--nav-h));
   padding-top: var(--nav-h);
   padding-left: max(12px, env(safe-area-inset-left));
   padding-right: max(12px, env(safe-area-inset-right));
@@ -26,6 +26,7 @@
   color: var(--ink);
   font-family: "Heebo", system-ui, Segoe UI, Arial, sans-serif;
   overflow-x: hidden;
+  width:100%;
 }
 
 /* ===== Hero (ימין טקסט / שמאל לוגו) ===== */
