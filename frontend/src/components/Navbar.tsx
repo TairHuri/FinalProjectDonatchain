@@ -87,7 +87,7 @@ export default function Navbar() {
         aria-expanded={openDropdown === "ngo"}
         aria-haspopup="menu"
       >
-        עמותות
+        עמותות ⌄
       </button>
             {openDropdown === "ngo" && (
               <ul className="dropdown" role="menu">

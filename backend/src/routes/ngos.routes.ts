@@ -29,7 +29,7 @@ router.patch(
 router.post(
   "/",
   authMiddleware,
-  roleMiddleware(["manager", "admin"]),
+  roleMiddleware(["manager"]),
   validateCreateNgo,
   createNgo
 );
@@ -37,7 +37,7 @@ router.post(
 router.put(
   "/:id",
   authMiddleware,
-  roleMiddleware(["manager", "admin"]),
+  roleMiddleware(["manager"]),
   updateNgo
 );
 

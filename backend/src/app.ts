@@ -6,6 +6,7 @@ import morgan from 'morgan';
 import routes from './routes';
 import errorMiddleware from './middlewares/error.middleware';
 import authRoutes from "./routes/auth.routes";
+
 import fileUpload, { certificateFolder, imageFolder } from './middlewares/multer.middleware';
 import { config } from './config';
 import path from 'path';

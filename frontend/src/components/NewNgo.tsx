@@ -92,7 +92,7 @@
 
 import type { Ngo } from "../models/Ngo";
 import type { NgoMediaType } from "../pages/RegistrationNgo";
-import { Mail, MapPin, Phone, CreditCard, Wallet, Building2,File,Image,IdCard } from "lucide-react";
+import { Mail, MapPin, Phone, CreditCard, Wallet, Building2,File,Image,IdCard,ScreenShare } from "lucide-react";
 
 type Props = {
   ngo: Ngo;
@@ -161,6 +161,19 @@ const NewNgo = ({ ngo, media, handleChangeNgo, handleChangeMedia }: Props) => {
           placeholder="טלפון עמותה"
           value={ngo.phone || ""}
           onChange={(e) => handleChangeNgo("phone", e.target.value)}
+          className="input-field"
+        />
+      </div>
+
+      
+      {/* אתר */}
+      <div className="input-group">
+        <ScreenShare className="input-icon" />
+        <input
+          type="text"
+          placeholder="קישור לאתר העמותה"
+          value={ngo.phone || ""}
+          onChange={(e) => handleChangeNgo("website", e.target.value)}
           className="input-field"
         />
       </div>

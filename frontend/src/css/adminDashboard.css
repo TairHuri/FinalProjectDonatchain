@@ -1,0 +1,5 @@
+
+.admin-container{
+    max-height: calc(100dvh - 65px);
+    overflow-y: auto;
+}

@@ -3,6 +3,8 @@ import { getAllCampaigns, toggleCampaignStatus } from "../services/campaignApi";
 import { PauseCircle, PlayCircle, Loader2, Search } from "lucide-react";
 import { motion } from "framer-motion";
 
+import '../css/adminDashboard.css'
+
 export default function CampaignList() {
   const [campaigns, setCampaigns] = useState<any[]>([]);
   const [filteredCampaigns, setFilteredCampaigns] = useState<any[]>([]);

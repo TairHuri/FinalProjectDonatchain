@@ -15,7 +15,7 @@
 
 /* ===== Base ===== */
 .home{
-  min-height: calc(180dvh - var(--nav-h));
+  min-height: calc(195dvh - var(--nav-h));
   padding-top: var(--nav-h);
   padding-left: max(12px, env(safe-area-inset-left));
   padding-right: max(12px, env(safe-area-inset-right));
@@ -80,13 +80,13 @@
   background: linear-gradient(135deg, var(--teal), var(--teal-dark));
   color:#fff;
 }
-.btn-primary:hover{ transform: translateY(-2px); background:#aebfaa; }
+.btn-primary:hover{ color:#fff; transform: translateY(-2px);  background: linear-gradient(135deg,#8fa98f, #3b6978); }
 .btn-ghost{
   background: #fff;
   color: var(--teal-dark);
   border: 2px solid #cfe0dc;
 }
-.btn-ghost:hover{ background:#aebfaa; }
+.btn-ghost:hover{color:#fff; background: linear-gradient(135deg,#8fa98f, #3b6978); }
 
 .hero-left{
   text-align:center;
@@ -96,7 +96,15 @@
   width: clamp(240px, 34vw, 440px);
   height: auto;
   filter: drop-shadow(0 10px 26px rgba(30,40,38,.18));
+  will-change: transform, filter;
+  transform-origin: center;
 }
+
+@media (prefers-reduced-motion: reduce){
+  .logo-hero{ animation: none !important; transition: none !important; }
+}
+
+
 
 /* ===== Features ===== */
 .features{

@@ -19,7 +19,7 @@ import '../css/NgoDashboard.css'
 import type { Campaign } from "../models/Campaign";
 
 
-const tabs = [{id:0, label:"כל הקמפיינים"}, {id:1, label:"קמפיינים פעילים"}, {id:2, label:"קמפיינים מתוכננים"}, {id:3, label:"קמפיינים לא פעילים"}, ]
+const tabs = [{id:0, label:"כל הקמפיינים"}, {id:1, label:"קמפיינים פעילים"}, {id:2, label:"קמפיינים מתוכננים"}, {id:3, label:"קמפיינים לא פעילים"},{id:4, label:"קמפיינים מושהים/מחוקים"} ]
 const NgoDashboard: React.FC = () => {
   const { user, logout } = useAuth();
   const { campaigns } = useCampaigns();
@@ -33,9 +33,10 @@ const NgoDashboard: React.FC = () => {
   const now = new Date()
     const campaignFilters :{[n: number]:(campaign:Campaign)=>boolean} = {
     0:(campaign:Campaign) => true,
-    1: (campaign:Campaign) => campaign.startDate.toString().localeCompare(now.toISOString()) <= 0 && campaign.endDate.toString().localeCompare(now.toISOString()) >= 0,
+    1: (campaign:Campaign) => campaign.startDate.toString().localeCompare(now.toISOString()) <= 0 && campaign.endDate.toString().localeCompare(now.toISOString()) >= 0 && campaign.isActive==true,
     2: (campaign:Campaign) => campaign.startDate.toString().localeCompare(now.toISOString()) >= 0 , 
-    3: (campaign:Campaign) => campaign.endDate.toString().localeCompare(now.toISOString ()) <= 0 , 
+    3: (campaign:Campaign) => campaign.endDate.toString().localeCompare(now.toISOString ()) <= 0 ,
+    4: (campaign:Campaign) => campaign.isActive==false , 
     
   }
   //const showCampaigns = useCallback(() => setActivePage("campaigns"), [])
@@ -145,7 +146,7 @@ setCampaignId(id);
             {/* סטטיסטיקות */}
             <div style={{ display: "flex", gap: "20px", marginTop: "30px" }}>
               {statCard("קמפיינים פעילים", campaigns.length)}
-              {statCard("סכום כולל", "₪" + campaigns.reduce((a, c) => a + c.raised, 0))}
+              {statCard("סכום כולל", "₪" + campaigns.reduce((a, c) => a + c.raised, 0).toFixed(2))}
               {statCard("תורמים", donationsCount)}
             </div>
           </div>

@@ -7,15 +7,21 @@ dotenv.config();
 
 //  קריאת משתנה הסביבה עם כתובת MongoDB
 const mongoUri = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/donatchain";
+const adminPassword = process.env.ADMIN_PASSWORD ;
 
-async function createAdmin() {
+if(!adminPassword){
+  console.log("\x1b[33m⚠️ server is missing admin password\x1b[0m");
+  process.exit(-1)
+}
+
+export async function createAdmin() {
   try {
     // התחברות למסד הנתונים
-    await mongoose.connect(mongoUri);
-    console.log(" Connected to MongoDB");
+    //await mongoose.connect(mongoUri);
+    //console.log(" Connected to MongoDB");
 
     const email = "admin@donatchain.com";
-    const password = "Admin123!";
+    const password = adminPassword!;
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // בדיקה אם האדמין כבר קיים
@@ -36,15 +42,12 @@ async function createAdmin() {
 
     await adminUser.save();
     console.log(" Admin user created successfully!");
-    console.log(` Email: ${email}`);
-    console.log(` Password: ${password}`);
   } catch (error) {
     console.error(" Error creating admin:", error);
   } finally {
-    await mongoose.disconnect();
-    console.log(" Disconnected from MongoDB");
+    //await mongoose.disconnect();
+    //console.log(" Disconnected from MongoDB");
   }
 }
 
-// הפעלת הפונקציה
-createAdmin();
+

@@ -33,8 +33,10 @@ const App: React.FC = () => {
 
           {/* תוכן ראשי */}
           <div className="mx-auto max-w-6xl px-4
-            min-h-[calc(100dvh-65px)]
-            grid place-items-center">
+            min-h-[calc(100dvh-70px)]
+            max-h-[calc(100dvh-70px)]
+            grid place-items-center"
+            >
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/discover" element={<Discover />} />

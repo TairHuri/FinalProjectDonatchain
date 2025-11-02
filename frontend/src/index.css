@@ -2,12 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+*{
+  box-sizing: border-box;
+}
 html, body, #root {
   height: 100%;
   margin: 0;
   padding: 0;
+  /* background: linear-gradient(135deg, #e4ede9, #f9faf9); */
   /* background: linear-gradient(135deg, #8fa98f, #3b6978);  */
-  box-sizing: border-box;
+  /* overflow-y: hidden; */
   overflow-x: clip;
 }
 

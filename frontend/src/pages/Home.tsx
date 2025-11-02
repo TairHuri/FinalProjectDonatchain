@@ -209,6 +209,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { ShieldCheck, Users, Cpu, Coins } from "lucide-react";
 import "../css/Home.css";
+import { motion } from "framer-motion";
 
 export default function Home() {
   return (
@@ -235,8 +236,12 @@ export default function Home() {
         </div>
 
         <div className="hero-left">
-          <img src="/logoDonatchain.png" alt="DonatChain" className="logo-hero" />
+          <motion.img
+          initial={{ opacity: 0, y: -30 }}
+          animate={{ opacity: 1, y: 0 }}           
+          transition={{ duration: 1 }} src="/logoDonatchain.png" alt="DonatChain" className="logo-hero " />
         </div>
+        
       </section>
 
       {/* יתרונות */}

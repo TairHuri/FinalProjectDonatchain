@@ -4,7 +4,7 @@ export const menuBtnStyle: React.CSSProperties = {
   display: "flex",
   alignItems: "center",
   gap: "10px",
-  padding: "12px 15px",
+  padding: "12px 12px 5px 15px",
   background: "transparent",
   border: "none",
   borderRadius: "8px",

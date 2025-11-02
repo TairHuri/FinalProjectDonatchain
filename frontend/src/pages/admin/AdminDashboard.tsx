@@ -13,12 +13,14 @@ import { useNavigate } from "react-router-dom";
 import { cardStyle, menuBtnStyle } from "../../css/dashboardStyles";
 import AdminDonors from "../../components/AdminDonors";
 import CampaignList from "../../components/CampaignList";
-import NgoList from "../admin/NgoList"; 
-import NgoDetails from "../../components/admin/NgoDetails"; 
+import NgoList from "../admin/NgoList";
+import NgoDetails from "../../components/admin/NgoDetails";
 import AdminAboutEditor from "./AdminAboutEditor";
 import RulesViewer from "./RulesViewer";
 import AdminRulesEditor from "./AdminRulesEditor";
-import AdminNgoList from "../../components/admin/AdminNgoList"; 
+import AdminNgoList from "../../components/admin/AdminNgoList";
+
+import '../../css/adminDashboard.css'
 
 interface Stats {
   usersCount: number;
@@ -34,7 +36,7 @@ const AdminDashboard: React.FC = () => {
     "dashboard" | "donors" | "ngos" | "campaigns" | "terms" | "about"
   >("dashboard");
   const navigate = useNavigate();
-const [selectedNgo, setSelectedNgo] = useState<any | null>(null);
+  const [selectedNgo, setSelectedNgo] = useState<any | null>(null);
 
 
 
@@ -64,18 +66,19 @@ const [selectedNgo, setSelectedNgo] = useState<any | null>(null);
       dir="rtl"
       style={{
         display: "flex",
-        minHeight: "100vh",
+        // minHeight: "100vh",
+        height: '100%',
         backgroundColor: "#f7f9fc",
-        width: "80vw",
+        width: "85vw",
       }}
     >
       {/* סרגל צד */}
       <div
         style={{
-          width: "20vw",
+          width: "18dvw",
           background: "#1f2937",
           color: "white",
-          padding: "20px",
+          padding: " 15px 5px",
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
@@ -136,7 +139,7 @@ const [selectedNgo, setSelectedNgo] = useState<any | null>(null);
         </div>
 
         <button
-          style={{ ...menuBtnStyle, color: "#f87171" }}
+          style={{ ...menuBtnStyle, color: "#f87171", marginBottom:'1px', paddingBottom:'1px' }}
           onClick={logout}
         >
           <LogOut size={20} /> יציאה
@@ -144,7 +147,7 @@ const [selectedNgo, setSelectedNgo] = useState<any | null>(null);
       </div>
 
       {/* תוכן */}
-      <div style={{ flex: 1, padding: "30px" }}>
+      <div style={{ flex: 1, padding: "30px", paddingTop:'5px',  }} className="admin-container">
         {activePage === "dashboard" && (
           <div>
             <h1
@@ -184,33 +187,33 @@ const [selectedNgo, setSelectedNgo] = useState<any | null>(null);
         {/* ✅ כאן הוספנו את התצוגה החדשה של רשימת התורמים */}
         {activePage === "donors" && <AdminDonors />}
 
-{activePage === "ngos" && <AdminNgoList />}
+        {activePage === "ngos" && <AdminNgoList />}
 
 
-{activePage === "campaigns" && (
-  <div>
-    <h2 style={{ fontSize: "24px", fontWeight: "bold" }}>רשימת קמפיינים</h2>
+        {activePage === "campaigns" && (
+          <div>
+            <h2 style={{ fontSize: "24px", fontWeight: "bold", margin:'10px auto' }}>רשימת קמפיינים</h2>
 
-    <CampaignList />
-  </div>
-)}
+            <CampaignList />
+          </div>
+        )}
 
 
-{activePage === "terms" && (
-  <div>
-    <h2 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "16px" }}>
-      ניהול תקנון האתר
-    </h2>
+        {activePage === "terms" && (
+          <div>
+            <h2 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "16px" }}>
+              ניהול תקנון האתר
+            </h2>
 
-    {/* רכיב לצפייה */}
-    <RulesViewer />
+            {/* רכיב לצפייה */}
+            <RulesViewer />
 
-    {/* רכיב לעריכה */}
-    <AdminRulesEditor />
-  </div>
-)}
+            {/* רכיב לעריכה */}
+            <AdminRulesEditor />
+          </div>
+        )}
 
-{activePage === "about" && <AdminAboutEditor />}
+        {activePage === "about" && <AdminAboutEditor />}
 
       </div>
     </div>

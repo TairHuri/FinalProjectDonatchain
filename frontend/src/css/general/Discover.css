@@ -1,0 +1,123 @@
+/* === פונט יפה (Rubik) ===
+   הוסיפי ל-index.html ב-<head>:
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+*/
+.dc-page{
+  --nav-h:64px;
+  --bg:#eaf1f0;
+  --ink:#263432;
+  --muted:#586c69;
+  --brand:#345e6c;  /* מעט כהה יותר */
+  --brand2:#739a86;
+  --ring:#d9e5e2;
+  --card:#ffffff;
+  --shadow:0 10px 26px rgba(25,35,33,.12);
+  --radius:14px;
+
+  min-height: calc(100dvh - var(--nav-h));
+  padding: clamp(16px, 2.4vw, 28px);
+  background:
+    radial-gradient(800px 420px at 8% -6%, #e4eeec 0%, transparent 60%),
+    radial-gradient(900px 450px at 95% -10%, #eaf3f6 0%, transparent 55%),
+    var(--bg);
+  color: var(--ink);
+  font-family: "Rubik", "Heebo", system-ui, Segoe UI, Arial, sans-serif;
+}
+
+/* HERO */
+.dc-hero{ max-width:940px; margin:0 auto; text-align:center; }
+.dc-hero-title{ font-weight:800; color:var(--brand); font-size:clamp(1.9rem,5vw,2.6rem); margin:0 0 .4rem; }
+.dc-hero-sub{ color:var(--muted); font-size:clamp(1rem,2.1vw,1.12rem); max-width:68ch; margin:0 auto 1rem; }
+.dc-hero-cta{ display:flex; justify-content:center; gap:.6rem; flex-wrap:wrap; }
+
+/* Buttons – פחות עגול */
+.dc-btn{
+    font-family: "Rubik", "Heebo", system-ui, Segoe UI, Arial, sans-serif;
+  display:inline-flex; align-items:center; gap:.5rem;
+  padding:.72rem 1.05rem; border-radius:10px; border:2px solid transparent;
+  font-weight:800; cursor:pointer; box-shadow:var(--shadow);
+  transition: transform .16s ease, box-shadow .2s ease, background .2s, color .2s;
+}
+.dc-btn.less-round{ border-radius:10px; }
+.dc-btn:disabled{ opacity:.55; cursor:not-allowed; box-shadow:none; }
+.dc-btn-primary{ color:#fff; background:linear-gradient(135deg,var(--brand),var(--brand2)); }
+.dc-btn-primary:hover{ transform:translateY(-1px); }
+.dc-btn-ghost{ background:#fff; color:var(--brand); border-color:#dfe9e6; }
+.dc-btn-ghost:hover{ background:#f4f8f7; }
+
+/* MODAL */
+.dc-backdrop{ position:fixed; inset:0; background:#0b1211; opacity:.55; z-index:1000; border:none; }
+.dc-modal{ position:fixed; inset:0; z-index:1001; display:grid; place-items:center; padding: clamp(10px, 3vw, 24px); }
+
+.dc-card{
+  width:min(820px, 100%);             /* ⬅️ מעט רחב יותר */
+  background:var(--card);
+  border:1px solid var(--ring);
+  border-radius:var(--radius);
+  box-shadow:0 20px 40px rgba(20,28,27,.16);
+  overflow:hidden;
+}
+.dc-card-head{ display:flex; align-items:center; justify-content:space-between; gap:.5rem; padding:.85rem 1rem; border-bottom:1px solid var(--ring); }
+.dc-card-head h2{ margin:0; font-size:clamp(1.1rem,2.2vw,1.35rem); color:var(--brand); }
+.dc-iconBtn{ padding:.35rem .45rem; border-radius:.55rem; border:1px solid #e1ebe8; background:#fff; color:var(--brand); transition: background .2s, transform .15s; }
+.dc-iconBtn:hover{ background:#f3f7f6; transform:translateY(-1px); }
+
+.dc-dots{ display:flex; gap:.35rem; justify-content:center; padding:.55rem .9rem; border-bottom:1px solid var(--ring); }
+.dc-dot{ width:8px; height:8px; border-radius:999px; background:#d7e3e0; }
+.dc-dot.is-active{ background:linear-gradient(135deg,var(--brand),var(--brand2)); }
+
+.dc-card-body{ padding:1rem 1.1rem; }
+
+/* ⬅️ תמונה גדולה יותר + טקסט יותר שמאלה (מרווח גדול) */
+.dc-step{
+  display:grid; align-items:center;
+  grid-template-columns: 1.7fr 0.9fr;  /* תמונה גדולה יותר */
+  column-gap: clamp(18px, 3vw, 34px);  /* מרווח גדול יותר בין תמונה לטקסט */
+}
+
+.dc-step-media { position:relative; }
+.dc-media-click{
+  display:block; padding:0; border:none; background:transparent; cursor:zoom-in;
+}
+.dc-step-media img{
+  display:block; width:100%;
+  aspect-ratio: 16 / 9;               /* יותר גבוה ורחב */
+  object-fit: cover;
+  border-radius:12px;
+  box-shadow:0 12px 24px rgba(25,35,33,.14);
+}
+
+.dc-step-text{ padding-inline-start: clamp(10px, 1.5vw, 18px); } /* הטקסט "יותר הצידה" */
+.dc-step-text h3{ margin:.2rem 0 .35rem; color:var(--brand); font-size:clamp(1.06rem,2.1vw,1.28rem); }
+.dc-step-text p{ margin:0; color:var(--muted); font-size:clamp(1rem,2vw,1.08rem); }
+
+.dc-card-foot{ display:flex; justify-content:space-between; gap:.6rem; padding:.75rem 1rem; border-top:1px solid var(--ring); }
+
+/* רספונסיביות */
+@media (max-width: 900px){
+  .dc-step{ grid-template-columns:1fr; }
+  .dc-step-text{ padding-inline-start: 0; }
+}
+
+@media (max-width: 560px){
+  .dc-card{ width:min(96vw, 820px); }
+  .dc-card-body{ padding:.85rem; }
+  .dc-card-foot{ padding:.65rem .85rem; }
+}
+
+/* Lightbox */
+.dc-lightbox{
+  position:fixed; inset:0; z-index:1100;
+  display:grid; place-items:center;
+  background:rgba(11,18,17,.75);
+  padding: clamp(8px, 2vw, 24px);
+}
+.dc-lightbox-img{
+  max-width: min(1100px, 95vw);
+  max-height: 90vh;
+  border-radius: 14px;
+  box-shadow: 0 20px 50px rgba(0,0,0,.35);
+}
+
+/* להפוך את הצ׳ברונים ב-RTL */
+.dc-page [dir="rtl"] .dc-btn svg{ transform:scaleX(-1); }
