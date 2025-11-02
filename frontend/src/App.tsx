@@ -1,3 +1,4 @@
+// App.tsx
 import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
@@ -20,6 +21,11 @@ import AdminRoute from "./components/AdminRoute";
 import "./App.css";
 import Ngos from "./pages/Ngos";
 import NgoPageForUsers from "./components/NgoPageForUsers";
+
+// ✅ הוספת דפי שחזור סיסמה
+import ForgotPassword from "./pages/ForgotPassword";
+import VerifyCode from "./pages/VerifyCode";
+import ResetPassword from "./pages/ResetPassword";
 
 const App: React.FC = () => {
   return (
@@ -54,7 +60,12 @@ const App: React.FC = () => {
               <Route path="/ngos" element={<Ngos />} />
               <Route path="/ngos/:id" element={<NgoPageForUsers />} />
 
-              {/* ✅ נתיב מוגן — רק מנהל מורשה */}
+              {/*  דפי שחזור סיסמה */}
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/verify-code" element={<VerifyCode />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
+<Route path="/login" element={<LoginNgo />} />
+              {/*  נתיב מוגן — רק מנהל מורשה */}
               <Route
                 path="/admin/dashboard"
                 element={

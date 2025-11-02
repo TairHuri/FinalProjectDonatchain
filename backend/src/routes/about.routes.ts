@@ -2,7 +2,7 @@ import { Router, Request, Response } from "express";
 
 const router = Router();
 
-// תוכן ראשוני
+
 let aboutContent = {
   heroTitle: "מי אנחנו",
   heroText: "מערכת חדשנית לגיוס תרומות בשילוב טכנולוגיית בלוקצ'יין ובינה מלאכותית — למען עתיד חברתי חכם, מאובטח ושקוף יותר",
@@ -17,12 +17,12 @@ let aboutContent = {
   closingText: "אנו מאמינים שטכנולוגיה יכולה להפוך כל תרומה לסיפור של אמון, השפעה ונתינה. הצטרפו אלינו למסע אל עתיד של שקיפות, אחריות וחדשנות חברתית",
 };
 
-// GET /api/about
+
 router.get("/", (req: Request, res: Response) => {
   res.json(aboutContent);
 });
 
-// PUT /api/about → עדכון תוכן (רק למנהל)
+
 router.put("/", (req: Request, res: Response) => {
   const updates = req.body;
   aboutContent = { ...aboutContent, ...updates };

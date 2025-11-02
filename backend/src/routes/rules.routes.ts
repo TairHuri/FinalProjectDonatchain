@@ -11,14 +11,13 @@ let rulesContent = [
   { title: "שינויים בתקנון", text: "הנהלת המערכת רשאית לעדכן את תנאי התקנון מעת לעת. המשך השימוש במערכת לאחר עדכון ייחשב כהסכמה מלאה לתנאים החדשים" },
 ];
 
-// GET /api/rules
+
 router.get("/", (req: Request, res: Response) => {
   res.json(rulesContent);
 });
 
-// PUT /api/rules → עדכון התקנון (רק למנהל)
 router.put("/", (req: Request, res: Response) => {
-  const updates = req.body; // צריך להיות מערך של סעיפים
+  const updates = req.body; 
   rulesContent = updates;
   res.json(rulesContent);
 });

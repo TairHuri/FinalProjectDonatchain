@@ -8,28 +8,27 @@ import '../../css/ShareCampaign.css'
 
 const ShareCampaign = ({campaign}:{campaign:Campaign}) => {
   const [copied, setCopied] = useState(false);
-// ✅ חדש: לינק הקמפיין לשיתוף
+
   const campaignUrl = window.location.href;
 
-  // ✅ חדש: העתקה ללוח
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(campaignUrl);
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000); // יחזור אחרי 2 שניות
+      setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error("copy failed", err);
     }
   };
 
-  // ✅ חדש: וואטסאפ
+
   const handleShareWhatsapp = () => {
     const text = `תראה את הקמפיין הזה: ${campaign.title} - ${campaignUrl}`;
     const waUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
     window.open(waUrl, "_blank");
   };
 
-  // ✅ חדש: שיתוף דפדפן (אם קיים, למשל מובייל)
+ 
   const handleNativeShare = () => {
     if (navigator.share) {
       navigator.share({
@@ -40,13 +39,13 @@ const ShareCampaign = ({campaign}:{campaign:Campaign}) => {
         console.error("share cancelled or failed", err);
       });
     } else {
-      // אם אין תמיכה ב-navigator.share פשוט נעשה העתקה
+   
       handleCopyLink();
     }
   };
   return(
     <div className='share-row'>
-      {/* ✅ חדש: שיתוף הקמפיין */}
+      {/* חדש: שיתוף הקמפיין */}
       <div
         style={{
           marginTop: "20px",

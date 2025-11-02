@@ -9,10 +9,12 @@ export interface IUser extends Document {
   name: string;
   phone?: string;
   role: UserRoleType;
-  ngoId?: Schema.Types.ObjectId; // ✅ לא חובה
+  ngoId?: Schema.Types.ObjectId; 
   approved: boolean;
   createdAt: Date;
   updatedAt: Date;
+  resetCode?: string;
+resetCodeExpires?: Date;
 }
 
 const userSchema = new Schema<IUser>(
@@ -21,8 +23,9 @@ const userSchema = new Schema<IUser>(
     password: { type: String, required: true },
     name: { type: String, required: true },
     phone: { type: String },
+    resetCode: { type: String },
+resetCodeExpires: { type: Date },
 
-    // ✅ תמיכה בכל סוגי המשתמשים + ברירת מחדל member
     role: { 
       type: String, 
       enum: ['admin', 'manager', 'member'], 
@@ -30,7 +33,6 @@ const userSchema = new Schema<IUser>(
       required: true 
     },
 
-    // ✅ מנהל מערכת לא חייב עמותה
     ngoId: { 
       type: Schema.Types.ObjectId, 
       ref: 'Ngo', 

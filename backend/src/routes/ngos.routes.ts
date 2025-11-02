@@ -13,11 +13,11 @@ import { validateCreateNgo } from "../utils/validators";
 
 const router = Router();
 
-// רשימת עמותות וצפייה בעמותה
+
 router.get("/", listNgos);
 router.get("/:id", getNgo);
 
-// ✅ ניהול סטטוס עמותה (מנהל מערכת בלבד)
+
 router.patch(
   "/:id/toggle-status",
   authMiddleware,
@@ -25,7 +25,6 @@ router.patch(
   toggleNgoStatus
 );
 
-// ✅ יצירה ועדכון עמותה (עמותה עצמה או אדמין)
 router.post(
   "/",
   authMiddleware,

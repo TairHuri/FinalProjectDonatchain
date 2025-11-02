@@ -3,9 +3,7 @@ import CampaignService from '../services/campaign.service';
 import { MediaFiles } from '../middlewares/multer.middleware';
 
 
-/**
- * ➕ יצירת קמפיין חדש
- */
+
 export const createCampaign = async (req: Request, res: Response) => {
   
   const { title, description, startDate, endDate, tags, goal, isActive, blockchainTx } = req.body;
@@ -41,12 +39,6 @@ export const createCampaign = async (req: Request, res: Response) => {
   }
 }
 
-/**
- * עדכון קמפיין
- * 
- * @param req 
- * @param res 
- */
 export const updateCampaign = async (req: Request, res: Response) => {
   const {campaignId} = req.params;
   const { title, description, startDate, endDate, tags, goal, raised, isActive, blockchainTx, existingImages:images, existingMovie: movie, existingMainImage: mainImage } = req.body;
@@ -86,9 +78,7 @@ export const updateCampaign = async (req: Request, res: Response) => {
   }
 }
 
-/**
- * 📋 הבאת רשימת קמפיינים עם תמיכה ב־חיפוש/סינון
- */
+
 export const listCampaigns = async (req: Request, res: Response) => {
   const { q, tag, page = 1, limit = 10, ngoId } = req.query as any;
   try {
@@ -109,9 +99,7 @@ export const listCampaigns = async (req: Request, res: Response) => {
   }
 };
 
-/**
- * 🔎 הבאת קמפיין בודד לפי ID
- */
+
 export const getCampaign = async (req: Request, res: Response) => {
   try {
     const campaign = await CampaignService.getById(req.params.id);
@@ -143,7 +131,7 @@ export const toggleCampaignStatus = async (req: Request, res: Response) => {
     await campaign.save();
 
     res.json({
-      message: `קמפיין ${campaign.isActive ? "הופעל מחדש ✅" : "הושהה ⏸️"}`,
+      message: `קמפיין ${campaign.isActive ? "הופעל מחדש " : "הושהה "}`,
       campaign,
     });
   } catch (err: any) {

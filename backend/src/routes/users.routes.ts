@@ -10,7 +10,6 @@ const router = Router();
 router.get('/me', authMiddleware, getMe);
 router.put('/me', authMiddleware, validateUpdateProfile, updateMe);
 
-// Admin-only: list users
 router.get('/', authMiddleware, roleMiddleware(['admin']), listUsers);
 router.get('/ngo/:ngoId', authMiddleware, listUsersByNgo);
 router.patch('/approve/:userId', approveUser)

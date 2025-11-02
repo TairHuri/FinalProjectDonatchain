@@ -46,7 +46,7 @@ export default {
     return { items, total:items.length, page, limit }
   },
 
-  // עדכון סכום ממקור מאוחד (transaction-like using session)
+ 
   async addDonationToCampaign(campaignId: string, amount: number) {
 
     try {

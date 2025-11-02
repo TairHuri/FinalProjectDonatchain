@@ -6,7 +6,7 @@ import blockchainService from './blockchain.service';
 import campaignService from './campaign.service';
 import { ServerError } from '../middlewares/error.middleware';
 import fetch from 'node-fetch';
-import { sendReceiptEmail } from "../utils/receiptEmail";  // ✅ נוספה שליחה במייל
+import { sendReceiptEmail } from "../utils/receiptEmail"; 
 import mongoose from 'mongoose';
 
 export default {
@@ -18,7 +18,7 @@ export default {
 
       if (!campaign) throw new ServerError('Campaign not found', 404)
 
-      // Optional: if method === 'onchain' then verify txHash
+    
       if (donation.method === 'crypto' && donation.txHash) {
         const receipt = await blockchainService.getTransaction(donation.txHash);
         if (!receipt || receipt.status !== 1) {
@@ -96,7 +96,7 @@ export default {
 
         await AuditLog.create({ action: 'donation_created', meta: { donationId: donation._id } });
 
-        // החזרת תגובה לפרונט
+
         return donation;
       } else {
         const text = await chargeResponse.text();
