@@ -3,11 +3,16 @@ import bcrypt from 'bcryptjs';
 import { config } from '../config';
 import jwt, { SignOptions } from "jsonwebtoken";
 
+export async function encryptPassword(password:string){
+  const passwordHash = await bcrypt.hash(password, config.bcryptSaltRounds);
+  return passwordHash;
+}
+
 export async function registerUser(user:IUser) {
   const existing = await User.findOne({ email:user.email });
   if (existing) throw new Error("User already exists");
 
-  const passwordHash = await bcrypt.hash(user.password, config.bcryptSaltRounds);
+  const passwordHash = encryptPassword(user.password); // await bcrypt.hash(user.password, config.bcryptSaltRounds);
   const {_id, createdAt, updatedAt, ...newUser} = user;
   const userToCreate = new User({
     ...newUser, password:passwordHash,

@@ -15,6 +15,19 @@ export async function editUser(user:User) {
   return res.json();
 }
 
+export async function changePassword(currentPassword:string, newPassword:string) {
+  const token = localStorage.getItem("token")
+  const res = await fetch(`${API_URL}/users/me`, 
+    { method: 'PATCH', 
+        headers: {'Content-Type':'application/json', "Authorization": `Bearer ${token}` },
+    body: JSON.stringify({currentPassword, newPassword}) })
+  if(res.status >= 400){
+    const err = await res.json();
+    throw new Error(err.message);
+  }
+  return res.json();
+}
+
 export async function setUserRoleApi(userId: string, role:string) {
   const token = localStorage.getItem("token")
   const res = await fetch(`${API_URL}/users/role/${userId}`,

@@ -45,7 +45,7 @@ export default function RegistrationNgo() {
     createdAt: new Date(),
     ngoNumber: "",
     certificate: '',
-    isActive:true, //מה לעשות עם השדה הזה???
+    isActive:true, 
   });
 
   const handleChangeUser = (field: string, value: string | number) => {

@@ -43,11 +43,7 @@ const NgoDashboard: React.FC = () => {
 
   const [editMode, setEditMode] = useState<"view" | "edit" | "password">("view");
 
-  const [passwords, setPasswords] = useState({
-    current: "",
-    newPass: "",
-    confirmPass: "",
-  });
+
   const [donationsCount, setDonationsCount] = useState<number>(0)
 
   useEffect(() => {
@@ -65,20 +61,6 @@ const getDonationsCount = async () => {
 setActivePage("editCampaign");
 setCampaignId(id);
   }
-  const handleChangePassword = () => {
-    if (passwords.newPass !== passwords.confirmPass) {
-      alert("אימות סיסמה נכשל");
-      return;
-    }
-    //FIXME 
-    // if (passwords.current !== ngo?.password) {
-    //   alert("סיסמה נוכחית שגויה");
-    //   return;
-    // }
-    setPasswords({ current: "", newPass: "", confirmPass: "" });
-    setEditMode("view");
-  };
-
 
 
   return (
