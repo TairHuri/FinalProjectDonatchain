@@ -74,3 +74,34 @@
     border-radius: 10px;
     transition: width 0.4s ease;
 }
+/* מיקום יחסי לכרטיס כדי למקם תגית */
+.campaign-card {
+  position: relative;
+}
+
+/* תגית "הסתיים" בפינה הימנית-עליונה (RTL) */
+.campaign-badge {
+  position: absolute;
+  inset-block-start: 10px;      /* top */
+  inset-inline-start: 10px;     /* RTL-friendly (ימין) */
+  background: #ef4444;          /* אדום נעים */
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: .85rem;
+  box-shadow: 0 6px 16px rgba(0,0,0,.15);
+  z-index: 2;
+}
+
+/* אופציונלי: אם בא לך שגם התמונה תיראה "כבויה" כשנגמר */
+.campaign-card .image-grid,
+.campaign-card .image-flex {
+  transition: filter .2s ease, opacity .2s ease;
+}
+.campaign-card .campaign-badge ~ .image-grid,
+.campaign-card .campaign-badge ~ .image-flex {
+  filter: grayscale(.2) contrast(.95);
+  opacity: .65;
+}
+

@@ -4,7 +4,8 @@ import { cardStyle, inputStyle, menuBtnStyle, primaryBtnStyle } from "../css/das
 import { useCampaigns } from "../contexts/CampaignsContext";
 import type { Campaign } from "../models/Campaign";
 import '../css/EditCampaign.css'
-import { updateCampaign } from "../services/campaignApi";
+import { toggleCampaignStatus, updateCampaign } from "../services/campaignApi";
+import ConfirmDialog, { useConfirmDialog } from "./gui/ConfirmDialog";
 
 type MediaType = {
   images: { value: FileList | null, ref: React.RefObject<HTMLInputElement | null> },
@@ -18,6 +19,7 @@ const EditCampaign = ({ campaignId, editMode, setEditMode }: { campaignId: strin
   const { campaigns, postUpdateCampaign } = useCampaigns();
   const IMAGE_URL = import.meta.env.VITE_IMAGES_URL || "http://localhost:4000/images";
 
+  const {showConfirm, openConfirm, closeConfirm} = useConfirmDialog()
   const [campaign, setCampaign] = useState<Campaign | null>();
   const [disableStartDate, setDisableStartDate] = useState<boolean>(false)
   const [media, setMedia] = useState<MediaType>({
@@ -25,7 +27,7 @@ const EditCampaign = ({ campaignId, editMode, setEditMode }: { campaignId: strin
     movie: { value: null as File | null, ref: useRef<HTMLInputElement>(null) },
     mainImage: { value: null as File | null, ref: useRef<HTMLInputElement>(null) },
   })
-
+  
   const removeImage = (field: string, imageName: string) => {
     if (!campaign) return;
 
@@ -72,21 +74,21 @@ const EditCampaign = ({ campaignId, editMode, setEditMode }: { campaignId: strin
         images.push(img);
       }
     }
-    try{
+    try {
       console.log('campaign', campaign);
-      
+
       const updatedCampaign = await updateCampaign(campaign, user.token, images, media.movie.value, media.mainImage.value);
-      if(updatedCampaign._id){
+      if (updatedCampaign._id) {
         postUpdateCampaign(updatedCampaign)
       }
       alert('קמפיין עודכן בהצלחה')
       setEditMode("view")
-    }catch(error){
+    } catch (error) {
       console.log(error);
       alert('עדכון הקמפיין נכשל')
-      
+
     }
-    
+
   };
 
   useEffect(() => {
@@ -141,7 +143,20 @@ const EditCampaign = ({ campaignId, editMode, setEditMode }: { campaignId: strin
     }
     return images;
   }
-  console.log(media);
+  
+    const handleToggle = async (id: string) => {
+      try {
+        
+        const res = await toggleCampaignStatus(id,user.token!);
+        alert(res.message || "הסטטוס עודכן בהצלחה ✅");
+        //await fetchCampaigns(); // רענון הנתונים
+      } catch (err) {
+        console.error(err);
+        alert("שגיאה בעדכון הסטטוס ❌");
+      } finally {
+        
+      }
+    };
 
   if (!campaign) return <p>קמפיין לא נמצא</p>;
   return (
@@ -162,12 +177,18 @@ const EditCampaign = ({ campaignId, editMode, setEditMode }: { campaignId: strin
               <p><strong>תאריך התחלה:</strong> {campaign.startDate}</p>
               <p><strong>תאריך סיום:</strong> {campaign.endDate}</p>
               <p><strong>תאריך יצירה:</strong> {!campaign.createdAt}</p>
-              <button
-                onClick={() => setEditMode("edit")}
-                style={{ ...primaryBtnStyle, marginTop: "15px" }}
-              >
-                עריכת פרטים
-              </button>
+              <div className="campaign-edit-buttons">
+                <button
+                  onClick={() => setEditMode("edit")}
+                  style={{ ...primaryBtnStyle }}
+                >
+                  עריכת פרטים
+                </button>
+                <button style={{ ...primaryBtnStyle }} onClick={openConfirm}>
+                  השעיה/מחיקה
+                </button>
+              </div>
+              <ConfirmDialog show={showConfirm} onYes={() => handleToggle(campaign._id!)} onNo={closeConfirm} message='פעולה זו תמחק/תשהה את הקמפיין'/>
             </div>
           )}
 

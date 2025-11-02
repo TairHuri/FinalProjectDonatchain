@@ -22,6 +22,6 @@ router.get('/:id', getCampaign);
 
 router.post('/', authMiddleware, roleMiddleware(['member', 'manager']), createCampaign);
 router.put('/:campaignId', authMiddleware, roleMiddleware(['member', 'manager']), updateCampaign);
-router.put('/:id/toggle-status', authMiddleware, roleMiddleware(['admin']), toggleCampaignStatus);
+router.put('/:id/toggle-status', authMiddleware, roleMiddleware(['admin', 'manager']), toggleCampaignStatus);
 
 export default router;

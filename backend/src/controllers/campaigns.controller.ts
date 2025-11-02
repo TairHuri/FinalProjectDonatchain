@@ -126,7 +126,7 @@ export const toggleCampaignStatus = async (req: Request, res: Response) => {
     const { id } = req.params;
     const campaign = await CampaignService.getById(id);
     if (!campaign) return res.status(404).json({ message: "Campaign not found" });
-
+    if((req.user as any).ngoId != id)return res.status(403).json({ message: "You are not part of this NGO" });
     campaign.isActive = !campaign.isActive;
     await campaign.save();
 

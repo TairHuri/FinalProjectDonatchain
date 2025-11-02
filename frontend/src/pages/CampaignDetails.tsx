@@ -12,9 +12,18 @@ import { useAuth } from "../contexts/AuthContext";
 import CampaignDonations from "../components/campaign/CampaignDonations";
 import NgoDetailsCard from "../components/ngo/NgoDetailsCard";
 import ShareCampaign from "../components/campaign/ShareCampaign";
+import { ngoListStyle } from "../css/dashboardStyles";
+
+
+import '../css/campaign/CampaignDetails.css'
 
 const IMAGE_URL = import.meta.env.VITE_IMAGES_URL || "http://localhost:4000/images";
-
+function endOfDay(dateStr?: string) {
+  if (!dateStr) return null;
+  const d = new Date(dateStr);
+  d.setHours(23, 59, 59, 999);
+  return d;
+}
 const CampaignDetails: React.FC = () => {
   const params = useParams();
   const { campaigns } = useCampaigns();
@@ -46,6 +55,14 @@ const CampaignDetails: React.FC = () => {
 
   }, [params])
 
+  const isPayable = () => {
+    if (!campaign) return false;
+    const end = endOfDay(campaign.endDate);
+    const start = endOfDay(campaign.startDate);
+
+    return campaign && campaign?.isActive && end && end >= new Date() && start && start <= new Date()
+  }
+
   if (!campaign) return <p>קמפיין לא נמצא</p>;
 
 
@@ -71,19 +88,21 @@ const CampaignDetails: React.FC = () => {
 
       {/* כפתורים */}
       <div style={{ display: "flex", gap: "12px", marginTop: "20px" }}>
-        <button style={{ flex: 1, backgroundColor: "green", color: "white", padding: "10px", borderRadius: "8px", border: "none" }}
-          onClick={() => setShowCreditPay(true)}>
+        <button className='donate-button' style={{ flex: 1, backgroundColor: "green", color: "white", padding: "10px", borderRadius: "8px", border: "none" }}
+          onClick={() => setShowCreditPay(true)}
+          disabled={ !isPayable()}>
           תרומה באשראי
         </button>
 
-        <button style={{ flex: 1, backgroundColor: "#4b5563", color: "white", padding: "10px", borderRadius: "8px", border: "none" }}
-          onClick={() => setShowCryptoPay(true)}>
+        <button className='donate-button' style={{ flex: 1, backgroundColor: "#4b5563", color: "white", padding: "10px", borderRadius: "8px", border: "none" }}
+          onClick={() =>  setShowCryptoPay(true)}
+          disabled={ !isPayable()}>
           תרומה בקריפטו
         </button>
       </div>
       <Modal show={showCryptoPay} onClose={() => setShowCryptoPay(false)} component={<CryptoPayment close={() => setShowCryptoPay(false)} campaignId={campaign._id!} userId={campaign.ngo} />} />
       <Modal show={showCreditPay} onClose={() => setShowCreditPay(false)} component={<CreditPayment close={() => setShowCreditPay(false)} campaignId={campaign._id!} userId={campaign.ngo} />} />
-    <ShareCampaign campaign={campaign}/>
+      <ShareCampaign campaign={campaign} />
       {/* תמונות וסרטון */}
       <div style={{ display: "flex", gap: "10px", marginTop: "20px", overflowX: "hidden" }}>
         <SimpleGallery
