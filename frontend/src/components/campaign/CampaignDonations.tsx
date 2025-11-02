@@ -79,7 +79,7 @@ const CampaignDonations = ({ campaignId }: { campaignId: string }) => {
             {/* הגריד של התרומות */}
             <div
                 style={{
-                    display: "grid", // 👈 לפי הבקשה שלך
+                    display: "grid", 
                     gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
                     gap: "12px",
                 }}
@@ -139,7 +139,7 @@ const CampaignDonations = ({ campaignId }: { campaignId: string }) => {
                                 </span>
                             </div>
 
-                            {/* ✅ חדש: תגובת התורם אם קיימת */}
+                            {/* חדש: תגובת התורם אם קיימת */}
                             {donation.comment && donation.comment.trim() !== "" && (
                                 <div
                                     style={{

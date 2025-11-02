@@ -33,7 +33,7 @@ export default function AdminNgoList() {
       await fetchNgos();
     } catch (err) {
       console.error(err);
-      alert("שגיאה בעדכון הסטטוס ❌");
+      alert("שגיאה בעדכון הסטטוס ");
     } finally {
       setActionLoading(null);
     }
