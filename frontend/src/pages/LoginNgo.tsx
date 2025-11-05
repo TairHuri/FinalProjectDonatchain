@@ -95,7 +95,7 @@ const LoginNgo: React.FC = () => {
 
           {/* כפתור התחברות */}
           <button type="submit" className="login-btn" disabled={loading}>
-            {loading ? <span className="loader"></span> : <LogIn size={20} />}
+            {loading ? <span className=""></span> : <LogIn size={20} />}
             {loading ? "מתחבר..." : "התחבר"}
           </button>
 

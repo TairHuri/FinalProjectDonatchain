@@ -1,4 +1,4 @@
-.items-container_grid {
+/* .items-container_grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 20px;
@@ -31,4 +31,95 @@
     text-decoration: none;
     color: inherit;
 }
+ */
 
+ /* ===== Page shell ===== */
+.camps-page{
+  --bg:#f6f8f7;
+  --fg:#1f2b29;
+  --muted:#6b7a76;
+  --border:#e3ece9;
+  --primary:#345e6c;      /* כחול-ירקרק עמוק (תואם ללוגו שלך) */
+  --primary-2:#739a86;    /* ירקרק רך */
+  --card:#ffffff;
+
+  display:flex;flex-direction:column;gap:14px;
+  color:var(--fg);font-family:"Heebo",system-ui,Segoe UI,Arial,sans-serif;
+}
+
+/* ===== Header ===== */
+.camps-header{
+  display:flex;flex-direction:column;gap:.6rem;
+}
+.camps-title-wrap{
+  display:flex;align-items:baseline;gap:.6rem;justify-content:space-between;flex-wrap:wrap;
+}
+.camps-title{
+  margin:0;font-weight:900;font-size:clamp(1.2rem,2.6vw,1.6rem);color:var(--primary);
+}
+.camps-count{
+  background:var(--card);border:1px solid var(--border);border-radius:999px;
+  padding:.25rem .6rem;font-weight:800;color:var(--primary);
+}
+
+/* ===== Filters ===== */
+.camps-filters{
+  display:grid;grid-template-columns: 1.4fr .9fr auto;gap:.5rem;
+}
+@media (max-width:900px){ .camps-filters{ grid-template-columns: 1fr 1fr; } }
+@media (max-width:560px){ .camps-filters{ grid-template-columns: 1fr; } }
+
+.camps-input-wrap{
+  display:flex;align-items:center;gap:.45rem;background:#fff;border:1px solid var(--border);
+  border-radius:12px;padding:.55rem .7rem;
+}
+.camps-input-wrap svg{ opacity:.7 }
+.camps-input{
+  flex:1;border:0;outline:none;background:transparent;color:var(--fg);font-size:1rem;
+}
+
+.camps-select{
+  width:100%;border:1px solid var(--border);border-radius:12px;background:#fff;color:var(--fg);
+  padding:.55rem .7rem;font-size:1rem;outline:none;transition: box-shadow .15s, border-color .15s;
+}
+.camps-select:focus{ border-color:#cfe0dc; box-shadow:0 0 0 3px rgba(52,94,108,.12) }
+
+.camps-view{ display:flex;gap:.35rem;align-items:center;justify-content:flex-end }
+.view-btn{
+  border:1px solid var(--border);background:#fff;border-radius:10px;padding:.45rem .55rem;cursor:pointer;
+  transition: background .15s, transform .15s, border-color .15s;
+}
+.view-btn:hover{ background:#eef6f4; transform: translateY(-1px); }
+.view-btn.is-active{
+  background:linear-gradient(135deg,var(--primary),var(--primary-2));
+  color:#fff;border-color:transparent;box-shadow:0 6px 18px rgba(52,94,108,.22);
+}
+
+/* ===== Empty state ===== */
+.camps-empty{
+  text-align:center;color:var(--muted);background:var(--card);
+  border:1px solid var(--border);border-radius:16px;padding:2rem;
+}
+
+/* ===== Grid / List containers ===== */
+.items-container_grid{
+  display:grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap:16px;
+}
+.items-container_flex{
+  display:flex;flex-direction:column;gap:12px;
+}
+
+/* ===== Link wrappers ===== */
+.item-link_grid, .item-link_flex{
+  text-decoration:none;color:inherit;
+}
+.item-link_grid{ display:block }
+.item-link_flex{ display:block }
+
+/* Slight outer padding for the page (optional) */
+.camps-page > .items-container_grid,
+.camps-page > .items-container_flex{
+  margin-top:.2rem;
+}

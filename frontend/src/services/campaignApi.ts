@@ -66,3 +66,10 @@ export async function getAllCampaigns(token: string) {
   if (!res.ok) throw new Error(await res.text());
   return res.json();
 }
+export async function getCampaignTags(token: string) {
+  const res = await fetch(`${API_URL}/campaigns/tags`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}

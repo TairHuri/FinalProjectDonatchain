@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext"
-import { cardStyle, inputStyle, menuBtnStyle, primaryBtnStyle } from "../css/dashboardStyles"
+import { cardStyle, inputStyle, primaryBtnStyle } from "../css/dashboardStyles"
 import type { Ngo } from "../models/Ngo";
 import InputText from "./gui/InputText";
 import { editNgo } from "../services/ngoApi";
 
 const NgoPersonalDetails = ({ editMode, setEditMode }: { editMode: string, setEditMode: (mode: "view" | "edit" | "password") => void }) => {
     const { ngo: ngoDetails, user, updateNgo } = useAuth()
-    
+
     if (!user || !ngoDetails) return <p>לא בוצעה התחברות לעמותה</p>
-    const {token} = user;
+    const { token } = user;
     const [logo, setLogo] = useState<File | null>(null)
     const [ngo, setNgo] = useState<Ngo>({ ...ngoDetails });
 
@@ -24,15 +24,17 @@ const NgoPersonalDetails = ({ editMode, setEditMode }: { editMode: string, setEd
             return null;
         }
 
-        try{const res = await editNgo(ngo, token, logo);
-        if (res) {
-            updateNgo(res);
-            setNgo(res)
-            setLogo(null)
-            setEditMode('view');
-        }}catch(error){
+        try {
+            const res = await editNgo(ngo, token, logo);
+            if (res) {
+                updateNgo(res);
+                setNgo(res)
+                setLogo(null)
+                setEditMode('view');
+            }
+        } catch (error) {
             console.log((error as any).message);
-            alert('לא ניתן לעדכן שלב זה' +'\n'+  (error as any).message)
+            alert('לא ניתן לעדכן שלב זה' + '\n' + (error as any).message)
         }
     };
 
@@ -60,10 +62,10 @@ const NgoPersonalDetails = ({ editMode, setEditMode }: { editMode: string, setEd
                             <p><strong>תיאור:</strong> {ngo.description}</p>
                             <button
                                 onClick={() => setEditMode("edit")}
-                                style={{ ...primaryBtnStyle, marginTop: "15px" }}
-                            >
+                                style={{ ...primaryBtnStyle, marginTop: "15px" }}>
                                 עריכת פרטים
                             </button>
+
                         </div>
                     )}
 
@@ -85,7 +87,7 @@ const NgoPersonalDetails = ({ editMode, setEditMode }: { editMode: string, setEd
 
                             <div style={{ display: "flex", gap: "10px" }}>
                                 <button onClick={handleSaveChanges} style={primaryBtnStyle}>שמור</button>
-                                <button onClick={() => setEditMode("view")} style={{ ...menuBtnStyle, background: "#f87171", color: "#fff" }}>ביטול</button>
+                                <button onClick={() => setEditMode("view")} style={{ ...primaryBtnStyle, background: "#f87171", color: "#fff" }}>ביטול</button>
                             </div>
                         </div>
                     )}

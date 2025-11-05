@@ -249,37 +249,37 @@ export default function Home() {
         <article className="card">
           <ShieldCheck className="ic" />
           <h3>שקיפות מלאה</h3>
-          <p>כל תרומה מתועדת בבלוקצ'יין — אמון מוחלט וגלוי לכולם.</p>
+          <p>כל תרומה מתועדת בבלוקצ'יין - אמון מוחלט וגלוי לכולם</p>
         </article>
 
         <article className="card">
           <Cpu className="ic" />
           <h3>בינה מלאכותית</h3>
-          <p>התאמת תרומות חכמה לפי ערכים ותחומי עניין.</p>
+          <p>התאמה והמלצה חכמה במיוחד עבורך</p>
         </article>
 
         <article className="card">
           <Users className="ic" />
           <h3>קהילה מחבקת</h3>
-          <p>עמותות ותורמים מחוברים במטרה אחת — לעשות טוב.</p>
+          <p>עמותות ותורמים מחוברים במטרה אחת - לעשות טוב</p>
         </article>
 
         <article className="card">
           <Coins className="ic" />
-          <h3>השפעה נמדדת</h3>
-          <p>עקבו בזמן אמת אחרי ההשפעה של כל תרומה.</p>
+          <h3>השפעה ומשמעות</h3>
+          <p>כל תרומה בעלת ערך ועושה את ההבדל</p>
         </article>
       </section>
 
       {/* איך זה עובד */}
       <section className="how">
-        <h2>איך זה עובד?</h2>
-        <div className="steps">
+        <h2>מה זה בלוקצ'יין?</h2>
+        {/* <div className="steps">
           <div className="step"><span className="dot">1</span> בוחרים עמותה</div>
           <div className="step"><span className="dot">2</span> תורמים בבטחה</div>
           <div className="step"><span className="dot">3</span> מקבלים תובנות חכמות</div>
           <div className="step"><span className="dot">4</span> רואים את ההשפעה</div>
-        </div>
+        </div> */}
       </section>
 
       <footer className="footer">

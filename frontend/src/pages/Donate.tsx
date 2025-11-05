@@ -1,6 +1,10 @@
+
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 export default function Donate() {
+  const navigate = useNavigate();
+
   return (
     <div
       dir="rtl"
@@ -34,6 +38,7 @@ export default function Donate() {
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
+        onClick={() => navigate("/campaigns")}
         style={{
           marginTop: "2rem",
           padding: "0.8rem 2rem",

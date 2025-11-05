@@ -1,7 +1,7 @@
 // src/services/campaign.service.ts
 import Campaign from '../models/campaign.model';
-import Donation from '../models/donation.model';
 import mongoose from 'mongoose';
+import tags from '../config/campaignTags.json'
 
 export default {
   async create(payload: any) {
@@ -61,5 +61,6 @@ export default {
     } catch (err) {
       throw err;
     }
-  }
+  },
+  getCampaignTags: () => tags
 };

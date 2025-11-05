@@ -110,10 +110,25 @@ export const changeUserRole = async (req: Request, res: Response) => {
   }
 };
 
-export const deleteUse = (req: Request, res: Response) => {
+let lastDeletedTime:number|null = null;
+export const deleteUse = async(req: Request, res: Response) => {
   try {
-    const { userId } = req.params
-    userService.deleteUser(userId);
+    const { userId } = req.params;
+    
+    const user = await userService.getById(userId)
+    if(!user){
+      res.status(400).send({message:'invalid user'})
+      return;
+    }
+    if(user.role == 'manager'){
+      const now = Date.now();
+      if(lastDeletedTime !=null && (lastDeletedTime + 1000*60 > now)){
+        return res.status(400).send({message:'please try again in a minute'})
+      }
+      lastDeletedTime = now;
+      
+    }
+    await userService.deleteUser(userId);
     res.json({ success: true });
   } catch (error: any) {
     res.status(500).json({ success: false, message: error.toString() });

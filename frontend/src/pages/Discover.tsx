@@ -1,53 +1,9 @@
-// import { motion } from "framer-motion";
-
-// export default function Discover() {
-//   return (
-//     <div
-//       dir="rtl"
-//       style={{
-//         padding: "3rem 2rem",
-//         textAlign: "center",
-//         fontFamily:  "Fredoka, sans-serif",
-//       }}
-//     >
-//       <motion.h1
-//         initial={{ opacity: 0, y: -30 }}
-//         animate={{ opacity: 1, y: 0 }}
-//         transition={{ duration: 0.6 }}
-//         style={{ fontSize: "2.5rem", fontWeight: "bold", marginBottom: "1rem" }}
-//       >
-//         גלה עוד על המערכת שלנו
-//       </motion.h1>
-
-//       <motion.p
-//         initial={{ opacity: 0 }}
-//         animate={{ opacity: 1 }}
-//         transition={{ delay: 0.3 }}
-//         style={{ fontSize: "1.2rem", maxWidth: "700px", margin: "0 auto" }}
-//       >
-//         פרויקט זה מציע מערכת חדשנית לגיוס תרומות המשלבת{" "}
-//         <strong>טכנולוגיית בלוקצ'יין</strong> לשקיפות מלאה וביטחון,
-//         יחד עם <strong>בינה מלאכותית</strong> לניתוח טקסטים, זיהוי צרכים
-//         ומתן המלצות מותאמות אישית לתורמים.  
-//         <br />
-//         המטרה – לחבר בין עמותות ותורמים בצורה חכמה, אמינה ושקופה.
-//       </motion.p>
-//     </div>
-//   );
-// }
-
-
-
-
-
-
-
-
-   
 
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight, CheckCircle2 } from "lucide-react";
+
+
 import "../css/general/Discover.css";
 
 
@@ -57,10 +13,30 @@ export default function Discover() {
   const [zoomSrc, setZoomSrc] = useState<string | null>(null);
 
   const steps = [
-    { title: "בחירת קמפיין", desc: "דפדפי בין הקמפיינים…", img: "/discover/choose_campaign.png", alt: "מסך בחירת קמפיין" },
-    { title: "פרטי תרומה", desc: "בחרי סכום ואמצעי תשלום…", img: "/discover/donate_form.png", alt: "מסך פרטי תרומה" },
-    { title: "אישור התרומה", desc: "מאשרים בצורה מאובטחת…", img: "/discover/tx_confirm.png", alt: "מסך אישור תרומה" },
-    { title: "שקיפות בבלוקצ׳יין", desc: "לחיצה על 🔥 מציגה את העסקה…", img: "/discover/blockchain_view.png", alt: "צפייה בעסקה" },
+    { title: "בחירת קמפיין", 
+      desc: "גללו וחפשו את הקמפיין אליו תרצו לתרום", 
+      img: "/discover/choose_campaign.png", 
+      alt: "מסך בחירת קמפיין" },
+
+       { title: "פרטי קמפיין",
+       desc: "במסך זה תוכלו לראות את פרטי הקמפיין, להתחבר ולהבין יותר את ערך התרומה שלכם",
+        img: "/discover/donate_form.png", 
+        alt: "מסך פרטי קמפיין" },
+
+    { title: "פרטי תרומה",
+       desc: "בחרו את אמצעי התשלום בו תרצו לבצע את התרומה והזינו את הפרטים הנדרשים",
+        img: "/discover/donate_form.png", 
+        alt: "מסך פרטי תרומה" },
+
+    { title: "אישור התרומה", 
+      desc: "מסך אישור התרומה יופי בו תוכלו למצוא את כתובת הhash המתעדת את התרומה שלכם על רשת הבלוקצ'יין וקישור המפנה לתיעוד תרומתכם", 
+      img: "/discover/tx_confirm.png", 
+      alt: "מסך אישור תרומה" },
+
+    { title: "שקיפות בבלוקצ׳יין", 
+      desc: "פרטי התרומה מתועדים ושמורים בבטחה על רשת הבלוקצ'יין - אינם ניתנים לשינוי ומגיעים ליעדם כמובטח", 
+      img: "/discover/blockchain_view.png", 
+      alt: "צפייה בעסקה" },
   ];
 
   const openWizard = () => setOpen(true);
@@ -92,14 +68,21 @@ export default function Discover() {
     <div dir="rtl" className="dc-page">
       <section className="dc-hero">
         <motion.h1 className="dc-hero-title" initial={{opacity:0,y:-10}} animate={{opacity:1,y:0}}>
-          למה DonatChain מיוחדת?
+          ייחודיות DonatChain
         </motion.h1>
         <motion.p className="dc-hero-sub" initial={{opacity:0}} animate={{opacity:1}} transition={{delay:.1}}>
-          שילוב של <strong>בלוקצ׳יין</strong> לשקיפות ואמינות,
-          יחד עם <strong>בינה מלאכותית</strong> שמציעה קמפיינים מותאמים אישית.
+          {/* שילוב של <strong>בלוקצ׳יין</strong> לשקיפות ואמינות,
+          יחד עם <strong>בינה מלאכותית</strong> שמציעה קמפיינים מותאמים אישית. */}
+          DonatChain באה לשנות את כללי המשחק בכל מה שקשור לעולם גיוס התרומות כאשר היא שמה דגש על שקיפות ואמינות מול התורם  
+        <br />
+        בעזרת טכנולוגיית הבלוקצ'יין כל תרומה נרשמת ומתועדת בלתי יכולת לזיוף או שינוי
+        <br />
+        כבר לא עוד קופסה שחורה - שקיפות מלאה של הנעשה מאחורי הקלעים
+        <br />
+        
         </motion.p>
         <div className="dc-hero-cta">
-          <button className="dc-btn dc-btn-primary" onClick={openWizard}>אז איך זה עובד?</button>
+          <button className="dc-btn dc-btn-primary" onClick={openWizard}>גלו איך זה עובד</button>
         </div>
       </section>
 
@@ -170,7 +153,7 @@ export default function Discover() {
         )}
       </AnimatePresence>
 
-      {/* Lightbox לתמונה מוגדלת */}
+      {/* zoom image*/}
       <AnimatePresence>
         {zoomSrc && (
           <>
@@ -194,4 +177,6 @@ export default function Discover() {
     </div>
   );
 }
+
+
 

@@ -4,7 +4,8 @@ import {
   updateCampaign,
   listCampaigns,
   getCampaign,
-  getAllCampaigns
+  getAllCampaigns,
+  getCampaignTags
 } from '../controllers/campaigns.controller';
 import authMiddleware from '../middlewares/auth.middleware';
 import roleMiddleware from '../middlewares/role.middleware';
@@ -16,6 +17,7 @@ const router = Router();
 router.get('/admin/all', authMiddleware, roleMiddleware(['admin']), getAllCampaigns);
 
 router.get('/', listCampaigns);
+router.get('/tags', getCampaignTags);
 
 
 router.get('/:id', getCampaign);

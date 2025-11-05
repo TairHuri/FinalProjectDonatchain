@@ -27,7 +27,10 @@
 /* HERO */
 .dc-hero{ max-width:940px; margin:0 auto; text-align:center; }
 .dc-hero-title{ font-weight:800; color:var(--brand); font-size:clamp(1.9rem,5vw,2.6rem); margin:0 0 .4rem; }
-.dc-hero-sub{ color:var(--muted); font-size:clamp(1rem,2.1vw,1.12rem); max-width:68ch; margin:0 auto 1rem; }
+.dc-hero-sub{ 
+  color:black; 
+  /* color:var(--muted);  */
+  font-size:clamp(1rem,2.1vw,1.12rem); max-width:68ch; margin:0 auto 1rem; }
 .dc-hero-cta{ display:flex; justify-content:center; gap:.6rem; flex-wrap:wrap; }
 
 /* Buttons – פחות עגול */

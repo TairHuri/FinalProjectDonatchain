@@ -148,7 +148,7 @@ export default {
 
   async listByNgo(ngoId: string) {
     const objId = new mongoose.Types.ObjectId(ngoId);
-    return Donation.aggregate([
+    return await Donation.aggregate([
       {
         $lookup: {
           from: 'campaigns',

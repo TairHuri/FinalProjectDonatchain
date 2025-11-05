@@ -8,19 +8,20 @@ import {
   Settings,
   Home,
   LogOut,
+  FilePenLine,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { cardStyle, menuBtnStyle } from "../../css/dashboardStyles";
 import AdminDonors from "../../components/AdminDonors";
 import CampaignList from "../../components/CampaignList";
-import NgoList from "../admin/NgoList";
-import NgoDetails from "../../components/admin/NgoDetails";
 import AdminAboutEditor from "./AdminAboutEditor";
 import RulesViewer from "./RulesViewer";
 import AdminRulesEditor from "./AdminRulesEditor";
 import AdminNgoList from "../../components/admin/AdminNgoList";
 
 import '../../css/adminDashboard.css'
+import RequestFromUsers from "../../components/admin/RequestFromUsers";
+
 
 interface Stats {
   usersCount: number;
@@ -33,7 +34,7 @@ interface Stats {
 const AdminDashboard: React.FC = () => {
   const [stats, setStats] = useState<Stats | null>(null);
   const [activePage, setActivePage] = useState<
-    "dashboard" | "donors" | "ngos" | "campaigns" | "terms" | "about"
+    "dashboard" | "donors" | "ngos" | "campaigns" | "terms" | "about"| "request"
   >("dashboard");
   const navigate = useNavigate();
   const [selectedNgo, setSelectedNgo] = useState<any | null>(null);
@@ -71,7 +72,7 @@ useEffect(() => {
         // minHeight: "100vh",
         height: '100%',
         backgroundColor: "#f7f9fc",
-        width: "85vw",
+        width: "95%",
       }}
     >
       {/* סרגל צד */}
@@ -101,7 +102,7 @@ useEffect(() => {
             onClick={() => setActivePage("dashboard")}
             style={menuBtnStyle}
           >
-            <Home size={20} /> דשבורד
+            <Home size={20} /> דף הבית
           </button>
 
           <button
@@ -138,6 +139,12 @@ useEffect(() => {
           >
             <Settings size={20} /> עמוד "עלינו"
           </button>
+          <button
+            onClick={() => setActivePage("request")}
+            style={menuBtnStyle}
+          >
+            <FilePenLine size={20} /> בקשות משתמשים
+          </button>
         </div>
 
         <button
@@ -149,7 +156,7 @@ useEffect(() => {
       </div>
 
       {/* תוכן */}
-      <div style={{ flex: 1, padding: "30px", paddingTop:'5px',  }} className="admin-container">
+      <div style={{ flex: 1, padding: "20px", paddingTop:'5px',  }} className="admin-container">
         {activePage === "dashboard" && (
           <div>
             <h1
@@ -188,6 +195,7 @@ useEffect(() => {
         )}
 
         {/* ✅ כאן הוספנו את התצוגה החדשה של רשימת התורמים */}
+        {activePage === "request" && <RequestFromUsers />}
         {activePage === "donors" && <AdminDonors />}
 
         {activePage === "ngos" && <AdminNgoList />}

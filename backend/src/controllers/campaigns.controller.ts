@@ -148,3 +148,8 @@ export const getCampagnsByNgo = async (req: Request, res: Response) => {
     res.status(500).json({ message: err.message });
   }
 }
+
+export const getCampaignTags = (req: Request, res: Response) =>{
+  const tags = CampaignService.getCampaignTags();
+  res.send(tags)
+}

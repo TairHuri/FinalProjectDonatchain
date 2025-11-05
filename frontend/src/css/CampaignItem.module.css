@@ -1,0 +1,90 @@
+
+.campaign-card{
+  position:relative;background:#fff;border:1px solid #e3ece9;border-radius:14px;
+  box-shadow:0 8px 22px rgba(30,40,38,.08);overflow:hidden;
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+}
+.campaign-card:hover{
+  transform: translateY(-2px);
+  border-color:#d9e6e2;
+  box-shadow:0 12px 32px rgba(30,40,38,.12);
+}
+
+/* ===== Badge (הסתיים) ===== */
+.campaign-badge{
+  position:absolute; inset-inline-start:10px; inset-block-start:10px; z-index:2;
+  background:linear-gradient(135deg,#b31332,#e11d48);
+  color:#fff; font-weight:800; font-size:.85rem; border-radius:999px; padding:.2rem .55rem;
+  box-shadow:0 6px 18px rgba(177,19,50,.25);
+}
+
+/* ===== Media ===== */
+.campaign-media{
+  position:relative; aspect-ratio:16/9; background:#f0f2f1; overflow:hidden;
+}
+.campaign-img{
+  width:100%; height:100%; object-fit:cover; display:block;
+  transition: transform .35s ease;
+}
+.campaign-card:hover .campaign-img{ transform: scale(1.03) }
+
+/* ===== Content layout for both views ===== */
+.grid_container_grid, .grid_container_flex{ display:block }
+.flex-container_flex{ padding:12px 40px 14px }
+
+.title-grid, .title-flex{
+  margin:12px 14px 6px; color:#1f2b29; font-weight:900;
+  font-size:clamp(1rem,2.2vw,1.15rem);
+}
+.title-flex{ margin:12px 0 6px }
+
+.meta{
+  margin:0 14px 8px; color:#6b7a76; font-size:.93rem
+}
+
+/* Amount + percent row */
+.amount-row{
+  display:flex;align-items:center;justify-content:space-between;gap:.6rem;margin:0 14px 8px;
+}
+.amount{ font-weight:800; color:#1f2b29 }
+.amount .muted{ color:#6b7a76; font-weight:600; margin-inline-start:.3rem }
+.percent{
+  font-size:.9rem; font-weight:900; color:#345e6c;
+  background:#eef6f4; border:1px solid #d7e6e2; border-radius:999px; padding:.15rem .5rem;
+}
+
+/* Progress bar */
+.progress{
+  margin:0 14px 14px; height:9px; background:#eef2f1; border-radius:999px; overflow:hidden;
+  border:1px solid #e2ebe8;
+}
+.progress-bar{
+  height:100%; background:linear-gradient(90deg,#739a86,#345e6c);
+  border-radius:999px; transition: width .35s ease;
+}
+
+/* Actions (optional in grid) */
+.card-actions{
+  display:flex; gap:.6rem; padding:0 14px 14px; justify-content:space-between;
+}
+.btn-primary{
+  flex:1; text-align:center; border:0; cursor:pointer; font-weight:800;
+  border-radius:10px; padding:.55rem .8rem; color:#fff;
+  background:linear-gradient(135deg,#345e6c,#739a86);
+  box-shadow:0 8px 18px rgba(52,94,108,.20); transition: filter .15s, transform .15s;
+}
+.btn-primary:hover{ filter:brightness(1.05); transform: translateY(-1px) }
+
+/* ===== List view tweaks ===== */
+.grid_container_flex{
+  display:grid; grid-template-columns: 220px 1fr; gap:0; align-items:stretch;
+}
+.grid_container_flex .campaign-media{ border-inline-end:1px solid #e9f0ee }
+@media (max-width:680px){
+  .grid_container_flex{ grid-template-columns: 1fr; }
+  .grid_container_flex .campaign-media{ border-inline-end:0; border-bottom:1px solid #e9f0ee }
+}
+
+/* (לניקוי ישנים אם היו) */
+.image-grid, .image-flex, .progress-grid_bar, .progress-flex_bar{ all: unset; }
+

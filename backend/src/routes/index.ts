@@ -6,6 +6,7 @@ import ngoRoutes from "./ngos.routes";
 import usersRoutes from "./users.routes";
 import adminRoutes from "./admin.routes";
 import messagesRoutes from "./message.route";
+import requestsRoutes from "./request.route";
 import aboutRoutes from "./about.routes";
 import rulesRoutes from "./rules.routes";
 
@@ -18,6 +19,7 @@ router.use("/ngos", ngoRoutes);
 router.use("/users", usersRoutes);
 router.use("/admin", adminRoutes);
 router.use("/messages", messagesRoutes);
+router.use("/requests", requestsRoutes);
 router.use("/about", aboutRoutes);
 router.use("/rules", rulesRoutes); 
 

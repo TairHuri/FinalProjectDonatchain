@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useCampaigns } from "../contexts/CampaignsContext";
-import { PlusCircle, Home, Users, LogOut, FileText, Settings } from "lucide-react";
+import { PlusCircle, Home, Users, LogOut, FileText, Settings, FilePenLine } from "lucide-react";
 import NgoDonors from "../components/NgoDonors";
 import CampaignItem from "../components/CampaignItem";
 import { cardStyle, inputStyle, menuBtnStyle, primaryBtnStyle } from "../css/dashboardStyles";
@@ -17,6 +17,7 @@ import TabsButtons, { useTabsButtons } from "../components/gui/TabsButtons";
 
 import '../css/NgoDashboard.css'
 import type { Campaign } from "../models/Campaign";
+import AdminRequest from "../components/ngo/AdminRequest";
 
 
 const tabs = [{id:0, label:"כל הקמפיינים"}, {id:1, label:"קמפיינים פעילים"}, {id:2, label:"קמפיינים מתוכננים"}, {id:3, label:"קמפיינים לא פעילים"},{id:4, label:"קמפיינים מושהים/מחוקים"} ]
@@ -25,7 +26,7 @@ const NgoDashboard: React.FC = () => {
   const { campaigns } = useCampaigns();
   const navigate = useNavigate();
   const [activePage, setActivePage] = useState<
-    "dashboard" | "newCampaign" | "campaigns" |"editCampaign"| "profile" | "donors" | "ngoUsers" | "ngoDetails"
+    "dashboard" | "newCampaign" | "campaigns" |"editCampaign"| "profile" | "donors" | "ngoUsers" | "ngoDetails"| "adminRequest"
   >("dashboard");
   const [campaignId, setCampaignId] = useState<string|null>(null)
   console.log('campaigns', campaigns);
@@ -41,7 +42,7 @@ const NgoDashboard: React.FC = () => {
   }
   //const showCampaigns = useCallback(() => setActivePage("campaigns"), [])
 
-  const [editMode, setEditMode] = useState<"view" | "edit" | "password">("view");
+  const [editMode, setEditMode] = useState<"view" | "edit" | "password"|'deleteUser'>("view");
 
 
   const [donationsCount, setDonationsCount] = useState<number>(0)
@@ -61,8 +62,9 @@ const getDonationsCount = async () => {
 setActivePage("editCampaign");
 setCampaignId(id);
   }
+console.log(user);
 
-
+if (!user || !user.ngoId) return;
   return (
     <div dir="rtl" style={{ display: "flex", backgroundColor: "#f7f9fc", width: '90vw',marginTop: '5px' }}>
       {/* סרגל צד */}
@@ -85,7 +87,7 @@ setCampaignId(id);
             onClick={() => setActivePage("dashboard")}
             style={menuBtnStyle}
           >
-            <Home size={20} /> דשבורד
+            <Home size={20} /> דף הבית
           </button>
           <button
             onClick={() => setActivePage("newCampaign")}
@@ -108,6 +110,10 @@ setCampaignId(id);
           <button onClick={() => setActivePage("donors")} style={menuBtnStyle}>
             <Users size={20} /> תורמי העמותה
           </button>
+          
+          {user!.role === "manager" && (<button onClick={() => setActivePage("adminRequest")} style={menuBtnStyle}>
+            <FilePenLine size={20} /> בקשות מהמערכת
+          </button>)}
         </div>
         <button style={{ ...menuBtnStyle, color: "#f87171" }} onClick={() => {logout();navigate("/");}}>
           <LogOut size={20} /> יציאה
@@ -133,6 +139,7 @@ setCampaignId(id);
             </div>
           </div>
         )}
+        {activePage == "adminRequest" && <AdminRequest />}
         {activePage == "donors" && <NgoDonors />}
         {activePage === "newCampaign" && (<CreateCampaign postSave={() => setActivePage("campaigns")} />)}
         {activePage === "profile" && <UserPersonalDetails editMode={editMode} setEditMode={setEditMode} />}

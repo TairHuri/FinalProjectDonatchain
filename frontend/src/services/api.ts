@@ -93,11 +93,7 @@ export async function approveUserApi(userId: string) {
   const res = await fetch(`${API_URL}/users/approve/${userId}`, { method: 'PATCH', headers: { "Authorization": `Bearer ${token}` } })
   return res.json();
 }
-export async function deleteUserApi(userId: string) {
-  const token = localStorage.getItem("token")
-  const res = await fetch(`${API_URL}/users/${userId}`, { method: 'DELETE', headers: { "Authorization": `Bearer ${token}` } })
-  return res.json();
-}
+
 
 export async function createCampaign(data: Omit<Campaign, "raised">, token: string, images: File[] | null, movie: File | null, mainImage: File | null) {
   // content type: multipart/formdata
@@ -121,6 +117,9 @@ export async function createCampaign(data: Omit<Campaign, "raised">, token: stri
   }
   formData.append("startDate", data.startDate)
   formData.append("endDate", data.endDate)
+  for(const tag of data.tags){
+    formData.append('tags', tag)
+  }
   formData.append("isActive", `${data.isActive}`)
   const res = await fetch(`${API_URL}/campaigns`, {
     method: "POST",

@@ -35,3 +35,9 @@ export async function setUserRoleApi(userId: string, role:string) {
   body:JSON.stringify({role}) })
   return res.json();
 }
+
+export async function deleteUserApi(userId: string) {
+  const token = localStorage.getItem("token")
+  const res = await fetch(`${API_URL}/users/${userId}`, { method: 'DELETE', headers: { "Authorization": `Bearer ${token}` } })
+  return res.json();
+}

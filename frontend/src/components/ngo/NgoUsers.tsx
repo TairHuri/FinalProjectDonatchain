@@ -2,11 +2,11 @@
 import type { User } from "../../models/User";
 import { useAuth } from "../../contexts/AuthContext";
 import { useEffect, useMemo, useState } from "react"
-import { approveUserApi, deleteUserApi, getUsers } from "../../services/api";
+import { approveUserApi, getUsers } from "../../services/api";
 import UserItem from "../UserItem";
 
 import "../../css/NgoUsers.css";
-import { setUserRoleApi } from "../../services/userApi";
+import { setUserRoleApi, deleteUserApi } from "../../services/userApi";
 import AlertDialog from "../gui/AlertDialog";
 import type { Message } from "../../models/Message";
 import { getMessagesByNgoId, saveMessage } from "../../services/messageApi";
@@ -25,10 +25,10 @@ const NgoUsers = () => {
     // דאטה  להודעות עמותה
     const [messages, setMessages] = useState<Message[]>([]);
 
-    // state של טאב
+
     const [activeTab, setActiveTab] = useState<Tab>("members");
 
-    // הודעה חדשה (וירטואלי)
+  
     const [newMessage, setNewMessage] = useState<Message>(defaultMessage);
     console.log("all users=", users);
     console.log("user=", user);
@@ -202,7 +202,7 @@ function MembersTable({ members, loggedinUser, changeUserRole, declineUser, isCu
                                     {isCurrentManager && m.role != 'manager' && loggedinUser._id != m._id &&
                                         <button
                                             className={'smallBtn'}
-                                            onClick={() => changeUserRole(m._id!, 'Manager')}>הפוך למנהל
+                                            onClick={() => changeUserRole(m._id!, 'manager')}>הפוך למנהל
                                         </button>}
 
                                     {isCurrentManager && m.role == 'manager' && canDemote && loggedinUser._id != m._id &&
@@ -246,6 +246,8 @@ function PendingTable({
                     <tr>
                         <th>שם</th>
                         <th>אימייל</th>
+                        <th>טלפון</th>
+                        <th>תפקיד</th>
                         <th>פעולה</th>
                     </tr>
                 </thead>

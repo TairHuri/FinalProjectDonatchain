@@ -1,0 +1,202 @@
+:root{
+  --ngo-bg:#f3f4f6;        /* רקע דף */
+  --card:#ffffff;          /* רקע כרטיס */
+  --border:#e5e7eb;
+  --fg:#111827;            /* טקסט כהה */
+  --muted:#6b7280;         /* טקסט משני */
+  --primary:#3b6978;       /* כחול-ירקרק מהמותג */
+  --primary-2:#8fa98f;     /* ירקרק משלים */
+  --soft:#f9fafb;          /* רקע רך */
+}
+
+/* עמוד */
+.ngo-page{
+  padding: 24px;
+  background: var(--ngo-bg);
+  
+}
+
+/* כרטיס מרכזי */
+.ngo-card{
+    
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 16px 40px rgba(0,0,0,.06);
+  padding: clamp(18px, 2.6vw, 28px);
+  width: 85%;
+  margin-inline: auto;
+  color: var(--fg);
+  font-family: "Heebo", system-ui, Segoe UI, Arial, sans-serif;
+}
+
+/* Header */
+.ngo-header{
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 16px;
+  align-items: center;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+@media (max-width: 640px){
+  .ngo-header{ grid-template-columns: 1fr; }
+}
+
+.ngo-logo{
+  width: 86px; height: 86px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: var(--soft);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; flex-shrink: 0;
+}
+.ngo-logo-img{
+  width: 100%; height: 100%; object-fit: cover;
+}
+.ngo-logo-fallback{
+  font-size: .85rem; color: var(--muted); text-align: center; padding: 8px;
+}
+
+.ngo-headings{ min-width: 0; }
+.ngo-title{
+  margin: 0;
+  color: var(--fg);
+  font-weight: 800;
+  line-height: 1.15;
+  font-size: clamp(1.25rem, 2.8vw, 1.7rem);
+  text-align: right;
+}
+.ngo-sub{
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: .95rem;
+  line-height: 1.4;
+}
+
+.ngo-actions{ display: flex; align-items: center; justify-content: flex-end; }
+@media (max-width: 640px){
+  .ngo-actions{ justify-content: flex-start; }
+}
+
+/* כפתור ראשי */
+.btn-primary{
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  color: #fff; font-weight: 800; font-size: .95rem;
+  border: none; border-radius: 12px;
+  padding: .65rem 1rem; cursor: pointer;
+  box-shadow: 0 8px 20px rgba(59,105,120,.22);
+  transition: transform .15s, filter .15s;
+}
+.btn-primary:hover{ transform: translateY(-1px); filter: brightness(1.03); }
+
+/* סקשנים */
+.section{ margin-top: 18px; }
+.section-title{
+  margin: 0 0 8px;
+  color: var(--primary);
+  font-weight: 900;
+  font-size: clamp(1rem, 2.2vw, 1.15rem);
+  display: flex; align-items: center; gap: 8px;
+}
+.section-text{
+  margin: 0;
+  color: #1f2937;
+  line-height: 1.65;
+  font-size: 1rem;
+  white-space: pre-line;
+}
+
+/* בלוקים רכים */
+.row{
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  background: #fff;
+}
+.row.soft{ background: var(--soft); }
+.row-title{
+  margin: 0 0 6px;
+  font-weight: 700; color: #374151; font-size: .95rem;
+}
+.row-value{ color: var(--fg); font-size: .95rem; }
+
+.btn-link{
+  display: inline-block;
+  background: #2563eb; color:#fff;
+  text-decoration: none; font-weight: 700; font-size: .9rem;
+  padding: 8px 12px; border-radius: 9px;
+  box-shadow: 0 10px 22px rgba(37,99,235,.20);
+}
+.btn-link:hover{ filter: brightness(1.03); }
+
+/* טבלת שקיפות קומפקטית */
+.grid-lines{
+  display: grid;
+  grid-template-columns: 1fr;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.line{
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 12px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  align-items: center;
+}
+.line:last-child{ border-bottom: 0; }
+.line-label{
+  color: #374151; font-weight: 800; font-size: .95rem; white-space: nowrap;
+}
+.line-value{
+  color: var(--fg); font-size: .95rem; overflow-wrap: anywhere;
+}
+
+/* פרטי קשר קומפקטיים במיוחד */
+.contact-grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+}
+.contact-item{
+  display: grid;
+  grid-template-columns: 66px 1fr;
+  align-items: center;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  min-height: 44px;
+}
+.contact-label{
+  color: #374151; font-weight: 800; font-size: .95rem; white-space: nowrap;
+}
+.contact-link, .contact-value{
+  color: var(--fg); font-size: .95rem;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.contact-link{ color: #2563eb; text-decoration: none; font-weight: 600; }
+.contact-link:hover{ text-decoration: underline; }
+
+/* פוטר */
+.ngo-footer{
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  line-height: 1.4;
+  font-size: .9rem;
+}
+.footer-title{ color:#374151; font-weight: 700; margin-bottom: 4px; }
+
+/* התאמות מובייל */
+@media (max-width: 480px){
+  .line{ grid-template-columns: 1fr; gap: 6px; }
+  .contact-item{
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}
+
