@@ -5,7 +5,7 @@ import { cardStyle, primaryBtnStyle } from "../css/dashboardStyles"
 import InputText from "./gui/InputText";
 import type { User } from "../models/User";
 import { changePassword, deleteUserApi, editUser } from "../services/userApi";
-import {  getUsers } from "../services/api";
+import { getUsers } from "../services/api";
 
 
 import '../css/user/UserPersonalDetails.css'
@@ -13,12 +13,12 @@ import AlertDialog, { useAlertDialog } from "./gui/AlertDialog";
 import { useNavigate } from "react-router-dom";
 import ConfirmDialog, { useConfirmDialog } from "./gui/ConfirmDialog";
 
-const UserPersonalDetails = ({ editMode, setEditMode }: { editMode: string, setEditMode: (mode: "view" | "edit" | "password"|'deleteUser') => void }) => {
+const UserPersonalDetails = ({ editMode, setEditMode }: { editMode: string, setEditMode: (mode: "view" | "edit" | "password" | 'deleteUser') => void }) => {
   const { user, updateUser, logout } = useAuth()
   const nav = useNavigate();
 
-  const {message, setMessage, showAlert, setShowAlert, setIsFailure, isFailure} = useAlertDialog()
-  const {openConfirm, closeConfirm, showConfirm} = useConfirmDialog();
+  const { message, setMessage, showAlert, setShowAlert, setIsFailure, isFailure } = useAlertDialog()
+  const { openConfirm, closeConfirm, showConfirm } = useConfirmDialog();
   if (!user || !user._id || !user.token) return <p>לא בוצעה התחברות</p>
   const [formData, setFormData] = useState<User>({ ...user });
   const [passwords, setPasswords] = useState({
@@ -27,59 +27,61 @@ const UserPersonalDetails = ({ editMode, setEditMode }: { editMode: string, setE
     confirmPass: "",
   });
 
-    const hadAnotherManagers = async () => {
-  
-          if (!user) return;
-  
-          const users:{items:User[]} = await getUsers(user?.ngoId)
-          const count = users.items.reduce( (accumulator, user) => accumulator + (user.role=='manager'?1:0), 0)
+  const hadAnotherManagers = async () => {
 
-          console.log('count', count);
-          
-          return count>1
-      }
+    if (!user) return;
 
-  const handleChangePassword = async() => {
+    const users: { items: User[] } = await getUsers(user?.ngoId)
+    const count = users.items.reduce((accumulator, user) => accumulator + (user.role == 'manager' ? 1 : 0), 0)
+
+    console.log('count', count);
+
+    return count > 1
+  }
+
+  const handleChangePassword = async () => {
     if (passwords.newPass !== passwords.confirmPass) {
       setMessage("הסיסמאות החדשות אינן תואמות");
       setIsFailure(true);
       setShowAlert(true);
       return;
     }
-    try{
+    try {
       const user = await changePassword(passwords.current, passwords.newPass);
-     setMessage("אימות סיסמה בוצע בהצלחה");
+      setMessage("אימות סיסמה בוצע בהצלחה");
       setIsFailure(false);
       setShowAlert(true);
 
-    }catch(error){
+    } catch (error) {
       setMessage("אימות סיסמה נכשל");
       setIsFailure(true);
       setShowAlert(true);
     }
   };
 
-  const handleDeleteAccount = async() => {
+  const handleDeleteAccount = async () => {
     closeConfirm();
-    if(!user || !user._id) return;
+    if (!user || !user._id) return;
     setEditMode("deleteUser")
-    const hasManagers = await hadAnotherManagers();
-    
-    if(!hasManagers){
-      // alert
-      setMessage("לא ניתן למחוק את החשבון - מנהל יחיד")
-      setIsFailure(true)
-      setShowAlert(true)
-      setEditMode('view')
-      return;
+    if (user.role == 'manager') {
+      const hasManagers = await hadAnotherManagers();
+
+      if (!hasManagers) {
+        // alert
+        setMessage("לא ניתן למחוק את החשבון - מנהל יחיד")
+        setIsFailure(true)
+        setShowAlert(true)
+        setEditMode('view')
+        return;
+      }
     }
-    const result:{success:true}|{success:false, message:string} = await deleteUserApi(user._id);
-    if(result.success === true){
+    const result: { success: true } | { success: false, message: string } = await deleteUserApi(user._id);
+    if (result.success === true) {
       setMessage("מחיקת החשבון בוצעה בהצלחה, לחץ אישור למעבר למסך הבית")
       setIsFailure(false)
       setShowAlert(true)
-    }else{
-      setMessage(result.message ||"מחיקת החשבון לא הצליחה - אנא נסה מאוחר יותר")
+    } else {
+      setMessage(result.message || "מחיקת החשבון לא הצליחה - אנא נסה מאוחר יותר")
       setIsFailure(true)
       setShowAlert(true)
       setEditMode('view')
@@ -102,10 +104,10 @@ const UserPersonalDetails = ({ editMode, setEditMode }: { editMode: string, setE
   };
 
   const handleAlertSuccess = () => {
-    if(editMode == 'deleteUser'){
+    if (editMode == 'deleteUser') {
       logout();
       nav('/');
-    }else{
+    } else {
       setEditMode("view")
     }
   }
@@ -116,12 +118,12 @@ const UserPersonalDetails = ({ editMode, setEditMode }: { editMode: string, setE
   const handlePasswordsChange = (field: string, value: string | number) => {
     setPasswords({ ...passwords, [field]: value })
   }
- 
+
 
   return (
     <div style={cardStyle}>
       <h2 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "20px" }}>
-        {editMode == 'password'? 'שינוי סיסמה' : 'פרטים אישיים'}
+        {editMode == 'password' ? 'שינוי סיסמה' : 'פרטים אישיים'}
       </h2>
       {user ? (
         <>
@@ -184,8 +186,8 @@ const UserPersonalDetails = ({ editMode, setEditMode }: { editMode: string, setE
       ) : (
         <p>לא נמצאו פרטים, אנא התחבר שוב.</p>
       )}
-      <AlertDialog show={showAlert} message={message} failureOnClose={() => setShowAlert(false)} isFailure={isFailure} successOnClose={handleAlertSuccess}/>
-        <ConfirmDialog show={showConfirm} message='אתה בטוח שברצונך למחוק חשבון זה?' onYes={handleDeleteAccount} onNo={closeConfirm}  />
+      <AlertDialog show={showAlert} message={message} failureOnClose={() => setShowAlert(false)} isFailure={isFailure} successOnClose={handleAlertSuccess} />
+      <ConfirmDialog show={showConfirm} message='אתה בטוח שברצונך למחוק חשבון זה?' onYes={handleDeleteAccount} onNo={closeConfirm} />
     </div>
   )
 

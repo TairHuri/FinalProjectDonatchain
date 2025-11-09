@@ -48,12 +48,13 @@ const NgoDashboard: React.FC = () => {
   const [donationsCount, setDonationsCount] = useState<number>(0)
 
   useEffect(() => {
-    getDonationsCount();
-  }, [])
+    if(user!= null) getDonationsCount();
+  }, [user])
 
 const getDonationsCount = async () => {
   if (!user || !user.ngoId) return;
   const donations = await getDonationsByNgo(user.ngoId);
+  
   setDonationsCount(donations.length);
 };
 
@@ -133,9 +134,9 @@ if (!user || !user.ngoId) return;
 
             {/* סטטיסטיקות */}
             <div style={{ display: "flex", gap: "20px", marginTop: "30px" }}>
-              {statCard("קמפיינים פעילים", campaigns.length)}
+              {statCard("קמפיינים פעילים", campaigns.filter(campaignFilters[1]).length)}
               {statCard("סכום כולל", "₪" + campaigns.reduce((a, c) => a + c.raised, 0).toFixed(2))}
-              {statCard("תורמים", donationsCount)}
+              {statCard("תרומות", donationsCount)}
             </div>
           </div>
         )}

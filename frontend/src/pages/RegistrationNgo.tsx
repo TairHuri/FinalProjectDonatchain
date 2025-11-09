@@ -6,8 +6,9 @@ import type { User, UserRoleType } from "../models/User";
 import type { Ngo } from "../models/Ngo";
 import NewNgo from "../components/NewNgo";
 import { useNavigate } from 'react-router-dom';
-import "../css/RegistrationNgo.css"; 
+import "../css/RegistrationNgo.css";
 import AlertDialog, { useAlertDialog } from "../components/gui/AlertDialog";
+import { verifyNgoNumber } from "../services/ngoApi";
 
 export type NgoMediaType = { logoUrl: File | null, certificate: File | null }
 
@@ -19,7 +20,7 @@ export default function RegistrationNgo() {
   const [media, setMedia] = useState<NgoMediaType>({ logoUrl: null, certificate: null });
 
 
-  const {message, setMessage, showAlert, setShowAlert, isFailure, setIsFailure} = useAlertDialog()
+  const { message, setMessage, showAlert, setShowAlert, isFailure, setIsFailure } = useAlertDialog()
   const [user, setUser] = useState<User>({
     name: "",
     ngoId: "",
@@ -45,7 +46,7 @@ export default function RegistrationNgo() {
     createdAt: new Date(),
     ngoNumber: "",
     certificate: '',
-    isActive:true, 
+    isActive: true,
   });
 
   const handleChangeUser = (field: string, value: string | number) => {
@@ -73,21 +74,30 @@ export default function RegistrationNgo() {
     e.preventDefault();
     if (!user.email || !user.password || !user.name) {
       setIsFailure(true);
-      setMessage("אנא מלאי שם, אימייל וסיסמה");
+      setMessage("אנא מלא/י שם, אימייל וסיסמה");
       setShowAlert(true);
       return;
     }
     try {
       let res;
       if (newNgo) {
-        const u = { ...user, role: 'manager' as UserRoleType};
+        const result = await verifyNgoNumber(ngo.ngoNumber)
+        if (!result.status) {
+          setIsFailure(true);
+          console.log(result.message);
+          
+          setMessage(result.message);
+          setShowAlert(true);
+          return;
+        }
+        const u = { ...user, role: 'manager' as UserRoleType };
         res = await registerUserNewNgo(u, ngo, media);
       } else {
         res = await registerUserExistingNgo(user);
       }
       if (res.success) {
         setIsFailure(false);
-        setMessage("עמותה נרשמה בהצלחה");
+        setMessage("רישום בוצע בהצלחה");
         setShowAlert(true);
 
       } else {
@@ -107,11 +117,11 @@ export default function RegistrationNgo() {
 
   return (
     <>
-      <div className="login-page" dir="rtl">{/* 📌 שימוש באותה עטיפה כמו ההתחברות */}
-        <div className="login-card">{/* 📌 אותו כרטיס כמו בהתחברות */}
-          <h1 className="login-title">הרשמת עמותה</h1>{/* 📌 אותו סטייל כותרת */}
+      <div className="login-page" dir="rtl">
+        <div className="login-card">
+          <h1 className="login-title">הרשמת עמותה</h1>
 
-          {/* 📌 טוגל בסגנון פשוט ונקי, כמו שני כפתורי צ'יפס */}
+
           <div className="segmented" dir="rtl">
             <button
               type="button"
@@ -129,9 +139,9 @@ export default function RegistrationNgo() {
             </button>
           </div>
 
-          <form onSubmit={handleSubmit} className="login-form">{/* 📌 אותה מחלקה של טופס כמו בהתחברות */}
-            {/* שם משתמש */}
-            <div className="input-group">{/* 📌 אותו מבנה כמו ההתחברות */}
+          <form onSubmit={handleSubmit} className="login-form">
+            {/* user name */}
+            <div className="input-group">
               <Building2 className="input-icon" />
               <input
                 type="text"
@@ -143,7 +153,7 @@ export default function RegistrationNgo() {
               />
             </div>
 
-            {/* אימייל */}
+            {/* mail */}
             <div className="input-group">
               <Mail className="input-icon" />
               <input
@@ -156,7 +166,7 @@ export default function RegistrationNgo() {
               />
             </div>
 
-            {/* טלפון */}
+            {/* phone */}
             <div className="input-group">
               <Phone className="input-icon" />
               <input
@@ -168,7 +178,7 @@ export default function RegistrationNgo() {
               />
             </div>
 
-            {/* סיסמה */}
+            {/* password */}
             <div className="input-group">
               <Lock className="input-icon" />
               <input
@@ -194,12 +204,12 @@ export default function RegistrationNgo() {
 
               </>
             ) : (
-              <div className="input-group">{/* 📌 שורת בחירת עמותה קיימת בסגנון ההתחברות */}
+              <div className="input-group">
                 <Building2 className="input-icon" />
                 <input
                   type="text"
                   list="ngoList"
-                  placeholder="חפשי ובחרי עמותה קיימת…"
+                  placeholder="חפש/י ובחר/י עמותה קיימת"
                   onChange={(e) => handleChangeData("ngoId", e.target.value)}
                   className="input-field"
                 />

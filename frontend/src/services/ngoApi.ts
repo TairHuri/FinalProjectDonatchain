@@ -2,6 +2,21 @@ import axios from "axios";
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
 import type { Ngo } from "../models/Ngo";
 
+export async function verifyNgoNumber(ngoNumber: string){
+  try{
+    const httpResponse = await fetch(`${API_URL}/ngos/verify/${ngoNumber}`);
+    if(!httpResponse.ok){
+      const resp = await httpResponse.json()
+      return {status:false, message:resp.message}
+    }
+    return {status: true, message:null};
+  }catch(error){
+    console.log(error);
+    
+    return {status:false, message: 'שגיאה בקריאה לשרת'}
+  }
+  
+}
 export async function editNgo(ngo: Ngo, token: string, logo: File|null) {
   // content type: multipart/formdata
   

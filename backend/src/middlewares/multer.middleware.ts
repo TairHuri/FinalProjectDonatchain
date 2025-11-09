@@ -25,6 +25,7 @@ export default fileUpload
 
 export type MediaFiles = {
     images: Express.Multer.File[];
+    newImages?: Express.Multer.File[];
     movie: Express.Multer.File[];
     mainImage: Express.Multer.File[];
 

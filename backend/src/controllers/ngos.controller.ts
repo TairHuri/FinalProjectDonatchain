@@ -5,7 +5,34 @@ import AuditLog from "../models/auditlog.model";
 import { NgoMediaFiles } from "../middlewares/multer.middleware";
 import nodemailer from "nodemailer";
 import Campaign from "../models/campaign.model";
+import service, { ApiSuccessType } from '../services/ngo.service'
 
+
+export const verifyNgo = async (req: Request, res: Response) =>{
+  const {id} = req.params;
+  
+  if(!id){
+    return res.status(400).send({message:'הקלידו את מספר העמותה'})
+  }
+  const activeResult = await service.verifyNgoActive(id.toString());
+  if(!activeResult.status){
+    return res.status(400).send({message:activeResult.message})
+  }
+  
+  const approveResult = await service.verifyNgoApproved(id.toString());
+  const year = new Date().getFullYear();
+  const currentYear = `${year}` as keyof ApiSuccessType;
+  const lastYear = `${year-1}` as keyof ApiSuccessType;
+  if(approveResult.status === false){
+    return res.status(400).send({message: approveResult.message})
+  }
+  const apiSuccess = approveResult as ApiSuccessType;
+  if(apiSuccess[currentYear].status ||apiSuccess[lastYear].status){
+    return res.send();
+  }
+  res.status(400).send({message: `${currentYear}: ${apiSuccess[currentYear].message}, ${lastYear}: ${apiSuccess[lastYear]}`})
+
+}
 export const createNgo = async (req: Request, res: Response) => {
   const { name, description, website, contactEmail, logoUrl, certificate } = req.body;
   const user = (req as any).user;
@@ -16,7 +43,7 @@ export const createNgo = async (req: Request, res: Response) => {
       website,
       email: contactEmail,
       logoUrl,
-      certificate, 
+      certificate,
       createdBy: user._id,
     });
 
@@ -32,7 +59,7 @@ export const createNgo = async (req: Request, res: Response) => {
 export const listNgos = async (_req: Request, res: Response) => {
   try {
     const items = await Ngo.aggregate([
-     
+
       {
         $lookup: {
           from: "campaigns",
@@ -141,11 +168,10 @@ async function sendNgoStatusEmail({
       <h2 style="color:${isActive ? "#2e7d32" : "#c62828"};">${subject}</h2>
       <p>שלום רב,</p>
       <p>עמותת <b>${ngoName}</b> ${isActive ? "הופעלה מחדש על ידי מנהל המערכת." : "הושהתה זמנית על ידי מנהל המערכת."}</p>
-      ${
-        isActive
-          ? "<p>העמותה יכולה כעת להתחבר למערכת ולנהל קמפיינים כרגיל.</p>"
-          : "<p>המערכת לא מאפשרת כניסה עד להודעה חדשה ממנהל המערכת.</p>"
-      }
+      ${isActive
+      ? "<p>העמותה יכולה כעת להתחבר למערכת ולנהל קמפיינים כרגיל.</p>"
+      : "<p>המערכת לא מאפשרת כניסה עד להודעה חדשה ממנהל המערכת.</p>"
+    }
       <hr style="margin:20px 0; border:none; border-top:1px solid #ddd;"/>
       <p>בברכה,<br/>צוות <b>DonatChain</b></p>
     </div>
@@ -172,7 +198,7 @@ export const updateNgo = async (req: Request, res: Response) => {
     if (!ngo) return res.status(404).json({ message: "עמותה לא נמצאה" });
 
     // TODO לא חושבת שצריך שמי שיצר הוא יהיה חייב לעדכן
-    if (ngo.createdBy?.toString() !== user._id.toString() &&  !['manager'].includes(user.role)) {
+    if (ngo.createdBy?.toString() !== user._id.toString() && !['manager'].includes(user.role)) {
       return res.status(403).json({ message: "אין הרשאה לעדכן עמותה זו" });
     }
 

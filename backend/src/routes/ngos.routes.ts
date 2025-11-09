@@ -6,6 +6,7 @@ import {
   getNgo,
   updateNgo,
   toggleNgoStatus,
+  verifyNgo
 } from "../controllers/ngos.controller";
 import authMiddleware from "../middlewares/auth.middleware";
 import roleMiddleware from "../middlewares/role.middleware";
@@ -15,6 +16,7 @@ const router = Router();
 
 
 router.get("/", listNgos);
+router.get("/verify/:id", verifyNgo);
 router.get("/:id", getNgo);
 
 

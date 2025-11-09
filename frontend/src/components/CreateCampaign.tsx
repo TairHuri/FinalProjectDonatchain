@@ -417,7 +417,7 @@ const CreateCampaign = ({ postSave }: { postSave: () => void }) => {
   const { isLoading, start, stop } = useSpinner();
   const { addCampaign } = useCampaigns();
   const [ngo, setNgo] = useState<Ngo | null>(null);
-  const [campaignTags, setCampaignTags] = useState<string[]>([])
+  const [campaignTags, setCampaignTags] = useState<{[key:string]:string}[]>([])
 
   const [form, setForm] = useState({
     title: "",
@@ -437,7 +437,7 @@ const CreateCampaign = ({ postSave }: { postSave: () => void }) => {
     const loadNgo = async (u: User) => {
       const n = await getNgoById(u?.ngoId);
       setNgo(n);
-      const t = await getCampaignTags(u.token!)
+      const t = await getCampaignTags()
       setCampaignTags(t);
     };
     if (user?.token) loadNgo(user);
@@ -596,7 +596,7 @@ const CreateCampaign = ({ postSave }: { postSave: () => void }) => {
           </div>
 
           <div className="cc-chips">
-            {campaignTags.map((tag) => {
+            {campaignTags.map(({tag}) => {
               const selected = form.tags.includes(tag);
               const disabled = !selected && form.tags.length >= 3;
               return (

@@ -29,8 +29,13 @@ const NgoDonors = () => {
   const loadDonors = async (campaignId: string) => {
     setLoading(true);
     try {
-      const rows = await getDonationsByCampaign(campaignId);
-      setDonations(rows);
+      const rows:Donation[] = await getDonationsByCampaign(campaignId);
+      const uniqueDonners:{[email:string]:Donation} = {}
+      console.log(rows)
+      for(const d in rows){
+        uniqueDonners[rows[d].email] = rows[d];
+      }
+      setDonations(Object.values(uniqueDonners));
     } finally {
       setLoading(false);
     }
@@ -40,8 +45,14 @@ const NgoDonors = () => {
     if (!user) return;
     setLoading(true);
     try {
-      const rows = await getDonationsByNgo(user.ngoId);
-      setDonations(rows);
+      const rows:Donation[] = await getDonationsByNgo(user.ngoId);
+
+         const uniqueDonations:{[email:string]:Donation} = {}
+      console.log(rows)
+      for(const d in rows){
+        uniqueDonations[rows[d].email] = rows[d];
+      }
+      setDonations(Object.values(uniqueDonations));
     } finally {
       setLoading(false);
     }

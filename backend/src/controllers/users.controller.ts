@@ -5,7 +5,8 @@ import * as AuthService from '../services/auth.service';
 import AuditLog from '../models/auditlog.model';
 import userService from '../services/user.service';
 import { ServerError } from '../middlewares/error.middleware';
-import { log } from 'console';
+
+const deleteManagerWaitingTime = +(process.env.DELETE_MANAGER_WAITING_TIME||1)*1000*60; 
 
 export const getMe = async (req: Request, res: Response) => {
   const user = (req as any).user;
@@ -122,7 +123,7 @@ export const deleteUse = async(req: Request, res: Response) => {
     }
     if(user.role == 'manager'){
       const now = Date.now();
-      if(lastDeletedTime !=null && (lastDeletedTime + 1000*60 > now)){
+      if(lastDeletedTime !=null && (lastDeletedTime + deleteManagerWaitingTime > now)){
         return res.status(400).send({message:'please try again in a minute'})
       }
       lastDeletedTime = now;

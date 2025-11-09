@@ -36,6 +36,7 @@ export const getDonationsByCampaign = async (campaignId: string) => {
 
 export const getDonationsByNgo = async (ngoId: string) => {
   const url = `${API_URL}/donations/ngo?ngoId=${ngoId}`  // שים לב לשימוש ב-query param
+  
   try {
     const res = await fetch(url);
     if (!res.ok) {
@@ -44,6 +45,7 @@ export const getDonationsByNgo = async (ngoId: string) => {
       return [];
     }
     const data = await res.json();
+
     return data;
   } catch (error) {
     console.log(error);

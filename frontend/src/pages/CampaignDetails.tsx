@@ -12,7 +12,7 @@ import { useAuth } from "../contexts/AuthContext";
 import CampaignDonations from "../components/campaign/CampaignDonations";
 import NgoDetailsCard from "../components/ngo/NgoDetailsCard";
 import ShareCampaign from "../components/campaign/ShareCampaign";
-import { ngoListStyle } from "../css/dashboardStyles";
+
 
 
 import '../css/campaign/CampaignDetails.css'

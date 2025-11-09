@@ -13,6 +13,7 @@ export const createCampaign = async (req: Request, res: Response) => {
   
   try {
     const mediaFiles = req.files as MediaFiles
+    
     const images:string[] = mediaFiles.images? mediaFiles.images.map((file:Express.Multer.File) => file.filename) : []
     const movie:string|null = mediaFiles.movie? mediaFiles.movie[0].filename : null
     const mainImage:string|null = mediaFiles.mainImage? mediaFiles.mainImage[0].filename : null
@@ -41,7 +42,7 @@ export const createCampaign = async (req: Request, res: Response) => {
 
 export const updateCampaign = async (req: Request, res: Response) => {
   const {campaignId} = req.params;
-  const { title, description, startDate, endDate, tags, goal, raised, isActive, blockchainTx, existingImages:images, existingMovie: movie, existingMainImage: mainImage } = req.body;
+  const { title, description, startDate, endDate, tags, goal, raised, isActive, blockchainTx, existingImages:images=[], existingMovie: movie, existingMainImage: mainImage } = req.body;
 
   const user :{_id:string, ngoId:string}= (req as any).user;
   console.log('existingImages', images);

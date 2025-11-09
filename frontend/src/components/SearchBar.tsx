@@ -5,7 +5,8 @@ type Props = {
 }
 
 export default function SearchBar({ onSearch }: Props) {
-  const [text, setText] = useState("")
+  const [text, setText] = useState("");
+  
 
   return (
     <div className="flex items-center gap-2">

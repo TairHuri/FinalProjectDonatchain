@@ -151,7 +151,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { Grid, List, Search } from "lucide-react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useSearchParams } from "react-router-dom";
 import { getCampaigns } from "../services/api";
 import CampaignItem from "../components/CampaignItem";
 import type { Campaign } from "../models/Campaign";
@@ -173,6 +173,8 @@ export default function Campaigns() {
   const [sortBy, setSortBy] = useState<SortByType>("title");
   const [view, setView] = useState<"grid" | "list">("grid");
   const params = useParams();
+  const [queryTag, setQueryTag] = useSearchParams();
+
 
   const fetchData = async () => {
     try {
@@ -208,12 +210,13 @@ export default function Campaigns() {
       (b.endDate || "").toString().localeCompare((a.endDate || "").toString()),
     endDateNewToOld: (a, b) =>
       (a.endDate || "").toString().localeCompare((b.endDate || "").toString()),
+    
   };
 
   const filtered = useMemo(
     () =>
       (Array.isArray(campaigns) ? campaigns : [])
-        .filter((c) => c.title?.toLowerCase().includes(query.toLowerCase()))
+        .filter((c) => queryTag.has("tag")? c.tags.includes( queryTag.get("tag")!) : c.title?.toLowerCase().includes(query.toLowerCase()))
         .sort((a, b) => sortMap[sortBy](a, b)),
     [campaigns, query, sortBy]
   );

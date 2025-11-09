@@ -1,15 +1,15 @@
 [
-    "רווחה",
-    "בריאות",
-    "חינוך",
-    "סביבה",
-    "בעלי חיים",
-    "קהילה",
-    "תרבות",
-    "חירום",
-    "טכנולוגיה",
-    "חסד",
-    "שוויון",
-    "נגישות",
-    "צה\"ל"
+    {"tag":"רווחה", "icon":"ShieldAlert"},
+    {"tag":"בריאות", "icon":"ShieldAlert"},
+    {"tag":"חינוך", "icon":"ShieldAlert"},
+    {"tag":"סביבה", "icon":"ShieldAlert"},
+    {"tag":"בעלי חיים", "icon":"ShieldAlert"},
+    {"tag":"קהילה", "icon":"ShieldAlert"},
+    {"tag":"תרבות", "icon":"ShieldAlert"},
+    {"tag":"חירום", "icon":"ShieldAlert"},
+    {"tag":"טכנולוגיה", "icon":"ShieldAlert"},
+    {"tag":"חסד", "icon":"ShieldAlert"},
+    {"tag":"שוויון", "icon":"ShieldAlert"},
+    {"tag":"נגישות", "icon":"ShieldAlert"},
+    {"tag":"צה\"ל", "icon":"ShieldAlert"}
 ]

@@ -11,7 +11,11 @@ export async function updateCampaign(data: Campaign, token: string, images: File
     formData.append("startDate", data.startDate)
     formData.append("endDate", data.endDate)
     formData.append("isActive", `${data.isActive}`)
-    formData.append("tags", `${data.tags}`)
+    console.log(data.tags);
+    
+    for(const tag of data.tags){        
+        formData.append("tags", tag)
+    }
     formData.append("ngo", data.ngo)
     formData.append("blockchainTx", data.blockchainTx!)
     formData.append("goal", `${data.goal}`)
@@ -66,10 +70,8 @@ export async function getAllCampaigns(token: string) {
   if (!res.ok) throw new Error(await res.text());
   return res.json();
 }
-export async function getCampaignTags(token: string) {
-  const res = await fetch(`${API_URL}/campaigns/tags`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+export async function getCampaignTags() {
+  const res = await fetch(`${API_URL}/campaigns/tags`);
   if (!res.ok) throw new Error(await res.text());
   return res.json();
 }
