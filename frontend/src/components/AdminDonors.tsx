@@ -49,7 +49,7 @@ const AdminDonors = () => {
 
               <p style={{ margin: "3px 0", fontSize: "14px", color: "#555" }}>
                 סכום: {d.amount} ₪ | קמפיין:{" "}
-                {/* ✅ מתייחס לפי הסכמה שלך — ObjectId או populated */}
+                {/* — ObjectId או populated */}
                 {typeof d.campaign === "string"
                   ? "לא ידוע"
                   : (d.campaign as any)?.title || "לא ידוע"}
