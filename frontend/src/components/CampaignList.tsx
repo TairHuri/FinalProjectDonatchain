@@ -3,7 +3,7 @@ import { getAllCampaigns, toggleCampaignStatus } from "../services/campaignApi";
 import { PauseCircle, PlayCircle, Loader2, Search } from "lucide-react";
 import { motion } from "framer-motion";
 
-import '../css/adminDashboard.css'
+import "../css/adminDashboard.css";
 
 export default function CampaignList() {
   const [campaigns, setCampaigns] = useState<any[]>([]);
@@ -40,7 +40,7 @@ export default function CampaignList() {
       setActionLoading(id);
       const res = await toggleCampaignStatus(id, token);
       alert(res.message || "הסטטוס עודכן בהצלחה ✅");
-      await fetchCampaigns(); // רענון הנתונים
+      await fetchCampaigns();
     } catch (err) {
       console.error(err);
       alert("שגיאה בעדכון הסטטוס ❌");
@@ -52,7 +52,6 @@ export default function CampaignList() {
   const applyFilters = () => {
     let filtered = [...campaigns];
 
-    // סינון לפי טקסט בחיפוש
     if (searchTerm.trim()) {
       filtered = filtered.filter(
         (c) =>
@@ -61,7 +60,6 @@ export default function CampaignList() {
       );
     }
 
-    // סינון לפי סטטוס
     if (statusFilter === "active") {
       filtered = filtered.filter((c) => c.isActive);
     } else if (statusFilter === "paused") {
@@ -81,9 +79,8 @@ export default function CampaignList() {
       transition={{ duration: 0.6 }}
       className="mt-6"
     >
-      {/* 🔍 אזור חיפוש וסינון */}
+      {/* ן */}
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
-        {/* שדה חיפוש */}
         <div className="relative w-full md:w-1/3">
           <Search
             className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
@@ -98,7 +95,6 @@ export default function CampaignList() {
           />
         </div>
 
-        {/* סינון לפי סטטוס */}
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value as "all" | "active" | "paused")}
@@ -110,7 +106,7 @@ export default function CampaignList() {
         </select>
       </div>
 
-      {/* טבלה */}
+      {/**/}
       <table className="table-auto w-full border-collapse border border-gray-300 rounded-xl overflow-hidden shadow-sm">
         <thead>
           <tr className="bg-gray-100 text-gray-700">
@@ -120,13 +116,15 @@ export default function CampaignList() {
             <th className="border px-4 py-2">נאסף</th>
             <th className="border px-4 py-2">סטטוס</th>
             <th className="border px-4 py-2">תאריך יצירה</th>
+            {/* שה */}
+            <th className="border px-4 py-2">תאריך סיום</th>
             <th className="border px-4 py-2">פעולה</th>
           </tr>
         </thead>
         <tbody>
           {filteredCampaigns.length === 0 ? (
             <tr>
-              <td colSpan={7} className="text-center py-6 text-gray-500">
+              <td colSpan={8} className="text-center py-6 text-gray-500">
                 לא נמצאו קמפיינים תואמים 🔎
               </td>
             </tr>
@@ -155,6 +153,12 @@ export default function CampaignList() {
                 </td>
                 <td className="border px-4 py-2">
                   {new Date(c.createdAt).toLocaleDateString("he-IL")}
+                </td>
+                {/* */}
+                <td className="border px-4 py-2">
+                  {c.endDate
+                    ? new Date(c.endDate).toLocaleDateString("he-IL")
+                    : "לא צוין"}
                 </td>
                 <td className="border px-4 py-2 text-center">
                   <motion.button

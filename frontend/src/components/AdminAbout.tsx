@@ -36,7 +36,7 @@ export default function AdminAbout() {
 
 const handleFeatureChange = (
   index: number,
-  field: "title" | "text", // ✅ במקום string
+  field: "title" | "text", 
   value: string
 ) => {
   const newFeatures = [...aboutData.features];
@@ -147,7 +147,6 @@ const handleFeatureChange = (
   );
 }
 
-// 💅 עיצוב בסיסי
 const inputStyle = {
   width: "100%",
   padding: "8px",
