@@ -70,7 +70,7 @@ export default function RegistrationNgo() {
     setNgoList(res.items);
   };
 
-  // ✅ פונקציה לבדוק תעודת זהות תקינה לפי ספרת ביקורת
+  //  פונקציה לבדוק תעודת זהות תקינה לפי ספרת ביקורת
   const isValidIsraeliID = (id: string) => {
     id = String(id).trim();
     if (id.length > 9 || isNaN(Number(id))) return false;
@@ -84,16 +84,32 @@ export default function RegistrationNgo() {
     return sum % 10 === 0;
   };
 
+    const isValidBankAccount = (account: string) => {
+    if (!account) return false;
+    const clean = account.replace(/\D/g, ""); // מסיר תווים לא מספריים
+    if (clean.length < 6 || clean.length > 10) return false; // רוב החשבונות בישראל באורך 6-10 ספרות
+    if (/^(\d)\1+$/.test(clean)) return false; // כל הספרות זהות (כמו 000000)
+    return true;
+  };
+  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // 🆔 בדיקת ת"ז לפני שליחה
+    //  בדיקת ת"ז לפני שליחה
     if (!isValidIsraeliID(idNumber)) {
       setIsFailure(true);
       setMessage("תעודת זהות אינה תקינה");
       setShowAlert(true);
       return;
     }
+
+if (newNgo && (!ngo.bankAccount || !isValidBankAccount(ngo.bankAccount))) {
+  setIsFailure(true);
+  setMessage("מספר חשבון הבנק אינו תקין");
+  setShowAlert(true);
+  return;
+}
 
     if (!user.email || !user.password || !user.name) {
       setIsFailure(true);
