@@ -1,7 +1,7 @@
 
 
 import { useState } from "react";
-import "../../css/TabsButtons.css"; // נשתמש בעיצוב למטה
+import "../../css/TabsButtons.css"; 
 
 const TabsButtons =  ({active, setActive, tabs}:{active:number, setActive:(index:number)=>void, tabs:{id:number, label:string}[]}) => {
   

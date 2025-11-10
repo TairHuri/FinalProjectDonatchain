@@ -1,7 +1,6 @@
-
 import { useEffect, useState } from "react";
 import { getNgoList, registerUserExistingNgo, registerUserNewNgo } from "../services/api";
-import { Building2, Mail, Lock, Phone } from "lucide-react";
+import { Building2, Mail, Lock, Phone, IdCard } from "lucide-react";
 import type { User, UserRoleType } from "../models/User";
 import type { Ngo, NgoMediaType  } from "../models/Ngo";
 
@@ -9,7 +8,6 @@ import NewNgo from "../components/NewNgo";
 import { useNavigate } from 'react-router-dom';
 import "../css/RegistrationNgo.css";
 import AlertDialog, { useAlertDialog } from "../components/gui/AlertDialog";
-import { verifyNgoNumber } from "../services/ngoApi";
 
 //export type NgoMediaType = { logoUrl: File | null, certificate: File | null }
 
@@ -20,17 +18,19 @@ export default function RegistrationNgo() {
   const [ngoList, setNgoList] = useState<Ngo[]>([]);
   const [media, setMedia] = useState<NgoMediaType>({ logoUrl: null, certificate: null });
 
+  const { message, setMessage, showAlert, setShowAlert, isFailure, setIsFailure } = useAlertDialog();
 
-  const { message, setMessage, showAlert, setShowAlert, isFailure, setIsFailure } = useAlertDialog()
   const [user, setUser] = useState<User>({
     name: "",
     ngoId: "",
     email: "",
     phone: "",
     password: "",
-    role: 'member',
-    approved: false
+    role: "member",
+    approved: false,
   });
+
+  const [idNumber, setIdNumber] = useState<string>("");
 
   const [ngo, setNgo] = useState<Ngo>({
     _id: "",
@@ -46,7 +46,7 @@ export default function RegistrationNgo() {
     createdBy: "",
     createdAt: new Date(),
     ngoNumber: "",
-    certificate: '',
+    certificate: "",
     isActive: true,
   });
 
@@ -61,7 +61,7 @@ export default function RegistrationNgo() {
   };
 
   const handleChangeData = (field: string, value: string | number) => {
-    const n = ngoList.find(x => x.name === value);
+    const n = ngoList.find((x) => x.name === value);
     if (!n) return;
     setUser({ ...user, ngoId: n._id });
   };
@@ -71,41 +71,124 @@ export default function RegistrationNgo() {
     setNgoList(res.items);
   };
 
+  // בדיקת תקינות תעודת זהות
+  const isValidIsraeliID = (id: string) => {
+    id = String(id).trim();
+    if (id.length > 9 || isNaN(Number(id))) return false;
+    id = id.padStart(9, "0");
+    let sum = 0;
+    for (let i = 0; i < 9; i++) {
+      let num = Number(id[i]) * ((i % 2) + 1);
+      if (num > 9) num -= 9;
+      sum += num;
+    }
+    return sum % 10 === 0;
+  };
+
+  const isValidBankAccount = (account: string) => {
+    if (!account) return false;
+    const clean = account.replace(/\D/g, "");
+    if (clean.length < 6 || clean.length > 10) return false;
+    if (/^(\d)\1+$/.test(clean)) return false;
+    return true;
+  };
+
+  const isValidCryptoWallet = (wallet: string) => {
+    if (!wallet) return false;
+    return /^0x[a-fA-F0-9]{40}$/.test(wallet.trim());
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user.email || !user.password || !user.name) {
+
+    // בדיקת ת"ז
+    if (!isValidIsraeliID(idNumber)) {
       setIsFailure(true);
-      setMessage("אנא מלא/י שם, אימייל וסיסמה");
+      setMessage("תעודת זהות אינה תקינה");
       setShowAlert(true);
       return;
     }
-    try {
-      let res;
-      if (newNgo) {
-        const result = await verifyNgoNumber(ngo.ngoNumber)
-        if (!result.status) {
+
+    // בדיקות שדות חובה למשתמש
+    if (!user.name || !user.email || !user.password || !user.phone) {
+      setIsFailure(true);
+      setMessage("יש למלא את כל שדות המשתמש: שם, אימייל, טלפון וסיסמה");
+      setShowAlert(true);
+      return;
+    }
+
+    if (newNgo) {
+      // בדיקות חובה לעמותה חדשה (למעט website ולוגו)
+      const requiredNgoFields: (keyof Ngo)[] = [
+        "name",
+        "description",
+        "bankAccount",
+        "wallet",
+        "address",
+        "phone",
+        "email",
+        "ngoNumber",
+      ];
+
+      for (const field of requiredNgoFields) {
+        if (!ngo[field]) {
           setIsFailure(true);
-          console.log(result.message);
-          
-          setMessage(result.message);
+          setMessage("יש למלא את כל שדות העמותה (למעט אתר ולוגו)");
           setShowAlert(true);
           return;
         }
-        const u = { ...user, role: 'manager' as UserRoleType };
+      }
+
+      // בדיקת תעודה חובה
+      if (!media.certificate) {
+        setIsFailure(true);
+        setMessage("יש להעלות תעודת רישום עמותה (קובץ אישור).");
+        setShowAlert(true);
+        return;
+      }
+
+      // בדיקת תקינות חשבון בנק
+  if (!isValidIsraeliID(idNumber)) {
+    setIsFailure(true);
+    setMessage("תעודת זהות אינה תקינה");
+    setShowAlert(true);
+    return;
+  }
+
+  if (newNgo && (!ngo.wallet || !isValidCryptoWallet(ngo.wallet))) {
+    setIsFailure(true);
+    setMessage("כתובת ארנק הקריפטו אינה תקינה. ודאי שהיא מתחילה ב-0x ומכילה 42 תווים.");
+    setShowAlert(true);
+    return;
+  }
+
+    } else {
+      // עמותה קיימת — חובה לבחור אחת
+      if (!user.ngoId) {
+        setIsFailure(true);
+        setMessage("יש לבחור עמותה קיימת מהרשימה");
+        setShowAlert(true);
+        return;
+      }
+    }
+
+    try {
+      let res;
+      if (newNgo) {
+        const u = { ...user, role: "manager" as UserRoleType };
         res = await registerUserNewNgo(u, ngo, media);
       } else {
         res = await registerUserExistingNgo(user);
       }
+
       if (res.success) {
         setIsFailure(false);
-        setMessage("רישום בוצע בהצלחה");
+        setMessage("ההרשמה בוצעה בהצלחה!");
         setShowAlert(true);
-
       } else {
         setIsFailure(true);
-        setMessage("שגיאה בהרשמה");
+        setMessage(res.message || "שגיאה בהרשמה");
         setShowAlert(true);
-        alert(res.message);
       }
     } catch (err) {
       setIsFailure(true);
@@ -114,14 +197,15 @@ export default function RegistrationNgo() {
     }
   };
 
-  useEffect(() => { loadNgoList(); }, []);
+  useEffect(() => {
+    loadNgoList();
+  }, []);
 
   return (
     <>
       <div className="login-page" dir="rtl">
         <div className="login-card">
           <h1 className="login-title">הרשמת עמותה</h1>
-
 
           <div className="segmented" dir="rtl">
             <button
@@ -141,7 +225,6 @@ export default function RegistrationNgo() {
           </div>
 
           <form onSubmit={handleSubmit} className="login-form">
-            {/* user name */}
             <div className="input-group">
               <Building2 className="input-icon" />
               <input
@@ -154,7 +237,19 @@ export default function RegistrationNgo() {
               />
             </div>
 
-            {/* mail */}
+            <div className="input-group">
+              <IdCard className="input-icon" />
+              <input
+                type="text"
+                placeholder="תעודת זהות"
+                value={idNumber}
+                onChange={(e) => setIdNumber(e.target.value)}
+                className="input-field"
+                maxLength={9}
+                required
+              />
+            </div>
+
             <div className="input-group">
               <Mail className="input-icon" />
               <input
@@ -167,7 +262,6 @@ export default function RegistrationNgo() {
               />
             </div>
 
-            {/* phone */}
             <div className="input-group">
               <Phone className="input-icon" />
               <input
@@ -176,10 +270,10 @@ export default function RegistrationNgo() {
                 value={user.phone || ""}
                 onChange={(e) => handleChangeUser("phone", e.target.value)}
                 className="input-field"
+                required
               />
             </div>
 
-            {/* password */}
             <div className="input-group">
               <Lock className="input-icon" />
               <input
@@ -192,7 +286,6 @@ export default function RegistrationNgo() {
               />
             </div>
 
-            {/* בחירת מצב */}
             {newNgo ? (
               <>
                 <div className="section-divider"><span>פרטי עמותה חדשה</span></div>
@@ -202,7 +295,6 @@ export default function RegistrationNgo() {
                   handleChangeNgo={handleChangeNgo}
                   handleChangeMedia={handleChangeMedia}
                 />
-
               </>
             ) : (
               <div className="input-group">
@@ -210,19 +302,18 @@ export default function RegistrationNgo() {
                 <input
                   type="text"
                   list="ngoList"
-                  placeholder="חפש/י ובחר/י עמותה קיימת"
+                  placeholder="חפשי ובחרי עמותה קיימת…"
                   onChange={(e) => handleChangeData("ngoId", e.target.value)}
                   className="input-field"
                 />
                 <datalist id="ngoList">
-                  {ngoList.map(n => (
+                  {ngoList.map((n) => (
                     <option key={n._id} value={n.name} />
                   ))}
                 </datalist>
               </div>
             )}
 
-            {/* תקנון + כפתור */}
             <label className="agree-inline">
               <input
                 type="checkbox"
@@ -248,11 +339,9 @@ export default function RegistrationNgo() {
         successTitle=""
         message={message}
         failureOnClose={() => setShowAlert(false)}
-        successOnClose={() => nav('/login/ngo')}
+        successOnClose={() => nav("/login/ngo")}
         isFailure={isFailure}
       />
     </>
   );
-
-
 }

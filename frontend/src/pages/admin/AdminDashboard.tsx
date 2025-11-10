@@ -8,20 +8,17 @@ import {
   Settings,
   Home,
   LogOut,
-  FilePenLine,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { cardStyle, menuBtnStyle } from "../../css/dashboardStyles";
 import AdminDonors from "../../components/AdminDonors";
 import CampaignList from "../../components/CampaignList";
+import NgoList from "../admin/NgoList"; 
+import NgoDetails from "../../components/admin/NgoDetails"; 
 import AdminAboutEditor from "./AdminAboutEditor";
 import RulesViewer from "./RulesViewer";
 import AdminRulesEditor from "./AdminRulesEditor";
-import AdminNgoList from "../../components/admin/AdminNgoList";
-
-import '../../css/adminDashboard.css'
-import RequestFromUsers from "../../components/admin/RequestFromUsers";
-
+import AdminNgoList from "../../components/admin/AdminNgoList"; 
 
 interface Stats {
   usersCount: number;
@@ -34,10 +31,10 @@ interface Stats {
 const AdminDashboard: React.FC = () => {
   const [stats, setStats] = useState<Stats | null>(null);
   const [activePage, setActivePage] = useState<
-    "dashboard" | "donors" | "ngos" | "campaigns" | "terms" | "about"| "request"
+    "dashboard" | "donors" | "ngos" | "campaigns" | "terms" | "about"
   >("dashboard");
   const navigate = useNavigate();
-  const [selectedNgo, setSelectedNgo] = useState<any | null>(null);
+const [selectedNgo, setSelectedNgo] = useState<any | null>(null);
 
 
 useEffect(() => {
@@ -69,19 +66,18 @@ useEffect(() => {
       dir="rtl"
       style={{
         display: "flex",
-        // minHeight: "100vh",
-        height: '100%',
+        minHeight: "100vh",
         backgroundColor: "#f7f9fc",
-        width: "95%",
+        width: "80vw",
       }}
     >
       {/* סרגל צד */}
       <div
         style={{
-          width: "18dvw",
+          width: "20vw",
           background: "#1f2937",
           color: "white",
-          padding: " 15px 5px",
+          padding: "20px",
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
@@ -102,7 +98,7 @@ useEffect(() => {
             onClick={() => setActivePage("dashboard")}
             style={menuBtnStyle}
           >
-            <Home size={20} /> דף הבית
+            <Home size={20} /> דשבורד
           </button>
 
           <button
@@ -139,24 +135,21 @@ useEffect(() => {
           >
             <Settings size={20} /> עמוד "עלינו"
           </button>
-          <button
-            onClick={() => setActivePage("request")}
-            style={menuBtnStyle}
-          >
-            <FilePenLine size={20} /> בקשות משתמשים
-          </button>
         </div>
 
-        <button
-          style={{ ...menuBtnStyle, color: "#f87171", marginBottom:'1px', paddingBottom:'1px' }}
-          onClick={logout}
+       <button
+          style={{ ...menuBtnStyle, color: "#f87171" }}
+          onClick={() => {
+            logout();
+            navigate("/");
+          }}
         >
           <LogOut size={20} /> יציאה
         </button>
       </div>
 
       {/* תוכן */}
-      <div style={{ flex: 1, padding: "20px", paddingTop:'5px',  }} className="admin-container">
+      <div style={{ flex: 1, padding: "30px" }}>
         {activePage === "dashboard" && (
           <div>
             <h1
@@ -194,37 +187,36 @@ useEffect(() => {
           </div>
         )}
 
-        {/* ✅ כאן הוספנו את התצוגה החדשה של רשימת התורמים */}
-        {activePage === "request" && <RequestFromUsers />}
+        {/* כאן הוספנו את התצוגה החדשה של רשימת התורמים */}
         {activePage === "donors" && <AdminDonors />}
 
-        {activePage === "ngos" && <AdminNgoList />}
+{activePage === "ngos" && <AdminNgoList />}
 
 
-        {activePage === "campaigns" && (
-          <div>
-            <h2 style={{ fontSize: "24px", fontWeight: "bold", margin:'10px auto' }}>רשימת קמפיינים</h2>
+{activePage === "campaigns" && (
+  <div>
+    <h2 style={{ fontSize: "24px", fontWeight: "bold" }}>רשימת קמפיינים</h2>
 
-            <CampaignList />
-          </div>
-        )}
+    <CampaignList />
+  </div>
+)}
 
 
-        {activePage === "terms" && (
-          <div>
-            <h2 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "16px" }}>
-              ניהול תקנון האתר
-            </h2>
+{activePage === "terms" && (
+  <div>
+    <h2 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "16px" }}>
+      ניהול תקנון האתר
+    </h2>
 
-            {/* רכיב לצפייה */}
-            <RulesViewer />
+    {/* רכיב לצפייה */}
+    <RulesViewer />
 
-            {/* רכיב לעריכה */}
-            <AdminRulesEditor />
-          </div>
-        )}
+    {/* רכיב לעריכה */}
+    <AdminRulesEditor />
+  </div>
+)}
 
-        {activePage === "about" && <AdminAboutEditor />}
+{activePage === "about" && <AdminAboutEditor />}
 
       </div>
     </div>

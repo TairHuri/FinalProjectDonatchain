@@ -50,9 +50,7 @@ export default {
     }
   },
 
-
   creditDonate: async (creditDonation: Omit<CreditDonation, "method">, campaignId: string) => {
-
     try {
       const campaign = await campaignService.getById(campaignId);
       if (!campaign?.blockchainTx) {
@@ -62,6 +60,7 @@ export default {
       const { amount, ccNumber, expYear, expMonth, cvv,
         ownerId, ownername, currency,
         email, firstName, lastName } = creditDonation;
+
       const chargeResponse = await fetch('http://localhost:8890/api/charge', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -75,7 +74,12 @@ export default {
       if (chargeResponse.status === 200) {
         const data = await chargeResponse.json() as { message: string, charge: number, code: string };
 
-        const txHash = await blockchainService.recordFiatDonation(+(campaign?.blockchainTx), data.charge, currency, data.code)
+        const txHash = await blockchainService.recordFiatDonation(
+          +(campaign?.blockchainTx),
+          data.charge,
+          currency,
+          data.code
+        );
 
         const donation = new Donation({
           email: creditDonation.email,
@@ -91,22 +95,31 @@ export default {
         });
 
         await donation.save();
-        await campaignService.addDonationToCampaign(campaignId, +data.charge)
-
-
+        await campaignService.addDonationToCampaign(campaignId, +data.charge);
         await AuditLog.create({ action: 'donation_created', meta: { donationId: donation._id } });
 
+        // ✅ שליחת מייל קבלה לתורם באשראי
+        await sendReceiptEmail({
+          donorEmail: donation.email,
+          donorFirstName: donation.firstName,
+          donorLastName: donation.lastName,
+          amount: donation.amount,
+          currency: donation.currency,
+          method: "credit",
+          txHash: donation.txHash,
+        });
 
         return donation;
       } else {
         const text = await chargeResponse.text();
-        throw new ServerError('Charge server error: ' + text, 502)
+        throw new ServerError('Charge server error: ' + text, 502);
       }
     } catch (error) {
       console.error('❌ Error in creditDonate:', error);
       throw error;
     }
   },
+
   // creates donation record, validates onchain tx if needed, updates campaign.returns donation
   async createDonation({ donorId, campaignId, amount, currency = 'USD', method = 'card', txHash }: any) {
     if (method === 'crypto' && txHash) {
