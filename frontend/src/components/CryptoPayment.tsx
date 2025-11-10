@@ -175,3 +175,4 @@ function Crypto({ waiting, isPending, isSuccess, error }: CryptoProps) {
 }
 
 export default CryptoPayment
+

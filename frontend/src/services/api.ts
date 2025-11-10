@@ -1,9 +1,9 @@
 import axios from "axios";
-import type { Ngo } from "../models/Ngo";
+import type { Ngo, NgoMediaType } from "../models/Ngo";
 import type { User } from "../models/User";
 import type { Campaign } from "../models/Campaign";
 import type { CreditDonation, Donation } from "../models/Donation";
-import type { NgoMediaType } from "../pages/RegistrationNgo";
+
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
 
 

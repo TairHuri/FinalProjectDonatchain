@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 import { getNgoList, registerUserExistingNgo, registerUserNewNgo } from "../services/api";
 import { Building2, Mail, Lock, Phone, IdCard } from "lucide-react";
 import type { User, UserRoleType } from "../models/User";
-import type { Ngo } from "../models/Ngo";
+import type { Ngo, NgoMediaType  } from "../models/Ngo";
+
 import NewNgo from "../components/NewNgo";
 import { useNavigate } from 'react-router-dom';
 import "../css/RegistrationNgo.css";
 import AlertDialog, { useAlertDialog } from "../components/gui/AlertDialog";
 
-export type NgoMediaType = { logoUrl: File | null, certificate: File | null }
+//export type NgoMediaType = { logoUrl: File | null, certificate: File | null }
 
 export default function RegistrationNgo() {
   const nav = useNavigate();

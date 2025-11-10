@@ -59,8 +59,9 @@ export async function toggleCampaignStatus(id: string, token: string) {
     method: "PUT",
     headers: { Authorization: `Bearer ${token}` },
   });
-  if (!res.ok) throw new Error(await res.text());
-  return res.json();
+  const result = await res.json();
+  if (!res.ok) throw new Error(result.message);
+  return result;
 }
 
 export async function getAllCampaigns(token: string) {
