@@ -96,7 +96,10 @@ export default function RegistrationNgo() {
     if (!wallet) return false;
     return /^0x[a-fA-F0-9]{40}$/.test(wallet.trim());
   };
-
+const isValidPassword = (password: string) => {
+  const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+  return regex.test(password);
+};
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -115,7 +118,12 @@ export default function RegistrationNgo() {
       setShowAlert(true);
       return;
     }
-
+if (!isValidPassword(user.password)) {
+  setIsFailure(true);
+  setMessage("הסיסמה חייבת להכיל לפחות 8 תווים, כולל אות גדולה, אות קטנה, ספרה ותו מיוחד");
+  setShowAlert(true);
+  return;
+}
     if (newNgo) {
       // בדיקות חובה לעמותה חדשה (למעט website ולוגו)
       const requiredNgoFields: (keyof Ngo)[] = [
