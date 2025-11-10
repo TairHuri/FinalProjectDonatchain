@@ -38,10 +38,13 @@ const [selectedNgo, setSelectedNgo] = useState<any | null>(null);
 
 
 useEffect(() => {
-  fetchStats();
-  const interval = setInterval(fetchStats, 10000); 
-  return () => clearInterval(interval);
-}, []);
+  if (activePage === "dashboard") {
+    fetchStats();
+    const interval = setInterval(fetchStats, 10000);
+    return () => clearInterval(interval);
+  }
+}, [activePage]);
+
 
 
   const fetchStats = async () => {

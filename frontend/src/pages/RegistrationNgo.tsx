@@ -97,7 +97,10 @@ export default function RegistrationNgo() {
     if (!wallet) return false;
     return /^0x[a-fA-F0-9]{40}$/.test(wallet.trim());
   };
-
+const isValidPassword = (password: string) => {
+  const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+  return regex.test(password);
+};
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -116,7 +119,12 @@ export default function RegistrationNgo() {
       setShowAlert(true);
       return;
     }
-
+if (!isValidPassword(user.password)) {
+  setIsFailure(true);
+  setMessage("הסיסמה חייבת להכיל לפחות 8 תווים, כולל אות גדולה, אות קטנה, ספרה ותו מיוחד");
+  setShowAlert(true);
+  return;
+}
     if (newNgo) {
       // בדיקות חובה לעמותה חדשה (למעט website ולוגו)
       const requiredNgoFields: (keyof Ngo)[] = [
@@ -138,6 +146,19 @@ export default function RegistrationNgo() {
           return;
         }
       }
+
+          const existingNgo = ngoList.find(
+      (n) =>
+        n.name.trim() === ngo.name.trim() ||
+        (n.ngoNumber && n.ngoNumber.trim() === ngo.ngoNumber.trim())
+    );
+
+        if (existingNgo) {
+      setIsFailure(true);
+      setMessage("עמותה בשם זה או עם מספר עמותה זה כבר קיימת במערכת.");
+      setShowAlert(true);
+      return;
+    }
 
       // בדיקת תעודה חובה
       if (!media.certificate) {

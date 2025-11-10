@@ -510,9 +510,37 @@ const CreateCampaign = ({ postSave }: { postSave: () => void }) => {
   }
   const validations: ValidationType = {
     endDate: { validate: (v) => (form.startDate !== "" && v.localeCompare(form.startDate) <= 0), message: "תאריך סיום קמפיין חייב להיות אחרי תאריך התחלה", status:'submit' },
-    goal:    { validate: (v) => isNaN(+v) || +v <= 0, message: "סכום יעד חייב להיות חיובי", status:'submit' },
-    title:   { validate: (v) => v.length < 2, message:'שם קמפיין קצר מדי', status: 'submit' },
-    startDate: { validate: (v) => v.localeCompare(new Date().toISOString().split("T")[0]) < 0, message: "תאריך התחלה לא יכול להיות בעבר", status:'submit' },
+  goal: {
+    validate: (v) => !v || isNaN(+v) || +v <= 0,
+    message: "נא להזין סכום יעד תקין (מספר גדול מ-0).",
+    status: 'submit'
+  },
+    title: {
+    validate: (v) => !v || v.trim().length < 2,
+    message: "יש להזין שם קמפיין (לפחות 2 תווים).",
+    status: 'submit'
+  },
+  startDate: {
+    validate: (v) => !v || v.localeCompare(new Date().toISOString().split("T")[0]) < 0,
+    message: "נא להזין תאריך התחלה שאינו בעבר.",
+    status: 'submit'
+  },
+    description: {
+    validate: (v) => !v || v.trim().length < 10,
+    message: "נא להזין תיאור מפורט (לפחות 10 תווים).",
+    status: 'submit'
+  },
+  mainImage: {
+    validate: (_) => !form.mainImage,
+    message: "יש להעלות תמונה ראשית לקמפיין.",
+    status: 'submit'
+  },
+  tags: {
+    validate: (_) => !form.tags || form.tags.length < 1,
+    message: "נא לבחור לפחות קטגוריה אחת לקמפיין.",
+    status: 'submit'
+  },
+
   };
   const validateFormCreateCampaign = (name: keyof typeof form, value: string, status:StatusType) => {
     if (validations[name] && (validations[name].status === 'both' || validations[name].status === status) && validations[name].validate(value)) {
@@ -544,7 +572,14 @@ const CreateCampaign = ({ postSave }: { postSave: () => void }) => {
 
   return (
     <>
-      <form className="cc-card cc-compact-media" style={cardStyle} onSubmit={handleCreateCampaign} dir="rtl">
+     <form
+  className="cc-card cc-compact-media"
+  style={cardStyle}
+  onSubmit={handleCreateCampaign}
+  dir="rtl"
+  noValidate
+>
+
         <h2 className="cc-title">יצירת קמפיין</h2>
 
         <div className="cc-grid">

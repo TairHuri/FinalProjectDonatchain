@@ -70,31 +70,39 @@ const EditCampaign = ({
     }
   }
 
-  const handleSaveChanges = async () => {
-    if (!campaign || !user.token) return;
-    if (!campaign.title || !campaign._id) {
-      alert("יש למלא את כל השדות");
-      return;
-    }
-    const images: File[] = []
-    if (media.images.value) for (const img of media.images.value) images.push(img);
+const handleSaveChanges = async () => {
+  if (!campaign || !user.token) return;
+  if (!campaign.title || !campaign._id) {
+    alert("יש למלא את כל השדות");
+    return;
+  }
 
-    try {
-      const updatedCampaign = await updateCampaign(
-        campaign,   
-        user.token,
-        images,
-        media.movie.value,
-        media.mainImage.value
-      );
-      if (updatedCampaign._id) postUpdateCampaign(updatedCampaign)
-      alert('קמפיין עודכן בהצלחה')
-      setEditMode("view")
-    } catch (error) {
-      console.log(error);
-      alert('עדכון הקמפיין נכשל')
-    }
-  };
+  
+  if (Number(campaign.goal) < Number(campaign.raised)) {
+    alert(`לא ניתן להגדיר סכום יעד (${campaign.goal} ₪) קטן מהסכום שכבר גויס (${campaign.raised} ₪).`);
+    return;
+  }
+
+  const images: File[] = [];
+  if (media.images.value) for (const img of media.images.value) images.push(img);
+
+  try {
+    const updatedCampaign = await updateCampaign(
+      campaign,
+      user.token,
+      images,
+      media.movie.value,
+      media.mainImage.value
+    );
+    if (updatedCampaign._id) postUpdateCampaign(updatedCampaign);
+    alert("קמפיין עודכן בהצלחה");
+    setEditMode("view");
+  } catch (error) {
+    console.log(error);
+    alert("עדכון הקמפיין נכשל");
+  }
+};
+
 
   useEffect(() => {
     const c = campaigns.find((x) => x._id! === (campaignId));

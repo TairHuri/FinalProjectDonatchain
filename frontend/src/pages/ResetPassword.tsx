@@ -5,13 +5,44 @@ import "../css/LoginNgo.css";
 const ResetPassword = () => {
   const [newPassword, setNewPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const { state } = useLocation();
   const email = state?.email;
   const code = state?.code;
   const navigate = useNavigate();
 
+  // ✅ פונקציית בדיקת תנאי סיסמה
+  const passwordRules = {
+    length: (pw: string) => pw.length >= 8,
+    upper: (pw: string) => /[A-Z]/.test(pw),
+    lower: (pw: string) => /[a-z]/.test(pw),
+    number: (pw: string) => /\d/.test(pw),
+    special: (pw: string) => /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pw),
+  };
+
+  const isValidPassword = (password: string) => {
+    return (
+      passwordRules.length(password) &&
+      passwordRules.upper(password) &&
+      passwordRules.lower(password) &&
+      passwordRules.number(password) &&
+      passwordRules.special(password)
+    );
+  };
+
   const handleReset = async (e: any) => {
     e.preventDefault();
+
+    if (!isValidPassword(newPassword)) {
+      setPasswordError(
+        "הסיסמה חייבת לכלול לפחות 8 תווים, אות גדולה, אות קטנה, ספרה ותו מיוחד."
+      );
+      alert(
+        "הסיסמה אינה עומדת בדרישות. יש להשתמש באות גדולה, אות קטנה, ספרה ותו מיוחד (לפחות 8 תווים)."
+      );
+      return;
+    }
+
     const res = await fetch("http://localhost:4000/api/auth/reset-password", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -21,7 +52,18 @@ const ResetPassword = () => {
     if (data.success) {
       setMessage("הסיסמה שונתה בהצלחה!");
       setTimeout(() => navigate("/login"), 2000);
-    } else setMessage(data.message);
+    } else {
+      setMessage(data.message || "שגיאה באיפוס הסיסמה");
+    }
+  };
+
+  // ✅ עדכון בזמן הקלדה
+  const handlePasswordChange = (value: string) => {
+    setNewPassword(value);
+    if (!value) setPasswordError("");
+    else if (!isValidPassword(value))
+      setPasswordError("הסיסמה עדיין לא עומדת בכל הדרישות.");
+    else setPasswordError("");
   };
 
   return (
@@ -33,11 +75,50 @@ const ResetPassword = () => {
             type="password"
             placeholder="סיסמה חדשה"
             value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
+            onChange={(e) => handlePasswordChange(e.target.value)}
             className="input-field"
+            required
           />
-          <button className="login-btn">שנה סיסמה</button>
-          {message && <div className="login-error">{message}</div>}
+
+          {/* ✅ הצגת הדרישות עם סימנים דינמיים */}
+          <div className="password-hint" style={{ textAlign: "right" }}>
+            <ul style={{ fontSize: "0.9rem", color: "#444", listStyle: "none", paddingRight: "10px" }}>
+              <li>
+                {passwordRules.length(newPassword) ? "✅" : "❌"} לפחות 8 תווים
+              </li>
+              <li>
+                {passwordRules.upper(newPassword) ? "✅" : "❌"} לפחות אות גדולה אחת (A–Z)
+              </li>
+              <li>
+                {passwordRules.lower(newPassword) ? "✅" : "❌"} לפחות אות קטנה אחת (a–z)
+              </li>
+              <li>
+                {passwordRules.number(newPassword) ? "✅" : "❌"} לפחות ספרה אחת (0–9)
+              </li>
+              <li>
+                {passwordRules.special(newPassword) ? "✅" : "❌"} לפחות תו מיוחד אחד (!@#$%^&* וכו׳)
+              </li>
+            </ul>
+          </div>
+
+          {passwordError && (
+            <div className="login-error" style={{ color: "red", fontSize: "0.9rem" }}>
+              {passwordError}
+            </div>
+          )}
+
+          <button className="login-btn" type="submit">
+            שנה סיסמה
+          </button>
+
+          {message && (
+            <div
+              className="login-success"
+              style={{ color: "green", marginTop: "10px", fontWeight: 500 }}
+            >
+              {message}
+            </div>
+          )}
         </form>
       </div>
     </div>
