@@ -147,6 +147,19 @@ if (!isValidPassword(user.password)) {
         }
       }
 
+          const existingNgo = ngoList.find(
+      (n) =>
+        n.name.trim() === ngo.name.trim() ||
+        (n.ngoNumber && n.ngoNumber.trim() === ngo.ngoNumber.trim())
+    );
+
+        if (existingNgo) {
+      setIsFailure(true);
+      setMessage("עמותה בשם זה או עם מספר עמותה זה כבר קיימת במערכת.");
+      setShowAlert(true);
+      return;
+    }
+
       // בדיקת תעודה חובה
       if (!media.certificate) {
         setIsFailure(true);
