@@ -33,12 +33,29 @@ export const verifyNgo = async (req: Request, res: Response) =>{
   res.status(400).send({message: `${currentYear}: ${apiSuccess[currentYear].message}, ${lastYear}: ${apiSuccess[lastYear]}`})
 
 }
+
 export const createNgo = async (req: Request, res: Response) => {
-  const { name, description, website, contactEmail, logoUrl, certificate } = req.body;
+  const { name, description, website, contactEmail, logoUrl, certificate, ngoNumber } = req.body;
   const user = (req as any).user;
+
   try {
+        const existingNgo = await Ngo.findOne({
+      $or: [
+        { name: name.trim() },
+        { ngoNumber: ngoNumber?.trim() }
+      ],
+    });
+
+    if (existingNgo) {
+      return res.status(400).json({
+        message: "עמותה עם שם זה או מספר עמותה זה כבר קיימת במערכת",
+      });
+    }
+
+    // ✅ יצירת עמותה חדשה אם לא קיימת
     const ngo = new Ngo({
       name,
+      ngoNumber,
       description,
       website,
       email: contactEmail,
@@ -48,13 +65,19 @@ export const createNgo = async (req: Request, res: Response) => {
     });
 
     await ngo.save();
-    await AuditLog.create({ action: "ngo_created", user: user._id, meta: { ngoId: ngo._id } });
+
+    await AuditLog.create({
+      action: "ngo_created",
+      user: user._id,
+      meta: { ngoId: ngo._id },
+    });
+
     res.status(201).json(ngo);
   } catch (err: any) {
+    console.error("שגיאה ביצירת עמותה:", err);
     res.status(400).json({ message: err.message });
   }
 };
-
 
 export const listNgos = async (_req: Request, res: Response) => {
   try {
@@ -107,25 +130,26 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-
 export const toggleNgoStatus = async (req: Request, res: Response) => {
   try {
     const ngo = await Ngo.findById(req.params.id);
     if (!ngo) return res.status(404).json({ message: "עמותה לא נמצאה" });
 
+    // הפעלה/השהיה של העמותה
     ngo.isActive = !ngo.isActive;
     await ngo.save({ validateModifiedOnly: true });
 
-
+    // עדכון כל הקמפיינים של העמותה
     await Campaign.updateMany({ ngo: ngo._id }, { isActive: ngo.isActive });
 
+    // שמירה ביומן פעילות (AuditLog)
     await AuditLog.create({
       action: ngo.isActive ? "ngo_reactivated" : "ngo_suspended",
       user: (req as any).user._id,
       meta: { ngoId: ngo._id, newStatus: ngo.isActive },
     });
 
-
+    // שליחת מייל לעמותה עצמה
     if (ngo.email) {
       await sendNgoStatusEmail({
         to: ngo.email,
@@ -133,22 +157,78 @@ export const toggleNgoStatus = async (req: Request, res: Response) => {
         isActive: ngo.isActive,
       });
     } else {
-      console.warn(" לא נמצא אימייל לעמותה:", ngo.name);
+      console.warn("⚠️ לא נמצא אימייל לעמותה:", ngo.name);
+    }
+
+    // 🔹 שליחת מייל לכל החברים של העמותה
+    const User = (await import("../models/user.model")).default; // טעינה דינמית למניעת import מעגלי
+    const members = await User.find({ ngoId: ngo._id });
+
+    for (const member of members) {
+      if (!member.email) continue;
+
+await sendMemberStatusEmail({
+  to: member.email,
+  fullName: member.name || "מתנדב/ת יקר/ה", // 👈 משתמשים בשדה הקיים
+  ngoName: ngo.name,
+  isActive: ngo.isActive,
+});
     }
 
     res.json({
       success: true,
       message: ngo.isActive
-        ? "העמותה הופעלה מחדש  וכל הקמפיינים הופעלו ונשלח מייל לעמותה"
-        : "העמותה הושהתה  וכל הקמפיינים הושבתו ונשלח מייל לעמותה",
+        ? "✅ העמותה הופעלה מחדש, כל הקמפיינים הופעלו ונשלחו מיילים לעמותה ולחבריה."
+        : "⛔ העמותה הושהתה, כל הקמפיינים הושבתו ונשלחו מיילים לעמותה ולחבריה.",
       ngo,
     });
   } catch (err: any) {
-    console.error("toggleNgoStatus error:", err);
+    console.error("❌ toggleNgoStatus error:", err);
     res.status(500).json({ message: err.message });
   }
 };
 
+async function sendMemberStatusEmail({
+  to,
+  fullName,
+  ngoName,
+  isActive,
+}: {
+  to: string;
+  fullName: string;
+  ngoName: string;
+  isActive: boolean;
+}) {
+  const subject = isActive
+    ? `העמותה "${ngoName}" הופעלה מחדש`
+    : `העמותה "${ngoName}" הושהתה`;
+
+  const html = `
+    <div style="direction: rtl; text-align: right; font-family: 'Assistant', Arial; background-color:#f9f9f9; padding:25px;">
+      <h2 style="color:${isActive ? "#2e7d32" : "#c62828"};">${subject}</h2>
+      <p>שלום ${fullName},</p>
+      <p>עמותת <b>${ngoName}</b> ${isActive ? "הופעלה מחדש על ידי מנהל המערכת." : "הושהתה זמנית על ידי מנהל המערכת."}</p>
+      ${isActive
+        ? "<p>הפעילות חזרה לסדרה ותוכל/י להשתמש שוב במערכת DonatChain.</p>"
+        : "<p>המערכת לא מאפשרת כניסה עד להודעה חדשה ממנהל המערכת.</p>"
+      }
+      <hr style="margin:20px 0; border:none; border-top:1px solid #ddd;"/>
+      <p>בברכה,<br/>צוות <b>DonatChain</b></p>
+    </div>
+  `;
+
+  try {
+    await transporter.sendMail({
+      from: `"DonatChain" <${process.env.EMAIL_USER}>`,
+      to,
+      subject,
+      html,
+    });
+    console.log(`📧 נשלח מייל לחבר בעמותה: ${to}`);
+  } catch (err) {
+    console.error("❌ שגיאה בשליחת מייל לחבר עמותה:", err);
+  }
+}
 
 async function sendNgoStatusEmail({
   to,
