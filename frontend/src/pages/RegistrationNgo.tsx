@@ -91,6 +91,12 @@ export default function RegistrationNgo() {
     if (/^(\d)\1+$/.test(clean)) return false; // כל הספרות זהות (כמו 000000)
     return true;
   };
+
+    //  פונקציה לבדוק שכתובת ארנק קריפטו תקינה (Ethereum / EVM)
+  const isValidCryptoWallet = (wallet: string) => {
+    if (!wallet) return false;
+    return /^0x[a-fA-F0-9]{40}$/.test(wallet.trim());
+  };
   
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -107,6 +113,13 @@ export default function RegistrationNgo() {
 if (newNgo && (!ngo.bankAccount || !isValidBankAccount(ngo.bankAccount))) {
   setIsFailure(true);
   setMessage("מספר חשבון הבנק אינו תקין");
+  setShowAlert(true);
+  return;
+}
+
+if (newNgo && (!ngo.wallet || !isValidCryptoWallet(ngo.wallet))) {
+  setIsFailure(true);
+  setMessage("כתובת ארנק הקריפטו אינה תקינה. ודאי שהיא מתחילה ב-0x ומכילה 42 תווים.");
   setShowAlert(true);
   return;
 }
