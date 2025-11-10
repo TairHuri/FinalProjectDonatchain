@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { getNgoList, registerUserExistingNgo, registerUserNewNgo } from "../services/api";
-import { Building2, Mail, Lock, Phone, Wallet, IdCard } from "lucide-react";
+import { Building2, Mail, Lock, Phone, IdCard } from "lucide-react";
 import type { User, UserRoleType } from "../models/User";
 import type { Ngo } from "../models/Ngo";
 import NewNgo from "../components/NewNgo";
 import { useNavigate } from 'react-router-dom';
-import "../css/RegistrationNgo.css"; 
+import "../css/RegistrationNgo.css";
 import AlertDialog, { useAlertDialog } from "../components/gui/AlertDialog";
 
 export type NgoMediaType = { logoUrl: File | null, certificate: File | null }
@@ -29,7 +29,7 @@ export default function RegistrationNgo() {
     approved: false,
   });
 
-  const [idNumber, setIdNumber] = useState<string>(""); // 🆔 ת"ז
+  const [idNumber, setIdNumber] = useState<string>("");
 
   const [ngo, setNgo] = useState<Ngo>({
     _id: "",
@@ -70,7 +70,7 @@ export default function RegistrationNgo() {
     setNgoList(res.items);
   };
 
-  //  פונקציה לבדוק תעודת זהות תקינה לפי ספרת ביקורת
+  // בדיקת תקינות תעודת זהות
   const isValidIsraeliID = (id: string) => {
     id = String(id).trim();
     if (id.length > 9 || isNaN(Number(id))) return false;
@@ -84,25 +84,23 @@ export default function RegistrationNgo() {
     return sum % 10 === 0;
   };
 
-    const isValidBankAccount = (account: string) => {
+  const isValidBankAccount = (account: string) => {
     if (!account) return false;
-    const clean = account.replace(/\D/g, ""); // מסיר תווים לא מספריים
-    if (clean.length < 6 || clean.length > 10) return false; // רוב החשבונות בישראל באורך 6-10 ספרות
-    if (/^(\d)\1+$/.test(clean)) return false; // כל הספרות זהות (כמו 000000)
+    const clean = account.replace(/\D/g, "");
+    if (clean.length < 6 || clean.length > 10) return false;
+    if (/^(\d)\1+$/.test(clean)) return false;
     return true;
   };
 
-    //  פונקציה לבדוק שכתובת ארנק קריפטו תקינה (Ethereum / EVM)
   const isValidCryptoWallet = (wallet: string) => {
     if (!wallet) return false;
     return /^0x[a-fA-F0-9]{40}$/.test(wallet.trim());
   };
-  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    //  בדיקת ת"ז לפני שליחה
+    // בדיקת ת"ז
     if (!isValidIsraeliID(idNumber)) {
       setIsFailure(true);
       setMessage("תעודת זהות אינה תקינה");
@@ -110,25 +108,67 @@ export default function RegistrationNgo() {
       return;
     }
 
-if (newNgo && (!ngo.bankAccount || !isValidBankAccount(ngo.bankAccount))) {
-  setIsFailure(true);
-  setMessage("מספר חשבון הבנק אינו תקין");
-  setShowAlert(true);
-  return;
-}
-
-if (newNgo && (!ngo.wallet || !isValidCryptoWallet(ngo.wallet))) {
-  setIsFailure(true);
-  setMessage("כתובת ארנק הקריפטו אינה תקינה. ודאי שהיא מתחילה ב-0x ומכילה 42 תווים.");
-  setShowAlert(true);
-  return;
-}
-
-    if (!user.email || !user.password || !user.name) {
+    // בדיקות שדות חובה למשתמש
+    if (!user.name || !user.email || !user.password || !user.phone) {
       setIsFailure(true);
-      setMessage("אנא מלאי שם, אימייל וסיסמה");
+      setMessage("יש למלא את כל שדות המשתמש: שם, אימייל, טלפון וסיסמה");
       setShowAlert(true);
       return;
+    }
+
+    if (newNgo) {
+      // בדיקות חובה לעמותה חדשה (למעט website ולוגו)
+      const requiredNgoFields: (keyof Ngo)[] = [
+        "name",
+        "description",
+        "bankAccount",
+        "wallet",
+        "address",
+        "phone",
+        "email",
+        "ngoNumber",
+      ];
+
+      for (const field of requiredNgoFields) {
+        if (!ngo[field]) {
+          setIsFailure(true);
+          setMessage("יש למלא את כל שדות העמותה (למעט אתר ולוגו)");
+          setShowAlert(true);
+          return;
+        }
+      }
+
+      // בדיקת תעודה חובה
+      if (!media.certificate) {
+        setIsFailure(true);
+        setMessage("יש להעלות תעודת רישום עמותה (קובץ אישור).");
+        setShowAlert(true);
+        return;
+      }
+
+      // בדיקת תקינות חשבון בנק
+  if (!isValidIsraeliID(idNumber)) {
+    setIsFailure(true);
+    setMessage("תעודת זהות אינה תקינה");
+    setShowAlert(true);
+    return;
+  }
+
+  if (newNgo && (!ngo.wallet || !isValidCryptoWallet(ngo.wallet))) {
+    setIsFailure(true);
+    setMessage("כתובת ארנק הקריפטו אינה תקינה. ודאי שהיא מתחילה ב-0x ומכילה 42 תווים.");
+    setShowAlert(true);
+    return;
+  }
+
+    } else {
+      // עמותה קיימת — חובה לבחור אחת
+      if (!user.ngoId) {
+        setIsFailure(true);
+        setMessage("יש לבחור עמותה קיימת מהרשימה");
+        setShowAlert(true);
+        return;
+      }
     }
 
     try {
@@ -142,13 +182,12 @@ if (newNgo && (!ngo.wallet || !isValidCryptoWallet(ngo.wallet))) {
 
       if (res.success) {
         setIsFailure(false);
-        setMessage("עמותה נרשמה בהצלחה");
+        setMessage("ההרשמה בוצעה בהצלחה!");
         setShowAlert(true);
       } else {
         setIsFailure(true);
-        setMessage("שגיאה בהרשמה");
+        setMessage(res.message || "שגיאה בהרשמה");
         setShowAlert(true);
-        alert(res.message);
       }
     } catch (err) {
       setIsFailure(true);
@@ -185,7 +224,6 @@ if (newNgo && (!ngo.wallet || !isValidCryptoWallet(ngo.wallet))) {
           </div>
 
           <form onSubmit={handleSubmit} className="login-form">
-            {/* שם משתמש */}
             <div className="input-group">
               <Building2 className="input-icon" />
               <input
@@ -198,7 +236,6 @@ if (newNgo && (!ngo.wallet || !isValidCryptoWallet(ngo.wallet))) {
               />
             </div>
 
-            {/* תעודת זהות 🆔 */}
             <div className="input-group">
               <IdCard className="input-icon" />
               <input
@@ -212,7 +249,6 @@ if (newNgo && (!ngo.wallet || !isValidCryptoWallet(ngo.wallet))) {
               />
             </div>
 
-            {/* אימייל */}
             <div className="input-group">
               <Mail className="input-icon" />
               <input
@@ -225,7 +261,6 @@ if (newNgo && (!ngo.wallet || !isValidCryptoWallet(ngo.wallet))) {
               />
             </div>
 
-            {/* טלפון */}
             <div className="input-group">
               <Phone className="input-icon" />
               <input
@@ -234,10 +269,10 @@ if (newNgo && (!ngo.wallet || !isValidCryptoWallet(ngo.wallet))) {
                 value={user.phone || ""}
                 onChange={(e) => handleChangeUser("phone", e.target.value)}
                 className="input-field"
+                required
               />
             </div>
 
-            {/* סיסמה */}
             <div className="input-group">
               <Lock className="input-icon" />
               <input
