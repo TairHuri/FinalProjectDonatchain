@@ -11,20 +11,31 @@ const ResetPassword = () => {
   const code = state?.code;
   const navigate = useNavigate();
 
-  // ✅ פונקציית בדיקת תקינות סיסמה
+  // ✅ פונקציית בדיקת תנאי סיסמה
+  const passwordRules = {
+    length: (pw: string) => pw.length >= 8,
+    upper: (pw: string) => /[A-Z]/.test(pw),
+    lower: (pw: string) => /[a-z]/.test(pw),
+    number: (pw: string) => /\d/.test(pw),
+    special: (pw: string) => /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pw),
+  };
+
   const isValidPassword = (password: string) => {
-    const regex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
-    return regex.test(password);
+    return (
+      passwordRules.length(password) &&
+      passwordRules.upper(password) &&
+      passwordRules.lower(password) &&
+      passwordRules.number(password) &&
+      passwordRules.special(password)
+    );
   };
 
   const handleReset = async (e: any) => {
     e.preventDefault();
 
-    // בדיקה לפני שליחה
     if (!isValidPassword(newPassword)) {
       setPasswordError(
-        "הסיסמה חייבת להכיל לפחות 8 תווים, כולל אות גדולה, אות קטנה, ספרה ותו מיוחד."
+        "הסיסמה חייבת לכלול לפחות 8 תווים, אות גדולה, אות קטנה, ספרה ותו מיוחד."
       );
       alert(
         "הסיסמה אינה עומדת בדרישות. יש להשתמש באות גדולה, אות קטנה, ספרה ותו מיוחד (לפחות 8 תווים)."
@@ -46,18 +57,13 @@ const ResetPassword = () => {
     }
   };
 
-  // ✅ בדיקה בזמן הקלדה (לצורך פידבק מיידי)
+  // ✅ עדכון בזמן הקלדה
   const handlePasswordChange = (value: string) => {
     setNewPassword(value);
-    if (!value) {
-      setPasswordError("");
-    } else if (!isValidPassword(value)) {
-      setPasswordError(
-        "הסיסמה חייבת לכלול לפחות 8 תווים, אות גדולה, אות קטנה, ספרה ותו מיוחד."
-      );
-    } else {
-      setPasswordError("");
-    }
+    if (!value) setPasswordError("");
+    else if (!isValidPassword(value))
+      setPasswordError("הסיסמה עדיין לא עומדת בכל הדרישות.");
+    else setPasswordError("");
   };
 
   return (
@@ -74,18 +80,27 @@ const ResetPassword = () => {
             required
           />
 
-          {/* ✅ טקסט הסבר מתחת לשדה הסיסמה */}
-          <div className="password-hint">
-            <ul style={{ fontSize: "0.85rem", color: "#555", textAlign: "right", paddingRight: "20px" }}>
-              <li>לפחות 8 תווים</li>
-              <li>לפחות אות גדולה אחת (A–Z)</li>
-              <li>לפחות אות קטנה אחת (a–z)</li>
-              <li>לפחות ספרה אחת (0–9)</li>
-              <li>לפחות תו מיוחד אחד (!@#$%^&* וכו׳)</li>
+          {/* ✅ הצגת הדרישות עם סימנים דינמיים */}
+          <div className="password-hint" style={{ textAlign: "right" }}>
+            <ul style={{ fontSize: "0.9rem", color: "#444", listStyle: "none", paddingRight: "10px" }}>
+              <li>
+                {passwordRules.length(newPassword) ? "✅" : "❌"} לפחות 8 תווים
+              </li>
+              <li>
+                {passwordRules.upper(newPassword) ? "✅" : "❌"} לפחות אות גדולה אחת (A–Z)
+              </li>
+              <li>
+                {passwordRules.lower(newPassword) ? "✅" : "❌"} לפחות אות קטנה אחת (a–z)
+              </li>
+              <li>
+                {passwordRules.number(newPassword) ? "✅" : "❌"} לפחות ספרה אחת (0–9)
+              </li>
+              <li>
+                {passwordRules.special(newPassword) ? "✅" : "❌"} לפחות תו מיוחד אחד (!@#$%^&* וכו׳)
+              </li>
             </ul>
           </div>
 
-          {/* הודעת שגיאה אדומה אם הסיסמה לא תקינה */}
           {passwordError && (
             <div className="login-error" style={{ color: "red", fontSize: "0.9rem" }}>
               {passwordError}
@@ -97,7 +112,10 @@ const ResetPassword = () => {
           </button>
 
           {message && (
-            <div className="login-success" style={{ color: "green", marginTop: "10px" }}>
+            <div
+              className="login-success"
+              style={{ color: "green", marginTop: "10px", fontWeight: 500 }}
+            >
               {message}
             </div>
           )}
