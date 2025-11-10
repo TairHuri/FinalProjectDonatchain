@@ -62,8 +62,8 @@ const CampaignItem = ({
         )}
 
         <p className={styles.meta}>
-          <span>מתחיל: {c.startDate?.split("T")[0]}</span> •{" "}
-          <span>מסתיים: {c.endDate?.split("T")[0]}</span>
+          <span>מתחיל: {new Date(c.startDate).toLocaleDateString('he')}</span> •{" "}
+          <span>מסתיים: {new Date(c.endDate).toLocaleDateString('he')}</span>
         </p>
 
         <div className={styles['amount-row']}>

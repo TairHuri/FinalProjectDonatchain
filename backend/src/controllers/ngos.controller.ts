@@ -197,8 +197,7 @@ export const updateNgo = async (req: Request, res: Response) => {
     const ngo = await Ngo.findById(req.params.id);
     if (!ngo) return res.status(404).json({ message: "עמותה לא נמצאה" });
 
-    // TODO לא חושבת שצריך שמי שיצר הוא יהיה חייב לעדכן
-    if (ngo.createdBy?.toString() !== user._id.toString() && !['manager'].includes(user.role)) {
+    if (!['manager'].includes(user.role)) {
       return res.status(403).json({ message: "אין הרשאה לעדכן עמותה זו" });
     }
 
@@ -209,7 +208,9 @@ export const updateNgo = async (req: Request, res: Response) => {
     if (mediaFiles?.logo) {
       ngo.logoUrl = mediaFiles.logo[0].filename;
     }
-
+    if (mediaFiles?.certificate) {
+      ngo.certificate = mediaFiles.certificate[0].filename;
+    }
     await ngo.save({ validateModifiedOnly: true });
     await AuditLog.create({ action: "ngo_updated", user: user._id, meta: { ngoId: ngo._id } });
 

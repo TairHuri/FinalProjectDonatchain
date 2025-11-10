@@ -24,6 +24,12 @@ function endOfDay(dateStr?: string) {
   d.setHours(23, 59, 59, 999);
   return d;
 }
+function startOfDay(dateStr?: string) {
+  if (!dateStr) return null;
+  const d = new Date(dateStr);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
 const CampaignDetails: React.FC = () => {
   const params = useParams();
   const { campaigns } = useCampaigns();
@@ -58,8 +64,9 @@ const CampaignDetails: React.FC = () => {
   const isPayable = () => {
     if (!campaign) return false;
     const end = endOfDay(campaign.endDate);
-    const start = endOfDay(campaign.startDate);
-
+    const start = startOfDay(campaign.startDate);
+    console.log('isPayable', start, start! <= new Date());
+    
     return campaign && campaign?.isActive && end && end >= new Date() && start && start <= new Date()
   }
 
@@ -141,3 +148,4 @@ const CampaignDetails: React.FC = () => {
 
 
 export default CampaignDetails;
+

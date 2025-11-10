@@ -1,6 +1,6 @@
 import axios from "axios";
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
-import type { Ngo } from "../models/Ngo";
+import type { Ngo, NgoMediaType } from "../models/Ngo";
 
 export async function verifyNgoNumber(ngoNumber: string){
   try{
@@ -17,7 +17,7 @@ export async function verifyNgoNumber(ngoNumber: string){
   }
   
 }
-export async function editNgo(ngo: Ngo, token: string, logo: File|null) {
+export async function editNgo(ngo: Ngo, token: string,  media: NgoMediaType) {
   // content type: multipart/formdata
   
   const formData = new FormData()
@@ -29,9 +29,12 @@ export async function editNgo(ngo: Ngo, token: string, logo: File|null) {
   ngo.website && formData.append("website", ngo.website)
   ngo.bankAccount && formData.append("bankAccount", ngo.bankAccount)
   ngo.ngoNumber && formData.append("ngoNumber", ngo.ngoNumber)
+  if(media.certificate){
+    formData.append("certificate", media.certificate);
+  }
 
-  if (logo) {
-    formData.append("logo", logo)
+  if (media.logoUrl) {
+    formData.append("logo", media.logoUrl)
   }
 
   const res = await fetch(`${API_URL}/ngos/${ngo._id}`, {

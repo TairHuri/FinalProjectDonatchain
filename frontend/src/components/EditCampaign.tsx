@@ -9,6 +9,7 @@ import ConfirmDialog, { useConfirmDialog } from "./gui/ConfirmDialog";
 import "../css/campaign/CreateCampaign.css"; // ⬅️ שימוש באותם סגנונות של מסך יצירה (cc- classes)
 import "../css/campaign/EditCampaign.css"
 import type { User } from "../models/User";
+import AlertDialog, { useAlertDialog } from "./gui/AlertDialog";
 
 type MediaType = {
   images: { value: FileList | null, ref: React.RefObject<HTMLInputElement | null> },
@@ -33,6 +34,7 @@ const EditCampaign = ({
 
   const [campaignTags, setCampaignTags] = useState<{[key:string]:string}[]>([])
   const { showConfirm, openConfirm, closeConfirm } = useConfirmDialog()
+  const {showAlert, isFailure, setIsFailure, message, setMessage, setShowAlert} = useAlertDialog()
   const [campaign, setCampaign] = useState<Campaign | null>();
   const [disableStartDate, setDisableStartDate] = useState<boolean>(false)
   const [media, setMedia] = useState<MediaType>({
@@ -79,7 +81,7 @@ const EditCampaign = ({
 
     try {
       const updatedCampaign = await updateCampaign(
-        campaign,          // ⬅️ כולל campaign.tags המעודכן
+        campaign,   
         user.token,
         images,
         media.movie.value,
@@ -145,14 +147,22 @@ const EditCampaign = ({
   const handleToggle = async (id: string) => {
     try {
       const res = await toggleCampaignStatus(id, user.token!);
-      alert(res.message || "הסטטוס עודכן בהצלחה ✅");
+      
+      setIsFailure(false);
+      setMessage(res.message || "הסטטוס עודכן בהצלחה")
+      setCampaign({...campaign!,isActive:!campaign?.isActive})
     } catch (err) {
-      console.error(err);
-      alert("שגיאה בעדכון הסטטוס ❌");
-    } finally { }
+      console.error((err as any).message);
+      closeConfirm()
+      setIsFailure(false);
+      setMessage((err as any).message || "שגיאה בעדכון הסטטוס")
+    } finally {
+      closeConfirm()
+      setShowAlert(true)
+     }
   };
 
-  // ⬅️ קטגוריות – עדכון state של הקמפיין
+  
   const toggleTag = (tag: string) => {
     if (!campaign) return;
     const tags = campaign.tags || [];
@@ -160,7 +170,7 @@ const EditCampaign = ({
     if (exists) {
       setCampaign({ ...campaign, tags: tags.filter(t => t !== tag) });
     } else {
-      if (tags.length >= 3) return; // מגבלה עד 3
+      if (tags.length >= 3) return;
       setCampaign({ ...campaign, tags: [...tags, tag] });
     }
   };
@@ -185,29 +195,29 @@ const EditCampaign = ({
               <p><strong>סכום יעד:</strong> {campaign.goal}</p>
               <p><strong>סכום שגויס:</strong> {campaign.raised}</p>
               <p><strong>מספר תורמים:</strong> {campaign.numOfDonors}</p>
-              <p><strong>תאריך התחלה:</strong> {campaign.startDate}</p>
-              <p><strong>תאריך סיום:</strong> {campaign.endDate}</p>
+              <p><strong>תאריך התחלה:</strong> {new Date(campaign.startDate).toLocaleDateString('he')}</p>
+              <p><strong>תאריך סיום:</strong> {new Date(campaign.endDate).toLocaleDateString('he')}</p>
               <p><strong>קטגוריות:</strong> {(campaign.tags || []).join(", ") || "-"}</p>
               <div className="campaign-edit-buttons cc-actions" style={{ gap: ".5rem", marginTop: ".8rem" }}>
                 <button onClick={() => setEditMode("edit")} style={{ ...primaryBtnStyle }}>
                   עריכת פרטים
                 </button>
                 <button style={{ ...primaryBtnStyle }} onClick={openConfirm}>
-                  השהייה/מחיקה
+                  {campaign.isActive? 'השהייה/מחיקה' : 'הפעל'}
                 </button>
               </div>
               <ConfirmDialog
                 show={showConfirm}
                 onYes={() => handleToggle(campaign._id!)}
                 onNo={closeConfirm}
-                message='פעולה זו תמחק/תשהה את הקמפיין'
+                message={campaign.isActive? 'פעולה זו תמחק/תשהה את הקמפיין' : 'פעולה זו תפעיל את הקמפיין'}
               />
+              <AlertDialog message={message} show={showAlert} isFailure={isFailure} failureOnClose={() =>setShowAlert(false)} successOnClose={() =>setShowAlert(false)}/>
             </div>
           )}
 
           {editMode === "edit" && (
             <>
-              {/* פריסת 2 עמודות כמו במסך יצירה */}
               <div className="cc-grid">
                 <section className="cc-section">
                   <h3 className="cc-section-title">פרטי בסיס</h3>
@@ -309,8 +319,6 @@ const EditCampaign = ({
                   </div>
                 </section>
               </div>
-
-              {/* קטגוריות – אותו UI כמו במסך יצירה */}
               <section className="cc-section" style={{ marginTop: "12px" }}>
                 <div className="cc-section-title with-counter">
                   <span>קטגוריות הקמפיין</span>

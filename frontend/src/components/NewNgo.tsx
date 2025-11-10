@@ -1,7 +1,7 @@
 
-import type { Ngo } from "../models/Ngo";
-import type { NgoMediaType } from "../pages/RegistrationNgo";
-import { Mail, MapPin, Phone, CreditCard, Wallet, Building2,File,Image,IdCard,ScreenShare } from "lucide-react";
+import type { Ngo, NgoMediaType } from "../models/Ngo";
+
+import { Mail, MapPin, Phone, CreditCard, Wallet, Building2, File, Image, IdCard, ScreenShare } from "lucide-react";
 
 type Props = {
   ngo: Ngo;
@@ -28,7 +28,7 @@ const NewNgo = ({ ngo, media, handleChangeNgo, handleChangeMedia }: Props) => {
 
       {/* מספר עמותה */}
       <div className="input-group">
-        <IdCard className="input-icon"/>
+        <IdCard className="input-icon" />
         <input
           type="text"
           placeholder="מספר עמותה"
@@ -74,7 +74,7 @@ const NewNgo = ({ ngo, media, handleChangeNgo, handleChangeMedia }: Props) => {
         />
       </div>
 
-      
+
       {/* אתר */}
       <div className="input-group">
         <ScreenShare className="input-icon" />
@@ -127,17 +127,17 @@ const NewNgo = ({ ngo, media, handleChangeNgo, handleChangeMedia }: Props) => {
       <div className="input-group  file-upload-group">
         <Image className="input-icon" />
         <div className="file-upload" style={{ width: "100%" }}>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => handleChangeMedia("logoUrl", e.target.files)}
-          className="input-field file-field"
-        />
-        <button type="button" className="fake-btn">בחר/י קובץ</button>
-         <span className="file-name">
-          {media.logoUrl ? media.logoUrl.name : "לא נבחר קובץ"}
-         </span>
-         </div>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => handleChangeMedia("logoUrl", e.target.files)}
+            className="input-field file-field"
+          />
+          <button type="button" className="fake-btn">בחר/י קובץ</button>
+          <span className="file-name">
+            {media.logoUrl ? media.logoUrl.name : "לא נבחר קובץ"}
+          </span>
+        </div>
       </div>
 
       {media.logoUrl && (
@@ -153,16 +153,16 @@ const NewNgo = ({ ngo, media, handleChangeNgo, handleChangeMedia }: Props) => {
       <div className="input-group file-upload-group">
         <File className="input-icon" />
         <div className="file-upload" style={{ width: "100%" }}>
-        <input
-          type="file"
-          accept="application/pdf"
-          onChange={(e) => handleChangeMedia("certificate", e.target.files)}
-        />
-        <button type="button" className="fake-btn">בחר/י קובץ</button>
-         <span className="file-name">
-          {media.certificate ? media.certificate.name : "לא נבחר קובץ"}
-         </span>
-         </div>
+          <input
+            type="file"
+            accept="application/pdf"
+            onChange={(e) => handleChangeMedia("certificate", e.target.files)}
+          />
+          <button type="button" className="fake-btn">בחר/י קובץ</button>
+          <span className="file-name">
+            {media.certificate ? media.certificate.name : "לא נבחר קובץ"}
+          </span>
+        </div>
       </div>
     </>
   );

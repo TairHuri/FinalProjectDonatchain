@@ -1,12 +1,12 @@
 
-import {useState} from 'react';
+import { useState } from 'react';
 // import { Share2, Facebook, Send, MessageCircle } from "lucide-react";
 import { Copy, MessageCircle, Share2, Check } from "lucide-react";
 import type { Campaign } from '../../models/Campaign';
 
 import '../../css/ShareCampaign.css'
 
-const ShareCampaign = ({campaign}:{campaign:Campaign}) => {
+const ShareCampaign = ({ campaign }: { campaign: Campaign }) => {
   const [copied, setCopied] = useState(false);
 
   const campaignUrl = window.location.href;
@@ -28,7 +28,7 @@ const ShareCampaign = ({campaign}:{campaign:Campaign}) => {
     window.open(waUrl, "_blank");
   };
 
- 
+
   const handleNativeShare = () => {
     if (navigator.share) {
       navigator.share({
@@ -39,11 +39,11 @@ const ShareCampaign = ({campaign}:{campaign:Campaign}) => {
         console.error("share cancelled or failed", err);
       });
     } else {
-   
+
       handleCopyLink();
     }
   };
-  return(
+  return (
     <div className='share-row'>
       {/* חדש: שיתוף הקמפיין */}
       <div
@@ -68,7 +68,7 @@ const ShareCampaign = ({campaign}:{campaign:Campaign}) => {
             marginBottom: "12px",
           }}
         >
-          שתפו את הקמפיין ותעזרו לנו להגיע לעוד אנשים 🙏
+          שתפו את הקמפיין ותעזרו לנו להגיע לעוד אנשים
         </div>
 
         {/* קבוצת הכפתורים */}
@@ -81,70 +81,55 @@ const ShareCampaign = ({campaign}:{campaign:Campaign}) => {
           }}
         >
           {/* כפתור העתקה */}
-           <button
-          className="campaign-share-btn"
-          onClick={handleCopyLink}
-          type="button"
-        >
-          <div
-            className={
-              "campaign-share-iconCircle copy" +
-              (copied ? " copied" : "")
-            }
+          <button
+            className="campaign-share-btn"
+            onClick={handleCopyLink}
+            type="button"
           >
-            {copied ? (
-              <Check size={22} color="currentColor" strokeWidth={2.5} />
-            ) : (
-              <Copy size={22} color="currentColor" strokeWidth={2} />
-            )}
-          </div>
-          <div
-            className={
-              "campaign-share-label" +
-              (copied ? " copiedText" : "")
-            }
-          >
-            {copied ? "הועתק" : "העתק"}
-          </div>
-        </button>
+            <div
+              className={
+                "campaign-share-iconCircle copy" +
+                (copied ? " copied" : "")
+              }
+            >
+              {copied ? (
+                <Check size={22} color="currentColor" strokeWidth={2.5} />
+              ) : (
+                <Copy size={22} color="currentColor" strokeWidth={2} />
+              )}
+            </div>
+            <div
+              className={
+                "campaign-share-label" +
+                (copied ? " copiedText" : "")
+              }
+            >
+              {copied ? "הועתק" : "העתק"}
+            </div>
+          </button>
 
           {/* כפתור וואטסאפ */}
-           <button
-          className="campaign-share-btn"
-          onClick={handleShareWhatsapp}
-          type="button"
-        >
-          <div className="campaign-share-iconCircle whatsapp">
-            <MessageCircle size={22} color="currentColor" strokeWidth={2} />
-          </div>
-          <div className="campaign-share-label">וואטסאפ</div>
-        </button>
-
-          {/* כפתור שיתוף (טלפון / רשתות) */}
-             <button
-          className="campaign-share-btn"
-          onClick={handleNativeShare}
-          type="button"
-        >
-          <div className="campaign-share-iconCircle share">
-            <Share2 size={22} color="currentColor" strokeWidth={2} />
-          </div>
-          <div className="campaign-share-label">שיתוף…</div>
-        </button>
-        </div>
-
-        {/* הצגת הכתובת עצמה (למי שרוצה להעתיק ידנית) */}
-        <div
-          style={{
-            marginTop: "12px",
-            fontSize: "0.7rem",
-            color: "#6b7280",
-            textAlign: "center",
-            wordBreak: "break-all",
-            lineHeight: 1.4,
-          }}
-        >
-          {campaignUrl}
+          <button
+            className="campaign-share-btn"
+            onClick={handleShareWhatsapp}
+            type="button"
+          >
+            <div className="campaign-share-iconCircle whatsapp">
+              <MessageCircle size={22} color="currentColor" strokeWidth={2} />
+            </div>
+            <div className="campaign-share-label">וואטסאפ</div>
+          </button>
+          
+          <button
+            className="campaign-share-btn"
+            onClick={handleNativeShare}
+            type="button"
+          >
+            <div className="campaign-share-iconCircle share">
+              <Share2 size={22} color="currentColor" strokeWidth={2} />
+            </div>
+            <div className="campaign-share-label">שיתוף…</div>
+          </button>
         </div>
       </div>
 

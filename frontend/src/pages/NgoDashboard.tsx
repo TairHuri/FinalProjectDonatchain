@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useCampaigns } from "../contexts/CampaignsContext";
 import { PlusCircle, Home, Users, LogOut, FileText, Settings, FilePenLine } from "lucide-react";
 import NgoDonors from "../components/NgoDonors";
 import CampaignItem from "../components/CampaignItem";
-import { cardStyle, inputStyle, menuBtnStyle, primaryBtnStyle } from "../css/dashboardStyles";
+import { cardStyle,  menuBtnStyle } from "../css/dashboardStyles";
 
 import NgoUsers from "../components/ngo/NgoUsers";
 import UserPersonalDetails from "../components/UserPersonalDetails";
@@ -51,6 +51,9 @@ const NgoDashboard: React.FC = () => {
     if(user!= null) getDonationsCount();
   }, [user])
 
+  useEffect(() => {
+    setEditMode('view')
+  }, [activePage])
 const getDonationsCount = async () => {
   if (!user || !user.ngoId) return;
   const donations = await getDonationsByNgo(user.ngoId);

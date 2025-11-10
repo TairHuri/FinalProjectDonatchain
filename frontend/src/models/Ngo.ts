@@ -15,3 +15,5 @@ export interface Ngo {
     ngoNumber:string;
     isActive: boolean; 
 }
+
+export type NgoMediaType = { logoUrl: File | null, certificate: File | null }
