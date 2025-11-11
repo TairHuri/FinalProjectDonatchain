@@ -19,7 +19,7 @@ import AdminAboutEditor from "./AdminAboutEditor";
 import RulesViewer from "./RulesViewer";
 import AdminRulesEditor from "./AdminRulesEditor";
 import AdminNgoList from "../../components/admin/AdminNgoList"; 
-
+import { useAuth } from "../../contexts/AuthContext";
 interface Stats {
   usersCount: number;
   ngosCount: number;
@@ -34,6 +34,7 @@ const AdminDashboard: React.FC = () => {
     "dashboard" | "donors" | "ngos" | "campaigns" | "terms" | "about"
   >("dashboard");
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
 const [selectedNgo, setSelectedNgo] = useState<any | null>(null);
 
 
@@ -57,11 +58,6 @@ useEffect(() => {
     } catch (err) {
       console.error("שגיאה בטעינת הנתונים:", err);
     }
-  };
-
-  const logout = () => {
-    localStorage.clear();
-    navigate("/admin/login");
   };
 
   return (
@@ -140,15 +136,16 @@ useEffect(() => {
           </button>
         </div>
 
-       <button
-          style={{ ...menuBtnStyle, color: "#f87171" }}
-          onClick={() => {
-            logout();
-            navigate("/");
-          }}
-        >
-          <LogOut size={20} /> יציאה
-        </button>
+<button
+  style={{ ...menuBtnStyle, color: "#f87171" }}
+  onClick={() => {
+    logout();
+    navigate("/", { replace: true });
+  }}
+>
+  <LogOut size={20} /> יציאה
+</button>
+
       </div>
 
       {/* תוכן */}
