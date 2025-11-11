@@ -11,7 +11,8 @@ export default function Navbar() {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [darkMode, setDarkMode] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-
+  const [showContact, setShowContact] = useState(false); 
+  const [copied, setCopied] = useState(false);
   const { user, logout } = useAuth();
 
   const handlBottonClick = (event: React.MouseEvent<HTMLButtonElement>, name: string) => {
@@ -44,6 +45,8 @@ export default function Navbar() {
           עמוד ראשי
         </Link>
       </li>
+
+
 
       {/* תורמים */}
       <li className="dropdownWrapper">
@@ -117,6 +120,15 @@ export default function Navbar() {
           </ul>
         )}
       </li>
+      
+      <li>
+  <button
+    onClick={() => setShowContact(true)}
+    className={`navBtn ${showContact ? "navBtnActive" : ""}`}
+  >
+     צור קשר
+  </button>
+</li>
     </>
   );
 
@@ -225,6 +237,35 @@ export default function Navbar() {
         aria-hidden="true"
         onClick={() => setMobileOpen(false)}
       />
+      
+      {/* צור קשר */}
+      {showContact && (
+        <div className="contactModal" onClick={() => setShowContact(false)}>
+          <div className="contactContent" onClick={(e) => e.stopPropagation()}>
+            <h2>צור קשר עם צוות DonatChain</h2>
+            <p>נשמח לשמוע ממך לגבי שיתופי פעולה, תמיכה טכנית או הצעות לשיפור.</p>
+
+            <div className="emailBox">
+              <span className="emailText">DonatChainSM@gmail.com</span>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText("DonatChainSM@gmail.com");
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 2000);
+                }}
+                className="copyBtn"
+              >
+                {copied ? "✔️ הועתק!" : " העתק מייל"}
+              </button>
+            </div>
+
+            <button className="closeContactBtn" onClick={() => setShowContact(false)}>
+              סגור
+            </button>
+          </div>
+        </div>
+      )}
+
 
       {/* <ul
         id="mobile-menu"
@@ -234,6 +275,8 @@ export default function Navbar() {
       >
         <MenuItems />
       </ul> */}
+
+
     </>
   );
 }
