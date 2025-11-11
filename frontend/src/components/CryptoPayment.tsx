@@ -11,118 +11,151 @@ import type { Donation } from "../models/Donation";
 import Spinner from "./Spinner";
 import { useSpinner } from "./Spinner";
 
-
-
-
 const CryptoPayment = ({ close, campaignId }: { close: () => void, campaignId: string, userId: string }) => {
 
   const { updateCampaign } = useCampaigns();
   const { disconnect } = useDisconnect();
-  const { donateCrypto, waiting, isPending, isSuccess, error, hash } = useCryptoPayment()
-  //const { ngo } = useAuth();
-  const [ccForm, setCcform] = useState<Donation>({comment:'', phone: '', email: '', firstName: '', lastName: '', amount: 0, campaign: campaignId, currency: 'ETH', method: 'crypto', txHash: '', anonymous:false })
-  const [message, setMessage] = useState<string | null>(null)
-  const [showConfirm, setShowConfirm] = useState<boolean>(false)
-  const { isLoading, start, stop } = useSpinner()
-  const [agree, setAgree] = useState(false);
+  const { donateCrypto, waiting, isPending, isSuccess, error, hash } = useCryptoPayment();
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement|HTMLTextAreaElement | HTMLSelectElement>) => {
+  const [ccForm, setCcform] = useState<Donation>({
+    comment: '',
+    phone: '',
+    email: '',
+    firstName: '',
+    lastName: '',
+    amount: 0,
+    campaign: campaignId,
+    currency: 'ETH',
+    method: 'crypto',
+    txHash: '',
+    anonymous: false
+  });
+
+  const [message, setMessage] = useState<string | null>(null);
+  const [showConfirm, setShowConfirm] = useState<boolean>(false);
+  const { isLoading, start, stop } = useSpinner();
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { id, value } = event.target;
-    setCcform({ ...ccForm, [id]: value })
-  }
-  const handleAnonymouse = (checked:boolean) => {
-    setCcform({...ccForm, anonymous:checked})
-  }
+    setCcform({ ...ccForm, [id]: value });
+  };
+
+  const handleAnonymouse = (checked: boolean) => {
+    setCcform({ ...ccForm, anonymous: checked });
+  };
+
   useEffect(() => {
     if (isSuccess && !isPending && hash) {
-      saveDonation()
+      saveDonation();
     }
-  }, [isSuccess, isPending, hash])
+  }, [isSuccess, isPending, hash]);
 
   const saveDonation = async () => {
-
     try {
-      const chargeData = { ...ccForm, campaignId, txHash: hash }
-      const { data, status } = await cryptoDonation(chargeData, campaignId)
-
-      console.log('sent', chargeData)
-      console.log(data, status);
-      if (status == 201) {
+      const chargeData = { ...ccForm, campaignId, txHash: hash };
+      const { data, status } = await cryptoDonation(chargeData, campaignId);
+      if (status === 201) {
         updateCampaign(campaignId);
-        setShowConfirm(true)
+        setShowConfirm(true);
         disconnect();
       } else {
-        setMessage(data.message)
+        setMessage(data.message);
       }
     } catch (error) {
       console.log(error);
-
     } finally {
       stop();
     }
-  }
-
+  };
 
   const handlePayment = async (event: React.FormEvent) => {
     event.preventDefault();
-    try {
-      if (ccForm.amount <= 0) {
-        setMessage("amount must be greater than 0")
-        return;
-      }
-      start();
-      console.log('start spinner');
+    setMessage(null);
 
-      await donateCrypto(`${ccForm.amount}`)
+    // ✅ בדיקת שכל השדות הדרושים מלאים
+    if (!ccForm.firstName.trim()) return setMessage("יש להזין שם פרטי");
+    if (!ccForm.lastName.trim()) return setMessage("יש להזין שם משפחה");
+    if (!ccForm.phone.match(/^[0-9]{3}[\-.]?[0-9]{7}$/))
+      return setMessage("יש להזין מספר פלאפון תקין בפורמט 0501234567");
+    if (!ccForm.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/))
+      return setMessage("יש להזין כתובת מייל תקינה");
+    if (!ccForm.amount || ccForm.amount <= 0)
+      return setMessage("יש להזין סכום תרומה תקין");
+
+    try {
+      start();
+      await donateCrypto(`${ccForm.amount}`);
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      setMessage("אירעה שגיאה בעת ביצוע התרומה, אנא נסי שוב.");
       stop();
     }
-  }
+  };
 
+  if (isLoading) return <Spinner />;
 
-  if (isLoading) return <Spinner />
-  if (showConfirm) return (
-    <div className="result">
-      <h3 className="resultTitle">תרומתך התבצעה בהצלחה</h3>
-      <h3 className="resultSecondTitle">כתובת hash של התרומה: {hash}</h3>
-      <div className="resultLink"><a href={`https://sepolia.etherscan.io/tx/${hash}`} target="_blank">מעבר לתיעוד התרומה</a></div>
-      <div>
-        <button type='button' onClick={close} style={buttonStyle}>אישור</button>
+  if (showConfirm)
+    return (
+      <div className="result">
+        <h3 className="resultTitle">תרומתך התבצעה בהצלחה</h3>
+        <h3 className="resultSecondTitle">כתובת hash של התרומה: {hash}</h3>
+        <div className="resultLink">
+          <a href={`https://sepolia.etherscan.io/tx/${hash}`} target="_blank" rel="noreferrer">
+            מעבר לתיעוד התרומה
+          </a>
+        </div>
+        <div>
+          <button type="button" onClick={close} style={buttonStyle}>אישור</button>
+        </div>
       </div>
-    </div>
-  )
+    );
+
   return (
-    <form onSubmit={handlePayment} style={{ width: '100%' }}>
+    <form onSubmit={handlePayment} style={{ width: "100%" }}>
+      <div style={fildsPositionStyle}>
+        <label htmlFor="firstName" style={labelStyle}>שם פרטי</label>
+        <input id="firstName" placeholder="שם פרטי" type="text" onChange={handleChange} style={inputStyle} />
+        <label htmlFor="lastName" style={labelStyle}>שם משפחה</label>
+        <input id="lastName" placeholder="שם משפחה" type="text" onChange={handleChange} style={inputStyle} />
+      </div>
 
       <div style={fildsPositionStyle}>
-        <label htmlFor="firstName" style={labelStyle}>שם פרטי</label><input id="firstName" placeholder="שם פרטי" type="text" required onChange={handleChange} style={inputStyle} />
-        <label htmlFor="lastName" style={labelStyle}>שם משפחה</label><input id="lastName" placeholder="שם משפחה" type="text" required onChange={handleChange} style={inputStyle} />
+        <label htmlFor="phone" style={labelStyle}>פלאפון</label>
+        <input id="phone" placeholder="מספר פלאפון" type="tel" onChange={handleChange} style={inputStyle} />
+        <label htmlFor="email" style={labelStyle}>מייל</label>
+        <input id="email" placeholder="מייל" type="email" onChange={handleChange} style={inputStyle} />
       </div>
-      <div style={fildsPositionStyle}>
-        <label htmlFor="phone" style={labelStyle}>פלאפון</label><input id="phone" placeholder="מספר פלאפון" pattern="^[0-9]{3}[\-.]?[0-9]{7}$" title="incorrect be xxx.1234567" type="tel" required onChange={handleChange} style={inputStyle} />
-        <label htmlFor="email" style={labelStyle}>מייל</label><input id="email" placeholder="מייל" type="email" required onChange={handleChange} style={inputStyle} />
-      </div>
+
       <div dir="rtl">
-      <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", fontFamily: 'calibri'}}>
-        <input type="checkbox" checked={ccForm.anonymous} onChange={(e) => handleAnonymouse(e.target.checked)}/>
-        הישארו אנונימיים - אני רוצה שבעמוד הקמפיין יופיע רק סכום התרומה</label>
+        <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", fontFamily: "calibri" }}>
+          <input type="checkbox" checked={ccForm.anonymous} onChange={(e) => handleAnonymouse(e.target.checked)} />
+          הישארו אנונימיים - אני רוצה שבעמוד הקמפיין יופיע רק סכום התרומה
+        </label>
       </div>
+
       <div>
         <label htmlFor="comment" style={labelStyle}>תגובה</label>
-        <textarea id="comment" placeholder="כמה מילים על תרומתך" onChange={handleChange} style={inputStyle} ></textarea>
+        <textarea id="comment" placeholder="כמה מילים על תרומתך (לא חובה)" onChange={handleChange} style={inputStyle}></textarea>
       </div>
+
+      {message && (
+        <p style={{ color: "red", textAlign: "center", fontWeight: "bold" }}>{message}</p>
+      )}
+
       <div style={fildsPositionStyle}>
-        <label htmlFor="amount" style={labelStyle}>סכום </label><input id="amount" placeholder="סכום התרומה" required onChange={handleChange} style={inputStyle} />
+        <label htmlFor="amount" style={labelStyle}>סכום</label>
+        <input id="amount" placeholder="סכום התרומה" onChange={handleChange} style={inputStyle} />
       </div>
+
       <div style={fildsPositionStyle}>
         <Crypto waiting={waiting} isPending={isPending} isSuccess={isSuccess} error={error as Error} hash={hash} />
-        <button type='button' onClick={close} style={buttonStyle}>ביטול</button>
+        <button type="button" onClick={close} style={buttonStyle}>ביטול</button>
       </div>
     </form>
-  )
-}
+  );
+};
 
+// ===== פונקציות עזר לקריפטו =====
 const useCryptoPayment = () => {
   const { isConnected, chainId } = useAccount();
   const { switchChain } = useSwitchChain();
@@ -130,22 +163,20 @@ const useCryptoPayment = () => {
   const { isLoading: waiting, isSuccess } = useWaitForTransactionReceipt({ hash });
 
   async function donateCrypto(amountEth: string) {
-    console.log('amountEth', amountEth);
-    if (!isConnected) { alert('התחברי לארנק'); return; }
-    if (chainId !== sepolia.id) { switchChain({ chainId: sepolia.id }); return; }
+    if (!isConnected) return alert("התחברי לארנק");
+    if (chainId !== sepolia.id) return switchChain({ chainId: sepolia.id });
 
-    // הקריאה לחוזה שלך: זה שולח tx מהארנק של התורם אל כתובת החוזה
     writeContract({
       address: CONTRACT,
       abi: HUB_ABI,
-      functionName: 'donateCrypto',
+      functionName: "donateCrypto",
       args: [BigInt(CAMPAIGN_ID)],
-      value: parseEther(amountEth || '0.01'),
+      value: parseEther(amountEth || "0.01"),
     });
   }
 
-  return { donateCrypto, waiting, isSuccess, hash, isPending, error }
-}
+  return { donateCrypto, waiting, isSuccess, hash, isPending, error };
+};
 
 const HUB_ABI = hubAbiJson.abi as Abi;
 const CONTRACT = import.meta.env.VITE_CONTRACT_ADDRESS as `0x${string}`;
@@ -156,23 +187,20 @@ type CryptoProps = {
   waiting: boolean;
   isSuccess: boolean;
   hash: string | undefined;
-  error: Error
+  error: Error;
+};
 
-}
 function Crypto({ waiting, isPending, isSuccess, error }: CryptoProps) {
-
   return (
     <div dir="rtl" style={{ padding: 24 }}>
       <ConnectButton accountStatus="address" />
-
       <button disabled={isPending || waiting} style={buttonStyle}>
-        {isPending || waiting ? 'שולח…' : 'לתרומה בקריפטו'}
+        {isPending || waiting ? "שולח…" : "לתרומה בקריפטו"}
       </button>
-      {error && <div style={{ color: 'crimson' }}>{(error as any).shortMessage || error.message}</div>}
-      {isSuccess && <div style={{ color: 'green' }}>הושלם ✅</div>}
+      {error && <div style={{ color: "crimson" }}>{(error as any).shortMessage || error.message}</div>}
+      {isSuccess && <div style={{ color: "green" }}>הושלם ✅</div>}
     </div>
   );
 }
 
-export default CryptoPayment
-
+export default CryptoPayment;
