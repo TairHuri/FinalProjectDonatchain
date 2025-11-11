@@ -1,19 +1,26 @@
-
-
 import { useState } from "react";
-import "../../css/TabsButtons.css"; 
+import "../../css/TabsButtons.css";
 
-const TabsButtons =  ({active, setActive, tabs}:{active:number, setActive:(index:number)=>void, tabs:{id:number, label:string}[]}) => {
-  
+interface TabItem {
+  id: number;
+  label: string;
+}
 
+interface TabsButtonsProps {
+  active: number;
+  setActive: (index: number) => void;
+  tabs: TabItem[];
+}
+
+const TabsButtons = ({ active, setActive, tabs }: TabsButtonsProps) => {
   return (
     <div className="tabs-wrapper">
       {tabs.map((item) => (
         <button
           key={item.id}
+          type="button"
           className={`tab-btn ${active === item.id ? "active" : ""}`}
           onClick={() => setActive(item.id)}
-          type="button"
         >
           {item.label}
         </button>
@@ -22,9 +29,10 @@ const TabsButtons =  ({active, setActive, tabs}:{active:number, setActive:(index
   );
 };
 
-export const useTabsButtons = () => {
-    const [active, setActive] = useState<number>(0);
-    return{active, setActive}
-}
+// Hook לניהול מצב יחיד של טאב פעיל
+export const useTabsButtons = (defaultActive: number = 0) => {
+  const [active, setActive] = useState<number>(defaultActive);
+  return { active, setActive };
+};
 
 export default TabsButtons;

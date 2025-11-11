@@ -2,7 +2,7 @@
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
-  direction: rtl;            /* כי את בעברית */
+  direction: rtl;            
 }
 
 .tab-btn {

@@ -3,9 +3,9 @@ import { useRef, useState, useEffect } from "react";
 
 type Props = {
   images: string[];
-  imageBaseUrl?: string;     // אם את שומרת רק שמות קבצים
-  movie?: string | null;     // קישור לווידאו (לא חובה)
-  rtl?: boolean;             // למקרה שתרצי לשלוט בזה מבחוץ
+  imageBaseUrl?: string;     
+  movie?: string | null;     
+  rtl?: boolean;           
 };
 
 export default function SimpleGallery({ images, imageBaseUrl = "", movie, rtl = true }: Props) {

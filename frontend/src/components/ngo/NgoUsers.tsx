@@ -110,36 +110,37 @@ const NgoUsers = () => {
         <div className={'container'}>
             <AlertDialog show={message != ""} isFailure={true} message={message} failureOnClose={() => setMessage("")} />
 
-            {/* טאבים */}
-            {/* TABS */}
-            <div className='tabsRow'>
-                <button
-                    className={`tabBtn ${activeTab === "pending" ? 'tabActive' : ""}`}
-                    onClick={() => setActiveTab("members")}
-                >
-                    חברי עמותה
-                    <span className='tabCount'>{activeMembers.length}</span>
-                </button>
+<div className='tabsRow'>
+  {/* טאב חברי עמותה */}
+  <button
+    className={`tabBtn ${activeTab === "members" ? 'tabActive' : ""}`}
+    onClick={() => setActiveTab("members")}
+  >
+    חברי עמותה
+    <span className='tabCount'>{activeMembers.length}</span>
+  </button>
 
-                {/* טאב בקשות — מנהל בלבד */}
-                {isCurrentManager && (
-                    <button
-                        className={`tabBtn ${activeTab === "pending" ? 'tabActive' : ""}`}
-                        onClick={() => setActiveTab("pending")}
-                    >
-                        בקשות הצטרפות
-                        <span className='tabCount'>{pendingMembers.length}</span>
-                    </button>
-                )}
+  {/* טאב בקשות — מנהל בלבד */}
+  {isCurrentManager && (
+    <button
+      className={`tabBtn ${activeTab === "pending" ? 'tabActive' : ""}`}
+      onClick={() => setActiveTab("pending")}
+    >
+      בקשות הצטרפות
+      <span className='tabCount'>{pendingMembers.length}</span>
+    </button>
+  )}
 
-                <button
-                    className={`tabBtn ${activeTab === "board" ? 'tabActive' : ""}`}
-                    onClick={() => setActiveTab("board")}
-                >
-                    לוח הודעות
-                    <span className='tabCount'>{messages.length}</span>
-                </button>
-            </div>
+  {/* טאב לוח הודעות */}
+  <button
+    className={`tabBtn ${activeTab === "board" ? 'tabActive' : ""}`}
+    onClick={() => setActiveTab("board")}
+  >
+    לוח הודעות
+    <span className='tabCount'>{messages.length}</span>
+  </button>
+</div>
+
 
             {/* TAB CONTENT */}
             <div className='tabContentCard'>
