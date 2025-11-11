@@ -48,17 +48,27 @@ useEffect(() => {
 
 
 
-  const fetchStats = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/admin/stats`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setStats(res.data);
-    } catch (err) {
-      console.error("שגיאה בטעינת הנתונים:", err);
-    }
-  };
+const fetchStats = async () => {
+  try {
+    const token = localStorage.getItem("token");
+
+    // בקשה לסטטיסטיקות כלליות
+    const statsRes = await axios.get(`${import.meta.env.VITE_API_URL}/admin/stats`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    // בקשה לרשימת עמותות
+    const ngosRes = await axios.get(`${import.meta.env.VITE_API_URL}/ngos`);
+
+    setStats({
+      ...statsRes.data,
+      ngosCount: ngosRes.data.items?.length ?? 0,
+    });
+  } catch (err) {
+    console.error("שגיאה בטעינת הנתונים:", err);
+  }
+};
+
 
   return (
     <div
