@@ -169,7 +169,14 @@ if (!isValidPassword(user.password)) {
       }
 
       // בדיקת תקינות חשבון בנק
-  if (!isValidIsraeliID(idNumber)) {
+if (!isValidBankAccount(ngo.bankAccount || "")) {
+  setIsFailure(true);
+  setMessage("מספר חשבון הבנק אינו תקין. יש להזין בין 6 ל-10 ספרות בלבד.");
+  setShowAlert(true);
+  return;
+}
+
+      if (!isValidIsraeliID(idNumber)) {
     setIsFailure(true);
     setMessage("תעודת זהות אינה תקינה");
     setShowAlert(true);
