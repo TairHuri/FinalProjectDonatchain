@@ -60,14 +60,25 @@ const fetchStats = async () => {
     // בקשה לרשימת עמותות
     const ngosRes = await axios.get(`${import.meta.env.VITE_API_URL}/ngos`);
 
+    // בקשה לכל התרומות (בשביל חישוב מצטבר)
+    const donationsRes = await axios.get(`${import.meta.env.VITE_API_URL}/donations`);
+
+    // חישוב סכום כולל של כל התרומות בפועל
+    const totalRaisedFromDonations = donationsRes.data.reduce(
+      (sum: number, donation: any) => sum + (donation.amount || 0),
+      0
+    );
+
     setStats({
       ...statsRes.data,
       ngosCount: ngosRes.data.items?.length ?? 0,
+      totalRaised: totalRaisedFromDonations, // כאן מחליפים את הסכום לחישוב המעודכן
     });
   } catch (err) {
     console.error("שגיאה בטעינת הנתונים:", err);
   }
 };
+
 
 
   return (
