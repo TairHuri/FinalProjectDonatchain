@@ -60,11 +60,16 @@ export default function RegistrationNgo() {
     setMedia({ ...media, [field]: value ? value[0] : null });
   };
 
-  const handleChangeData = (field: string, value: string | number) => {
-    const n = ngoList.find((x) => x.name === value);
-    if (!n) return;
-    setUser({ ...user, ngoId: n._id });
-  };
+const handleChangeData = (field: string, value: string | number) => {
+  const n = ngoList.find(
+    (x) =>
+      x.name === value ||
+      (x.ngoNumber && x.ngoNumber.toString() === value.toString())
+  );
+  if (!n) return;
+  setUser({ ...user, ngoId: n._id });
+};
+
 
   const loadNgoList = async () => {
     const res = await getNgoList();
@@ -334,11 +339,16 @@ if (!isValidBankAccount(ngo.bankAccount || "")) {
                   onChange={(e) => handleChangeData("ngoId", e.target.value)}
                   className="input-field"
                 />
-                <datalist id="ngoList">
-                  {ngoList.map((n) => (
-                    <option key={n._id} value={n.name} />
-                  ))}
-                </datalist>
+<datalist id="ngoList">
+  {ngoList.map((n) => (
+    <option
+      key={n._id}
+      value={n.name}
+      label={n.ngoNumber ? `(${n.ngoNumber})` : ""}
+    />
+  ))}
+</datalist>
+
               </div>
             )}
 
