@@ -155,10 +155,11 @@ export const toggleCampaignStatus = async (req: Request, res: Response) => {
       campaign,
     });
   } catch (err: any) {
-    console.error("❌ שגיאה בעדכון סטטוס קמפיין:", err);
+    console.error(" שגיאה בעדכון סטטוס קמפיין:", err);
     res.status(500).json({ message: err.message || "שגיאת שרת" });
   }
 };
+
 
 export const getCampagnsByNgo = async (req: Request, res: Response) => {
   try {

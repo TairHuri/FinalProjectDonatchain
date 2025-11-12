@@ -2,14 +2,20 @@ import mongoose from 'mongoose';
 import { config } from './config';
 import app from './app';
 import logger from './utils/logger';
-import {createAdmin} from './scripts/createAdmin'
+import { createAdmin } from './scripts/createAdmin';
+import { startCampaignStatusJob } from "./jobs/campaignScheduler"; // ✅
 
 const start = async () => {
   try {
     await mongoose.connect(config.mongoUri);
     logger.info('Connected to MongoDB');
+
     createAdmin();
-    app.listen(+config.port,'0.0.0.0', () =>
+
+    //  הפעלת מתזמן הקמפיינים אחרי שהמסד מוכן
+    startCampaignStatusJob();
+
+    app.listen(+config.port, '0.0.0.0', () =>
       logger.info(`Server listening on port ${config.port}`)
     );
   } catch (err) {
