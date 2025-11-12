@@ -67,10 +67,36 @@ setActivePage("editCampaign");
 setCampaignId(id);
   }
 console.log(user);
+ const getDashboardSizeClass = () => {
+    switch (activePage) {
+      case "dashboard":
+        return "medium";
+      case "newCampaign":
+      case "editCampaign":
+      case "ngoDetails":
+        return "large";
+      case "campaigns":
+      case "donors":
+      case "ngoUsers":
+      case "profile":
+      case "adminRequest":
+        return "small";
+      default:
+        return "medium";
+    }
+  };
 
-if (!user || !user.ngoId) return;
+  if (!user || !user.ngoId) return;
   return (
-    <div dir="rtl" style={{ display: "flex", backgroundColor: "#f7f9fc", width: '90vw',marginTop: '5px' }}>
+    <div
+      dir="rtl"
+      style={{
+        display: "flex",
+        backgroundColor: "#f7f9fc",
+        width: "90vw",
+        marginTop: "5px",
+      }}
+    >
       {/* סרגל צד */}
       <div
         style={{
@@ -87,10 +113,8 @@ if (!user || !user.ngoId) return;
           <h2 style={{ fontSize: "20px", fontWeight: "bold", marginBottom: "20px" }}>
             ניהול עמותה
           </h2>
-          <button
-            onClick={() => setActivePage("dashboard")}
-            style={menuBtnStyle}
-          >
+
+          <button onClick={() => setActivePage("dashboard")} style={menuBtnStyle}>
             <Home size={20} /> דף הבית
           </button>
           <button
@@ -114,18 +138,26 @@ if (!user || !user.ngoId) return;
           <button onClick={() => setActivePage("donors")} style={menuBtnStyle}>
             <Users size={20} /> תורמי העמותה
           </button>
-          
-          {user!.role === "manager" && (<button onClick={() => setActivePage("adminRequest")} style={menuBtnStyle}>
-            <FilePenLine size={20} /> בקשות מהמערכת
-          </button>)}
+
+          {user!.role === "manager" && (
+            <button onClick={() => setActivePage("adminRequest")} style={menuBtnStyle}>
+              <FilePenLine size={20} /> בקשות מהמערכת
+            </button>
+          )}
         </div>
-        <button style={{ ...menuBtnStyle, color: "#f87171" }} onClick={() => {logout();navigate("/");}}>
+        <button
+          style={{ ...menuBtnStyle, color: "#f87171" }}
+          onClick={() => {
+            logout();
+            navigate("/");
+          }}
+        >
           <LogOut size={20} /> יציאה
         </button>
       </div>
 
-      {/* תוכן */}
-      <div style={{ flex: 1, padding: "30px" }}>
+      {/* תוכן הדשבורד */}
+      <div className={`dashboard-content ${getDashboardSizeClass()}`} style={{ flex: 1, padding: "30px" }}>
         {activePage === "ngoDetails" && <NgoDetails editMode={editMode} setEditMode={setEditMode} />}
         {activePage === "ngoUsers" && <NgoUsers />}
         {activePage === "dashboard" && (
@@ -145,29 +177,33 @@ if (!user || !user.ngoId) return;
         )}
         {activePage == "adminRequest" && <AdminRequest />}
         {activePage == "donors" && <NgoDonors />}
-        {activePage === "newCampaign" && (<CreateCampaign postSave={() => setActivePage("campaigns")} />)}
+        {activePage === "newCampaign" && <CreateCampaign postSave={() => setActivePage("campaigns")} />}
         {activePage === "profile" && <UserPersonalDetails editMode={editMode} setEditMode={setEditMode} />}
 
         {activePage === "campaigns" && (
           <div className="ngo-campaigns-container">
-            <h2 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "20px" }}>
-              הקמפיינים שלי
-            </h2>
+            <h2 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "20px" }}>הקמפיינים שלי</h2>
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-             
-              <TabsButtons active={active} setActive={setActive} tabs={tabs}/>
+              <TabsButtons active={active} setActive={setActive} tabs={tabs} />
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: "20px" }}>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))",
+                gap: "20px",
+              }}
+            >
               {campaigns.filter(campaignFilters[active]).map((c) => (
                 <div key={c._id}>
-                  <CampaignItem c={c} showButtons={true} edit={editCampaign}/>
-                 
+                  <CampaignItem c={c} showButtons={true} edit={editCampaign} />
                 </div>
               ))}
             </div>
           </div>
         )}
-        {activePage == "editCampaign" && <EditCampaign campaignId={campaignId!} editMode={editMode} setEditMode={setEditMode} /> }
+        {activePage == "editCampaign" && (
+          <EditCampaign campaignId={campaignId!} editMode={editMode} setEditMode={setEditMode} />
+        )}
       </div>
     </div>
   );

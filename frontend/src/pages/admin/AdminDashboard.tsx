@@ -47,35 +47,51 @@ useEffect(() => {
 }, [activePage]);
 
 
-
 const fetchStats = async () => {
   try {
     const token = localStorage.getItem("token");
 
-    // בקשה לסטטיסטיקות כלליות
-    const statsRes = await axios.get(`${import.meta.env.VITE_API_URL}/admin/stats`, {
-      headers: { Authorization: `Bearer ${token}` },
+    setStats({
+      usersCount: 0,
+      ngosCount: 0,
+      campaignsCount: 0,
+      donationsCount: 0,
+      totalRaised: 0,
     });
 
-    // בקשה לרשימת עמותות
-    const ngosRes = await axios.get(`${import.meta.env.VITE_API_URL}/ngos`);
+    const [statsRes, ngosRes, donationsRes] = await Promise.all([
+      axios.get(`${import.meta.env.VITE_API_URL}/admin/stats`, {
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+      axios.get(`${import.meta.env.VITE_API_URL}/ngos`),
+      axios.get(`${import.meta.env.VITE_API_URL}/donations`, {
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+    ]);
 
-    // בקשה לכל התרומות (בשביל חישוב מצטבר)
-    const donationsRes = await axios.get(`${import.meta.env.VITE_API_URL}/donations`);
 
-    // חישוב סכום כולל של כל התרומות בפועל
-    const totalRaisedFromDonations = donationsRes.data.reduce(
-      (sum: number, donation: any) => sum + (donation.amount || 0),
-      0
-    );
+    const totalRaisedFromDonations = Array.isArray(donationsRes.data)
+      ? donationsRes.data.reduce(
+          (sum: number, donation: any) => sum + (donation.amount || 0),
+          0
+        )
+      : 0;
+
+    const donationsCount = Array.isArray(donationsRes.data)
+      ? donationsRes.data.length
+      : 0;
 
     setStats({
-      ...statsRes.data,
+      usersCount: statsRes.data.usersCount ?? 0,
       ngosCount: ngosRes.data.items?.length ?? 0,
-      totalRaised: totalRaisedFromDonations, // כאן מחליפים את הסכום לחישוב המעודכן
+      campaignsCount: statsRes.data.campaignsCount ?? 0,
+      donationsCount,
+      totalRaised: totalRaisedFromDonations,
     });
+
+    console.log("✅ הנתונים רועננו בהצלחה!");
   } catch (err) {
-    console.error("שגיאה בטעינת הנתונים:", err);
+    console.error("❌ שגיאה בטעינת הנתונים בדשבורד המנהל:", err);
   }
 };
 
