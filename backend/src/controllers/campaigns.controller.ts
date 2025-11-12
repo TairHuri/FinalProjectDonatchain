@@ -141,7 +141,6 @@ export const toggleCampaignStatus = async (req: Request, res: Response) => {
       (campaign.ngo as any)?._id?.toString?.() ||
       (typeof campaign.ngo === "string" ? campaign.ngo : null);
 
-    console.log("🔍 userNgoId:", userNgoId, "campaignNgoId:", campaignNgoId);
 
     // בדיקת הרשאה — רק מנהל מערכת או חבר באותה עמותה
     if (req.user!.role == 'admin' || (req.user as any).ngoId.toString() != (campaign.ngo as unknown as INgo)._id.toString()) return res.status(403).json({ message: "You are not part of this NGO" });
@@ -155,7 +154,7 @@ export const toggleCampaignStatus = async (req: Request, res: Response) => {
       campaign,
     });
   } catch (err: any) {
-    console.error("❌ שגיאה בעדכון סטטוס קמפיין:", err);
+    console.error("שגיאה בעדכון סטטוס קמפיין:", err);
     res.status(500).json({ message: err.message || "שגיאת שרת" });
   }
 };
