@@ -76,13 +76,13 @@ const CampaignDetails: React.FC = () => {
   const percent = Math.min((campaign.raised / campaign.goal) * 100, 100);
   return (
     <div dir="rtl" style={{ justifyContent: 'center', background: "white", padding: "24px", borderRadius: "12px", margin: "0 auto", width: "80vw" }}>
-      {/* לוגו ושם קמפיין */}
+      {/* */}
       <div style={{ display: "flex", alignItems: "center" }}>
         <img src={`${IMAGE_URL}/${(campaign.ngo as unknown as Ngo).logoUrl}`} alt="ngo logo" style={{ width: "130px", height: "auto", borderRadius: "50%" }} />
         <h1 style={{ flex: 1, fontSize: '3rem', color: "#000000ff", textAlign: 'center' }}>{campaign.title}</h1>
       </div>
 
-      {/* פס התקדמות */}
+      {/**/}
       <div style={{ marginTop: "20px" }}>
         <div style={{ width: "100%", background: "#e5e7eb", borderRadius: "10px", height: "14px" }}>
           <div style={{ width: `${percent}%`, height: "14px", background: "#22c55e", borderRadius: "10px" }} />
@@ -93,7 +93,7 @@ const CampaignDetails: React.FC = () => {
         <p style={{ fontSize: "14px", color: "#666" }}>מספר תורמים: {campaign.numOfDonors}</p>
       </div>
 
-      {/* כפתורים */}
+      {/* */}
       <div style={{ display: "flex", gap: "12px", marginTop: "20px" }}>
         <button className='donate-button' style={{ flex: 1, backgroundColor: "green", color: "white", padding: "10px", borderRadius: "8px", border: "none" }}
           onClick={() => setShowCreditPay(true)}
@@ -110,16 +110,16 @@ const CampaignDetails: React.FC = () => {
       <Modal show={showCryptoPay} onClose={() => setShowCryptoPay(false)} component={<CryptoPayment close={() => setShowCryptoPay(false)} campaignId={campaign._id!} userId={campaign.ngo} />} />
       <Modal show={showCreditPay} onClose={() => setShowCreditPay(false)} component={<CreditPayment close={() => setShowCreditPay(false)} campaignId={campaign._id!} userId={campaign.ngo} />} />
       <ShareCampaign campaign={campaign} />
-      {/* תמונות וסרטון */}
+      {/* */}
       <div style={{ display: "flex", gap: "10px", marginTop: "20px", overflowX: "hidden" }}>
         <SimpleGallery
           images={campaign.images}
-          imageBaseUrl={IMAGE_URL}   // אם צריך
+          imageBaseUrl={IMAGE_URL}  
           movie={campaign.movie}
         />
       </div>
 
-      {/* טאבים */}
+      {/**/}
       <div style={{ marginTop: "24px" }}>
         <div style={{ display: "flex", gap: "16px", borderBottom: "1px solid #ccc" }}>
           <button onClick={() => setActiveTab("project")} style={{ padding: "8px", fontWeight: activeTab === "project" ? "bold" : "normal" }}>
