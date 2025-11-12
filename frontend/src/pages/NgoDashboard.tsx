@@ -97,7 +97,7 @@ console.log(user);
         marginTop: "5px",
       }}
     >
-      {/* סרגל צד */}
+      {/**/}
       <div
         style={{
           width: "20vw",
@@ -156,7 +156,7 @@ console.log(user);
         </button>
       </div>
 
-      {/* תוכן הדשבורד */}
+      {/**/}
       <div className={`dashboard-content ${getDashboardSizeClass()}`} style={{ flex: 1, padding: "30px" }}>
         {activePage === "ngoDetails" && <NgoDetails editMode={editMode} setEditMode={setEditMode} />}
         {activePage === "ngoUsers" && <NgoUsers />}
@@ -167,7 +167,7 @@ console.log(user);
             </h1>
             <p style={{ fontSize: "18px", marginTop: "10px" }}>זהו האזור האישי שלך.</p>
 
-            {/* סטטיסטיקות */}
+            {/* */}
             <div style={{ display: "flex", gap: "20px", marginTop: "30px" }}>
               {statCard("קמפיינים פעילים", campaigns.filter(campaignFilters[1]).length)}
               {statCard("סכום כולל", "₪" + campaigns.reduce((a, c) => a + c.raised, 0).toFixed(2))}
