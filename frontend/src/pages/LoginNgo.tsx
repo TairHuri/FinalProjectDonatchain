@@ -62,7 +62,7 @@ const LoginNgo: React.FC = () => {
           }}
           className="login-form"
         >
-          {/* שדה אימייל */}
+          {/* mail field */}
           <div className="input-group">
             <Mail className="input-icon" />
             <input

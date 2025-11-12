@@ -68,10 +68,12 @@
   display:flex; gap:.6rem; padding:0 14px 14px; justify-content:space-between;
 }
 .btn-primary{
-  flex:1; text-align:center; border:0; cursor:pointer; font-weight:800;
+  font-family:"Heebo", system-ui, Segoe UI, Arial, sans-serif;
+  flex:1; text-align:center; border:0; cursor:pointer; font-weight:700;
   border-radius:10px; padding:.55rem .8rem; color:#fff;
-  background:linear-gradient(135deg,#345e6c,#739a86);
-  box-shadow:0 8px 18px rgba(52,94,108,.20); transition: filter .15s, transform .15s;
+  background:#345e6c;
+  /* background:linear-gradient(135deg,#345e6c,#739a86); */
+  box-shadow:0 8px 18px rgba(214, 229, 234, 0.2); transition: filter .15s, transform .15s;
 }
 .btn-primary:hover{ filter:brightness(1.05); transform: translateY(-1px) }
 

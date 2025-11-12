@@ -1,20 +1,10 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import {
-  Users,
-  Building2,
-  FileText,
-  Heart,
-  Settings,
-  Home,
-  LogOut,
-} from "lucide-react";
+import {Users,Building2,FileText,Heart,Settings,Home,LogOut,} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { cardStyle, menuBtnStyle } from "../../css/dashboardStyles";
 import AdminDonors from "../../components/AdminDonors";
 import CampaignList from "../../components/CampaignList";
-import NgoList from "../admin/NgoList"; 
-import NgoDetails from "../../components/admin/NgoDetails"; 
 import AdminAboutEditor from "./AdminAboutEditor";
 import RulesViewer from "./RulesViewer";
 import AdminRulesEditor from "./AdminRulesEditor";
@@ -101,7 +91,7 @@ useEffect(() => {
             onClick={() => setActivePage("dashboard")}
             style={menuBtnStyle}
           >
-            <Home size={20} /> דשבורד
+            <Home size={20} /> ראשי
           </button>
 
           <button

@@ -64,7 +64,7 @@ const NgoPageForUsers: React.FC = () => {
 
                     <div className="ngo-actions">
                         <button
-                            className="btn-primary"
+                            className="btn-our-campaigns"
                             onClick={() => nav(`/campaigns/${ngo._id}`)}
                         >
                             הקמפיינים שלנו

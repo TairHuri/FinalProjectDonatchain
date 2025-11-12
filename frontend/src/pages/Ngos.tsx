@@ -42,7 +42,7 @@ export default function Ngos() {
         );
 
     return (
-        <div dir="rtl" style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+        <div dir="rtl" style={{ display: "flex", flexDirection: "column", gap: "20px", width: "80%" }}>
             {/* כותרת */}
             <h1 style={{ fontSize: "24px", fontWeight: "bold", color: "#374151" }}>רשימת עמותות</h1>
 
@@ -106,10 +106,13 @@ export default function Ngos() {
             </div>
 
             {/* רשימת עמותות */}
-            
+
                 <div className={view == 'grid'?'ngos-container_grid':'ngos-container_flex'}>
                     {filteredNgos.map((ngo) => <NgoItem key={ngo._id} ngo={ngo} view={view}/>)}
                 </div> 
         </div>
     );
 }
+
+
+

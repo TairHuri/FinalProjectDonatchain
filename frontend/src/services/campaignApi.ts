@@ -71,6 +71,14 @@ export async function getAllCampaigns(token: string) {
   if (!res.ok) throw new Error(await res.text());
   return res.json();
 }
+export async function getCampaignReport(token: string, campaignId:string, includeDonations:string, includeComments:string) {
+  //window.open(`/api/campaigns/${id}/export.pdf`, '_blank');
+  const res = await fetch(`${API_URL}/campaigns/reports/${campaignId}?includeDonations=${includeDonations}&includeComments=${includeComments}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error(await res.text());
+  
+}
 export async function getCampaignTags() {
   const res = await fetch(`${API_URL}/campaigns/tags`);
   if (!res.ok) throw new Error(await res.text());

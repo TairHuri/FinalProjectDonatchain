@@ -10,6 +10,8 @@ import "../css/campaign/CreateCampaign.css"; // ⬅️ שימוש באותם ס�
 import "../css/campaign/EditCampaign.css"
 import type { User } from "../models/User";
 import AlertDialog, { useAlertDialog } from "./gui/AlertDialog";
+import Modal from "./gui/Modal";
+import ReportDialog from "./campaign/ReportDialog";
 
 type MediaType = {
   images: { value: FileList | null, ref: React.RefObject<HTMLInputElement | null> },
@@ -32,11 +34,12 @@ const EditCampaign = ({
   const { campaigns, postUpdateCampaign } = useCampaigns();
   const IMAGE_URL = import.meta.env.VITE_IMAGES_URL || "http://localhost:4000/images";
 
-  const [campaignTags, setCampaignTags] = useState<{[key:string]:string}[]>([])
+  const [campaignTags, setCampaignTags] = useState<{ [key: string]: string }[]>([])
   const { showConfirm, openConfirm, closeConfirm } = useConfirmDialog()
-  const {showAlert, isFailure, setIsFailure, message, setMessage, setShowAlert} = useAlertDialog()
+  const { showAlert, isFailure, setIsFailure, message, setMessage, setShowAlert } = useAlertDialog()
   const [campaign, setCampaign] = useState<Campaign | null>();
   const [disableStartDate, setDisableStartDate] = useState<boolean>(false)
+  const [showReportOptions, setShowReportOptions] = useState<boolean>(false)
   const [media, setMedia] = useState<MediaType>({
     images: { value: null as FileList | null, ref: useRef<HTMLInputElement>(null) },
     movie: { value: null as File | null, ref: useRef<HTMLInputElement>(null) },
@@ -70,38 +73,38 @@ const EditCampaign = ({
     }
   }
 
-const handleSaveChanges = async () => {
-  if (!campaign || !user.token) return;
-  if (!campaign.title || !campaign._id) {
-    alert("יש למלא את כל השדות");
-    return;
-  }
+  const handleSaveChanges = async () => {
+    if (!campaign || !user.token) return;
+    if (!campaign.title || !campaign._id) {
+      alert("יש למלא את כל השדות");
+      return;
+    }
 
-  
-  if (Number(campaign.goal) < Number(campaign.raised)) {
-    alert(`לא ניתן להגדיר סכום יעד (${campaign.goal} ₪) קטן מהסכום שכבר גויס (${campaign.raised} ₪).`);
-    return;
-  }
 
-  const images: File[] = [];
-  if (media.images.value) for (const img of media.images.value) images.push(img);
+    if (Number(campaign.goal) < Number(campaign.raised)) {
+      alert(`לא ניתן להגדיר סכום יעד (${campaign.goal} ₪) קטן מהסכום שכבר גויס (${campaign.raised} ₪).`);
+      return;
+    }
 
-  try {
-    const updatedCampaign = await updateCampaign(
-      campaign,
-      user.token,
-      images,
-      media.movie.value,
-      media.mainImage.value
-    );
-    if (updatedCampaign._id) postUpdateCampaign(updatedCampaign);
-    alert("קמפיין עודכן בהצלחה");
-    setEditMode("view");
-  } catch (error) {
-    console.log(error);
-    alert("עדכון הקמפיין נכשל");
-  }
-};
+    const images: File[] = [];
+    if (media.images.value) for (const img of media.images.value) images.push(img);
+
+    try {
+      const updatedCampaign = await updateCampaign(
+        campaign,
+        user.token,
+        images,
+        media.movie.value,
+        media.mainImage.value
+      );
+      if (updatedCampaign._id) postUpdateCampaign(updatedCampaign);
+      alert("קמפיין עודכן בהצלחה");
+      setEditMode("view");
+    } catch (error) {
+      console.log(error);
+      alert("עדכון הקמפיין נכשל");
+    }
+  };
 
 
   useEffect(() => {
@@ -155,10 +158,10 @@ const handleSaveChanges = async () => {
   const handleToggle = async (id: string) => {
     try {
       const res = await toggleCampaignStatus(id, user.token!);
-      
+
       setIsFailure(false);
       setMessage(res.message || "הסטטוס עודכן בהצלחה")
-      setCampaign({...campaign!,isActive:!campaign?.isActive})
+      setCampaign({ ...campaign!, isActive: !campaign?.isActive })
     } catch (err) {
       console.error((err as any).message);
       closeConfirm()
@@ -167,10 +170,10 @@ const handleSaveChanges = async () => {
     } finally {
       closeConfirm()
       setShowAlert(true)
-     }
+    }
   };
 
-  
+
   const toggleTag = (tag: string) => {
     if (!campaign) return;
     const tags = campaign.tags || [];
@@ -211,16 +214,20 @@ const handleSaveChanges = async () => {
                   עריכת פרטים
                 </button>
                 <button style={{ ...primaryBtnStyle }} onClick={openConfirm}>
-                  {campaign.isActive? 'השהייה/מחיקה' : 'הפעל'}
+                  {campaign.isActive ? 'השהייה/מחיקה' : 'הפעל'}
+                </button>
+                <button style={{ ...primaryBtnStyle }} onClick={() => setShowReportOptions(prev => !prev)}>
+                  יצירת דו״ח
                 </button>
               </div>
+              <Modal component={<ReportDialog campaignId={campaign._id!} token={user.token!} close={() => setShowReportOptions(prev => !prev)} />} show={showReportOptions} />
               <ConfirmDialog
                 show={showConfirm}
                 onYes={() => handleToggle(campaign._id!)}
                 onNo={closeConfirm}
-                message={campaign.isActive? 'פעולה זו תמחק/תשהה את הקמפיין' : 'פעולה זו תפעיל את הקמפיין'}
+                message={campaign.isActive ? 'פעולה זו תמחק/תשהה את הקמפיין' : 'פעולה זו תפעיל את הקמפיין'}
               />
-              <AlertDialog message={message} show={showAlert} isFailure={isFailure} failureOnClose={() =>setShowAlert(false)} successOnClose={() =>setShowAlert(false)}/>
+              <AlertDialog message={message} show={showAlert} isFailure={isFailure} failureOnClose={() => setShowAlert(false)} successOnClose={() => setShowAlert(false)} />
             </div>
           )}
 
@@ -336,7 +343,7 @@ const handleSaveChanges = async () => {
                 </div>
 
                 <div className="cc-chips">
-                  {campaignTags.map(({tag}) => {
+                  {campaignTags.map(({ tag }) => {
                     const selected = (campaign.tags || []).includes(tag);
                     const disabled = !selected && (campaign.tags || []).length >= 3;
                     return (
@@ -380,5 +387,7 @@ const handleSaveChanges = async () => {
     </div>
   )
 }
+
+
 
 export default EditCampaign;

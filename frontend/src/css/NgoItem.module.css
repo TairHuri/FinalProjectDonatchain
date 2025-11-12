@@ -1,0 +1,150 @@
+/* .ngo-grid-item {
+    background: white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.ngo-flex-item {
+    background: white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.ngo-link_item {
+    display: block;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+} */
+
+
+.link{
+  display:block;
+  text-decoration:none;
+  color:inherit;
+  height:100%;
+  min-width:0;
+}
+
+/* Card */
+.card{
+  position:relative;
+  background:#fff;
+  border:1px solid #e3ece9;
+  border-radius:14px;
+  box-shadow:0 8px 22px rgba(30,40,38,.08);
+  overflow:hidden;
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+}
+.card:hover{
+  transform: translateY(-2px);
+  border-color:#d9e6e2;
+  box-shadow:0 12px 32px rgba(30,40,38,.12);
+}
+
+/* Grid vs List */
+.grid .media{
+  /* כמו בקמפיינים יש area ויזואלית קבועה, אבל 1:1 ללוגו */
+  aspect-ratio:1/1;
+  min-height:136px;
+  background:#f0f2f1;
+  display:grid;
+  place-items:center;
+  border-bottom:1px solid #e9f0ee;
+}
+.list{
+  flex-direction:row-reverse;
+  align-items:center;
+  gap:.9rem;
+}
+.list .media{
+  width:92px;
+  height:92px;
+  flex:0 0 92px;
+  background:#f0f2f1;
+  display:grid;
+  place-items:center;
+  border:1px solid #e9f0ee;
+  border-radius:12px;
+  margin:12px 12px 12px 0;
+}
+
+/* Logo */
+.logo{
+  width:72%;
+  height:72%;
+  object-fit:contain;
+  background:#fff;
+  border:1px dashed #e3ece9;
+  border-radius:12px;
+}
+.logoPlaceholder{ display:grid; place-items:center; color:#6b7a76; font-size:.9rem; }
+
+/* Content */
+.content{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  gap:.55rem;
+  padding: .9rem 1rem 1rem;
+  min-width:0;
+}
+
+/* Title (single line ellipsis כמו שביקשת) */
+.title{
+  margin:0;
+  color:#1f2b29;
+  font-weight:900;
+  font-size:clamp(1rem,2.2vw,1.15rem);
+  line-height:1.2;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+/* Meta */
+.meta{ display:flex; flex-direction:column; gap:.35rem; color:#42514e; font-size:.95rem; }
+.line{ display:flex; gap:.35rem; align-items:baseline; min-width:0; }
+.key{ font-weight:700; color:#6b7a76; flex:0 0 auto; }
+.value{
+  flex:1 1 auto;
+  min-width:0;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.url{
+  direction:ltr;
+  unicode-bidi:plaintext;
+  text-align:left;
+}
+
+/* Footer chip */
+.footer{ margin-top:auto; display:flex; justify-content:flex-start; }
+.chip{
+  display:inline-block;
+  background:linear-gradient(90deg,#739a86,#345e6c);
+  color:#fff; font-weight:800; font-size:.78rem;
+  padding:.28rem .6rem; border-radius:999px;
+}
+
+/* Mobile */
+@media (max-width:600px){
+  .list .media{ width:76px; height:76px; flex-basis:76px; margin:10px 10px 10px 0; }
+}
+

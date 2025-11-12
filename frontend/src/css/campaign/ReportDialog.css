@@ -1,0 +1,125 @@
+.report-dialog {
+    max-width: 560px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 18px 16px;
+    background: #fff;
+    border: 1px solid #eaeaea;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+}
+
+.report-title {
+    margin: 0 0 6px 0;
+    font-size: 1.22rem;
+    font-weight: 800;
+    color: #0f172a;
+}
+
+.report-sub {
+    margin: 0 0 14px 0;
+    font-size: .95rem;
+    color: #475569;
+}
+
+.options {
+    display: grid;
+    gap: 10px;
+}
+
+.option-row {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 12px;
+    background: #fafafa;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    transition: background .2s ease, border-color .2s ease;
+}
+
+.option-row:hover {
+    background: #f6faff;
+    border-color: #e5f0ff;
+}
+
+.option-row.disabled {
+    opacity: 0.6;
+}
+
+.option-label {
+    font-weight: 700;
+    font-size: 0.98rem;
+    color: #0b1324;
+    cursor: pointer;
+    user-select: none;
+    line-height: 1.4;
+}
+
+.option-checkbox {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.hint {
+    margin: -2px 2px 2px;
+    font-size: 0.85rem;
+    color: #64748b;
+}
+
+.button-row-report {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.button-report {
+    flex: 1;
+    height: 44px;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 0.98rem;
+    cursor: pointer;
+    transition: transform .06s ease, box-shadow .2s ease, background .2s ease, color .2s ease, border-color .2s ease;
+    border: 1px solid transparent;
+}
+
+.button-report:active {
+    transform: translateY(1px);
+}
+
+.button-report-primary {
+    font-family: "Heebo", system-ui, Segoe UI, Arial, sans-serif;
+    background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+    color: #fff;
+}
+
+.button-report-primary:hover {
+    filter: brightness(1.03);
+}
+
+.button-report-ghost {
+    font-family: "Heebo", system-ui, Segoe UI, Arial, sans-serif;
+    background: rgb(201, 104, 104) !important;
+    color: white;
+    border-color: #e5e7eb;
+}
+
+.button-report-ghost:hover {
+    filter: brightness(1.03);
+}
+
+/* רספונסיביות */
+@media (max-width: 520px) {
+    .report-dialog {
+        padding: 14px 12px;
+    }
+
+    .btn-row {
+        flex-direction: column;
+    }
+}

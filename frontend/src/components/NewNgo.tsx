@@ -1,7 +1,7 @@
 
 import type { Ngo, NgoMediaType } from "../models/Ngo";
 
-import { Mail, MapPin, Phone, CreditCard, Wallet, Building2, File, Image, IdCard, ScreenShare } from "lucide-react";
+import { Mail, MapPin, Phone, CreditCard, Wallet, Building2, File, Image, IdCard, ScreenShare, Goal } from "lucide-react";
 
 type Props = {
   ngo: Ngo;
@@ -13,7 +13,7 @@ type Props = {
 const NewNgo = ({ ngo, media, handleChangeNgo, handleChangeMedia }: Props) => {
   return (
     <>
-      {/* שם העמותה */}
+      {/* name */}
       <div className="input-group">
         <Building2 className="input-icon" />
         <input
@@ -26,7 +26,7 @@ const NewNgo = ({ ngo, media, handleChangeNgo, handleChangeMedia }: Props) => {
         />
       </div>
 
-      {/* מספר עמותה */}
+      {/* number */}
       <div className="input-group">
         <IdCard className="input-icon" />
         <input
@@ -38,7 +38,7 @@ const NewNgo = ({ ngo, media, handleChangeNgo, handleChangeMedia }: Props) => {
         />
       </div>
 
-      {/* אימייל עמותה */}
+      {/* email */}
       <div className="input-group">
         <Mail className="input-icon" />
         <input
@@ -50,19 +50,19 @@ const NewNgo = ({ ngo, media, handleChangeNgo, handleChangeMedia }: Props) => {
         />
       </div>
 
-      {/* כתובת */}
+      {/* address - city */}
       <div className="input-group">
         <MapPin className="input-icon" />
         <input
           type="text"
-          placeholder="כתובת"
+          placeholder="עיר"
           value={ngo.address || ""}
           onChange={(e) => handleChangeNgo("address", e.target.value)}
           className="input-field"
         />
       </div>
 
-      {/* טלפון */}
+      {/* phone */}
       <div className="input-group">
         <Phone className="input-icon" />
         <input
@@ -75,7 +75,7 @@ const NewNgo = ({ ngo, media, handleChangeNgo, handleChangeMedia }: Props) => {
       </div>
 
 
-      {/* אתר */}
+      {/* website */}
       <div className="input-group">
         <ScreenShare className="input-icon" />
         <input
@@ -87,7 +87,7 @@ const NewNgo = ({ ngo, media, handleChangeNgo, handleChangeMedia }: Props) => {
         />
       </div>
 
-      {/* חשבון בנק */}
+      {/* bank account */}
       <div className="input-group">
         <CreditCard className="input-icon" />
         <input
@@ -99,7 +99,7 @@ const NewNgo = ({ ngo, media, handleChangeNgo, handleChangeMedia }: Props) => {
         />
       </div>
 
-      {/* ארנק קריפטו */}
+      {/* crypto wallet */}
       <div className="input-group">
         <Wallet className="input-icon" />
         <input
@@ -111,9 +111,9 @@ const NewNgo = ({ ngo, media, handleChangeNgo, handleChangeMedia }: Props) => {
         />
       </div>
 
-      {/* תיאור מטרות העמותה */}
+      {/* description */}
       <div className="input-group">
-        {/* אפשר להציג כאן גם אייקון אם רוצים */}
+        <Goal className="input-icon" />
         <textarea
           placeholder="תאר/י בקצרה את מטרות העמותה"
           value={ngo.description || ""}
@@ -122,7 +122,7 @@ const NewNgo = ({ ngo, media, handleChangeNgo, handleChangeMedia }: Props) => {
         />
       </div>
 
-      {/* העלאת לוגו */}
+      {/* upload logo */}
       <span className="section-title">העלאת לוגו עמותה </span>
       <div className="input-group  file-upload-group">
         <Image className="input-icon" />

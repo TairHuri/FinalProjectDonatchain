@@ -82,10 +82,10 @@ const CampaignItem = ({
       {view === "grid" && showButtons && (
         <div className={styles['card-actions']}>
           <button className={styles['btn-primary']} disabled={!c._id} onClick={() => edit(c._id!)}>
-            עריכה
+            פרטי הקמפיין
           </button>
           <button className={styles['btn-primary']} onClick={() => nav(`/campaign/${c._id}`)}>
-            צפייה
+            דף הקמפיין
           </button>
         </div>
       )}
