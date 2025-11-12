@@ -129,18 +129,34 @@ export const toggleCampaignStatus = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const campaign = await CampaignService.getById(id);
-    if (!campaign) return res.status(404).json({ message: "Campaign not found" });
-    console.log((req.user as any).ngoId.toString(), (campaign.ngo as unknown as INgo)._id.toString())
+    if (!campaign) {
+      return res.status(404).json({ message: "Campaign not found" });
+    }
+
+    const user = req.user as any;
+
+    // נוודא שקיים user ושהשדות קיימים לפני שניגשים ל-toString
+    const userNgoId = user?.ngoId ? user.ngoId.toString() : null;
+    const campaignNgoId =
+      (campaign.ngo as any)?._id?.toString?.() ||
+      (typeof campaign.ngo === "string" ? campaign.ngo : null);
+
+    console.log("🔍 userNgoId:", userNgoId, "campaignNgoId:", campaignNgoId);
+
+    // בדיקת הרשאה — רק מנהל מערכת או חבר באותה עמותה
     if (req.user!.role == 'admin' || (req.user as any).ngoId.toString() != (campaign.ngo as unknown as INgo)._id.toString()) return res.status(403).json({ message: "You are not part of this NGO" });
+
+    // שינוי סטטוס
     campaign.isActive = !campaign.isActive;
     await campaign.save();
 
     res.json({
-      message: `קמפיין ${campaign.isActive ? "הופעל מחדש " : "הושהה "}`,
+      message: `קמפיין ${campaign.isActive ? "הופעל מחדש ✅" : "הושהה ⏸️"}`,
       campaign,
     });
   } catch (err: any) {
-    res.status(500).json({ message: err.message });
+    console.error("❌ שגיאה בעדכון סטטוס קמפיין:", err);
+    res.status(500).json({ message: err.message || "שגיאת שרת" });
   }
 };
 

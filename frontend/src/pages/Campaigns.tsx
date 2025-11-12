@@ -22,6 +22,7 @@ export default function Campaigns() {
   const [query, setQuery] = useState("");
   const [sortBy, setSortBy] = useState<SortByType>("title");
   const [view, setView] = useState<"grid" | "list">("grid");
+   const [showActiveOnly, setShowActiveOnly] = useState(true);
   const params = useParams();
   const [queryTag, setQueryTag] = useSearchParams();
 
@@ -60,16 +61,37 @@ export default function Campaigns() {
       (b.endDate || "").toString().localeCompare((a.endDate || "").toString()),
     endDateNewToOld: (a, b) =>
       (a.endDate || "").toString().localeCompare((b.endDate || "").toString()),
-    
   };
 
-  const filtered = useMemo(
-    () =>
-      (Array.isArray(campaigns) ? campaigns : [])
-        .filter((c) => queryTag.has("tag")? c.tags.includes( queryTag.get("tag")!) : c.title?.toLowerCase().includes(query.toLowerCase()))
-        .sort((a, b) => sortMap[sortBy](a, b)),
-    [campaigns, query, sortBy]
-  );
+  const filtered = useMemo(() => {
+    const now = new Date();
+
+    // בדיקה האם הסתיים
+    const isEnded = (c: Campaign) =>
+      c.endDate ? new Date(c.endDate) < now : false;
+
+    // חיפוש
+    let result = (Array.isArray(campaigns) ? campaigns : []).filter((c) =>
+      queryTag.has("tag")
+        ? c.tags.includes(queryTag.get("tag")!)
+        : c.title?.toLowerCase().includes(query.toLowerCase())
+    );
+
+    //  סינון פעילים בלבד אם המשתמש בחר
+    if (showActiveOnly) {
+      result = result.filter((c) => !isEnded(c));
+    }
+
+    //  מיון כך שפעילים למעלה והסתיימים למטה
+    result = result.sort((a, b) => {
+      const aEnded = isEnded(a);
+      const bEnded = isEnded(b);
+      if (aEnded !== bEnded) return aEnded ? 1 : -1; // פעילים קודם
+      return sortMap[sortBy](a, b);
+    });
+
+    return result;
+  }, [campaigns, query, sortBy, showActiveOnly]);
 
   return (
     <div className="camps-page" dir="rtl">
@@ -109,6 +131,16 @@ export default function Campaigns() {
             <option value="endDateNewToOld">סיום (חדש→ישן)</option>
             <option value="endDateOldToNew">סיום (ישן→חדש)</option>
           </select>
+
+          {/**/}
+          <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={showActiveOnly}
+              onChange={(e) => setShowActiveOnly(e.target.checked)}
+            />
+            הצג רק פעילים
+          </label>
 
           <div className="camps-view">
             <button

@@ -9,7 +9,7 @@ import AdminAboutEditor from "./AdminAboutEditor";
 import RulesViewer from "./RulesViewer";
 import AdminRulesEditor from "./AdminRulesEditor";
 import AdminNgoList from "../../components/admin/AdminNgoList"; 
-
+import { useAuth } from "../../contexts/AuthContext";
 interface Stats {
   usersCount: number;
   ngosCount: number;
@@ -24,6 +24,7 @@ const AdminDashboard: React.FC = () => {
     "dashboard" | "donors" | "ngos" | "campaigns" | "terms" | "about"
   >("dashboard");
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
 const [selectedNgo, setSelectedNgo] = useState<any | null>(null);
 
 
@@ -37,22 +38,38 @@ useEffect(() => {
 
 
 
-  const fetchStats = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/admin/stats`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setStats(res.data);
-    } catch (err) {
-      console.error("שגיאה בטעינת הנתונים:", err);
-    }
-  };
+const fetchStats = async () => {
+  try {
+    const token = localStorage.getItem("token");
 
-  const logout = () => {
-    localStorage.clear();
-    navigate("/admin/login");
-  };
+    // בקשה לסטטיסטיקות כלליות
+    const statsRes = await axios.get(`${import.meta.env.VITE_API_URL}/admin/stats`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    // בקשה לרשימת עמותות
+    const ngosRes = await axios.get(`${import.meta.env.VITE_API_URL}/ngos`);
+
+    // בקשה לכל התרומות (בשביל חישוב מצטבר)
+    const donationsRes = await axios.get(`${import.meta.env.VITE_API_URL}/donations`);
+
+    // חישוב סכום כולל של כל התרומות בפועל
+    const totalRaisedFromDonations = donationsRes.data.reduce(
+      (sum: number, donation: any) => sum + (donation.amount || 0),
+      0
+    );
+
+    setStats({
+      ...statsRes.data,
+      ngosCount: ngosRes.data.items?.length ?? 0,
+      totalRaised: totalRaisedFromDonations, // כאן מחליפים את הסכום לחישוב המעודכן
+    });
+  } catch (err) {
+    console.error("שגיאה בטעינת הנתונים:", err);
+  }
+};
+
+
 
   return (
     <div
@@ -130,15 +147,16 @@ useEffect(() => {
           </button>
         </div>
 
-       <button
-          style={{ ...menuBtnStyle, color: "#f87171" }}
-          onClick={() => {
-            logout();
-            navigate("/");
-          }}
-        >
-          <LogOut size={20} /> יציאה
-        </button>
+<button
+  style={{ ...menuBtnStyle, color: "#f87171" }}
+  onClick={() => {
+    logout();
+    navigate("/", { replace: true });
+  }}
+>
+  <LogOut size={20} /> יציאה
+</button>
+
       </div>
 
       {/* תוכן */}

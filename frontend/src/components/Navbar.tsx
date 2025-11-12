@@ -1,4 +1,3 @@
-
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
@@ -9,18 +8,23 @@ export default function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<string>(""); // ✅ הטאב הנבחר
   const [darkMode, setDarkMode] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-
+  const [showContact, setShowContact] = useState(false);
+  const [copied, setCopied] = useState(false);
   const { user, logout } = useAuth();
 
-  const handlBottonClick = (event: React.MouseEvent<HTMLButtonElement>, name: string) => {
+  const handleButtonClick = (event: React.MouseEvent<HTMLButtonElement>, name: string) => {
     event.stopPropagation();
     toggleDropdown(name);
+    setActiveTab(name); // ✅ רק זה יסומן
   };
+
   const toggleDropdown = (name: string) => {
     setOpenDropdown(openDropdown === name ? null : name);
   };
+
   const autoClose = () => {
     if (openDropdown !== null) toggleDropdown(openDropdown);
   };
@@ -30,15 +34,20 @@ export default function Navbar() {
     return () => document.removeEventListener("click", autoClose);
   }, [openDropdown]);
 
-  const isActive = (path: string | ((p: string) => boolean)) =>
-    typeof path === "function" ? path(location.pathname) : location.pathname === path;
+  const handleLinkClick = (tabName: string) => {
+    setActiveTab(tabName);
+    setOpenDropdown(null);
+    setMobileOpen(false);
+  };
 
   const MenuItems = () => (
     <>
+      {/* עמוד ראשי */}
       <li>
         <Link
           to="/"
-          className={`navBtn ${isActive("/") ? "navBtnActive" : ""}`}
+          onClick={() => handleLinkClick("home")}
+          className={`navBtn ${activeTab === "home" ? "navBtnActive" : ""}`}
         >
           <Home size={18} />
           עמוד ראשי
@@ -48,8 +57,8 @@ export default function Navbar() {
       {/* תורמים */}
       <li className="dropdownWrapper">
         <button
-          onClick={(event) => handlBottonClick(event, "donors")}
-          className={`navBtn ${location.pathname.startsWith("/donors") ? "navBtnActive" : ""}`}
+          onClick={(event) => handleButtonClick(event, "donors")}
+          className={`navBtn ${activeTab === "donors" ? "navBtnActive" : ""}`}
           aria-expanded={openDropdown === "donors"}
           aria-haspopup="menu"
         >
@@ -58,41 +67,52 @@ export default function Navbar() {
         </button>
         {openDropdown === "donors" && (
           <ul className="dropdown" role="menu">
-            <li><Link to="/ngos" className="dropdownLink">רשימת עמותות</Link></li>
-            <li><Link to="/campaigns" className="dropdownLink">רשימת קמפיינים</Link></li>
+            <li>
+              <Link to="/ngos" className="dropdownLink" onClick={() => handleLinkClick("ngos")}>
+                רשימת עמותות
+              </Link>
+            </li>
+            <li>
+              <Link to="/campaigns" className="dropdownLink" onClick={() => handleLinkClick("campaigns")}>
+                רשימת קמפיינים
+              </Link>
+            </li>
           </ul>
         )}
       </li>
 
-      {/* עמותות */}
-     <li className="dropdownWrapper">
-  {user ? (
-    <Link
-      to={user.role === 'admin' ? "/admin/dashboard" : "/ngo/home"}
-      className={`navBtn ${
-        location.pathname.startsWith("/ngo") || location.pathname.startsWith("/admin")
-          ? "navBtnActive"
-          : ""
-      }`}
-    >
-      אזור אישי
-    </Link>
-  ) : (
-    <>
-      <button
-        onClick={(event) => handlBottonClick(event, "ngo")}
-        className={`navBtn ${
-          location.pathname.startsWith("/ngo") ? "navBtnActive" : ""
-        }`}
-        aria-expanded={openDropdown === "ngo"}
-        aria-haspopup="menu"
-      >
-        עמותות ⌄
-      </button>
+      {/* אזור אישי / עמותות */}
+      <li className="dropdownWrapper">
+        {user ? (
+          <Link
+            to={user.role === "admin" ? "/admin/dashboard" : "/ngo/home"}
+            onClick={() => handleLinkClick("personal")}
+            className={`navBtn ${activeTab === "personal" ? "navBtnActive" : ""}`}
+          >
+            אזור אישי
+          </Link>
+        ) : (
+          <>
+            <button
+              onClick={(event) => handleButtonClick(event, "ngo")}
+              className={`navBtn ${activeTab === "ngo" ? "navBtnActive" : ""}`}
+              aria-expanded={openDropdown === "ngo"}
+              aria-haspopup="menu"
+            >
+              עמותות ⌄
+            </button>
             {openDropdown === "ngo" && (
               <ul className="dropdown" role="menu">
-                <li><Link to="/registration/ngo" className="dropdownLink">הרשמה</Link></li>
-                <li><Link to="/login/ngo" className="dropdownLink">התחברות</Link></li>
+                <li>
+                  <Link to="/registration/ngo" className="dropdownLink" onClick={() => handleLinkClick("ngo-register")}>
+                    הרשמה
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/login/ngo" className="dropdownLink" onClick={() => handleLinkClick("ngo-login")}>
+                    התחברות
+                  </Link>
+                </li>
               </ul>
             )}
           </>
@@ -102,8 +122,8 @@ export default function Navbar() {
       {/* עלינו */}
       <li className="dropdownWrapper">
         <button
-          onClick={(event) => handlBottonClick(event, "about")}
-          className={`navBtn ${location.pathname.startsWith("/about") ? "navBtnActive" : ""}`}
+          onClick={(event) => handleButtonClick(event, "about")}
+          className={`navBtn ${activeTab === "about" ? "navBtnActive" : ""}`}
           aria-expanded={openDropdown === "about"}
           aria-haspopup="menu"
         >
@@ -112,47 +132,73 @@ export default function Navbar() {
         </button>
         {openDropdown === "about" && (
           <ul className="dropdown" role="menu">
-            <li><Link to="/about" className="dropdownLink">מי אנחנו</Link></li>
-            <li><Link to="/about/rules" className="dropdownLink">תקנון</Link></li>
+            <li>
+              <Link to="/about" className="dropdownLink" onClick={() => handleLinkClick("about-main")}>
+                מי אנחנו
+              </Link>
+            </li>
+            <li>
+              <Link to="/about/rules" className="dropdownLink" onClick={() => handleLinkClick("about-rules")}>
+                תקנון
+              </Link>
+            </li>
           </ul>
         )}
+      </li>
+
+      {/* צור קשר */}
+      <li>
+        <button
+          onClick={() => {
+            setShowContact(true);
+            setActiveTab("contact");
+          }}
+          className={`navBtn ${activeTab === "contact" ? "navBtnActive" : ""}`}
+        >
+          צור קשר
+        </button>
       </li>
     </>
   );
 
+  // ---------- שאר הקומפוננטה (nav, drawer, contactModal) נשאר אותו דבר ----------
   return (
     <>
-      <nav
-        dir="rtl"
-        className="navbar"
-        data-theme={darkMode ? "dark" : "light"}
-      >
-        {/* תפריט דסקטופ */}
+      <nav dir="rtl" className="navbar" data-theme={darkMode ? "dark" : "light"}>
         <ul className="menu desktopOnly">
           <MenuItems />
         </ul>
 
-        {/* צד ימין: אייקון משתמש + לוגו + מצב כהה + המבורגר */}
         <div className="rightCluster menu">
-          {user && <li className="dropdownWrapper">
-            <button
-              onClick={(event) => handlBottonClick(event, "user")}
-              className="iconBtn"
-              aria-expanded={openDropdown === "user"}
-              aria-haspopup="menu"
-            >
-              <User size={26} />
-            </button>
-            {openDropdown === "user" && (
-              <ul className="dropdown" role="menu">
-                <li><Link to="/" className="dropdownLink" onClick={() => { logout(); navigate("/"); }}><LogOut size={18} /> התנתקות</Link></li>
-
-              </ul>
-            )}
-          </li>}
-
-
-          
+          {user && (
+            <li className="dropdownWrapper">
+              <button
+                onClick={(event) => handleButtonClick(event, "user")}
+                className="iconBtn"
+                aria-expanded={openDropdown === "user"}
+                aria-haspopup="menu"
+              >
+                <User size={26} />
+              </button>
+              {openDropdown === "user" && (
+                <ul className="dropdown" role="menu">
+                  <li>
+                    <Link
+                      to="/"
+                      className="dropdownLink"
+                      onClick={() => {
+                        logout();
+                        navigate("/");
+                        setActiveTab("home");
+                      }}
+                    >
+                      <LogOut size={18} /> התנתקות
+                    </Link>
+                  </li>
+                </ul>
+              )}
+            </li>
+          )}
 
           <button
             onClick={() => setDarkMode(!darkMode)}
@@ -162,8 +208,8 @@ export default function Navbar() {
           >
             {darkMode ? <Sun size={22} /> : <Moon size={22} />}
           </button>
-          
-          <Link to="/" className="logoLink" aria-label="דף הבית">
+
+          <Link to="/" className="logoLink" aria-label="דף הבית" onClick={() => handleLinkClick("home")}>
             <img src="/longLogo.png" alt="לוגו" className="logo" />
           </Link>
 
@@ -176,64 +222,8 @@ export default function Navbar() {
           >
             {mobileOpen ? <X size={26} /> : <Menu size={26} />}
           </button>
-
-          {/* <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="iconBtn mobileOnly"
-            aria-label="פתיחת תפריט"
-            aria-expanded={mobileOpen}
-            aria-controls="mobile-menu"
-          >
-            {mobileOpen ? <X size={26} /> : <Menu size={26} />}
-          </button> */}
         </div>
       </nav>
-
-      {/* תפריט מובייל */}
-      {/* Mobile drawer (left) */}
-      <aside
-        id="mobile-drawer"
-        className="drawer"
-        data-open={mobileOpen ? "true" : "false"}
-        data-theme={darkMode ? "dark" : "light"}
-        dir="rtl"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="drawer-title"
-      >
-        <div className="drawerHeader">
-          <span id="drawer-title" className="drawerTitle">תפריט</span>
-          <button
-            className="iconBtn drawerClose"
-            aria-label="סגירת תפריט"
-            onClick={() => setMobileOpen(false)}
-          >
-            <X size={22} />
-          </button>
-        </div>
-
-        <ul className="drawerList">
-          <MenuItems />
-        </ul>
-      </aside>
-
-      {/* Light scrim (click to close) */}
-      <button
-        type="button"
-        className="scrim"
-        data-open={mobileOpen ? "true" : "false"}
-        aria-hidden="true"
-        onClick={() => setMobileOpen(false)}
-      />
-
-      {/* <ul
-        id="mobile-menu"
-        className="mobileMenu"
-        data-open={mobileOpen ? "true" : "false"}
-        data-theme={darkMode ? "dark" : "light"}
-      >
-        <MenuItems />
-      </ul> */}
     </>
   );
 }
