@@ -10,7 +10,7 @@ export async function encryptPassword(password:string){
 
 export async function registerUser(user:IUser) {
   const existing = await User.findOne({ email:user.email });
-  if (existing) throw new Error("User already exists");
+  if (existing) throw new Error("מייל זה קיים במערכת. נסה להירשם עם מייל אחר.");
 
   const passwordHash = await encryptPassword(user.password); // await bcrypt.hash(user.password, config.bcryptSaltRounds);
   const {_id, createdAt, updatedAt, ...newUser} = user;

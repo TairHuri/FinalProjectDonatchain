@@ -1,50 +1,36 @@
 // src/services/campaign.service.ts
 import Campaign from '../models/campaign.model';
+import Donation from '../models/donation.model';
 import mongoose from 'mongoose';
 import tags from '../config/campaignTags.json'
-import fs from "node:fs";
-import PDFDocument from "pdfkit";
+import serverMessages from '../config/serverMessages.json'
+import { ServerError } from '../middlewares/error.middleware';
+import {generateCampaignReport} from '../utils/pdfHelper'
+import { IUser } from '../models/user.model';
+import { INgo } from '../models/ngo.model';
 
-type CreatePdfOptions = {
-  outputPath?: string;                 // אם לא, יוחזר Buffer
-  pageSize?: PDFKit.PDFDocumentOptions["size"];
-  fontPathRegular?: string;            // הצמידי כאן פונט שתומך בעברית (WOFF/TTF/OTF)
-  fontPathBold?: string;
-  rtl?: boolean;                       // אם תרצי ליישר לימין
-};
 export default {
-  async generateReport(campaignId: string) {
-    const campaign = await this.getById(campaignId)
-    const pdfOptions: CreatePdfOptions = { outputPath: '', pageSize: 'A4', fontPathBold: '', fontPathRegular: '', rtl: true }
-    const doc = new PDFDocument({
-      size: pdfOptions.pageSize,
-      margin: 50,
-      bufferPages: true
-    });
 
-    let outStream: fs.WriteStream | null = null;
-    const chunks: Buffer[] = [];
-    const resultPromise: Promise<Buffer | void> = new Promise((resolve, reject) => {
-      if (pdfOptions.outputPath) {
-        outStream = fs.createWriteStream(pdfOptions.outputPath);
-        doc.pipe(outStream);
-        outStream.on("finish", () => resolve());
-        outStream.on("error", reject);
-      } else {
-        doc.on("data", (c: Buffer) => chunks.push(c));
-        doc.on("end", () => resolve(Buffer.concat(chunks)));
-      }
-      doc.on("error", reject);
-    });
-    if (pdfOptions.fontPathRegular) {
-      doc.registerFont("Regular", pdfOptions.fontPathRegular);
-      doc.font("Regular");
+  async generateReport(campaignId: string, user:IUser, includeDonations: boolean, includeComments: boolean) {
+    // const lang = 'he'
+    // serverMessages.campaign.not_found[lang]
+
+    const campaign = await Campaign.findById(campaignId)
+      .populate("ngo")
+      .lean();
+
+    if (!campaign)throw new ServerError(serverMessages.campaign.not_found.he, 404);
+    if(user.ngoId!.toString() != (campaign.ngo as unknown as INgo)._id!.toString()){
+      throw new ServerError(serverMessages.campaign.permissions.he, 403);
     }
-    if (pdfOptions.fontPathBold) {
-      doc.registerFont("Bold", pdfOptions.fontPathBold);
-    }
-    const isRTL = !!pdfOptions.rtl;
-  const alignMain: PDFKit.Mixins.TextOptions["align"] = isRTL ? "right" : "left"
+    const donations = includeDonations
+      ? await Donation.find({ campaign: campaignId })
+        .select("_id firstName lastName email phone amount currency comment txHash createdAt")
+        .sort({ createdAt: -1 })
+        .lean()
+      : [];
+    const data = await generateCampaignReport(campaign, donations, includeDonations, includeComments)
+    return data;
   },
   async create(payload: any) {
     const campaign = new Campaign(payload);
@@ -78,7 +64,7 @@ export default {
     return Campaign.findById(id).populate("ngo");
   },
 
-  async getByNgo(ngoId: string, page = 1, limit = 10) {
+  async getByNgo(ngoId: string, page = 1, limit = 20) {
     if (!mongoose.Types.ObjectId.isValid(ngoId)) return null;
     const items = await Campaign.find({ ngo: ngoId }).populate("ngo")
       .skip((page - 1) * limit)

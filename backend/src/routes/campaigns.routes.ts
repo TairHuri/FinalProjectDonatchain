@@ -5,7 +5,8 @@ import {
   listCampaigns,
   getCampaign,
   getAllCampaigns,
-  getCampaignTags
+  getCampaignTags,
+  getCampaignReport
 } from '../controllers/campaigns.controller';
 import authMiddleware from '../middlewares/auth.middleware';
 import roleMiddleware from '../middlewares/role.middleware';
@@ -18,6 +19,7 @@ router.get('/admin/all', authMiddleware, roleMiddleware(['admin']), getAllCampai
 
 router.get('/', listCampaigns);
 router.get('/tags', getCampaignTags);
+router.get('/reports/:id', authMiddleware, getCampaignReport);
 
 
 router.get('/:id', getCampaign);

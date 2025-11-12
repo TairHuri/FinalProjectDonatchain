@@ -11,6 +11,7 @@ import fileUpload, { certificateFolder, imageFolder } from './middlewares/multer
 import { config } from './config';
 import path from 'path';
 import fs from 'fs'
+import { reportFolder } from './utils/pdfHelper';
 
 
 const app = express();
@@ -26,6 +27,9 @@ if(!fs.existsSync(imageFolder)){
 }
 if(!fs.existsSync(certificateFolder)){
   fs.mkdirSync(certificateFolder)
+}
+if(!fs.existsSync(reportFolder)){
+  fs.mkdirSync(reportFolder)
 }
 app.get("/images/:image", (req, res)=>{
   const {image} = req.params;

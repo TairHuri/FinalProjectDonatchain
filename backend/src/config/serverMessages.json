@@ -1,0 +1,12 @@
+{
+    "campaign":{
+        "not_found":{
+            "en":"Campain was not found",
+            "he":"הקמפיין לא נמצא"
+        },
+        "permissions":{
+            "en":"You do not have permissions for this campaign",
+            "he":"אין לך הרשאות בקמפיין זה"
+        }
+    }
+}

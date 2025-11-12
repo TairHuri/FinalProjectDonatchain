@@ -1,321 +1,232 @@
-// pdf-campaign.ts
-import fs from "node:fs";
-import PDFDocument from "pdfkit";
+
+import puppeteer from "puppeteer";
 import { ICampaign } from "../models/campaign.model";
 import { IDonation } from "../models/donation.model";
-import { INgo } from "../models/ngo.model";
+import fs from "node:fs";
 
 
-type CreatePdfOptions = {
-  outputPath?: string;                 // אם לא, יוחזר Buffer
-  pageSize?: PDFKit.PDFDocumentOptions["size"];
-  fontPathRegular?: string;            // הצמידי כאן פונט שתומך בעברית (WOFF/TTF/OTF)
-  fontPathBold?: string;
-  rtl?: boolean;                       // אם תרצי ליישר לימין
+import path from 'path';
+
+
+
+export const reportFolder = path.join(process.cwd(), 'reports')
+export const generateCampaignReport = async (campaign: ICampaign, donations: IDonation[], includeDonations: boolean, includeComments: boolean) => {
+
+  // עוזר: עיצוב מספרים/תאריכים
+  const fmt = new Intl.NumberFormat("he-IL");
+  const dateFmt = new Intl.DateTimeFormat("he-IL", { dateStyle: "short" });
+  const dateDonationFmt = new Intl.DateTimeFormat("he-IL", { dateStyle: "short", timeStyle: 'short' });
+
+  // בונים HTML עם RTL
+  const html = buildHtml({
+    campaign,
+    donations,
+    fmtNumber: (n: number) => fmt.format(n),
+    fmtDate: (d: Date) => dateFmt.format(new Date(d)),
+    dateDonationFmt: (d: Date) => dateDonationFmt.format(new Date(d)),
+    includeDonations,
+    includeComments,
+    imagesBaseUrl: process.env.IMAGES_URL || "http://localhost:4000/images",
+    etherscanUrl: process.env.ETHERSCAN_URL || "https://sepolia.etherscan.io/tx",
+
+  });
+
+  // מרימים דפדפן ריק ומייצרים PDF
+  const browser = await puppeteer.launch({
+    args: ["--no-sandbox", "--font-render-hinting=none"],
+  });
+  const page = await browser.newPage();
+  await page.setContent(html, { waitUntil: "networkidle0" });
+
+  const pdf = await page.pdf({
+    format: "A4",
+    printBackground: true,
+    margin: { top: "18mm", right: "12mm", bottom: "18mm", left: "12mm" },
+    displayHeaderFooter: true,
+    headerTemplate: headerTemplate(),
+    footerTemplate: footerTemplate(),
+  });
+
+ 
+  await browser.close();
+  const filename = `campaign-${campaign._id.toString()}.pdf`;
+  //await fs.promises.writeFile(`${reportFolder}/${filename}`, pdf); //sava report on disk in report folder
+  return { filename, pdf }
+
 };
 
-export async function createCampaignPdf(
-  campaign: ICampaign,
-  donations: IDonation[],
-  opts: CreatePdfOptions = {}
-): Promise<Buffer | void> {
-  const {
-    outputPath,
-    pageSize = "A4",
-    fontPathRegular,
-    fontPathBold,
-    rtl = false,
-  } = opts;
 
-  const doc = new PDFDocument({
-    size: pageSize,
-    margin: 50,
-    bufferPages: true
-  });
 
-  let outStream: fs.WriteStream | null = null;
-  const chunks: Buffer[] = [];
-  const resultPromise: Promise<Buffer | void> = new Promise((resolve, reject) => {
-    if (outputPath) {
-      outStream = fs.createWriteStream(outputPath);
-      doc.pipe(outStream);
-      outStream.on("finish", () => resolve());
-      outStream.on("error", reject);
-    } else {
-      doc.on("data", (c: Buffer) => chunks.push(c));
-      doc.on("end", () => resolve(Buffer.concat(chunks)));
-    }
-    doc.on("error", reject);
-  });
-
-  // Fonts
-  if (fontPathRegular) {
-    doc.registerFont("Regular", fontPathRegular);
-    doc.font("Regular");
-  }
-  if (fontPathBold) {
-    doc.registerFont("Bold", fontPathBold);
-  }
-
-  const isRTL = !!rtl;
-  const alignMain: PDFKit.Mixins.TextOptions["align"] = isRTL ? "right" : "left";
-
-  // Helpers
-  const fmtNumber = (n?: number) =>
-    typeof n === "number" ? n.toLocaleString("he-IL") : "-";
-  const fmtDate = (d?: string | Date) => {
-    if (!d) return "-";
-    const dd = typeof d === "string" ? new Date(d) : d;
-    if (isNaN(dd.getTime())) return "-";
-    return new Intl.DateTimeFormat("he-IL", { dateStyle: "medium", timeStyle: "short" }).format(dd);
-  };
-  const line = (y?: number) => {
-    const yy = y ?? doc.y;
-    doc
-      .moveTo(doc.page.margins.left, yy)
-      .lineTo(doc.page.width - doc.page.margins.right, yy)
-      .strokeColor("#e5e7eb")
-      .lineWidth(1)
-      .stroke();
-  };
-  const ensureSpace = (h: number) => {
-    if (doc.y + h > doc.page.height - doc.page.margins.bottom) {
-      doc.addPage();
-    }
-  };
-
-  // Header
-  doc.fillColor("#111");
-  if (fontPathBold) doc.font("Bold");
-  doc.fontSize(20).text(campaign.title || "Campaign", { align: alignMain });
-  if (fontPathRegular) doc.font("Regular");
-  doc.moveDown(0.3);
-  doc.fontSize(10).fillColor("#555")
-    .text(`NGO #: ${(campaign.ngo as unknown as INgo).ngoNumber ?? "-"}`, { align: alignMain });
-
-  doc.moveDown(0.4);
-  line();
-  doc.moveDown(0.6);
-
-  // Campaign Stats (two columns)
-  const leftX = doc.page.margins.left;
-  const rightX = doc.page.width / 2 + 10;
-  const colWidth = doc.page.width / 2 - doc.page.margins.left - 10;
-
-  const drawLabelValue = (label: string, value: string, x: number, y: number) => {
-    doc.save();
-    doc.fontSize(11).fillColor("#000");
-    if (fontPathBold) doc.font("Bold");
-    doc.text(label, x, y, { width: colWidth, align: alignMain });
-    if (fontPathRegular) doc.font("Regular");
-    doc.fillColor("#222").moveDown(0.15);
-    doc.fontSize(11).text(value, { width: colWidth, align: alignMain });
-    doc.restore();
-  };
-
-  let yTop = doc.y;
-
-  drawLabelValue("יעד (Goal):", `${fmtNumber(campaign.goal)} ${campaign.currency}`, isRTL ? rightX : leftX, yTop);
-  drawLabelValue("נאסף (Raised):", `${fmtNumber(campaign.raised)} ${campaign.currency}`, isRTL ? rightX : leftX, yTop + 35);
-  drawLabelValue("מס׳ תורמים:", `${campaign.numOfDonors ?? 0}`, isRTL ? rightX : leftX, yTop + 70);
-  drawLabelValue("סטטוס:", campaign.isActive ? "פעיל" : "לא פעיל", isRTL ? rightX : leftX, yTop + 105);
-
-  drawLabelValue("תאריך התחלה:", fmtDate(campaign.startDate), isRTL ? leftX : rightX, yTop);
-  drawLabelValue("תאריך סיום:", fmtDate(campaign.endDate), isRTL ? leftX : rightX, yTop + 35);
-  drawLabelValue("נוצר ב־:", fmtDate(campaign.createdAt), isRTL ? leftX : rightX, yTop + 70);
-  drawLabelValue("תגיות:", (campaign.tags && campaign.tags.length) ? campaign.tags.join(" • ") : "-", isRTL ? leftX : rightX, yTop + 105);
-
-  ensureSpace(140);
-  doc.y = yTop + 145;
-
-  if (campaign.blockchainTx) {
-    doc.fontSize(10).fillColor("#0b5e37");
-    doc.text(`Blockchain TX: ${campaign.blockchainTx}`, {
-      align: alignMain,
-      link: campaign.blockchainTx.startsWith("http") ? campaign.blockchainTx : undefined,
-      underline: true
-    });
-    doc.fillColor("#111");
-  }
-
-  doc.moveDown(0.5);
-  line();
-  doc.moveDown(0.6);
-
-  // Description
-  if (campaign.description) {
-    if (fontPathBold) doc.font("Bold");
-    doc.fontSize(13).fillColor("#111").text("תיאור הקמפיין", { align: alignMain });
-    if (fontPathRegular) doc.font("Regular");
-    doc.moveDown(0.2);
-    doc.fontSize(11).fillColor("#222")
-      .text(campaign.description, {
-        align: alignMain,
-        width: doc.page.width - doc.page.margins.left - doc.page.margins.right
-      });
-    doc.moveDown(0.5);
-    line();
-    doc.moveDown(0.6);
-  }
-
-  // Donations Table
-  if (fontPathBold) doc.font("Bold");
-  doc.fontSize(13).fillColor("#111").text("תרומות", { align: alignMain });
-  if (fontPathRegular) doc.font("Regular");
-  doc.moveDown(0.2);
-
-  const columns:{key: keyof IDonation, header:string, width:number}[] = [
-    { key: "email",     header: "Email",       width: 120 },
-    { key: "phone",     header: "Phone",       width: 90 },
-    { key: "firstName", header: "First",       width: 70 },
-    { key: "lastName",  header: "Last",        width: 80 },
-    { key: "currency",  header: "Curr",        width: 45 },
-    { key: "method",    header: "Method",      width: 60 },
-    { key: "txHash",    header: "Tx Hash",     width: 120 },
-    { key: "comment",   header: "Comment",     width: (doc.page.width - doc.page.margins.left - doc.page.margins.right) - (120+90+70+80+45+60+120) }
-  ];
-
-  drawTable({
-    doc,
-    columns,
-    rows: donations,
-    align: alignMain,
-    headerFill: "#f3f4f6",
-    rowStripeFill: "#fafafa",
-    textColor: "#111",
-    borderColor: "#e5e7eb",
-    linkifyTx: true
-  });
-
-  doc.end();
-  return resultPromise;
+// פונקציות עזר ל-HTML
+function headerTemplate() {
+  return `
+  <style>
+    .hdr{ font-family: Heebo, Arial, sans-serif; font-size:10px; color:#111; width:100%; padding:0 12mm; }
+  </style>
+  <div class="hdr">
+    <div style="display:flex; justify-content:space-between;">
+      <span>DonatChain - דוח קמפיין</span>
+      <span class="date"></span>
+    </div>
+  </div>`;
 }
 
-// ----- Generic Table Drawer for PDFKit -----
-function drawTable<T extends Record<string, any>>(cfg: {
-  doc: PDFKit.PDFDocument;
-  columns: { key: keyof T; header: string; width: number }[];
-  rows: T[];
-  align?: "left" | "right" | "center" | "justify";
-  headerFill?: string;
-  rowStripeFill?: string;
-  textColor?: string;
-  borderColor?: string;
-  linkifyTx?: boolean;
+
+
+function footerTemplate() {
+  return `
+  <style>
+    .ftr{ font-family: Heebo, Arial, sans-serif; font-size:10px; color:#444; width:100%; padding:0 12mm; }
+  </style>
+  <div class="ftr">
+    <div style="display:flex; justify-content:space-between;">
+      <span>עמוד <span class="pageNumber"></span> מתוך <span class="totalPages"></span></span>
+      <span>© DonatChain</span>
+    </div>
+  </div>`;
+}
+
+function buildHtml(opts: {
+  campaign: any;
+  donations: any[];
+  fmtNumber: (n: number) => string;
+  fmtDate: (d: Date) => string;
+  dateDonationFmt: (d: Date) => string;
+  includeDonations: boolean;
+  includeComments: boolean;
+  imagesBaseUrl: string;
+  etherscanUrl: string;
 }) {
-  const {
-    doc, columns, rows,
-    align = "left",
-    headerFill = "#f3f4f6",
-    rowStripeFill = "#fafafa",
-    textColor = "#111",
-    borderColor = "#e5e7eb",
-    linkifyTx = false
-  } = cfg;
+  const { campaign, donations, fmtNumber, fmtDate, dateDonationFmt, includeDonations, includeComments, imagesBaseUrl, etherscanUrl } = opts;
 
-  const startX = doc.page.margins.left;
-  const usableWidth = doc.page.width - doc.page.margins.left - doc.page.margins.right;
+  const percent = Math.min((campaign.raised / Math.max(campaign.goal, 1)) * 100, 100);
 
-  // Header row
-  let y = doc.y;
-  ensurePageSpace(doc, 28);
-  y = doc.y;
+  // שימי לב: ל-RTL תקפידי על dir="rtl" ועל יישור ימין
+  return `
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+  @page { size: A4; margin: 18mm 12mm; }
+  body { font-family: Heebo, Arial, sans-serif; color:#111; }
+  h1,h2,h3 { margin:0 0 8px; }
+  .section { margin: 16px 0; }
+  .row { display:flex; align-items:center; gap:16px; }
+  .logo { width:72px; height:72px; border-radius:50%; object-fit:cover; }
+  .muted { color:#555; }
+  .pill { background:#e8fff1; color:#0b5e37; padding:4px 8px; border-radius:999px; font-size:12px; display:inline-block; }
+  .stat { background:#f7f7f7; border:1px solid #eee; padding:12px; border-radius:8px; }
+  .bar{ width:100%; height:10px; background:#eee; border-radius:999px; overflow:hidden; }
+  .bar>div{ height:10px; width:${percent}%; background:#22c55e; }
+  table { width:100%; border-collapse:collapse; }
+  th, td { border:1px solid #e5e7eb; padding:8px; font-size:12px; vertical-align:top; }
+  th { background:#fafafa; }
+  a { color:#0b5e37; text-decoration:none; }
+  .grid2 { display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
+  .right { text-align:right; }
+  .small { font-size:12px; }
+</style>
+</head>
+<body>
 
-  doc.save();
-  doc.rect(startX, y, usableWidth, 24).fill(headerFill).fillColor(textColor);
-  doc.fillColor("#111");
-  doc.fontSize(10);
+  <!-- כותרת -->
+  <div class="section">
+    <div class="row">
+      <img class="logo" src="${imagesBaseUrl}/${campaign.ngo?.logoUrl || ""}" />
+      <div>
+        <h1>${escapeHtml(campaign.title)}</h1>
+        <div class="muted small">${escapeHtml(`${campaign.ngo?.name ?? ""}${campaign.ngo?.ngoNumber ? ` (מס' ${campaign.ngo.ngoNumber})` : ""}`)}</div>
+      </div>
+    </div>
+  </div>
 
-  let x = startX;
-  for (const col of columns) {
-    doc.text(col.header, x + 6, y + 6, { width: col.width - 8, align });
-    x += col.width;
-  }
-  doc.restore();
+  <!-- מטרות והתקדמות -->
+  <div class="section grid2">
+    <div class="stat">
+      <h3>סטטוס גיוס</h3>
+      <div class="bar"><div></div></div>
+      <div class="row" style="justify-content:space-between; margin-top:8px;">
+        <div><strong>${fmtNumber(campaign.raised)} ₪</strong> נאספו</div>
+        <div class="muted">${fmtNumber(campaign.goal)} ₪ יעד</div>
+        <div class="pill">${percent.toFixed(1)}%</div>
+      </div>
+      <div class="small muted" style="margin-top:6px;">מספר תורמים: ${campaign.numOfDonors || 0}</div>
+    </div>
 
-  // Header bottom border
-  doc
-    .moveTo(startX, y + 24)
-    .lineTo(startX + usableWidth, y + 24)
-    .strokeColor(borderColor)
-    .lineWidth(1)
-    .stroke();
+    <div class="stat">
+      <h3>פרטי קמפיין</h3>
+      <div class="small"><strong>תאריך התחלה:</strong> ${campaign.startDate ? fmtDate(campaign.startDate) : "-"}</div>
+      <div class="small"><strong>תאריך סיום:</strong> ${campaign.endDate ? fmtDate(campaign.endDate) : "-"}</div>
+      <div class="small"><strong>סטטוס:</strong> ${campaign.isActive ? "פעיל" : "לא פעיל"}</div>
+      ${campaign.tags?.length ? `<div class="small"><strong>תגיות:</strong> ${campaign.tags.map(escapeHtml).join(" • ")}</div>` : ""}
+    </div>
+  </div>
 
-  doc.y = y + 26;
+  <!-- תיאור -->
+  <div class="section">
+    <h3>תיאור הקמפיין</h3>
+    <div class="small">${nl2br(escapeHtml(campaign.description || ""))}</div>
+  </div>
 
-  // Rows
-  rows.forEach((row, idx) => {
-    // Calculate row height based on wrapped text per cell:
-    const cellHeights = columns.map(col => {
-      const val = valueToString(row[col.key]);
-      const h = doc.heightOfString(val, {
-        width: col.width - 8,
-        align
-      });
-      return Math.max(h + 8, 22); // padding
-    });
-    const rowH = Math.max(...cellHeights);
-
-    ensurePageSpace(doc, rowH + 4);
-
-    const rowY = doc.y;
-    // Stripe background
-    if (idx % 2 === 0) {
-      doc.save();
-      doc.rect(startX, rowY, usableWidth, rowH).fill(rowStripeFill);
-      doc.restore();
+  ${includeDonations
+      ? `
+  <!-- תרומות -->
+  <div class="section">
+    <h3>תרומות</h3>
+    <table>
+      <thead>
+        <tr>
+          <th class="right">תורם</th>
+          <th class="right">אימייל</th>
+          <th class="right">טלפון</th>
+          <th class="right">סכום</th>
+          <th class="right">מטבע</th>
+          <th class="right">תאריך</th>
+          <th class="right">Transaction</th>
+          ${includeComments ? `<th class="right">הודעת תורם</th>` : ``}
+        </tr>
+      </thead>
+      <tbody>
+        ${donations
+        .map((d: IDonation) => {
+          const donor = `${escapeHtml(d.firstName || "")} ${escapeHtml(d.lastName || "")}`.trim();
+          return `
+              <tr>
+                <td class="right">${donor || "-"}</td>
+                <td class="right">${d.email || "-"}</td>
+                <td class="right">${d.phone || "-"}</td>
+                <td class="right">${fmtNumber(d.amount)}</td>
+                <td class="right">${escapeHtml(d.currency || "")}</td>
+                <td class="right">${d.createdAt ? dateDonationFmt(d.createdAt) : "-"}</td>
+                <td class="right">${d.txHash ? `<a href="${etherscanUrl}/${d.txHash}" target="_blank">${escapeHtml(shortHash(d.txHash))}</a>` : "-"}</td>
+                ${includeComments ? `<td class="right small">${d.comment ? nl2br(escapeHtml(d.comment)) : "-"}</td>` : ``}
+              </tr>
+            `;
+        })
+        .join("")}
+      </tbody>
+    </table>
+  </div>
+  `
+      : ``
     }
 
-    // Text cells
-    let xx = startX;
-    for (const col of columns) {
-      const raw = row[col.key];
-      const val = valueToString(raw);
+</body>
+</html>
+`;
+}
 
-      // linkify tx hash (Etherscan) when looks like a tx:
-      const isTx = linkifyTx && col.key === "txHash" && typeof raw === "string" && /^0x[0-9a-fA-F]{20,}$/.test(raw);
-      if (isTx) {
-        doc
-          .fillColor("#0b5e37")
-          .text(val, xx + 6, rowY + 4, {
-            width: col.width - 8,
-            align,
-            link: `https://sepolia.etherscan.io/tx/${raw}`,
-            underline: true
-          })
-          .fillColor(textColor);
-      } else {
-        doc
-          .fillColor(textColor)
-          .text(val, xx + 6, rowY + 4, {
-            width: col.width - 8,
-            align
-          });
-      }
-      xx += col.width;
-    }
-
-    // Bottom border
-    doc
-      .moveTo(startX, rowY + rowH)
-      .lineTo(startX + usableWidth, rowY + rowH)
-      .strokeColor(borderColor)
-      .lineWidth(1)
-      .stroke();
-
-    doc.y = rowY + rowH + 2;
-  });
-
-  function ensurePageSpace(d: PDFKit.PDFDocument, h: number) {
-    if (d.y + h > d.page.height - d.page.margins.bottom) {
-      d.addPage();
-    }
-  }
-
-  function valueToString(v: any): string {
-    if (v === null || v === undefined) return "-";
-    if (v instanceof Date) return v.toISOString();
-    if (typeof v === "number") return v.toLocaleString("he-IL");
-    return String(v);
-  }
+function escapeHtml(s: string) {
+  return (s || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+function nl2br(s: string) {
+  return s.replace(/\n/g, "<br/>");
+}
+function shortHash(h: string) {
+  return h && h.length > 12 ? `${h.slice(0, 8)}...${h.slice(-6)}` : h;
 }
