@@ -2,15 +2,19 @@
 import type { Ngo, NgoMediaType } from "../models/Ngo";
 
 import { Mail, MapPin, Phone, CreditCard, Wallet, Building2, File, Image, IdCard, ScreenShare, Goal } from "lucide-react";
+import { getNgoTags } from "../services/ngoApi";
+import Tags from "./gui/Tags";
 
 type Props = {
   ngo: Ngo;
   media: NgoMediaType;
-  handleChangeNgo: (field: string, value: string | number) => void;
+  handleChangeNgo: (field: string, value: string | number | string[]) => void;
   handleChangeMedia: (field: keyof NgoMediaType, value: FileList | null) => void;
 };
 
 const NewNgo = ({ ngo, media, handleChangeNgo, handleChangeMedia }: Props) => {
+
+ 
   return (
     <>
       {/* name */}
@@ -121,6 +125,9 @@ const NewNgo = ({ ngo, media, handleChangeNgo, handleChangeMedia }: Props) => {
           className="input-field textarea-like"
         />
       </div>
+
+      <span className="section-title">בחירת קטגוריות</span>
+      <Tags tagLoader={getNgoTags} tags={ngo.tags} handleChange={handleChangeNgo}/>
 
       {/* upload logo */}
       <span className="section-title">העלאת לוגו עמותה </span>

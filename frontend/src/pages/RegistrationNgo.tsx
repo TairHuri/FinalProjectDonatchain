@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import { getNgoList, registerUserExistingNgo, registerUserNewNgo } from "../services/api";
 import { Building2, Mail, Lock, Phone, IdCard } from "lucide-react";
 import type { User, UserRoleType } from "../models/User";
-import type { Ngo, NgoMediaType  } from "../models/Ngo";
+import type { Ngo, NgoMediaType } from "../models/Ngo";
 
 import NewNgo from "../components/NewNgo";
 import { useNavigate } from 'react-router-dom';
 import "../css/RegistrationNgo.css";
 import AlertDialog, { useAlertDialog } from "../components/gui/AlertDialog";
+import { getNgoTags } from "../services/ngoApi";
 
 //export type NgoMediaType = { logoUrl: File | null, certificate: File | null }
 
@@ -48,12 +49,13 @@ export default function RegistrationNgo() {
     ngoNumber: "",
     certificate: "",
     isActive: true,
+    tags: [],
   });
 
   const handleChangeUser = (field: string, value: string | number) => {
     setUser({ ...user, [field]: value });
   };
-  const handleChangeNgo = (field: string, value: string | number) => {
+  const handleChangeNgo = (field: string, value: string | number | string[]) => {
     setNgo({ ...ngo, [field]: value });
   };
   const handleChangeMedia = (field: keyof NgoMediaType, value: FileList | null) => {
@@ -70,6 +72,7 @@ export default function RegistrationNgo() {
     const res = await getNgoList();
     setNgoList(res.items);
   };
+
 
   // בדיקת תקינות תעודת זהות
   const isValidIsraeliID = (id: string) => {
@@ -97,10 +100,10 @@ export default function RegistrationNgo() {
     if (!wallet) return false;
     return /^0x[a-fA-F0-9]{40}$/.test(wallet.trim());
   };
-const isValidPassword = (password: string) => {
-  const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
-  return regex.test(password);
-};
+  const isValidPassword = (password: string) => {
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+    return regex.test(password);
+  };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -119,12 +122,12 @@ const isValidPassword = (password: string) => {
       setShowAlert(true);
       return;
     }
-if (!isValidPassword(user.password)) {
-  setIsFailure(true);
-  setMessage("הסיסמה חייבת להכיל לפחות 8 תווים, כולל אות גדולה, אות קטנה, ספרה ותו מיוחד");
-  setShowAlert(true);
-  return;
-}
+    if (!isValidPassword(user.password)) {
+      setIsFailure(true);
+      setMessage("הסיסמה חייבת להכיל לפחות 8 תווים, כולל אות גדולה, אות קטנה, ספרה ותו מיוחד");
+      setShowAlert(true);
+      return;
+    }
     if (newNgo) {
       // בדיקות חובה לעמותה חדשה (למעט website ולוגו)
       const requiredNgoFields: (keyof Ngo)[] = [
@@ -147,18 +150,18 @@ if (!isValidPassword(user.password)) {
         }
       }
 
-          const existingNgo = ngoList.find(
-      (n) =>
-        n.name.trim() === ngo.name.trim() ||
-        (n.ngoNumber && n.ngoNumber.trim() === ngo.ngoNumber.trim())
-    );
+      const existingNgo = ngoList.find(
+        (n) =>
+          n.name.trim() === ngo.name.trim() ||
+          (n.ngoNumber && n.ngoNumber.trim() === ngo.ngoNumber.trim())
+      );
 
-        if (existingNgo) {
-      setIsFailure(true);
-      setMessage("עמותה בשם זה או עם מספר עמותה זה כבר קיימת במערכת.");
-      setShowAlert(true);
-      return;
-    }
+      if (existingNgo) {
+        setIsFailure(true);
+        setMessage("עמותה בשם זה או עם מספר עמותה זה כבר קיימת במערכת.");
+        setShowAlert(true);
+        return;
+      }
 
       // בדיקת תעודה חובה
       if (!media.certificate) {
@@ -169,26 +172,26 @@ if (!isValidPassword(user.password)) {
       }
 
       // בדיקת תקינות חשבון בנק
-if (!isValidBankAccount(ngo.bankAccount || "")) {
-  setIsFailure(true);
-  setMessage("מספר חשבון הבנק אינו תקין. יש להזין בין 6 ל-10 ספרות בלבד.");
-  setShowAlert(true);
-  return;
-}
+      if (!isValidBankAccount(ngo.bankAccount || "")) {
+        setIsFailure(true);
+        setMessage("מספר חשבון הבנק אינו תקין. יש להזין בין 6 ל-10 ספרות בלבד.");
+        setShowAlert(true);
+        return;
+      }
 
       if (!isValidIsraeliID(idNumber)) {
-    setIsFailure(true);
-    setMessage("תעודת זהות אינה תקינה");
-    setShowAlert(true);
-    return;
-  }
+        setIsFailure(true);
+        setMessage("תעודת זהות אינה תקינה");
+        setShowAlert(true);
+        return;
+      }
 
-  if (newNgo && (!ngo.wallet || !isValidCryptoWallet(ngo.wallet))) {
-    setIsFailure(true);
-    setMessage("כתובת ארנק הקריפטו אינה תקינה. ודאי שהיא מתחילה ב-0x ומכילה 42 תווים.");
-    setShowAlert(true);
-    return;
-  }
+      if (newNgo && (!ngo.wallet || !isValidCryptoWallet(ngo.wallet))) {
+        setIsFailure(true);
+        setMessage("כתובת ארנק הקריפטו אינה תקינה. ודאי שהיא מתחילה ב-0x ומכילה 42 תווים.");
+        setShowAlert(true);
+        return;
+      }
 
     } else {
       // עמותה קיימת — חובה לבחור אחת

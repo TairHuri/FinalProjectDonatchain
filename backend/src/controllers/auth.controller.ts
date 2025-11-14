@@ -21,6 +21,7 @@ export const registerNewNgo = async (req: Request, res: Response) => {
       address,
       phone,
       email,
+      tags,
     } = req.body;
 
     const ngo: BaseNgo = {
@@ -35,6 +36,7 @@ export const registerNewNgo = async (req: Request, res: Response) => {
       email,
       logoUrl: "",
       certificate: "",
+      tags,
     };
 
     const ngoMediaFiles = req.files as NgoMediaFiles;

@@ -1,5 +1,9 @@
 
 .admin-container{
+    background-color: rgb(251, 249, 249);
     max-height: calc(100dvh - 65px);
     overflow-y: auto;
+    flex: 1; 
+    padding: 20px; 
+    padding-top: '5px';
 }

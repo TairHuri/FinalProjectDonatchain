@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import {Users,Building2,FileText,Heart,Settings,Home,LogOut,} from "lucide-react";
+import { Users, Building2, FileText, Heart, Settings, Home, LogOut, FilePenLine, } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { cardStyle, menuBtnStyle } from "../../css/dashboardStyles";
 import AdminDonors from "../../components/AdminDonors";
@@ -8,8 +8,12 @@ import CampaignList from "../../components/CampaignList";
 import AdminAboutEditor from "./AdminAboutEditor";
 import RulesViewer from "./RulesViewer";
 import AdminRulesEditor from "./AdminRulesEditor";
-import AdminNgoList from "../../components/admin/AdminNgoList"; 
-import { useAuth } from "../../contexts/AuthContext";
+import AdminNgoList from "../../components/admin/AdminNgoList";
+
+import '../../css/AdminDashboard.css'
+import RequestFromUsers from "../../components/admin/RequestFromUsers";
+
+
 interface Stats {
   usersCount: number;
   ngosCount: number;
@@ -21,73 +25,83 @@ interface Stats {
 const AdminDashboard: React.FC = () => {
   const [stats, setStats] = useState<Stats | null>(null);
   const [activePage, setActivePage] = useState<
-    "dashboard" | "donors" | "ngos" | "campaigns" | "terms" | "about"
+    "dashboard" | "donors" | "ngos" | "campaigns" | "terms" | "about" | "request"
   >("dashboard");
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
-const [selectedNgo, setSelectedNgo] = useState<any | null>(null);
+  const [selectedNgo, setSelectedNgo] = useState<any | null>(null);
 
 
-useEffect(() => {
-  if (activePage === "dashboard") {
-    fetchStats();
-    const interval = setInterval(fetchStats, 10000);
-    return () => clearInterval(interval);
-  }
-}, [activePage]);
+  // useEffect(() => {
+  //   fetchStats();
+  //   const interval = setInterval(fetchStats, 10000); 
+  //   return () => clearInterval(interval);
+  // }, []);
+
+  useEffect(() => {
+    if (activePage === "dashboard") {
+      fetchStats();
+      const interval = setInterval(fetchStats, 10000);
+      return () => clearInterval(interval);
+    }
+  }, [activePage]);
 
 
+  // const fetchStats = async () => {
+  //   try {
+  //     const token = localStorage.getItem("token");
+  //     const res = await axios.get(`${import.meta.env.VITE_API_URL}/admin/stats`, {
+  //       headers: { Authorization: `Bearer ${token}` },
+  //     });
+  //     setStats(res.data);
+  //   } catch (err) {
+  //     console.error("שגיאה בטעינת הנתונים:", err);
+  //   }
+  // };
 
-const fetchStats = async () => {
-  try {
-    const token = localStorage.getItem("token");
+  const fetchStats = async () => {
+    try {
+      const token = localStorage.getItem("token");
 
-    // בקשה לסטטיסטיקות כלליות
-    const statsRes = await axios.get(`${import.meta.env.VITE_API_URL}/admin/stats`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+      // בקשה לסטטיסטיקות כלליות
+      const statsRes = await axios.get(`${import.meta.env.VITE_API_URL}/admin/stats`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-    // בקשה לרשימת עמותות
-    const ngosRes = await axios.get(`${import.meta.env.VITE_API_URL}/ngos`);
+      // בקשה לרשימת עמותות
+      const ngosRes = await axios.get(`${import.meta.env.VITE_API_URL}/ngos`);
 
-    // בקשה לכל התרומות (בשביל חישוב מצטבר)
-    const donationsRes = await axios.get(`${import.meta.env.VITE_API_URL}/donations`);
+      setStats({
+        ...statsRes.data,
+        ngosCount: ngosRes.data.items?.length ?? 0,
+      });
+    } catch (err) {
+      console.error("שגיאה בטעינת הנתונים:", err);
+    }
+  };
 
-    // חישוב סכום כולל של כל התרומות בפועל
-    const totalRaisedFromDonations = donationsRes.data.reduce(
-      (sum: number, donation: any) => sum + (donation.amount || 0),
-      0
-    );
-
-    setStats({
-      ...statsRes.data,
-      ngosCount: ngosRes.data.items?.length ?? 0,
-      totalRaised: totalRaisedFromDonations, // כאן מחליפים את הסכום לחישוב המעודכן
-    });
-  } catch (err) {
-    console.error("שגיאה בטעינת הנתונים:", err);
-  }
-};
-
-
+  const logout = () => {
+    localStorage.clear();
+    navigate("/admin/login");
+  };
 
   return (
     <div
       dir="rtl"
       style={{
         display: "flex",
-        minHeight: "100vh",
+        // minHeight: "100vh",
+        height: '100%',
         backgroundColor: "#f7f9fc",
-        width: "80vw",
+        width: "100%",
       }}
     >
       {/* סרגל צד */}
       <div
         style={{
-          width: "20vw",
+          width: "18dvw",
           background: "#1f2937",
           color: "white",
-          padding: "20px",
+          padding: " 15px 10px",
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
@@ -96,6 +110,7 @@ const fetchStats = async () => {
         <div>
           <h2
             style={{
+              fontFamily: 'calibri',
               fontSize: "20px",
               fontWeight: "bold",
               marginBottom: "20px",
@@ -108,7 +123,7 @@ const fetchStats = async () => {
             onClick={() => setActivePage("dashboard")}
             style={menuBtnStyle}
           >
-            <Home size={20} /> ראשי
+            <Home size={20} /> דף הבית
           </button>
 
           <button
@@ -145,90 +160,64 @@ const fetchStats = async () => {
           >
             <Settings size={20} /> עמוד "עלינו"
           </button>
+          <button
+            onClick={() => setActivePage("request")}
+            style={menuBtnStyle}
+          >
+            <FilePenLine size={20} /> בקשות משתמשים
+          </button>
         </div>
 
-<button
-  style={{ ...menuBtnStyle, color: "#f87171" }}
-  onClick={() => {
-    logout();
-    navigate("/", { replace: true });
-  }}
->
-  <LogOut size={20} /> יציאה
-</button>
-
+        <button
+          style={{ ...menuBtnStyle, color: "#f87171", marginBottom: '1px', paddingBottom: '1px' }}
+          onClick={logout}
+        >
+          <LogOut size={20} /> יציאה
+        </button>
       </div>
 
       {/* תוכן */}
-      <div style={{ flex: 1, padding: "30px" }}>
+      <div className="admin-container">
         {activePage === "dashboard" && (
           <div>
-            <h1
-              style={{
-                fontSize: "28px",
-                fontWeight: "bold",
-                color: "#059669",
-              }}
-            >
+            <h1 style={{fontFamily: 'calibri',fontSize: "28px",fontWeight: "bold",color: "#059669",}}>
               ברוך הבא, מנהל המערכת
             </h1>
-            <p style={{ fontSize: "18px", marginTop: "10px" }}>
+            <p style={{ fontFamily: 'calibri', fontSize: "18px", marginTop: "10px" }}>
               זהו הדשבורד שלך לניהול כל נתוני האתר.
             </p>
-
             {!stats ? (
               <p style={{ marginTop: "20px" }}>טוען נתונים...</p>
             ) : (
-              <div
-                style={{
-                  display: "flex",
-                  gap: "20px",
-                  marginTop: "30px",
-                  flexWrap: "wrap",
-                }}
-              >
-{statCard("משתמשים", stats?.usersCount ?? 0)}
-{statCard("עמותות", stats?.ngosCount ?? 0)}
-{statCard("קמפיינים", stats?.campaignsCount ?? 0)}
-{statCard("תרומות", stats?.donationsCount ?? 0)}
-{statCard("סה״כ גויס", `${(stats?.totalRaised ?? 0).toLocaleString()} ₪`)}
+              <div  style={{ fontFamily: 'calibri', display: "flex", gap: "20px", marginTop: "30px", flexWrap: "wrap", textAlign: 'center',}}>
+                {statCard("משתמשים", stats?.usersCount ?? 0)}
+                {statCard("עמותות", stats?.ngosCount ?? 0)}
+                {statCard("קמפיינים", stats?.campaignsCount ?? 0)}
+                {statCard("תרומות", stats?.donationsCount ?? 0)}
+                {statCard("סה״כ גויס", `${(stats?.totalRaised ?? 0).toLocaleString()} ₪`)}
 
               </div>
             )}
           </div>
         )}
 
-        {/* כאן הוספנו את התצוגה החדשה של רשימת התורמים */}
+        {/* ✅ כאן הוספנו את התצוגה החדשה של רשימת התורמים */}
         {activePage === "donors" && <AdminDonors />}
-
-{activePage === "ngos" && <AdminNgoList />}
-
-
-{activePage === "campaigns" && (
-  <div>
-    <h2 style={{ fontSize: "24px", fontWeight: "bold" }}>רשימת קמפיינים</h2>
-
-    <CampaignList />
-  </div>
-)}
-
-
-{activePage === "terms" && (
-  <div>
-    <h2 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "16px" }}>
-      ניהול תקנון האתר
-    </h2>
-
-    {/* רכיב לצפייה */}
-    <RulesViewer />
-
-    {/* רכיב לעריכה */}
-    <AdminRulesEditor />
-  </div>
-)}
-
-{activePage === "about" && <AdminAboutEditor />}
-
+        {activePage === "ngos" && <AdminNgoList />}
+        {activePage === "campaigns" && <CampaignList />}
+        {activePage === "about" && <AdminAboutEditor />}
+        {activePage === "request" && <RequestFromUsers />}
+        {activePage === "terms" && (
+          <div>
+            <h2 style={{ color: "#059669", fontFamily: 'calibri', fontSize: "28px", fontWeight: "bold", marginBottom: "16px" }}>
+              ניהול תקנון האתר
+            </h2>
+            {/* view */}
+            <RulesViewer /> 
+            {/*edit*/}
+            <AdminRulesEditor />
+          </div>
+        )}
       </div>
     </div>
   );

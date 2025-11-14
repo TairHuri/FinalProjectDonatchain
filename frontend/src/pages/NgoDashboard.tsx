@@ -70,7 +70,7 @@ console.log(user);
 
 if (!user || !user.ngoId) return;
   return (
-    <div dir="rtl" style={{ display: "flex", backgroundColor: "#f7f9fc", width: '90vw',marginTop: '5px' }}>
+    <div dir="rtl" className="ngo-dashboard-container">
       {/* סרגל צד */}
       <div
         style={{

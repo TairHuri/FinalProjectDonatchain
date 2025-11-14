@@ -3,13 +3,7 @@ import { Link } from "react-router-dom";
 import { ShieldCheck, Users, Cpu, Coins, type LucideIcon } from "lucide-react";
 import "../css/Home.css";
 import { motion } from "framer-motion";
-
 import * as Icons from "lucide-react";
-// import {
-//   HeartPulse, ShieldAlert, CalendarCheck, HeartHandshake, BookOpen,
-//   Puzzle, Lightbulb, Shield, Pencil, BadgePlus,
-//   VenetianMask, Baby, Leaf, Gavel
-// } from "lucide-react";
 
 
 import { getCampaignTags } from "../services/campaignApi";
@@ -34,24 +28,7 @@ function CategoriesSection() {
     
      return <Icon className="block-ic" />
   }
-  // const categories = [
-  //   { key: "emergency", label: "סיוע חירום", sub: "לאומי", Icon: ShieldAlert },
-  //   { key: "health", label: "בריאות", sub: "—", Icon: HeartPulse },
-  //   { key: "welfare", label: "רווחה", sub: "—", Icon: HeartHandshake },
-  //   { key: "holidays", label: "חגים", sub: "—", Icon: CalendarCheck },
-  //   { key: "judaism", label: "יהדות", sub: "—", Icon: CalendarCheck },
-  //   { key: "community", label: "חברה", sub: "וקהילה", Icon: Puzzle },
-  //   { key: "culture", label: "תרבות", sub: "ואומנות", Icon: Lightbulb },
-  //   { key: "security", label: "ביטחון", sub: "והצלה", Icon: Shield },
-  //   { key: "education", label: "חינוך", sub: "—", Icon: BookOpen },
-  //   { key: "aliyah", label: "ציונות, קליטה", sub: "ועליה", Icon: BadgePlus },
-  //   { key: "women", label: "נשים", sub: "—", Icon: VenetianMask },
-  //   { key: "memory", label: "הנצחה", sub: "וזיכרון", Icon: Pencil },
-  //   { key: "youth", label: "ילדים", sub: "ונוער", Icon: Baby },
-  //   { key: "environment", label: "הגנת", sub: "הסביבה", Icon: Leaf },
-  //   { key: "justice", label: "זכויות אדם", sub: "משפט וצדק", Icon: Gavel },
-  //   { key: "other", label: "אחר", sub: "—", Icon: HeartHandshake },
-  // ];
+ 
 
   const scroll = (dir: "left" | "right") => {
     const el = scrollerRef.current;
@@ -174,7 +151,7 @@ export default function Home() {
       </section>
 
       <footer className="footer">
-        © 2025 DonatChain — טוב משותף שמתקדם ביחד
+        © 2025 DonatChain — טוב משותף שמקדמים יחד
       </footer>
     </main>
   );

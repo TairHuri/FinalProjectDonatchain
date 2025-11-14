@@ -19,10 +19,10 @@ export default function AdminAboutEditor() {
   const saveChanges = async () => {
     try {
       await axios.put(`${import.meta.env.VITE_API_URL}/about`, about);
-      alert("העמוד עודכן בהצלחה ✅");
+      alert("העמוד עודכן בהצלחה");
     } catch (err) {
       console.error("שגיאה בעדכון עמוד עלינו:", err);
-      alert("שגיאה בשמירה ❌");
+      alert("שגיאה בשמירה");
     }
   };
 
@@ -30,7 +30,7 @@ export default function AdminAboutEditor() {
 
   return (
     <div dir="rtl" className="p-6">
-      <h2 className="text-2xl font-bold mb-4 text-blue-700">עריכת עמוד עלינו</h2>
+      <h2 style={{ color: "#059669", fontFamily: 'calibri', fontSize: "28px", fontWeight: "bold", marginBottom: "16px" }}>עריכת עמוד עלינו</h2>
 
       <input
         type="text"

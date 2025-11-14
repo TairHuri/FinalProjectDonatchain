@@ -12,6 +12,7 @@ import type { User } from "../models/User";
 import AlertDialog, { useAlertDialog } from "./gui/AlertDialog";
 import Modal from "./gui/Modal";
 import ReportDialog from "./campaign/ReportDialog";
+import Tags from "./gui/Tags";
 
 type MediaType = {
   images: { value: FileList | null, ref: React.RefObject<HTMLInputElement | null> },
@@ -34,7 +35,6 @@ const EditCampaign = ({
   const { campaigns, postUpdateCampaign } = useCampaigns();
   const IMAGE_URL = import.meta.env.VITE_IMAGES_URL || "http://localhost:4000/images";
 
-  const [campaignTags, setCampaignTags] = useState<{ [key: string]: string }[]>([])
   const { showConfirm, openConfirm, closeConfirm } = useConfirmDialog()
   const { showAlert, isFailure, setIsFailure, message, setMessage, setShowAlert } = useAlertDialog()
   const [campaign, setCampaign] = useState<Campaign | null>();
@@ -119,13 +119,15 @@ const EditCampaign = ({
 
   useEffect(() => {
     const loadNgo = async (u: User) => {
-      const t = await getCampaignTags()
-      setCampaignTags(t);
     };
     if (user?.token) loadNgo(user);
 
   }, [user]);
 
+  const handleChangeTags = (field:string, value:string|number|string[]) =>{
+    if (!campaign) return;
+    setCampaign({...campaign, [field]:value})
+  }
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     if (!campaign) return;
     const { name, value } = event.target;
@@ -173,22 +175,6 @@ const EditCampaign = ({
     }
   };
 
-
-  const toggleTag = (tag: string) => {
-    if (!campaign) return;
-    const tags = campaign.tags || [];
-    const exists = tags.includes(tag);
-    if (exists) {
-      setCampaign({ ...campaign, tags: tags.filter(t => t !== tag) });
-    } else {
-      if (tags.length >= 3) return;
-      setCampaign({ ...campaign, tags: [...tags, tag] });
-    }
-  };
-  const removeTag = (tag: string) => {
-    if (!campaign) return;
-    setCampaign({ ...campaign, tags: (campaign.tags || []).filter(t => t !== tag) });
-  };
 
   if (!campaign) return <p>קמפיין לא נמצא</p>;
 
@@ -341,33 +327,8 @@ const EditCampaign = ({
                     {(campaign.tags?.length || 0)}/3
                   </span>
                 </div>
-
-                <div className="cc-chips">
-                  {campaignTags.map(({ tag }) => {
-                    const selected = (campaign.tags || []).includes(tag);
-                    const disabled = !selected && (campaign.tags || []).length >= 3;
-                    return (
-                      <button
-                        key={tag}
-                        type="button"
-                        className={`cc-chip ${selected ? 'is-selected' : ''} ${disabled ? 'is-disabled' : ''}`}
-                        onClick={() => toggleTag(tag)}
-                        aria-pressed={selected}
-                        disabled={disabled}
-                      >
-                        {tag}
-                      </button>
-                    );
-                  })}
-                </div>
-
-                {(campaign.tags?.length || 0) > 0 && (
-                  <div className="cc-selected">
-                    {campaign.tags!.map(tag => (
-                      <span key={tag} className="cc-selected-chip" onClick={() => removeTag(tag)} title="הסרת קטגוריה">✕ {tag}</span>
-                    ))}
-                  </div>
-                )}
+              <Tags tagLoader={getCampaignTags} tags={campaign.tags} handleChange={handleChangeTags} />
+               
               </section>
 
               <div className="cc-actions" style={{ gap: ".6rem" }}>

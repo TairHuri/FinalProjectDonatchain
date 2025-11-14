@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
-import "../../css/admin/RequestFromUsers.css";
+
 import RequestDetails from "./RequestDetails";
 import { categoryLabel, statusLabel, type IAdminRequestByUser, type RequestCategoryType, type RequestStatusType } from "../../models/Request";
 import { getRequests, updateRequest } from "../../services/requestApi";
 import { useAuth } from "../../contexts/AuthContext";
 
+import "../../css/admin/RequestFromUsers.css";
 
 export default function RequestFromUsers() {
   const {user}= useAuth()
@@ -61,7 +62,7 @@ export default function RequestFromUsers() {
       
       updateRequestOnServer({ ...active, status, adminComment })
     }
-    setSelected(prev => prev.filter(id => !ids.includes(id))); // נקה בחירה אחרי פעולה
+    setSelected(prev => prev.filter(id => !ids.includes(id))); 
   };
 
   const updateRequestOnServer = async(request: IAdminRequestByUser) => {
@@ -80,11 +81,12 @@ export default function RequestFromUsers() {
   return (
     <div className="ar-card" dir="rtl" role="region" aria-label="מרכז ניהול בקשות">
       {/* Header */}
-      <header className="ar-header">
-        <h2 className="ar-title">ניהול בקשות</h2>
-
-      
-      </header>
+      <div>
+        <h2 style={{ color: "#059669", fontFamily: 'calibri', fontSize: "28px", fontWeight: "bolder", marginBottom: "16px" }}>ניהול בקשות</h2>
+      </div>
+      {/* <header className="ar-header">
+        <h2 >ניהול בקשות</h2>
+      </header> */}
 
       {/* Filters */}
       <section className="ar-filters">
@@ -101,9 +103,6 @@ export default function RequestFromUsers() {
           aria-label="סינון לפי סטטוס"
         >
           <option value="">סטטוס: הכל</option>
-          {/* <option value="pending">בהמתנה</option>
-          <option value="בטיפול">בטיפול</option>
-          <option value="נסגר">נסגר</option> */}
           {
             Object.keys(statusLabel).map( (status) => <option key={status} value={status}>{statusLabel[status as RequestStatusType]}</option>)
           }
@@ -115,7 +114,6 @@ export default function RequestFromUsers() {
           aria-label="סינון לפי קטגוריה"
         >
           <option value="">קטגוריה: הכל</option>
-          {/* {CATEGORIES.map(c=><option key={c} value={c}>{c}</option>)} */}
           {Object.keys(categoryLabel).map(c => <option key={c} value={c}>{categoryLabel[c as RequestCategoryType]}</option>)}
         </select>
       </section>

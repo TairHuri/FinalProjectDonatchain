@@ -6,6 +6,7 @@ import { NgoMediaFiles } from "../middlewares/multer.middleware";
 import nodemailer from "nodemailer";
 import Campaign from "../models/campaign.model";
 import service, { ApiSuccessType } from '../services/ngo.service'
+import ngoService from "../services/ngo.service";
 
 
 export const verifyNgo = async (req: Request, res: Response) =>{
@@ -299,3 +300,8 @@ export const updateNgo = async (req: Request, res: Response) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+export const getNgoTags = (req: Request, res: Response) => {
+  const tags = ngoService.getNgoTags();
+  res.send(tags)
+}

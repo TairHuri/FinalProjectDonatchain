@@ -3,8 +3,9 @@ import { useAuth } from "../contexts/AuthContext"
 import { cardStyle, inputStyle, primaryBtnStyle } from "../css/dashboardStyles"
 import type { Ngo, NgoMediaType } from "../models/Ngo";
 import InputText from "./gui/InputText";
-import { editNgo } from "../services/ngoApi";
+import { editNgo, getNgoTags } from "../services/ngoApi";
 import AlertDialog, { useAlertDialog } from "./gui/AlertDialog";
+import Tags from "./gui/Tags";
 
 
 const NgoPersonalDetails = ({ editMode, setEditMode }: { editMode: string, setEditMode: (mode: "view" | "edit" | "password") => void }) => {
@@ -52,7 +53,7 @@ const NgoPersonalDetails = ({ editMode, setEditMode }: { editMode: string, setEd
         }
     };
 
-    const handleChange = (field: string, value: string | number) => {
+    const handleChange = (field: string, value: string | number|string[]) => {
         setNgo({ ...ngo, [field]: value })
     }
     const handleUpdateSuccess = () => {
@@ -80,6 +81,7 @@ const NgoPersonalDetails = ({ editMode, setEditMode }: { editMode: string, setEd
                             <p><strong>חשבון בנק:</strong> {ngo.bankAccount}</p>
                             <p><strong>ארנק:</strong> {ngo.wallet}</p>
                             <p><strong>תיאור:</strong> {ngo.description}</p>
+                            <p><strong>קטגוריות:</strong> {(ngo.tags || []).join(", ") || "-"}</p>
                             {ngo.certificate && <p><strong><a href={`${CERTIFICATES_URL}/${ngo.certificate}`} target="_blank">אישור עמותה</a></strong></p>}
                             <button
                                 onClick={() => setEditMode("edit")}
@@ -100,6 +102,7 @@ const NgoPersonalDetails = ({ editMode, setEditMode }: { editMode: string, setEd
                             <InputText field='bankAccount' type="text" value={ngo.bankAccount || ""} placeholder="חשבון בנק" onChange={handleChange} />
                             <InputText field='wallet' type="text" value={ngo.wallet || ""} placeholder="ארנק" onChange={handleChange} />
                             <InputText field='description' isMultiLine={true} value={ngo.description || ""} placeholder="תיאור" onChange={handleChange} />
+                            <Tags tagLoader={getNgoTags} tags={ngo.tags} handleChange={handleChange} />
                             <label>לוגו עמותה :</label>
                             <input type="file" accept="image/*"
                                 onChange={(e) => handleChangeMedia("logoUrl", e.target.files)} style={inputStyle} />

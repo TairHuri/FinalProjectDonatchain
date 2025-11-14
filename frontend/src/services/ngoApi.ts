@@ -32,7 +32,9 @@ export async function editNgo(ngo: Ngo, token: string,  media: NgoMediaType) {
   if(media.certificate){
     formData.append("certificate", media.certificate);
   }
-
+  for(const tag of ngo.tags){        
+        formData.append("tags", tag)
+    }
   if (media.logoUrl) {
     formData.append("logo", media.logoUrl)
   }
@@ -77,3 +79,9 @@ export const getNgoById = async ( ngoId:string): Promise<Ngo> => {
 
   return res.data; 
 };
+
+export async function getNgoTags() {
+  const res = await fetch(`${API_URL}/ngos/tags`);
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}

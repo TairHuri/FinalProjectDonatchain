@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { getAllDonations } from "../services/donationApi";
 import type { Donation } from "../models/Donation";
 
+import "../css/admin/AdminDonors.css";
+
 const AdminDonors = () => {
   const [donations, setDonations] = useState<Donation[]>([]);
   const [loading, setLoading] = useState(true);
@@ -23,8 +25,9 @@ const AdminDonors = () => {
   if (loading) return <p>טוען נתוני תרומות...</p>;
 
   return (
+    <div className="admin-donors-card" dir="rtl">
     <div>
-      <h2 style={{ fontSize: "22px", fontWeight: "bold", color: "#059669" }}>
+      <h2 className="h1-admin-donors">
         כל התורמים באתר
       </h2>
 
@@ -49,7 +52,6 @@ const AdminDonors = () => {
 
               <p style={{ margin: "3px 0", fontSize: "14px", color: "#555" }}>
                 סכום: {d.amount} ₪ | קמפיין:{" "}
-                {/* — ObjectId או populated */}
                 {typeof d.campaign === "string"
                   ? "לא ידוע"
                   : (d.campaign as any)?.title || "לא ידוע"}
@@ -64,6 +66,7 @@ const AdminDonors = () => {
           ))
         )}
       </div>
+    </div>
     </div>
   );
 };

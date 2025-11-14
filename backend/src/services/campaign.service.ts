@@ -2,7 +2,7 @@
 import Campaign from '../models/campaign.model';
 import Donation from '../models/donation.model';
 import mongoose from 'mongoose';
-import tags from '../config/campaignTags.json'
+import tags from '../config/tags.json'
 import serverMessages from '../config/serverMessages.json'
 import { ServerError } from '../middlewares/error.middleware';
 import {generateCampaignReport} from '../utils/pdfHelper'
@@ -90,5 +90,5 @@ export default {
       throw err;
     }
   },
-  getCampaignTags: () => tags
+  getCampaignTags: () => tags.campaign
 };

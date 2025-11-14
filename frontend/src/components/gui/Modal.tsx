@@ -3,12 +3,14 @@ import "../../css/Modal.css";
 
 const Modal = ({
   component,
+  children,
   show,
   onClose,
 }: {
-  component: ReactNode;
+  component?: ReactNode;
   show: boolean;
   onClose?: () => void;
+  children?: ReactNode;
 }) => {
   if (!show) return null;
 
@@ -18,7 +20,7 @@ const Modal = ({
         className="modal-content"
         onClick={(e) => e.stopPropagation()}
       >
-        {component}
+        {component || children}
       </div>
     </div>
   );

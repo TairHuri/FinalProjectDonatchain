@@ -150,7 +150,7 @@ export const toggleCampaignStatus = async (req: Request, res: Response) => {
     await campaign.save();
 
     res.json({
-      message: `קמפיין ${campaign.isActive ? "הופעל מחדש ✅" : "הושהה ⏸️"}`,
+      message: `קמפיין ${campaign.isActive ? "הופעל מחדש " : "הושהה "}`,
       campaign,
     });
   } catch (err: any) {

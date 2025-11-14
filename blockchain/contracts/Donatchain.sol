@@ -2,16 +2,17 @@
 pragma solidity ^0.8.19;
 
 contract Donatchain {
-    // -------- הרשאות בסיסיות --------
+    
+    // -------- Basic permissions --------
     address public owner;
     modifier onlyOwner() { require(msg.sender == owner, "not owner"); _; }
 
-    // Pause
+    // -------- Pause --------
     bool public paused;
     modifier whenNotPaused() { require(!paused, "paused"); _; }
     function setPaused(bool p) external onlyOwner { paused = p; }
 
-    // -------- מודל קמפיין --------
+    // -------- Campaign model --------
     struct Campaign {
         // מזהי תצוגה (לא חובה לשמור on-chain, אבל אם תרצי — הנה)
         uint256 campaignId;

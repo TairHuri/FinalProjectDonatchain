@@ -22,7 +22,9 @@ export async function registerUserNewNgo(user: User, ngo: Ngo, media: NgoMediaTy
   if (ngo.email) formData.append("email", ngo.email);
 
   if (media.logoUrl) formData.append("logo", media.logoUrl);
-
+  for(const tag of ngo.tags){        
+        formData.append("tags", tag)
+    }
 
   try {
     const res = await fetch(`${API_URL}/auth/register/newngo`, {

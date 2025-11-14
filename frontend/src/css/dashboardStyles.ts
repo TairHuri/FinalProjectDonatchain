@@ -10,6 +10,8 @@ export const menuBtnStyle: React.CSSProperties = {
   borderRadius: "8px",
   color: "white",
   fontSize: "16px",
+  fontWeight: "bolder",
+  fontFamily: 'calibri',
   cursor: "pointer",
   marginBottom: "10px",
 };
@@ -71,7 +73,7 @@ export const buttonStyle = {
   padding: "10px",
   borderRadius: "8px",
   border: "none",
- 
+
 }
 
 export const cardStyle: React.CSSProperties = {

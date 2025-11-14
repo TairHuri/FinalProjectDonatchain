@@ -1,0 +1,31 @@
+{
+    "campaign":[
+    {"tag":"רווחה", "icon":"HeartHandshake"},
+    {"tag":"בריאות", "icon":"Activity"},
+    {"tag":"חינוך", "icon":"GraduationCap"},
+    {"tag":"סביבה", "icon":"Flower"},
+    {"tag":"בעלי חיים", "icon":"Dog"},
+    {"tag":"קהילה", "icon":"Users"},
+    {"tag":"תרבות", "icon":"Clapperboard"},
+    {"tag":"חירום", "icon":"TriangleAlert"},
+    {"tag":"טכנולוגיה", "icon":"Laptop"},
+    {"tag":"חסד", "icon":"HandHelping"},
+    {"tag":"שוויון", "icon":"Scale"},
+    {"tag":"נגישות", "icon":"Accessibility"},
+    {"tag":"צה\"ל", "icon":"Shield"}
+],
+"ngo":[
+    {"tag":"רווחה", "icon":"HeartHandshake"},
+    {"tag":"בריאות", "icon":"Activity"},
+    {"tag":"חינוך", "icon":"GraduationCap"},
+    {"tag":"סביבה", "icon":"Flower"},
+    {"tag":"בעלי חיים", "icon":"Dog"},
+    {"tag":"קהילה", "icon":"Users"},
+    {"tag":"תרבות", "icon":"Clapperboard"},
+    {"tag":"חירום", "icon":"TriangleAlert"},
+    {"tag":"טכנולוגיה", "icon":"Laptop"},
+    {"tag":"חסד", "icon":"HandHelping"},
+    {"tag":"שוויון", "icon":"Scale"},
+    {"tag":"נגישות", "icon":"Accessibility"},
+    {"tag":"צה\"ל", "icon":"Shield"}
+]}

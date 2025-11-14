@@ -40,6 +40,7 @@ export default function Navbar() {
     setMobileOpen(false);
   };
 
+
   const MenuItems = () => (
     <>
       {/* עמוד ראשי */}
@@ -65,15 +66,15 @@ export default function Navbar() {
           <Users size={18} />
           תורמים ⌄
         </button>
-        {openDropdown === "donors" && (
-          <ul className="dropdown" role="menu">
+        {(openDropdown === "donors" || mobileOpen &&( activeTab === 'ngos' || activeTab === 'campaigns')) && (
+          <ul className={mobileOpen ? 'dropdown-mobile' : 'dropdown'} role={mobileOpen ? '' : 'menu'}>
             <li>
-              <Link to="/ngos" className="dropdownLink" onClick={() => handleLinkClick("ngos")}>
+              <Link to="/ngos" className={`dropdownLink ${activeTab === "ngos" ? "dropdownLinkActive" : "dropdownLinkInActive"}`} onClick={() => handleLinkClick("ngos")}>
                 רשימת עמותות
               </Link>
             </li>
             <li>
-              <Link to="/campaigns" className="dropdownLink" onClick={() => handleLinkClick("campaigns")}>
+              <Link to="/campaigns" className={`dropdownLink ${activeTab === "campaigns" ? "dropdownLinkActive" : "dropdownLinkInActive"}`} onClick={() => handleLinkClick("campaigns")}>
                 רשימת קמפיינים
               </Link>
             </li>
@@ -101,15 +102,19 @@ export default function Navbar() {
             >
               עמותות ⌄
             </button>
-            {openDropdown === "ngo" && (
-              <ul className="dropdown" role="menu">
+            {(openDropdown === "ngo" || mobileOpen && (activeTab === 'ngo-register' || activeTab === 'ngo-login')) && (
+              <ul className={mobileOpen?'dropdown-mobile':'dropdown'} role="menu">
                 <li>
-                  <Link to="/registration/ngo" className="dropdownLink" onClick={() => handleLinkClick("ngo-register")}>
+                  <Link to="/registration/ngo" 
+                  className={`dropdownLink ${activeTab === "ngo-register" ? "dropdownLinkActive" : "dropdownLinkInActive"}`}
+                  onClick={() => handleLinkClick("ngo-register")}>
                     הרשמה
                   </Link>
                 </li>
                 <li>
-                  <Link to="/login/ngo" className="dropdownLink" onClick={() => handleLinkClick("ngo-login")}>
+                  <Link to="/login/ngo" 
+                  className={`dropdownLink ${activeTab === "ngo-login" ? "dropdownLinkActive" : "dropdownLinkInActive"}`}
+                  onClick={() => handleLinkClick("ngo-login")}>
                     התחברות
                   </Link>
                 </li>
@@ -130,15 +135,15 @@ export default function Navbar() {
           <Info size={18} />
           עלינו ⌄
         </button>
-        {openDropdown === "about" && (
-          <ul className="dropdown" role="menu">
+        {(openDropdown === "about" || mobileOpen && (activeTab === "about-main" || activeTab === "about-rules")) && (
+          <ul className={mobileOpen ? 'dropdown-mobile' : "dropdown"} role="menu">
             <li>
-              <Link to="/about" className="dropdownLink" onClick={() => handleLinkClick("about-main")}>
+              <Link to="/about" className={`dropdownLink ${activeTab === "about-main" ? "dropdownLinkActive" : "dropdownLinkInActive"}`} onClick={() => handleLinkClick("about-main")}>
                 מי אנחנו
               </Link>
             </li>
             <li>
-              <Link to="/about/rules" className="dropdownLink" onClick={() => handleLinkClick("about-rules")}>
+              <Link to="/about/rules" className={`dropdownLink ${activeTab === "about-rules" ? "dropdownLinkActive" : "dropdownLinkInActive"}`} onClick={() => handleLinkClick("about-rules")}>
                 תקנון
               </Link>
             </li>
@@ -181,7 +186,7 @@ export default function Navbar() {
                 <User size={26} />
               </button>
               {openDropdown === "user" && (
-                <ul className="dropdown" role="menu">
+                <ul className="dropdown dropdownLink-logout" role="menu">
                   <li>
                     <Link
                       to="/"
@@ -209,7 +214,7 @@ export default function Navbar() {
             {darkMode ? <Sun size={22} /> : <Moon size={22} />}
           </button>
 
-          <Link to="/" className="logoLink" aria-label="דף הבית" onClick={() => handleLinkClick("home")}>
+          <Link to="/" className="logoLink" style={{float:mobileOpen?'left':undefined}} aria-label="דף הבית" onClick={() => handleLinkClick("home")}>
             <img src="/longLogo.png" alt="לוגו" className="logo" />
           </Link>
 
@@ -224,6 +229,33 @@ export default function Navbar() {
           </button>
         </div>
       </nav>
+      {/* תפריט מובייל */}
+      {/* Mobile drawer (left) */}
+      <aside
+        id="mobile-drawer"
+        className="drawer"
+        data-open={mobileOpen ? "true" : "false"}
+        data-theme={darkMode ? "dark" : "light"}
+        dir="rtl"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="drawer-title"
+      >
+        <div className="drawerHeader">
+          <span id="drawer-title" className="drawerTitle">תפריט</span>
+          <button
+            className="iconBtn drawerClose"
+            aria-label="סגירת תפריט"
+            onClick={() => setMobileOpen(false)}
+          >
+            <X size={22} />
+          </button>
+        </div>
+
+        <ul className="drawerList">
+          <MenuItems />
+        </ul>
+      </aside>
     </>
   );
 }

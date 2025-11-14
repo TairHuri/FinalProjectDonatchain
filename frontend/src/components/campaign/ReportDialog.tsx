@@ -46,6 +46,7 @@
 import { useState } from "react";
 import "../../css/campaign/ReportDialog.css";
 import { getCampaignReport } from "../../services/campaignApi";
+import Spinner, { useSpinner } from "../Spinner";
 
 type Props = {
   token: string;
@@ -54,6 +55,7 @@ type Props = {
 };
 
 export default function ReportDialog({ token, campaignId, close }: Props) {
+  const {start, stop, isLoading} = useSpinner()
   const [options, setOptions] = useState({
     includeDonations: false,
     includeComments: false,
@@ -77,23 +79,25 @@ export default function ReportDialog({ token, campaignId, close }: Props) {
     }
   };
 
-  const handleCreate = () => {
-    getCampaignReport(
+  const handleCreate = async() => {
+    start()
+    await getCampaignReport(
       token,
       campaignId,
       options.includeDonations ? "1" : "0",
       options.includeComments ? "1" : "0"
     );
+    stop()
     close();
   };
 
   const handleCancel = () => close();
-
+  if(isLoading) return <Spinner />
   return (
     <div className="report-dialog" dir="rtl" role="dialog" aria-labelledby="report-title">
       <h3 id="report-title" className="report-title">ייצוא דו״ח קמפיין</h3>
       <p className="report-sub">הדו"ח יכלול את פרטי הקמפיין. בחר/י אם הינך מעוניין שיופיעו גם הפרטים הבאים</p>
-
+      
       <div className="options">
         <div className="option-row">
           <label className="option-label" htmlFor="includeDonations">כלול תרומות</label>

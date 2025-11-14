@@ -53,7 +53,7 @@
   background: rgba(0,0,0,0.45);
   backdrop-filter: blur(2px);
   display: flex;
-  align-items: flex-start;    
+  align-items: center;    
   justify-content: center;
   z-index: 9999;
   padding: 40px 16px;        

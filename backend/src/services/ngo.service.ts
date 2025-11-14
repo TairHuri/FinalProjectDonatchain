@@ -1,6 +1,7 @@
 // src/services/ngo.service.ts
 import Ngo, { BaseNgo } from '../models/ngo.model';
 import fetch from 'node-fetch';
+import tags from '../config/tags.json'
 
 const VERIFY_NGO_RES_AMUTOT = "be5b7935-3922-45d4-9638-08871b17ec95"; // עמותות רשומות
 const VERIFY_NGO_RES_NIHUL_TAKIN = "cb12ac14-7429-4268-bc03-460f48157858"; // אישור ניהול תקין
@@ -106,5 +107,6 @@ async verifyNgoActive(ngoNumber: string)  {
     Object.assign(ngo, updates);
     await ngo.save();
     return ngo;
-  }
+  },
+  getNgoTags: () => tags.ngo
 };

@@ -22,7 +22,7 @@ export default function Campaigns() {
   const [query, setQuery] = useState("");
   const [sortBy, setSortBy] = useState<SortByType>("title");
   const [view, setView] = useState<"grid" | "list">("grid");
-   const [showActiveOnly, setShowActiveOnly] = useState(true);
+  const [showActiveOnly, setShowActiveOnly] = useState(true);
   const params = useParams();
   const [queryTag, setQueryTag] = useSearchParams();
 
@@ -132,16 +132,6 @@ export default function Campaigns() {
             <option value="endDateOldToNew">סיום (ישן→חדש)</option>
           </select>
 
-          {/**/}
-          <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={showActiveOnly}
-              onChange={(e) => setShowActiveOnly(e.target.checked)}
-            />
-            הצג רק פעילים
-          </label>
-
           <div className="camps-view">
             <button
               type="button"
@@ -160,6 +150,16 @@ export default function Campaigns() {
               <Grid size={18} />
             </button>
           </div>
+
+          {/**/}
+          <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={showActiveOnly}
+              onChange={(e) => setShowActiveOnly(e.target.checked)}
+            />
+            הצג רק פעילים
+          </label>
         </div>
       </header>
 

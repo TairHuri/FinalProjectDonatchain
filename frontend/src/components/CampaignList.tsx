@@ -79,7 +79,9 @@ export default function CampaignList() {
       transition={{ duration: 0.6 }}
       className="mt-6"
     >
-      {/* ן */}
+      <div>
+        <h2 style={{ color: "#059669", fontFamily: 'calibri', fontSize: "28px", fontWeight: "bold", margin: '10px auto' }}>רשימת קמפיינים</h2>
+      </div>
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
         <div className="relative w-full md:w-1/3">
           <Search
@@ -132,11 +134,10 @@ export default function CampaignList() {
             filteredCampaigns.map((c: any) => (
               <tr
                 key={c._id}
-                className={`transition-all duration-300 ${
-                  c.isActive
+                className={`transition-all duration-300 ${c.isActive
                     ? "bg-white hover:bg-blue-50"
                     : "bg-gray-100 opacity-80 hover:opacity-100"
-                }`}
+                  }`}
               >
                 <td className="border px-4 py-2 font-semibold text-blue-700">
                   {c.title}
@@ -145,9 +146,8 @@ export default function CampaignList() {
                 <td className="border px-4 py-2">{c.goal}</td>
                 <td className="border px-4 py-2">{c.raised}</td>
                 <td
-                  className={`border px-4 py-2 font-bold ${
-                    c.isActive ? "text-green-600" : "text-red-500"
-                  }`}
+                  className={`border px-4 py-2 font-bold ${c.isActive ? "text-green-600" : "text-red-500"
+                    }`}
                 >
                   {c.isActive ? "פעיל" : "מושהה"}
                 </td>
@@ -165,11 +165,10 @@ export default function CampaignList() {
                     whileTap={{ scale: 0.9 }}
                     onClick={() => handleToggle(c._id)}
                     disabled={actionLoading === c._id}
-                    className={`flex items-center justify-center gap-2 mx-auto px-4 py-2 rounded-lg text-white font-semibold shadow transition-all duration-300 ${
-                      c.isActive
+                    className={`flex items-center justify-center gap-2 mx-auto px-4 py-2 rounded-lg text-white font-semibold shadow transition-all duration-300 ${c.isActive
                         ? "bg-red-600 hover:bg-red-700"
                         : "bg-green-600 hover:bg-green-700"
-                    } disabled:opacity-60`}
+                      } disabled:opacity-60`}
                   >
                     {actionLoading === c._id ? (
                       <Loader2 className="animate-spin" size={20} />

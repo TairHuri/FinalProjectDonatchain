@@ -3,7 +3,7 @@ import '../css/Spinner.css'
 
 const Spinner = () => {
     return (
-        <div style={{alignItems:'center', display:'flex', justifyContent:'center', height:'100%'}}>
+        <div className='spinner-container' >
 
             <span className="loader"></span>
         </div>

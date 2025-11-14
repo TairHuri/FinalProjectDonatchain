@@ -34,14 +34,6 @@ const CampaignItem = ({
     return end ? end < new Date() : false;
   })();
 
-  const FlexContainer = ({
-    isGrid,
-    children,
-  }: {
-    isGrid: boolean;
-    children: ReactNode[] | ReactNode;
-  }) => (isGrid ? <>{children}</> : <div className={styles['flex-container_flex']}>{children}</div>);
-
   return (
     <div className={`${view === "grid" ? styles['grid_container_grid']:styles["grid_container_flex"]} ${styles['campaign-card']}` }>
       {isEnded && <span className={styles['campaign-badge']}>הסתיים</span>}
@@ -93,4 +85,11 @@ const CampaignItem = ({
   );
 };
 
+export const FlexContainer = ({
+    isGrid,
+    children,
+  }: {
+    isGrid: boolean;
+    children: ReactNode[] | ReactNode;
+  }) => (isGrid ? <>{children}</> : <div className={styles['flex-container_flex']}>{children}</div>);
 export default CampaignItem;

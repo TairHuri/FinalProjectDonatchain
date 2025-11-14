@@ -13,6 +13,7 @@ export interface BaseNgo {
   email?: string;
   logoUrl?: string;
   certificate: string;
+  tags: string[];
 }
 
 export interface INgo extends Document, BaseNgo {
@@ -33,6 +34,7 @@ const ngoSchema = new Schema(
     bankAccount: String,
     wallet: String,
     logoUrl: String,
+    tags: [String],
     certificate: { type: String, required: true },
     createdBy: { type: Schema.Types.ObjectId, ref: "User" },
     isActive: { type: Boolean, default: true },

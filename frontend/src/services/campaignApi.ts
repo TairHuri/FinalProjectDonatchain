@@ -77,6 +77,10 @@ export async function getCampaignReport(token: string, campaignId:string, includ
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!res.ok) throw new Error(await res.text());
+  const pdfFile = await res.blob()
+  const fileUrl = URL.createObjectURL(pdfFile);
+  window.open(fileUrl, '_blank')
+  
   
 }
 export async function getCampaignTags() {
