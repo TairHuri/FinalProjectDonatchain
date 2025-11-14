@@ -62,22 +62,49 @@ const AdminDashboard: React.FC = () => {
     try {
       const token = localStorage.getItem("token");
 
-      // בקשה לסטטיסטיקות כלליות
-      const statsRes = await axios.get(`${import.meta.env.VITE_API_URL}/admin/stats`, {
+    setStats({
+      usersCount: 0,
+      ngosCount: 0,
+      campaignsCount: 0,
+      donationsCount: 0,
+      totalRaised: 0,
+    });
+
+    const [statsRes, ngosRes, donationsRes] = await Promise.all([
+      axios.get(`${import.meta.env.VITE_API_URL}/admin/stats`, {
         headers: { Authorization: `Bearer ${token}` },
-      });
+      }),
+      axios.get(`${import.meta.env.VITE_API_URL}/ngos`),
+      axios.get(`${import.meta.env.VITE_API_URL}/donations`, {
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+    ]);
 
-      // בקשה לרשימת עמותות
-      const ngosRes = await axios.get(`${import.meta.env.VITE_API_URL}/ngos`);
 
-      setStats({
-        ...statsRes.data,
-        ngosCount: ngosRes.data.items?.length ?? 0,
-      });
-    } catch (err) {
-      console.error("שגיאה בטעינת הנתונים:", err);
-    }
-  };
+    const totalRaisedFromDonations = Array.isArray(donationsRes.data)
+      ? donationsRes.data.reduce(
+          (sum: number, donation: any) => sum + (donation.amount || 0),
+          0
+        )
+      : 0;
+
+    const donationsCount = Array.isArray(donationsRes.data)
+      ? donationsRes.data.length
+      : 0;
+
+    setStats({
+      usersCount: statsRes.data.usersCount ?? 0,
+      ngosCount: ngosRes.data.items?.length ?? 0,
+      campaignsCount: statsRes.data.campaignsCount ?? 0,
+      donationsCount,
+      totalRaised: totalRaisedFromDonations,
+    });
+
+    console.log("✅ הנתונים רועננו בהצלחה!");
+  } catch (err) {
+    console.error("❌ שגיאה בטעינת הנתונים בדשבורד המנהל:", err);
+  }
+};
 
   const logout = () => {
     localStorage.clear();

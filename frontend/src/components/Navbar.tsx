@@ -229,6 +229,34 @@ export default function Navbar() {
           </button>
         </div>
       </nav>
+      {showContact && (
+  <div className="contactModal" onClick={() => setShowContact(false)}>
+    <div className="contactContent" onClick={(e) => e.stopPropagation()}>
+      <h2>📬 צור קשר</h2>
+      <p>נשמח לשמוע ממך! ניתן לפנות אלינו ישירות למייל של המערכת:</p>
+
+      <div className="emailBox">
+        <span className="emailText">DonatChainSM@gmail.com</span>
+        <button
+          className="copyBtn"
+          onClick={() => {
+            navigator.clipboard.writeText("DonatChainSM@gmail.com");
+            setCopied(true);
+            setTimeout(() => setCopied(false), 1500);
+          }}
+        >
+          {copied ? "✔ הועתק!" : "העתק"}
+        </button>
+      </div>
+
+      <div className="contactActions">
+        <button className="closeContactBtn" onClick={() => setShowContact(false)}>
+          סגור
+        </button>
+      </div>
+    </div>
+  </div>
+)}
       {/* תפריט מובייל */}
       {/* Mobile drawer (left) */}
       <aside

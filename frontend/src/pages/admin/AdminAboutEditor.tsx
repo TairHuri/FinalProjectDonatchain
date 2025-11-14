@@ -20,6 +20,7 @@ export default function AdminAboutEditor() {
     try {
       await axios.put(`${import.meta.env.VITE_API_URL}/about`, about);
       alert("העמוד עודכן בהצלחה");
+      alert("העמוד עודכן בהצלחה");
     } catch (err) {
       console.error("שגיאה בעדכון עמוד עלינו:", err);
       alert("שגיאה בשמירה");
@@ -62,7 +63,7 @@ export default function AdminAboutEditor() {
         placeholder="טקסט החזון"
       />
 
-      {/* אפשר להוסיף עורך לכל feature */}
+      {/*  */}
       {about.features.map((f: any, i: number) => (
         <div key={i} className="mb-4">
           <input

@@ -71,7 +71,7 @@ export default function AboutRules() {
         <hr className="my-10 border-t-2 border-blue-200" />
 
         <p className="text-center text-xl font-semibold text-gray-800">
-          תודה על האמון שלכם 💙  
+          תודה על האמון שלכם   
           <br />
           יחד נבנה עתיד חכם, מאובטח ושקוף לעולם התרומות
         </p>

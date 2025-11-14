@@ -19,10 +19,10 @@ export default function AdminRulesEditor() {
   const saveChanges = async () => {
     try {
       await axios.put(`${import.meta.env.VITE_API_URL}/rules`, rules);
-      alert("התקנון עודכן בהצלחה ✅");
+      alert("התקנון עודכן בהצלחה ");
     } catch (err) {
       console.error("שגיאה בעדכון התקנון:", err);
-      alert("שגיאה בשמירה ❌");
+      alert("שגיאה בשמירה ");
     }
   };
 

@@ -4,7 +4,7 @@ import { ShieldCheck, Brain, HeartHandshake, Globe } from "lucide-react";
 import axios from "axios";
 
 export default function About() {
-  // ✅ State לטקסטים מהשרת
+ 
   const [about, setAbout] = useState<{
     heroTitle: string;
     heroText: string;

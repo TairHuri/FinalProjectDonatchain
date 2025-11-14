@@ -111,7 +111,10 @@ const UserPersonalDetails = ({ editMode, setEditMode }: { editMode: string, setE
       setEditMode("view")
     }
   }
-
+const isValidPassword = (password: string) => {
+  const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+  return regex.test(password);
+};
   const handleChange = (field: string, value: string | number) => {
     setFormData({ ...formData, [field]: value })
   }

@@ -85,6 +85,7 @@ export async function loginUser(data: { email: string; password: string }) {
   });
   return res.json();
 }
+
 export async function getUsers(ngoId: string) {
   const token = localStorage.getItem("token")
   const res = await fetch(`${API_URL}/users/ngo/${ngoId}`, { headers: { "Authorization": `Bearer ${token}` } })
