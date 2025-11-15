@@ -19,7 +19,7 @@ export default function RegistrationNgo() {
   const [ngoList, setNgoList] = useState<Ngo[]>([]);
   const [media, setMedia] = useState<NgoMediaType>({ logoUrl: null, certificate: null });
 
-  const { message, setMessage, showAlert, setShowAlert, isFailure, setIsFailure } = useAlertDialog();
+  const { showAlert, isFailure, message, clearAlert, setAlert } = useAlertDialog();
 
   const [user, setUser] = useState<User>({
     name: "",
@@ -114,23 +114,17 @@ const handleChangeData = (field: string, value: string | number) => {
 
     // בדיקת ת"ז
     if (!isValidIsraeliID(idNumber)) {
-      setIsFailure(true);
-      setMessage("תעודת זהות אינה תקינה");
-      setShowAlert(true);
+      setAlert("תעודת זהות אינה תקינה", true);
       return;
     }
 
     // בדיקות שדות חובה למשתמש
     if (!user.name || !user.email || !user.password || !user.phone) {
-      setIsFailure(true);
-      setMessage("יש למלא את כל שדות המשתמש: שם, אימייל, טלפון וסיסמה");
-      setShowAlert(true);
+      setAlert("יש למלא את כל שדות המשתמש: שם, אימייל, טלפון וסיסמה", true);
       return;
     }
     if (!isValidPassword(user.password)) {
-      setIsFailure(true);
-      setMessage("הסיסמה חייבת להכיל לפחות 8 תווים, כולל אות גדולה, אות קטנה, ספרה ותו מיוחד");
-      setShowAlert(true);
+      setAlert("הסיסמה חייבת להכיל לפחות 8 תווים, כולל אות גדולה, אות קטנה, ספרה ותו מיוחד", true);
       return;
     }
     if (newNgo) {
@@ -148,9 +142,7 @@ const handleChangeData = (field: string, value: string | number) => {
 
       for (const field of requiredNgoFields) {
         if (!ngo[field]) {
-          setIsFailure(true);
-          setMessage("יש למלא את כל שדות העמותה (למעט אתר ולוגו)");
-          setShowAlert(true);
+          setAlert("יש למלא את כל שדות העמותה (למעט אתר ולוגו)", true);
           return;
         }
       }
@@ -162,48 +154,36 @@ const handleChangeData = (field: string, value: string | number) => {
       );
 
       if (existingNgo) {
-        setIsFailure(true);
-        setMessage("עמותה בשם זה או עם מספר עמותה זה כבר קיימת במערכת.");
-        setShowAlert(true);
+        setAlert("עמותה בשם זה או עם מספר עמותה זה כבר קיימת במערכת.", true);
         return;
       }
 
       // בדיקת תעודה חובה
       if (!media.certificate) {
-        setIsFailure(true);
-        setMessage("יש להעלות תעודת רישום עמותה (קובץ אישור).");
-        setShowAlert(true);
+        setAlert("יש להעלות תעודת רישום עמותה (קובץ אישור).", true);
         return;
       }
 
       // בדיקת תקינות חשבון בנק
       if (!isValidBankAccount(ngo.bankAccount || "")) {
-        setIsFailure(true);
-        setMessage("מספר חשבון הבנק אינו תקין. יש להזין בין 6 ל-10 ספרות בלבד.");
-        setShowAlert(true);
+        setAlert("מספר חשבון הבנק אינו תקין. יש להזין בין 6 ל-10 ספרות בלבד.", true);
         return;
       }
 
       if (!isValidIsraeliID(idNumber)) {
-        setIsFailure(true);
-        setMessage("תעודת זהות אינה תקינה");
-        setShowAlert(true);
+        setAlert("תעודת זהות אינה תקינה", true);
         return;
       }
 
       if (newNgo && (!ngo.wallet || !isValidCryptoWallet(ngo.wallet))) {
-        setIsFailure(true);
-        setMessage("כתובת ארנק הקריפטו אינה תקינה. ודאי שהיא מתחילה ב-0x ומכילה 42 תווים.");
-        setShowAlert(true);
+        setAlert("כתובת ארנק הקריפטו אינה תקינה. ודאי שהיא מתחילה ב-0x ומכילה 42 תווים.", true);
         return;
       }
 
     } else {
       // עמותה קיימת — חובה לבחור אחת
       if (!user.ngoId) {
-        setIsFailure(true);
-        setMessage("יש לבחור עמותה קיימת מהרשימה");
-        setShowAlert(true);
+        setAlert("יש לבחור עמותה קיימת מהרשימה", true);
         return;
       }
     }
@@ -218,18 +198,12 @@ const handleChangeData = (field: string, value: string | number) => {
       }
 
       if (res.success) {
-        setIsFailure(false);
-        setMessage("ההרשמה בוצעה בהצלחה!");
-        setShowAlert(true);
+        setAlert("ההרשמה בוצעה בהצלחה!", false);
       } else {
-        setIsFailure(true);
-        setMessage(res.message || "שגיאה בהרשמה");
-        setShowAlert(true);
+        setAlert(res.message || "שגיאה בהרשמה", true);
       }
     } catch (err) {
-      setIsFailure(true);
-      setMessage("שגיאת שרת");
-      setShowAlert(true);
+      setAlert("שגיאת שרת", true);
     }
   };
 
@@ -379,7 +353,7 @@ const handleChangeData = (field: string, value: string | number) => {
         failureTitle="שגיאה"
         successTitle=""
         message={message}
-        failureOnClose={() => setShowAlert(false)}
+        failureOnClose={clearAlert}
         successOnClose={() => nav("/login/ngo")}
         isFailure={isFailure}
       />

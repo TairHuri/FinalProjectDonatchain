@@ -7,7 +7,7 @@ import UserItem from "../UserItem";
 
 import "../../css/NgoUsers.css";
 import { setUserRoleApi, deleteUserApi } from "../../services/userApi";
-import AlertDialog from "../gui/AlertDialog";
+import AlertDialog, { useAlertDialog } from "../gui/AlertDialog";
 import type { Message } from "../../models/Message";
 import { getMessagesByNgoId, saveMessage } from "../../services/messageApi";
 
@@ -24,14 +24,8 @@ const NgoUsers = () => {
     const [users, setUsers] = useState<User[]>([])
     // דאטה  להודעות עמותה
     const [messages, setMessages] = useState<Message[]>([]);
-
-
     const [activeTab, setActiveTab] = useState<Tab>("members");
-
-  
     const [newMessage, setNewMessage] = useState<Message>(defaultMessage);
-    console.log("all users=", users);
-    console.log("user=", user);
 
 
     const loadMesaages = async () => {
@@ -41,8 +35,7 @@ const NgoUsers = () => {
             const messages = await getMessagesByNgoId(user?.ngoId, user?.token);
             setMessages(messages)
         } catch (error) {
-            setMessage('שגיאה בטעינת הודעות')
-            console.log(error);
+            setAlert('שגיאה בטעינת הודעות', true)
         }
     }
 
@@ -54,8 +47,7 @@ const NgoUsers = () => {
                 setNewMessage(defaultMessage)
             }
         } catch (error) {
-            setMessage('שגיאה בשליחת הודעה')
-            console.log(error);
+            setAlert('שגיאה בשליחת הודעה', true)
         }
     }
 
@@ -71,14 +63,12 @@ const NgoUsers = () => {
         loadMesaages();
     }, [])
 
-    const [message, setMessage] = useState<string>('')
-
-    console.log("user=", user);
+    const { showAlert, message, clearAlert, setAlert } = useAlertDialog();
 
     const approveUser = async (userId: string) => {
         const res = await approveUserApi(userId)
         if (!res.success) {
-            alert('עדכון המשתמש נכשל')
+            setAlert('עדכון המשתמש נכשל', true)
         } else {
             loadUsers()
         }
@@ -86,7 +76,7 @@ const NgoUsers = () => {
     const declineUser = async (userId: string) => {
         const res = await deleteUserApi(userId);
         if (!res.success) {
-            setMessage('מחיקת המשתמש נכשל')
+            setAlert('מחיקת המשתמש נכשל', true)
         } else {
             loadUsers()
         }
@@ -94,7 +84,7 @@ const NgoUsers = () => {
     const changeUserRole = async (userId: string, role: string) => {
         const res = await setUserRoleApi(userId, role);
         if (!res.success) {
-            setMessage('שינוי התפקיד נכשל')
+            setAlert('שינוי התפקיד נכשל', true)
         } else {
             loadUsers()
         }
@@ -108,38 +98,38 @@ const NgoUsers = () => {
     if (!user) return null;
     return (
         <div className={'container'}>
-            <AlertDialog show={message != ""} isFailure={true} message={message} failureOnClose={() => setMessage("")} />
+            <AlertDialog show={showAlert} isFailure={true} message={message} failureOnClose={clearAlert} />
 
-<div className='tabsRow'>
-  {/* טאב חברי עמותה */}
-  <button
-    className={`tabBtn ${activeTab === "members" ? 'tabActive' : ""}`}
-    onClick={() => setActiveTab("members")}
-  >
-    חברי עמותה
-    <span className='tabCount'>{activeMembers.length}</span>
-  </button>
+            <div className='tabsRow'>
+                {/* טאב חברי עמותה */}
+                <button
+                    className={`tabBtn ${activeTab === "members" ? 'tabActive' : ""}`}
+                    onClick={() => setActiveTab("members")}
+                >
+                    חברי עמותה
+                    <span className='tabCount'>{activeMembers.length}</span>
+                </button>
 
-  {/* טאב בקשות — מנהל בלבד */}
-  {isCurrentManager && (
-    <button
-      className={`tabBtn ${activeTab === "pending" ? 'tabActive' : ""}`}
-      onClick={() => setActiveTab("pending")}
-    >
-      בקשות הצטרפות
-      <span className='tabCount'>{pendingMembers.length}</span>
-    </button>
-  )}
+                {/* טאב בקשות — מנהל בלבד */}
+                {isCurrentManager && (
+                    <button
+                        className={`tabBtn ${activeTab === "pending" ? 'tabActive' : ""}`}
+                        onClick={() => setActiveTab("pending")}
+                    >
+                        בקשות הצטרפות
+                        <span className='tabCount'>{pendingMembers.length}</span>
+                    </button>
+                )}
 
-  {/* טאב לוח הודעות */}
-  <button
-    className={`tabBtn ${activeTab === "board" ? 'tabActive' : ""}`}
-    onClick={() => setActiveTab("board")}
-  >
-    לוח הודעות
-    <span className='tabCount'>{messages.length}</span>
-  </button>
-</div>
+                {/* טאב לוח הודעות */}
+                <button
+                    className={`tabBtn ${activeTab === "board" ? 'tabActive' : ""}`}
+                    onClick={() => setActiveTab("board")}
+                >
+                    לוח הודעות
+                    <span className='tabCount'>{messages.length}</span>
+                </button>
+            </div>
 
 
             {/* TAB CONTENT */}
@@ -268,7 +258,7 @@ type MessageBoardProps = {
     createMessage: () => void;
 };
 
-function MessageBoard({ messages, newMessage, setNewMessage,createMessage }: MessageBoardProps) {
+function MessageBoard({ messages, newMessage, setNewMessage, createMessage }: MessageBoardProps) {
     return (
         <div className={'boardWrapper'}>
             <div className={'messagesList'}>

@@ -1,5 +1,4 @@
-import { ethers } from "ethers";
-import hubAbi from '../abi/Donatchain.json';
+
 import { useEffect, useState, type FormEvent } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useCampaigns } from "../contexts/CampaignsContext";
@@ -12,93 +11,23 @@ import '../css/AlertDialog.css';
 
 import InputText, { InputFile } from "./gui/InputText";
 import AlertDialog, { useAlertDialog } from "./gui/AlertDialog";
-import "../css/campaign/CreateCampaign.css";               // ⬅️ חדש: קובץ העיצוב לעמוד
 import { getCampaignTags } from "../services/campaignApi";
 import Tags from "./gui/Tags";
 
-const CONTRACT = import.meta.env.VITE_CONTRACT_ADDRESS as `0x${string}`;
-const TARGET_CHAIN_ID = BigInt(import.meta.env.VITE_CHAIN_ID ?? "11155111"); // Sepolia
-const IMAGE_URL = import.meta.env.VITE_IMAGES_URL || "http://localhost:4000/images";
+import "../css/campaign/CreateCampaign.css";               // ⬅️ חדש: קובץ העיצוב לעמוד
+import { createCampaignOnChain } from "../services/cryptoApi";
 
-const SEPOLIA = {
-  chainIdDec: 11155111n,
-  chainIdHex: '0xaa36a7',
-  rpcUrls: ['https://rpc.sepolia.org'],
-  chainName: 'Sepolia',
-  nativeCurrency: { name: 'Sepolia Ether', symbol: 'SEP', decimals: 18 },
-  blockExplorerUrls: ['https://sepolia.etherscan.io'],
-};
 
-// קטגוריות מוצעות (אפשר להרחיב/לשנות)
-// const CATEGORIES = [
-//   "רווחה", "בריאות", "חינוך", "סביבה", "בעלי חיים", "קהילה",
-//   "תרבות", "חירום", "טכנולוגיה", "חסד", "שוויון", "נגישות"
-// ];
+// const IMAGE_URL = import.meta.env.VITE_IMAGES_URL || "http://localhost:4000/images";
 
-async function ensureSepolia() {
-  if (!window.ethereum) throw new Error('No injected wallet');
-  const provider = new ethers.BrowserProvider(window.ethereum);
-  const net = await provider.getNetwork();
-  if (net.chainId === SEPOLIA.chainIdDec) return provider;
-  try {
-    await window.ethereum.request({
-      method: 'wallet_switchEthereumChain',
-      params: [{ chainId: SEPOLIA.chainIdHex }],
-    });
-  } catch (err: any) {
-    if (err?.code === 4902) {
-      await window.ethereum.request({
-        method: 'wallet_addEthereumChain',
-        params: [{
-          chainId: SEPOLIA.chainIdHex,
-          chainName: SEPOLIA.chainName,
-          rpcUrls: SEPOLIA.rpcUrls,
-          nativeCurrency: SEPOLIA.nativeCurrency,
-          blockExplorerUrls: SEPOLIA.blockExplorerUrls,
-        }],
-      });
-      await window.ethereum.request({
-        method: 'wallet_switchEthereumChain',
-        params: [{ chainId: SEPOLIA.chainIdHex }],
-      });
-    } else {
-      throw err;
-    }
-  }
-}
-async function createCampaignOnChain(opts: {
-  campaignName: string;
-  charityId: number;
-  charityName: string;
-  beneficiary: string;
-}) {
-  if (!window.ethereum) { alert("לא נמצא ארנק בדפדפן (MetaMask)."); return false; }
-  await ensureSepolia();
-  const provider = new ethers.BrowserProvider(window.ethereum);
-  await provider.send("eth_requestAccounts", []);
-  const network = await provider.getNetwork();
-  if (network.chainId !== TARGET_CHAIN_ID) { alert("נא לעבור לרשת Sepolia בארנק."); return false; }
-  const signer = await provider.getSigner();
-  const hub = new ethers.Contract(CONTRACT, hubAbi.abi as any, signer);
-  const tx = await hub.createCampaign(
-    opts.campaignName,
-    BigInt(opts.charityId),
-    opts.charityName,
-    opts.beneficiary
-  );
-  const receipt = await tx.wait();
-  const event = receipt.logs
-    .map((log: { topics: ReadonlyArray<string>; data: string; }) => { try { return hub.interface.parseLog(log); } catch { return null; } })
-    .find((p: { name: string; } | null) => p && (p as any).name === "CampaignCreated");
-  const onchainId = (event as any)?.args?.campaignId;
-  return onchainId;
-}
+
 
 const CreateCampaign = ({ postSave }: { postSave: () => void }) => {
   const { user } = useAuth();
   const { isLoading, start, stop } = useSpinner();
   const { addCampaign } = useCampaigns();
   const [ngo, setNgo] = useState<Ngo | null>(null);
+  
 
   const [form, setForm] = useState({
     title: "",
@@ -112,7 +41,7 @@ const CreateCampaign = ({ postSave }: { postSave: () => void }) => {
     tags: [] as string[],                       // ⬅️ חדש: קטגוריות שנבחרו
   });
 
-  const { message, setMessage, showAlert, setShowAlert, isFailure, setIsFailure } = useAlertDialog();
+  const { showAlert, isFailure, message, clearAlert, setAlert } = useAlertDialog();
 
   useEffect(() => {
     const loadNgo = async (u: User) => {
@@ -152,20 +81,24 @@ const CreateCampaign = ({ postSave }: { postSave: () => void }) => {
     const images: File[] = [];
     if (form.images) for (const img of form.images) images.push(img);
 
-    const blockchainTx: string | boolean = await createCampaignOnChain({
+    const blockchainTx = await createCampaignOnChain({
       campaignName: newCampaign.title,
       charityId: +ngo.ngoNumber,
       charityName: ngo.name,
       beneficiary: ngo.wallet
     });
-    if (!blockchainTx) { stop(); return; }
+    if (!blockchainTx.status) { 
+      stop(); 
+      setAlert(blockchainTx.message, true)
+      return; 
+    }
 
-    newCampaign.blockchainTx = blockchainTx.toString();
+    newCampaign.blockchainTx = blockchainTx.onchainId.toString();
     const success = await addCampaign(newCampaign, images, form.movie, form.mainImage);
     if (!success) {
-      stop(); setIsFailure(true); setMessage("שגיאה ביצירת הקמפיין"); setShowAlert(true); return;
+      stop();setAlert("שגיאה ביצירת הקמפיין", true);  return;
     }
-    stop(); setIsFailure(false); setMessage("הקמפיין נוצר בהצלחה!"); setShowAlert(true);
+    stop(); setAlert("הקמפיין נוצר בהצלחה!", false); 
     setForm({
       title: "", goal: "", startDate: "", endDate: "", description: "",
       images: null, movie: null, mainImage: null, tags: []
@@ -223,7 +156,7 @@ const CreateCampaign = ({ postSave }: { postSave: () => void }) => {
   };
   const validateFormCreateCampaign = (name: keyof typeof form, value: string, status: StatusType) => {
     if (validations[name] && (validations[name].status === 'both' || validations[name].status === status) && validations[name].validate(value)) {
-      setIsFailure(true); setMessage(validations[name].message); setShowAlert(true); return false;
+      setAlert(validations[name].message, true);  return false;
     }
     return true;
   };
@@ -311,7 +244,7 @@ const CreateCampaign = ({ postSave }: { postSave: () => void }) => {
         failureTitle="שגיאה"
         successTitle=""
         message={message}
-        failureOnClose={() => setShowAlert(false)}
+        failureOnClose={clearAlert}
         isFailure={isFailure}
       />
     </>

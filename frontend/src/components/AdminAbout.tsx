@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import type { ChangeEvent } from "react";
 
 import axios from "axios";
+import AlertDialog, { useAlertDialog } from "./gui/AlertDialog";
 
 export default function AdminAbout() {
   const [aboutData, setAboutData] = useState({
@@ -14,6 +15,7 @@ export default function AdminAbout() {
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const { showAlert, isFailure, message, clearAlert, setAlert } = useAlertDialog();
 
   useEffect(() => {
     fetchAboutData();
@@ -34,15 +36,15 @@ export default function AdminAbout() {
     setAboutData({ ...aboutData, [field]: value });
   };
 
-const handleFeatureChange = (
-  index: number,
-  field: "title" | "text", 
-  value: string
-) => {
-  const newFeatures = [...aboutData.features];
-  newFeatures[index] = { ...newFeatures[index], [field]: value };
-  setAboutData({ ...aboutData, features: newFeatures });
-};
+  const handleFeatureChange = (
+    index: number,
+    field: "title" | "text",
+    value: string
+  ) => {
+    const newFeatures = [...aboutData.features];
+    newFeatures[index] = { ...newFeatures[index], [field]: value };
+    setAboutData({ ...aboutData, features: newFeatures });
+  };
 
 
   const addFeature = () => {
@@ -59,10 +61,10 @@ const handleFeatureChange = (
       await axios.put(`${import.meta.env.VITE_API_URL}/admin/about`, aboutData, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      alert("עמוד 'עלינו' עודכן בהצלחה!");
+      setAlert("עמוד 'עלינו' עודכן בהצלחה!", false);
     } catch (err) {
       console.error("שגיאה בשמירת הנתונים:", err);
-      alert("שגיאה בשמירה, נסי שוב.");
+      setAlert("שגיאה בשמירה, נסי שוב.", true);
     } finally {
       setSaving(false);
     }
@@ -143,6 +145,7 @@ const handleFeatureChange = (
       <button onClick={saveChanges} disabled={saving} style={saveBtnStyle}>
         {saving ? "שומר..." : "שמור שינויים"}
       </button>
+      <AlertDialog show={showAlert} message={message} failureOnClose={clearAlert} isFailure={isFailure} />
     </div>
   );
 }

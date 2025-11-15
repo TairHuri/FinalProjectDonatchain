@@ -5,12 +5,14 @@ import { getNgoList } from "../services/ngoApi";
 import type { Ngo } from "../models/Ngo";
 
 import '../css/Ngos.css'
+import AlertDialog, { useAlertDialog } from "../components/gui/AlertDialog";
 
 export default function Ngos() {
     const [search, setSearch] = useState("");
     const [sortBy, setSortBy] = useState("name");
     const [ngos, setNgos] = useState<Ngo[]>([])
     const [view, setView] = useState<"grid" | "list">("grid"); // מצב תצוגה
+    const { showAlert, message,isFailure, clearAlert, setAlert } = useAlertDialog();
 
     const loadNgoList = async () => {
         try {
@@ -18,7 +20,7 @@ export default function Ngos() {
             setNgos(ngos.items);
         } catch (error) {
             console.log(error);
-            alert('error loading ngos')
+            setAlert('error loading ngos', true)
         }
     }
     useEffect(() => {
@@ -104,9 +106,8 @@ export default function Ngos() {
                     </button>
                 </div>
             </div>
-
+            <AlertDialog show={showAlert} message={message} isFailure={isFailure} failureOnClose={clearAlert} />
             {/* רשימת עמותות */}
-
                 <div className={view == 'grid'?'ngos-container_grid':'ngos-container_flex'}>
                     {filteredNgos.map((ngo) => <NgoItem key={ngo._id} ngo={ngo} view={view}/>)}
                 </div> 

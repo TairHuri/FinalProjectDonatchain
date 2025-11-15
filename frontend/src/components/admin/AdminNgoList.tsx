@@ -6,6 +6,7 @@ import axios from "axios";
 import Modal from "../gui/Modal";
 import AdminNgoDetails from "./AdminNgoDetails";
 import type { Ngo } from "../../models/Ngo";
+import AlertDialog, { useAlertDialog } from "../gui/AlertDialog";
 
 
 export default function AdminNgoList() {
@@ -15,6 +16,8 @@ export default function AdminNgoList() {
   const [selectedNgo, setSelectedNgo] = useState<Ngo | null>(null);
   const [detailsLoading, setDetailsLoading] = useState(false);
   const token = localStorage.getItem("token") || "";
+
+  const { showAlert, isFailure, message, clearAlert, setAlert } = useAlertDialog();
 
   useEffect(() => {
     fetchNgos();
@@ -30,7 +33,7 @@ export default function AdminNgoList() {
       }));
       setNgos(ngosWithDates);
     } catch (err) {
-      console.error("שגיאה בטעינת רשימת עמותות:", err);
+      setAlert("שגיאה בטעינת רשימת עמותות:", true);
     } finally {
       setLoading(false);
     }
@@ -43,11 +46,10 @@ export default function AdminNgoList() {
     try {
       setActionLoading(id);
       const res = await toggleNgoStatus(id, token);
-      alert(res.message);
+      setAlert(res.message, false);
       await fetchNgos();
     } catch (err) {
-      console.error(err);
-      alert("שגיאה בעדכון הסטטוס");
+      setAlert("שגיאה בעדכון הסטטוס", true);
     } finally {
       setActionLoading(null);
     }
@@ -61,8 +63,7 @@ export default function AdminNgoList() {
       });
       setSelectedNgo(res.data);
     } catch (err) {
-      console.error("שגיאה בשליפת פרטי עמותה:", err);
-      alert("שגיאה בשליפת פרטי עמותה");
+      setAlert("שגיאה בשליפת פרטי עמותה", true);
     } finally {
       setDetailsLoading(false);
     }
@@ -154,7 +155,14 @@ export default function AdminNgoList() {
           ))}
         </tbody>
       </table>
-
+         <AlertDialog
+                show={showAlert}
+                failureTitle="שגיאה"
+                successTitle=""
+                message={message}
+                failureOnClose={clearAlert}
+                isFailure={isFailure}
+              />
       {/* חלון פרטי עמותה */}
       <Modal show={selectedNgo != null} onClose={() => setSelectedNgo(null)}>
         <AdminNgoDetails setSelectedNgo={setSelectedNgo} detailsLoading={detailsLoading} selectedNgo={selectedNgo!}/>

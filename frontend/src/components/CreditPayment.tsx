@@ -13,7 +13,7 @@ const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campa
     firstName: "",
     lastName: "",
     comment: "",
-    amount: 0,
+    originalAmount: 0,
     currency: "ILS",
     ccNumber: "",
     expYear: date.getFullYear(),
@@ -95,7 +95,7 @@ const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campa
     if (!ccForm.lastName.trim()) return setMessage("יש להזין שם משפחה");
     if (!ccForm.phone.match(/^[0-9]{3}[\-.]?[0-9]{7}$/)) return setMessage("יש להזין מספר פלאפון תקין (לדוגמה: 0501234567)");
     if (!ccForm.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) return setMessage("יש להזין כתובת דוא\"ל תקינה");
-    if (!ccForm.amount || Number(ccForm.amount) <= 0) return setMessage("יש להזין סכום תרומה תקין");
+    if (!ccForm.originalAmount || Number(ccForm.originalAmount) <= 0) return setMessage("יש להזין סכום תרומה תקין");
     if (!isValidCreditCard(ccForm.ccNumber)) return setMessage("מספר כרטיס האשראי שהוזן אינו תקין");
     if (ccForm.cvv < 100 || ccForm.cvv > 999) return setMessage("קוד CVV אינו תקין");
     if (!isValidIsraeliId(ccForm.ownerId)) return setMessage("תעודת הזהות שהוזנה אינה תקינה");
@@ -106,6 +106,7 @@ const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campa
     try {
       const chargeData = { 
         ...ccForm, 
+        amount:0,
         ownername: ccForm.ownerName, // השם שהטיפוס דורש
         campaign: campaignId 
       };
@@ -189,7 +190,7 @@ const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campa
         <select id="currency" onChange={handleChange}>
           <option value="ILS">ILS</option>
           <option value="USD">USD</option>
-          <option value="EU">EU</option>
+          <option value="EUR">EUR</option>
         </select>
       </div>
 

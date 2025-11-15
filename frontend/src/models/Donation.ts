@@ -7,6 +7,7 @@ export interface Donation {
   lastName: string;
   campaign: string;
   amount: number;
+  originalAmount:number;
   currency: string;
   method?: string; // e.g. 'card','wallet','onchain'
   txHash?: string; // blockchain tx if onchain

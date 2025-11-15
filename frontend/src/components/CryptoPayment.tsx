@@ -3,13 +3,11 @@ import { useCampaigns } from "../contexts/CampaignsContext";
 import { cryptoDonation } from "../services/api";
 import { buttonStyle, fildsPositionStyle, inputStyle, labelStyle } from "../css/dashboardStyles";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { useAccount, useSwitchChain, useWriteContract, useWaitForTransactionReceipt, useDisconnect } from 'wagmi';
-import { sepolia } from 'wagmi/chains';
-import { parseEther, type Abi } from 'viem';
-import hubAbiJson from '../abi/Donatchain.json';
+import { useDisconnect } from 'wagmi';
 import type { Donation } from "../models/Donation";
 import Spinner from "./Spinner";
 import { useSpinner } from "./Spinner";
+import { useCryptoPayment } from "../services/cryptoApi";
 
 const CryptoPayment = ({ close, campaignId }: { close: () => void, campaignId: string, userId: string }) => {
 
@@ -87,7 +85,7 @@ const CryptoPayment = ({ close, campaignId }: { close: () => void, campaignId: s
       await donateCrypto(`${ccForm.amount}`);
     } catch (error) {
       console.error(error);
-      setMessage("אירעה שגיאה בעת ביצוע התרומה, אנא נסי שוב.");
+      setMessage((error as any).message||"אירעה שגיאה בעת ביצוע התרומה, אנא נסי שוב.");
       stop();
     }
   };
@@ -155,32 +153,9 @@ const CryptoPayment = ({ close, campaignId }: { close: () => void, campaignId: s
   );
 };
 
-// ===== פונקציות עזר לקריפטו =====
-const useCryptoPayment = () => {
-  const { isConnected, chainId } = useAccount();
-  const { switchChain } = useSwitchChain();
-  const { writeContract, data: hash, isPending, error } = useWriteContract();
-  const { isLoading: waiting, isSuccess } = useWaitForTransactionReceipt({ hash });
 
-  async function donateCrypto(amountEth: string) {
-    if (!isConnected) return alert("התחברי לארנק");
-    if (chainId !== sepolia.id) return switchChain({ chainId: sepolia.id });
 
-    writeContract({
-      address: CONTRACT,
-      abi: HUB_ABI,
-      functionName: "donateCrypto",
-      args: [BigInt(CAMPAIGN_ID)],
-      value: parseEther(amountEth || "0.01"),
-    });
-  }
 
-  return { donateCrypto, waiting, isSuccess, hash, isPending, error };
-};
-
-const HUB_ABI = hubAbiJson.abi as Abi;
-const CONTRACT = import.meta.env.VITE_CONTRACT_ADDRESS as `0x${string}`;
-const CAMPAIGN_ID = Number(import.meta.env.VITE_CAMPAIGN_ID ?? 0);
 
 type CryptoProps = {
   isPending: boolean;

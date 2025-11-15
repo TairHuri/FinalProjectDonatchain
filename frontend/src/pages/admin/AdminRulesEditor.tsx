@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import AlertDialog, { useAlertDialog } from "../../components/gui/AlertDialog";
 
 export default function AdminRulesEditor() {
   const [rules, setRules] = useState<any[]>([]);
+  const { showAlert, message,isFailure, clearAlert, setAlert } = useAlertDialog();
 
   useEffect(() => {
     const fetchRules = async () => {
@@ -19,10 +21,9 @@ export default function AdminRulesEditor() {
   const saveChanges = async () => {
     try {
       await axios.put(`${import.meta.env.VITE_API_URL}/rules`, rules);
-      alert("התקנון עודכן בהצלחה ");
+      setAlert("התקנון עודכן בהצלחה ", false);
     } catch (err) {
-      console.error("שגיאה בעדכון התקנון:", err);
-      alert("שגיאה בשמירה ");
+      setAlert("שגיאה בשמירה ", true);
     }
   };
 
@@ -57,6 +58,7 @@ export default function AdminRulesEditor() {
       <button onClick={saveChanges} className="bg-blue-700 text-white px-6 py-2 rounded-lg mt-4 hover:bg-blue-800">
         שמור שינויים
       </button>
+      <AlertDialog show={showAlert} message={message} isFailure={isFailure} failureOnClose={clearAlert} />
     </div>
   );
 }

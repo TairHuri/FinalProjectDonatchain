@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import AlertDialog, { useAlertDialog } from "../../components/gui/AlertDialog";
 
 export default function AdminAboutEditor() {
   const [about, setAbout] = useState<any>(null);
+  const { showAlert, message,isFailure, clearAlert, setAlert } = useAlertDialog();
 
   useEffect(() => {
     const fetchAbout = async () => {
@@ -19,11 +21,9 @@ export default function AdminAboutEditor() {
   const saveChanges = async () => {
     try {
       await axios.put(`${import.meta.env.VITE_API_URL}/about`, about);
-      alert("העמוד עודכן בהצלחה");
-      alert("העמוד עודכן בהצלחה");
+      setAlert("העמוד עודכן בהצלחה", false);
     } catch (err) {
-      console.error("שגיאה בעדכון עמוד עלינו:", err);
-      alert("שגיאה בשמירה");
+      setAlert("שגיאה בשמירה", false);
     }
   };
 
@@ -98,6 +98,7 @@ export default function AdminAboutEditor() {
       <button onClick={saveChanges} className="bg-blue-700 text-white px-6 py-2 rounded-lg mt-4 hover:bg-blue-800">
         שמור שינויים
       </button>
+      <AlertDialog show={showAlert} message={message} isFailure={isFailure} failureOnClose={clearAlert} />
     </div>
   );
 }

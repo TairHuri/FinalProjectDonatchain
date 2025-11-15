@@ -4,6 +4,7 @@ import { PauseCircle, PlayCircle, Loader2, Search } from "lucide-react";
 import { motion } from "framer-motion";
 
 import "../css/adminDashboard.css";
+import AlertDialog, { useAlertDialog } from "./gui/AlertDialog";
 
 export default function CampaignList() {
   const [campaigns, setCampaigns] = useState<any[]>([]);
@@ -12,6 +13,8 @@ export default function CampaignList() {
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "paused">("all");
+
+  const { showAlert, isFailure, message, clearAlert, setAlert } = useAlertDialog();
 
   const token = localStorage.getItem("token") || "";
 
@@ -39,11 +42,10 @@ export default function CampaignList() {
     try {
       setActionLoading(id);
       const res = await toggleCampaignStatus(id, token);
-      alert(res.message || "הסטטוס עודכן בהצלחה ✅");
+      setAlert(res.message || "הסטטוס עודכן בהצלחה ✅", false);
       await fetchCampaigns();
     } catch (err) {
-      console.error(err);
-      alert("שגיאה בעדכון הסטטוס ❌");
+      setAlert("שגיאה בעדכון הסטטוס ❌", true);
     } finally {
       setActionLoading(null);
     }
@@ -188,6 +190,7 @@ export default function CampaignList() {
           )}
         </tbody>
       </table>
+      <AlertDialog message={message} isFailure={isFailure} show={showAlert} failureOnClose={clearAlert} />
     </motion.div>
   );
 }

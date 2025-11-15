@@ -9,10 +9,10 @@ import { cardStyle,  menuBtnStyle } from "../css/dashboardStyles";
 import NgoUsers from "../components/ngo/NgoUsers";
 import UserPersonalDetails from "../components/UserPersonalDetails";
 import CreateCampaign from "../components/CreateCampaign";
-import NgoDetails from "../components/NgoDetails";
+import NgoDetails from "../components/ngo/NgoDetails";
 import { getDonationsByNgo } from "../services/donationApi";
 import { useNavigate } from "react-router-dom";
-import EditCampaign from "../components/EditCampaign";
+import CampaignDetails from "../components/campaign/CampaignDetails";
 import TabsButtons, { useTabsButtons } from "../components/gui/TabsButtons";
 
 import '../css/NgoDashboard.css'
@@ -26,7 +26,7 @@ const NgoDashboard: React.FC = () => {
   const { campaigns } = useCampaigns();
   const navigate = useNavigate();
   const [activePage, setActivePage] = useState<
-    "dashboard" | "newCampaign" | "campaigns" |"editCampaign"| "profile" | "donors" | "ngoUsers" | "ngoDetails"| "adminRequest"
+    "dashboard" | "newCampaign" | "campaigns" |"CampaignDetails"| "profile" | "donors" | "ngoUsers" | "ngoDetails"| "adminRequest"
   >("dashboard");
   const [campaignId, setCampaignId] = useState<string|null>(null)
   console.log('campaigns', campaigns);
@@ -63,7 +63,7 @@ const getDonationsCount = async () => {
 
 
   const editCampaign = (id:string) => {
-setActivePage("editCampaign");
+setActivePage("CampaignDetails");
 setCampaignId(id);
   }
 console.log(user);
@@ -72,7 +72,7 @@ console.log(user);
       case "dashboard":
         return "medium";
       case "newCampaign":
-      case "editCampaign":
+      case "CampaignDetails":
       case "ngoDetails":
         return "large";
       case "campaigns":
@@ -178,13 +178,7 @@ console.log(user);
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <TabsButtons active={active} setActive={setActive} tabs={tabs} />
             </div>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))",
-                gap: "20px",
-              }}
-            >
+            <div style={{ display: "grid",gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))",gap: "20px",}}>
               {campaigns.filter(campaignFilters[active]).map((c) => (
                 <div key={c._id}>
                   <CampaignItem c={c} showButtons={true} edit={editCampaign} />
@@ -193,8 +187,8 @@ console.log(user);
             </div>
           </div>
         )}
-        {activePage == "editCampaign" && (
-          <EditCampaign campaignId={campaignId!} editMode={editMode} setEditMode={setEditMode} />
+        {activePage == "CampaignDetails" && (
+          <CampaignDetails campaignId={campaignId!} editMode={editMode} setEditMode={setEditMode} />
         )}
       </div>
     </div>

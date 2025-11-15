@@ -17,7 +17,7 @@ const UserPersonalDetails = ({ editMode, setEditMode }: { editMode: string, setE
   const { user, updateUser, logout } = useAuth()
   const nav = useNavigate();
 
-  const { message, setMessage, showAlert, setShowAlert, setIsFailure, isFailure } = useAlertDialog()
+  const { showAlert, isFailure, message, clearAlert, setAlert } = useAlertDialog();
   const { openConfirm, closeConfirm, showConfirm } = useConfirmDialog();
   if (!user || !user._id || !user.token) return <p>לא בוצעה התחברות</p>
   const [formData, setFormData] = useState<User>({ ...user });
@@ -41,21 +41,15 @@ const UserPersonalDetails = ({ editMode, setEditMode }: { editMode: string, setE
 
   const handleChangePassword = async () => {
     if (passwords.newPass !== passwords.confirmPass) {
-      setMessage("הסיסמאות החדשות אינן תואמות");
-      setIsFailure(true);
-      setShowAlert(true);
+      setAlert("הסיסמאות החדשות אינן תואמות", true);
       return;
     }
     try {
       const user = await changePassword(passwords.current, passwords.newPass);
-      setMessage("אימות סיסמה בוצע בהצלחה");
-      setIsFailure(false);
-      setShowAlert(true);
+      setAlert("אימות סיסמה בוצע בהצלחה", false);
 
     } catch (error) {
-      setMessage("אימות סיסמה נכשל");
-      setIsFailure(true);
-      setShowAlert(true);
+      setAlert("אימות סיסמה נכשל", true);
     }
   };
 
@@ -68,38 +62,31 @@ const UserPersonalDetails = ({ editMode, setEditMode }: { editMode: string, setE
 
       if (!hasManagers) {
         // alert
-        setMessage("לא ניתן למחוק את החשבון - מנהל יחיד")
-        setIsFailure(true)
-        setShowAlert(true)
+        setAlert("לא ניתן למחוק את החשבון - מנהל יחיד", true)
         setEditMode('view')
         return;
       }
     }
     const result: { success: true } | { success: false, message: string } = await deleteUserApi(user._id);
     if (result.success === true) {
-      setMessage("מחיקת החשבון בוצעה בהצלחה, לחץ אישור למעבר למסך הבית")
-      setIsFailure(false)
-      setShowAlert(true)
+      setAlert("מחיקת החשבון בוצעה בהצלחה, לחץ אישור למעבר למסך הבית", false)
     } else {
-      setMessage(result.message || "מחיקת החשבון לא הצליחה - אנא נסה מאוחר יותר")
-      setIsFailure(true)
-      setShowAlert(true)
+      setAlert(result.message || "מחיקת החשבון לא הצליחה - אנא נסה מאוחר יותר", true)
       setEditMode('view')
     }
     // request to server
   }
   const handleSaveChanges = async () => {
     if (!formData.name || !formData._id) {
-      alert("יש למלא את כל השדות");
+      setAlert("יש למלא את כל השדות", true);
       return;
     }
-    console.log(formData);
     try {
       const user = await editUser(formData);
       updateUser(user);
       setEditMode('view');
     } catch (error) {
-      alert((error as any).message)
+      setAlert((error as any).message, true)
     }
   };
 
@@ -189,7 +176,7 @@ const isValidPassword = (password: string) => {
       ) : (
         <p>לא נמצאו פרטים, אנא התחבר שוב.</p>
       )}
-      <AlertDialog show={showAlert} message={message} failureOnClose={() => setShowAlert(false)} isFailure={isFailure} successOnClose={handleAlertSuccess} />
+      <AlertDialog show={showAlert} message={message} failureOnClose={clearAlert} isFailure={isFailure} successOnClose={handleAlertSuccess} />
       <ConfirmDialog show={showConfirm} message='אתה בטוח שברצונך למחוק חשבון זה?' onYes={handleDeleteAccount} onNo={closeConfirm} />
     </div>
   )

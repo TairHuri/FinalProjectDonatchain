@@ -6,6 +6,7 @@ import { getNgoById } from "../services/ngoApi";
 import Spinner, { useSpinner } from "./Spinner";
 
 import "../css/ngo/NgoPageForUsers.css";
+import AlertDialog, { useAlertDialog } from "./gui/AlertDialog";
 
 const CERTIFICATE_URL = import.meta.env.VITE_CERTIFICATES_URL || "http://localhost:4000/certificates";
 
@@ -16,6 +17,7 @@ const NgoPageForUsers: React.FC = () => {
     const IMAGE_URL = import.meta.env.VITE_IMAGES_URL || "http://localhost:4000/images";
 
     const [ngo, setNgo] = useState<Ngo | null>(null);
+    const { showAlert, isFailure, message, clearAlert, setAlert } = useAlertDialog();
 
     const loadNgo = async (ngoId: string) => {
         try {
@@ -23,8 +25,7 @@ const NgoPageForUsers: React.FC = () => {
             const ngo = await getNgoById(ngoId);
             setNgo(ngo);
         } catch (error) {
-            console.log(error);
-            alert("error loading ngo");
+            setAlert("error loading ngo", true);
         } finally {
             stop();
         }
@@ -176,6 +177,14 @@ const NgoPageForUsers: React.FC = () => {
                         כל תרומה נרשמת במערכת ומתועדת בבלוקצ'יין לצורך ביקורת ושקיפות.
                     </div>
                 </footer>
+                 <AlertDialog
+                        show={showAlert}
+                        failureTitle="שגיאה"
+                        successTitle=""
+                        message={message}
+                        failureOnClose={clearAlert}
+                        isFailure={isFailure}
+                      />
             </div>
 
     );

@@ -43,14 +43,14 @@ export const getDonationsByNgo = async (req: Request, res: Response) => {
 
 export const creditDonate = async (req: Request, res: Response) => {
   const {
-    amount, ccNumber, expYear, expMonth, cvv,
+    amount,originalAmount, ccNumber, expYear, expMonth, cvv,
     ownerId, ownername, currency,
     phone, email, firstName, lastName, comment, anonymous
   } = req.body;
   const campaignId = req.params.id;
   try {
     const donation = await donationService.creditDonate({
-      amount, ccNumber, expYear, expMonth, cvv, ownerId, ownername, currency,
+      amount,originalAmount, ccNumber, expYear, expMonth, cvv, ownerId, ownername, currency,
       phone, email, firstName, lastName, comment, campaign: campaignId, anonymous
     }, campaignId)
 
@@ -83,12 +83,12 @@ export const getAllDonations = async (req: Request, res: Response): Promise<void
 
 
 export const cryptoDonate = async (req: Request, res: Response) => {
-  const { phone, email, firstName, lastName, amount,  currency, method, txHash, comment, anonymous } = req.body;
+  const { phone, email, firstName, lastName, originalAmount, currency, method, txHash, comment, anonymous } = req.body;
   const campaignId = req.params.id;
 
   try {
    const donation = await  donationService.cryptoDonate(
-      { phone, email, firstName, lastName, amount, campaign:campaignId, currency, method, txHash, comment, anonymous },
+      { phone, email, firstName, lastName, amount:originalAmount,originalAmount, campaign:campaignId, currency, method, txHash, comment, anonymous },
       campaignId
     )
 

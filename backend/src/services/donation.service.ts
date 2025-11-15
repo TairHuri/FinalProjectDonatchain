@@ -57,7 +57,7 @@ export default {
         throw new ServerError('campaing in insuitable for crypto', 400);
       }
 
-      const { amount, ccNumber, expYear, expMonth, cvv,
+      const { originalAmount, ccNumber, expYear, expMonth, cvv,
         ownerId, ownername, currency,
         email, firstName, lastName } = creditDonation;
 
@@ -65,7 +65,7 @@ export default {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          amount, ccNumber, expYear, expMonth, cvv,
+          amount:originalAmount, ccNumber, expYear, expMonth, cvv,
           ownerId, ownername, currency,
           email, firstName, lastName
         }),
@@ -88,6 +88,7 @@ export default {
           lastName: creditDonation.lastName,
           campaign: campaignId,
           amount: +data.charge,
+          originalAmount,
           currency,
           method: 'card',
           txHash: txHash,

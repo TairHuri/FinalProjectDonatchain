@@ -4,7 +4,7 @@ import Campaign from "../models/campaign.model";
 
 export const startCampaignStatusJob = () => {
   
-  cron.schedule("0 0 * * *", async () => {
+  cron.schedule("0 0 0 * * *", async () => {
     console.log("🔄 מריץ עדכון סטטוס קמפיינים לפי תאריך סיום...");
 
     try {

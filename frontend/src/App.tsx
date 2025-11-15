@@ -12,8 +12,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { CampaignsProvider } from "./contexts/CampaignsContext";
 import Discover from "./pages/Discover";
 import Donate from "./pages/Donate";
-import CampaignDetails from "./pages/CampaignDetails";
-import NewCampaign from "./pages/NewCampaign";
+import CampaignPage from "./pages/CampaignPage";
 import AboutRules from "./pages/AboutRules";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminRoute from "./components/AdminRoute";
@@ -52,10 +51,10 @@ const App: React.FC = () => {
               <Route path="/registration/ngo" element={<RegistrationNgo />} />
               <Route path="/donors/ngo" element={<DonorsNgo />} />
               <Route path="/ngo/home" element={<NgoDashboard />} />
-              <Route path="/campaign/:id" element={<CampaignDetails />} />
+              <Route path="/campaign/:id" element={<CampaignPage />} />
               <Route path="/about/rules" element={<AboutRules />} />
               <Route path="/campaigns" element={<Campaigns />} />
-              <Route path="/campaigns/new" element={<NewCampaign />} />
+              
               <Route path="/campaigns/:ngoId" element={<Campaigns />} />
               <Route path="/ngos" element={<Ngos />} />
               <Route path="/ngos/:id" element={<NgoPageForUsers />} />
@@ -64,7 +63,7 @@ const App: React.FC = () => {
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/verify-code" element={<VerifyCode />} />
               <Route path="/reset-password" element={<ResetPassword />} />
-<Route path="/login" element={<LoginNgo />} />
+              <Route path="/login" element={<LoginNgo />} />
               {/*  נתיב מוגן — רק מנהל מורשה */}
               <Route
                 path="/admin/dashboard"

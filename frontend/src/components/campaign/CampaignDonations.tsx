@@ -5,13 +5,15 @@ import { getDonationsByCampaign } from "../../services/donationApi";
 
 
 const CampaignDonations = ({ campaignId }: { campaignId: string }) => {
-    const [donations, setDonations] = useState<Pick<Donation, "_id" | "firstName" | "lastName" | "amount" | "currency" | "comment" | "txHash">[]>([])
+    const [donations, setDonations] = useState<Pick<Donation, "_id" | "firstName" | "lastName" | "originalAmount" | "currency" | "comment" | "txHash">[]>([])
     const { isLoading, start, stop } = useSpinner();
 
     const loadDonations = async () => {
         start()
         try {
             const donations = await getDonationsByCampaign(campaignId)
+            console.log(donations);
+            
             setDonations(donations)
         } catch (error) {
 
@@ -93,10 +95,11 @@ const CampaignDonations = ({ campaignId }: { campaignId: string }) => {
                         ? "תורם אנונימי"
                         : `${donation.firstName} ${donation.lastName}`;
 
-                    const shortHash =
+                    const shortHash = donation.txHash?
                         donation.txHash!.length > 12
                             ? `${donation.txHash!.slice(0, 8)}...${donation.txHash!.slice(-6)}`
-                            : donation.txHash;
+                            : donation.txHash
+                            :'-'
 
                     return (
                         <div
@@ -135,7 +138,7 @@ const CampaignDonations = ({ campaignId }: { campaignId: string }) => {
                                         lineHeight: 1.3,
                                     }}
                                 >
-                                    {donation.amount} {donation.currency}
+                                    {donation.originalAmount} {donation.currency}
                                 </span>
                             </div>
 

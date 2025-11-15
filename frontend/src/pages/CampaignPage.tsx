@@ -15,7 +15,7 @@ import ShareCampaign from "../components/campaign/ShareCampaign";
 
 
 
-import '../css/campaign/CampaignDetails.css'
+import '../css/campaign/CampaignPage.css'
 
 const IMAGE_URL = import.meta.env.VITE_IMAGES_URL || "http://localhost:4000/images";
 function endOfDay(dateStr?: string) {
@@ -30,7 +30,7 @@ function startOfDay(dateStr?: string) {
   d.setHours(0, 0, 0, 0);
   return d;
 }
-const CampaignDetails: React.FC = () => {
+const CampaignPage: React.FC = () => {
   const params = useParams();
   const { campaigns } = useCampaigns();
   const { user } = useAuth()
@@ -147,5 +147,5 @@ const CampaignDetails: React.FC = () => {
 
 
 
-export default CampaignDetails;
+export default CampaignPage;
 

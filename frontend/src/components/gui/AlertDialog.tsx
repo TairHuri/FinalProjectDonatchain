@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import '../../css/AlertDialog.css'
+import { useCall } from "wagmi";
 
 type AlertDialogProps = {
   show: boolean;
@@ -43,7 +44,16 @@ export const useAlertDialog = () => {
   const [showAlert, setShowAlert] = useState<boolean>(false);
   const [isFailure, setIsFailure] = useState<boolean>(false);
 
-    return{message, setMessage, showAlert, setShowAlert, isFailure, setIsFailure}
+  const setAlert = useCallback((message: string, isFailure: boolean) => {
+    setIsFailure(isFailure);
+    setMessage(message);
+    setShowAlert(true);
+  }, [])
+  const clearAlert = useCallback(() =>{
+    setShowAlert(false);
+    setMessage("");
+  }, [])
+  return { message, setMessage, showAlert, setShowAlert, isFailure, setIsFailure, setAlert, clearAlert }
 
 }
 export default AlertDialog;
