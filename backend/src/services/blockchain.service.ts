@@ -10,7 +10,19 @@ if (config.contractPrivateKey) {
   wallet = new ethers.Wallet(config.contractPrivateKey, provider);
 }
 const contract = new ethers.Contract(config.contractAddress, DonatchainABI.abi, wallet ?? provider);
+
+// ether exchange rate logic
+const ethExchangeRateApi = config.ethExchangeRateApi;
+const exchangeRate = {eth:0}
+export type ExchangeRateApi = {ethereum:{ils:number}}
+const parseRateApi = (response:ExchangeRateApi) => {
+    return response.ethereum.ils
+}
+
 export default {
+  rateApi: `${ethExchangeRateApi}?ids=ethereum&vs_currencies=ils`,
+  exchangeRate,
+  parseRateApi,
   provider,
   wallet,
   contract,

@@ -6,7 +6,8 @@ _id?: string;
   goal: number;
   startDate: string;
   endDate: string;
-  raised: number;
+  raised: {crypto:number, credit:number};
+  totalRaised?:number;  // calculated field in server
   numOfDonors: number;
   images: string[];
   movie?:string;

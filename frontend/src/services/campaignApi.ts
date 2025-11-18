@@ -19,7 +19,7 @@ export async function updateCampaign(data: Campaign, token: string, images: File
     formData.append("ngo", data.ngo)
     formData.append("blockchainTx", data.blockchainTx!)
     formData.append("goal", `${data.goal}`)
-    formData.append("raised", `${data.raised}`)
+  
     for (const image of data.images) {
         formData.append("existingImages", image)
     }

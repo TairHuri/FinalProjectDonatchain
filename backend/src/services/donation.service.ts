@@ -29,7 +29,7 @@ export default {
       const createdDonation = new Donation({ ...donation, campaign: campaign._id, });
       await createdDonation.save();
 
-      await campaignService.addDonationToCampaign(campaignId, donation.amount);
+      await campaignService.addDonationToCampaign(campaignId, donation.amount, 'crypto');
       await AuditLog.create({ action: 'donation_created', meta: { donationId: createdDonation._id } });
 
       await sendReceiptEmail({
@@ -52,7 +52,7 @@ export default {
 
   creditDonate: async (creditDonation: Omit<CreditDonation, "method">, campaignId: string) => {
     try {
-      const campaign = await campaignService.getById(campaignId);
+      const campaign = await campaignService.getById(campaignId, false);
       if (!campaign?.blockchainTx) {
         throw new ServerError('campaing in insuitable for crypto', 400);
       }
@@ -61,6 +61,8 @@ export default {
         ownerId, ownername, currency,
         email, firstName, lastName } = creditDonation;
 
+      // send the creditServer the original amount (in the original currency)
+      // the credit server will return the ILS amount in the field: charge
       const chargeResponse = await fetch('http://localhost:8890/api/charge', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -87,7 +89,7 @@ export default {
           firstName: creditDonation.firstName,
           lastName: creditDonation.lastName,
           campaign: campaignId,
-          amount: +data.charge,
+          amount: +data.charge, // charge is the ILS amount
           originalAmount,
           currency,
           method: 'card',
@@ -96,10 +98,10 @@ export default {
         });
 
         await donation.save();
-        await campaignService.addDonationToCampaign(campaignId, +data.charge);
+        await campaignService.addDonationToCampaign(campaignId, +data.charge, 'card');
         await AuditLog.create({ action: 'donation_created', meta: { donationId: donation._id } });
 
-        // ✅ שליחת מייל קבלה לתורם באשראי
+        //  שליחת מייל קבלה לתורם באשראי
         await sendReceiptEmail({
           donorEmail: donation.email,
           donorFirstName: donation.firstName,
@@ -116,40 +118,9 @@ export default {
         throw new ServerError('Charge server error: ' + text, 502);
       }
     } catch (error) {
-      console.error('❌ Error in creditDonate:', error);
+      console.error(' Error in creditDonate:', error);
       throw error;
     }
-  },
-
-  // creates donation record, validates onchain tx if needed, updates campaign.returns donation
-  async createDonation({ donorId, campaignId, amount, currency = 'USD', method = 'card', txHash }: any) {
-    if (method === 'crypto' && txHash) {
-      const receipt = await blockchainService.getTransaction(txHash);
-      if (!receipt || (receipt as any).status !== 1) throw new Error('Invalid onchain transaction');
-    }
-
-    const donation = new Donation({
-      donor: donorId || null,
-      campaign: campaignId,
-      amount,
-      currency,
-      method,
-      txHash,
-    });
-    await donation.save();
-
-    const campaign = await Campaign.findById(campaignId);
-    if (!campaign) throw new Error('Campaign not found');
-    campaign.raised = (campaign.raised || 0) + amount;
-    await campaign.save();
-
-    await AuditLog.create({
-      action: 'donation_created',
-      user: donorId || null,
-      meta: { donationId: donation._id },
-    });
-
-    return donation;
   },
 
 

@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import "../css/RegistrationNgo.css";
 import AlertDialog, { useAlertDialog } from "../components/gui/AlertDialog";
 import { getNgoTags } from "../services/ngoApi";
+import { validateNgo, validateUser } from "../validations/registration.validation";
 
 //export type NgoMediaType = { logoUrl: File | null, certificate: File | null }
 
@@ -31,7 +32,6 @@ export default function RegistrationNgo() {
     approved: false,
   });
 
-  const [idNumber, setIdNumber] = useState<string>("");
 
   const [ngo, setNgo] = useState<Ngo>({
     _id: "",
@@ -62,15 +62,15 @@ export default function RegistrationNgo() {
     setMedia({ ...media, [field]: value ? value[0] : null });
   };
 
-const handleChangeData = (field: string, value: string | number) => {
-  const n = ngoList.find(
-    (x) =>
-      x.name === value ||
-      (x.ngoNumber && x.ngoNumber.toString() === value.toString())
-  );
-  if (!n) return;
-  setUser({ ...user, ngoId: n._id });
-};
+  const handleChangeData = (field: string, value: string | number) => {
+    const n = ngoList.find(
+      (x) =>
+        x.name === value ||
+        (x.ngoNumber && x.ngoNumber.toString() === value.toString())
+    );
+    if (!n) return;
+    setUser({ ...user, ngoId: n._id });
+  };
 
 
   const loadNgoList = async () => {
@@ -78,110 +78,22 @@ const handleChangeData = (field: string, value: string | number) => {
     setNgoList(res.items);
   };
 
-
-  // בדיקת תקינות תעודת זהות
-  const isValidIsraeliID = (id: string) => {
-    id = String(id).trim();
-    if (id.length > 9 || isNaN(Number(id))) return false;
-    id = id.padStart(9, "0");
-    let sum = 0;
-    for (let i = 0; i < 9; i++) {
-      let num = Number(id[i]) * ((i % 2) + 1);
-      if (num > 9) num -= 9;
-      sum += num;
-    }
-    return sum % 10 === 0;
-  };
-
-  const isValidBankAccount = (account: string) => {
-    if (!account) return false;
-    const clean = account.replace(/\D/g, "");
-    if (clean.length < 6 || clean.length > 10) return false;
-    if (/^(\d)\1+$/.test(clean)) return false;
-    return true;
-  };
-
-  const isValidCryptoWallet = (wallet: string) => {
-    if (!wallet) return false;
-    return /^0x[a-fA-F0-9]{40}$/.test(wallet.trim());
-  };
-  const isValidPassword = (password: string) => {
-    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
-    return regex.test(password);
-  };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // בדיקת ת"ז
-    if (!isValidIsraeliID(idNumber)) {
-      setAlert("תעודת זהות אינה תקינה", true);
-      return;
-    }
-
     // בדיקות שדות חובה למשתמש
-    if (!user.name || !user.email || !user.password || !user.phone) {
-      setAlert("יש למלא את כל שדות המשתמש: שם, אימייל, טלפון וסיסמה", true);
-      return;
-    }
-    if (!isValidPassword(user.password)) {
-      setAlert("הסיסמה חייבת להכיל לפחות 8 תווים, כולל אות גדולה, אות קטנה, ספרה ותו מיוחד", true);
-      return;
+    const validUser = validateUser(user)
+    if (!validUser.status) {
+      setAlert(validUser.message, true);
     }
     if (newNgo) {
       // בדיקות חובה לעמותה חדשה (למעט website ולוגו)
-      const requiredNgoFields: (keyof Ngo)[] = [
-        "name",
-        "description",
-        "bankAccount",
-        "wallet",
-        "address",
-        "phone",
-        "email",
-        "ngoNumber",
-      ];
-
-      for (const field of requiredNgoFields) {
-        if (!ngo[field]) {
-          setAlert("יש למלא את כל שדות העמותה (למעט אתר ולוגו)", true);
-          return;
-        }
+      const validNgo = validateNgo(ngo, ngoList, media)
+      if (!validNgo.status) {
+        setAlert(validNgo.message, true);
       }
-
-      const existingNgo = ngoList.find(
-        (n) =>
-          n.name.trim() === ngo.name.trim() ||
-          (n.ngoNumber && n.ngoNumber.trim() === ngo.ngoNumber.trim())
-      );
-
-      if (existingNgo) {
-        setAlert("עמותה בשם זה או עם מספר עמותה זה כבר קיימת במערכת.", true);
-        return;
-      }
-
-      // בדיקת תעודה חובה
-      if (!media.certificate) {
-        setAlert("יש להעלות תעודת רישום עמותה (קובץ אישור).", true);
-        return;
-      }
-
-      // בדיקת תקינות חשבון בנק
-      if (!isValidBankAccount(ngo.bankAccount || "")) {
-        setAlert("מספר חשבון הבנק אינו תקין. יש להזין בין 6 ל-10 ספרות בלבד.", true);
-        return;
-      }
-
-      if (!isValidIsraeliID(idNumber)) {
-        setAlert("תעודת זהות אינה תקינה", true);
-        return;
-      }
-
-      if (newNgo && (!ngo.wallet || !isValidCryptoWallet(ngo.wallet))) {
-        setAlert("כתובת ארנק הקריפטו אינה תקינה. ודאי שהיא מתחילה ב-0x ומכילה 42 תווים.", true);
-        return;
-      }
-
     } else {
-      // עמותה קיימת — חובה לבחור אחת
+
       if (!user.ngoId) {
         setAlert("יש לבחור עמותה קיימת מהרשימה", true);
         return;
@@ -248,19 +160,6 @@ const handleChangeData = (field: string, value: string | number) => {
             </div>
 
             <div className="input-group">
-              <IdCard className="input-icon" />
-              <input
-                type="text"
-                placeholder="תעודת זהות"
-                value={idNumber}
-                onChange={(e) => setIdNumber(e.target.value)}
-                className="input-field"
-                maxLength={9}
-                required
-              />
-            </div>
-
-            <div className="input-group">
               <Mail className="input-icon" />
               <input
                 type="email"
@@ -316,15 +215,15 @@ const handleChangeData = (field: string, value: string | number) => {
                   onChange={(e) => handleChangeData("ngoId", e.target.value)}
                   className="input-field"
                 />
-<datalist id="ngoList">
-  {ngoList.map((n) => (
-    <option
-      key={n._id}
-      value={n.name}
-      label={n.ngoNumber ? `(${n.ngoNumber})` : ""}
-    />
-  ))}
-</datalist>
+                <datalist id="ngoList">
+                  {ngoList.map((n) => (
+                    <option
+                      key={n._id}
+                      value={n.name}
+                      label={n.ngoNumber ? `(${n.ngoNumber})` : ""}
+                    />
+                  ))}
+                </datalist>
 
               </div>
             )}

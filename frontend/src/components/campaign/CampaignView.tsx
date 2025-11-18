@@ -45,7 +45,9 @@ const CampaignView = ({ campaign, setCampaign, token, setEditMode }: CampaignVie
         <p><strong>תיאור קמפיין:</strong> {campaign.description}</p>
         <p><strong>מספר בלוקצ'יין:</strong> {campaign.blockchainTx}</p>
         <p><strong>סכום יעד:</strong> {campaign.goal}</p>
-        <p><strong>סכום שגויס:</strong> {campaign.raised}</p>
+        <p><strong>סכום שגויס:</strong> {campaign.totalRaised}</p>
+        <p><strong>סכום שגויס בקריפטו:</strong> {campaign.raised.crypto}</p>
+        <p><strong>סכום שגויס באשראי:</strong> {campaign.raised.credit}</p>
         <p><strong>מספר תורמים:</strong> {campaign.numOfDonors}</p>
         <p><strong>תאריך התחלה:</strong> {new Date(campaign.startDate).toLocaleDateString('he')}</p>
         <p><strong>תאריך סיום:</strong> {new Date(campaign.endDate).toLocaleDateString('he')}</p>

@@ -146,7 +146,7 @@ export default function CampaignList() {
                 </td>
                 <td className="border px-4 py-2">{c.ngo?.name || "לא ידוע"}</td>
                 <td className="border px-4 py-2">{c.goal}</td>
-                <td className="border px-4 py-2">{c.raised}</td>
+                <td className="border px-4 py-2">{c.totalRaised}</td>
                 <td
                   className={`border px-4 py-2 font-bold ${c.isActive ? "text-green-600" : "text-red-500"
                     }`}

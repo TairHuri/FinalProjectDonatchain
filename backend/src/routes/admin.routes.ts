@@ -8,13 +8,12 @@ import { getAdminStats } from "../controllers/admin.controller";
 
 const router = Router();
 
-router.get('/stats', authMiddleware, roleMiddleware(['admin']), getStats);
+router.get('/stats', authMiddleware, roleMiddleware(['admin']), getAdminStats);
 router.get(
   '/donors',
   authMiddleware,
   roleMiddleware(['admin']),
   getAllDonors
 );
-router.get("/stats", authMiddleware,  getAdminStats);
 
 export default router;

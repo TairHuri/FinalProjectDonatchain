@@ -2,7 +2,6 @@
 pragma solidity ^0.8.19;
 
 contract Donatchain {
-    
     // -------- Basic permissions --------
     address public owner;
     modifier onlyOwner() { require(msg.sender == owner, "not owner"); _; }
@@ -14,28 +13,24 @@ contract Donatchain {
 
     // -------- Campaign model --------
     struct Campaign {
-        // מזהי תצוגה (לא חובה לשמור on-chain, אבל אם תרצי — הנה)
         uint256 campaignId;
         string  campaignName;
         uint256 charityId;
-        string  charityName;
 
-        // מצטברים
-        uint256 totalCrypto;   // ב-wei
-        uint256 totalFiat;     // באגורות/סנטים (יחידות קטנות off-chain)
+        uint64  startDate;   // unix timestamp (seconds)
+        uint64  endDate;     // unix timestamp (seconds)
+        uint256 goalAmount;
 
-        // הרשאות ויעד
-        address manager;       // בעל/מנהל הקמפיין
-        address beneficiary;   // ארנק העמותה שמקבל את ה-ETH
-
-        bool    active;        // האם פתוח לתרומות
+        uint256 totalCrypto;     
+        uint256 totalFiat;
+        address manager;       
+        address beneficiary;
+        bool    active;    
     }
 
-    // מזהה רץ
     uint256 public nextCampaignId;
     mapping(uint256 => Campaign) public campaigns;
 
-    // מנהל הקמפיין או סופר-אדמין
     modifier onlyOwnerOrManager(uint256 campaignId) {
         require(
             msg.sender == owner || msg.sender == campaigns[campaignId].manager,
@@ -44,12 +39,14 @@ contract Donatchain {
         _;
     }
 
-    // -------- אירועים לשקיפות --------
+    // -------- Events --------
     event CampaignCreated(
         uint256 indexed campaignId,
         string  campaignName,
         uint256 charityId,
-        string  charityName,
+        uint64  startDate,
+        uint64  endDate,
+        uint256 goalAmount,
         address beneficiary,
         address manager
     );
@@ -57,9 +54,14 @@ contract Donatchain {
     event CampaignUpdated(
         uint256 indexed campaignId,
         string  campaignName,
-        uint256 charityId,
-        string  charityName,
-        address beneficiary,
+        uint64  startDate,
+        uint64  endDate,
+        uint256 goalAmount,
+        address beneficiary
+    );
+
+    event CampaignStatusChanged(
+        uint256 indexed campaignId,
         bool    active
     );
 
@@ -69,33 +71,38 @@ contract Donatchain {
         uint256 amount
     );
 
-    event FiatDonationRecorded(
+    event CreditDonationRecorded(
         uint256 indexed campaignId,
         uint256 amount,
         string  currency,
         string  refCode
     );
 
-    // -------- בנאי --------
+    // -------- Constructor --------
     constructor() {
         owner = msg.sender;
         paused = false;
     }
 
-    // -------- יצירת/עדכון קמפיין --------
-
+    // -------- Create campaign --------
     function createCampaign(
         string  calldata campaignName,
         uint256         charityId,
-        string  calldata charityName,
+        uint64          startDate,
+        uint64          endDate,
+        uint256         goalAmount,
         address         beneficiary
     )
         external
         returns (uint256 id)
     {
         require(bytes(campaignName).length > 0, "empty name");
-        require(bytes(charityName).length  > 0, "empty charity name");
         require(beneficiary != address(0), "bad beneficiary");
+
+        require(startDate >= block.timestamp, "start in past"); // Start date not in the past
+        require(endDate > startDate, "bad end date"); // End date must be greater than start date
+
+        require(goalAmount > 0, "goal=0"); //goalAmount greater than 0
 
         id = nextCampaignId++;
 
@@ -103,9 +110,11 @@ contract Donatchain {
             campaignId:   id,
             campaignName: campaignName,
             charityId:    charityId,
-            charityName:  charityName,
+            startDate:    startDate,
+            endDate:      endDate,
+            goalAmount:   goalAmount,
             totalCrypto:  0,
-            totalFiat:    0,
+            totalCredit:  0,
             manager:      msg.sender,
             beneficiary:  beneficiary,
             active:       true
@@ -115,44 +124,79 @@ contract Donatchain {
             id,
             campaignName,
             charityId,
-            charityName,
+            startDate,
+            endDate,
+            goalAmount,
             beneficiary,
             msg.sender
         );
     }
 
+    // -------- Update campaign (without active) --------
     function updateCampaign(
         uint256 campaignId,
         string  calldata campaignName,
-        uint256         charityId,
-        string  calldata charityName,
-        address         beneficiary,
-        bool            active
+        uint64          newStartDate,
+        uint64          newEndDate,
+        uint256         newGoalAmount,
+        address         newBeneficiary
     )
         external
         onlyOwnerOrManager(campaignId)
     {
         Campaign storage c = campaigns[campaignId];
         require(c.manager != address(0), "unknown campaign");
-        require(beneficiary != address(0), "bad beneficiary");
+        require(bytes(campaignName).length > 0, "empty name");
+        require(newBeneficiary != address(0), "bad beneficiary");
 
+        // שם תמיד אפשר לעדכן
         c.campaignName = campaignName;
-        c.charityName  = charityName;
-        c.charityId    = charityId;
-        c.beneficiary  = beneficiary;
-        c.active       = active;
+
+        // עדכון תאריך התחלה – רק אם עדיין לא עבר התאריך הישן
+        if (newStartDate != c.startDate) {
+            require(block.timestamp < c.startDate, "start already passed");
+            require(newStartDate >= block.timestamp, "start in past");
+            require(newStartDate < c.endDate, "start >= end");
+            c.startDate = newStartDate;
+        }
+
+        // עדכון תאריך סיום – רק אם עדיין לא עבר התאריך הישן
+        if (newEndDate != c.endDate) {
+            require(block.timestamp < c.endDate, "end already passed");
+            require(newEndDate > c.startDate, "end <= start");
+            c.endDate = newEndDate;
+        }
+
+        // יעד
+        c.goalAmount = newGoalAmount;
+
+        // beneficiary
+        c.beneficiary = newBeneficiary;
 
         emit CampaignUpdated(
             campaignId,
-            campaignName,
-            charityId,
-            charityName,
-            beneficiary,
-            active
+            c.campaignName,
+            c.startDate,
+            c.endDate,
+            c.goalAmount,
+            c.beneficiary
         );
     }
 
-    // -------- תרומה בקריפטו (ETH) --------
+    // -------- Update active flag separately --------
+    function setCampaignActive(uint256 campaignId, bool active_)
+        external
+        onlyOwnerOrManager(campaignId)
+    {
+        Campaign storage c = campaigns[campaignId];
+        require(c.manager != address(0), "unknown campaign");
+
+        c.active = active_;
+
+        emit CampaignStatusChanged(campaignId, active_);
+    }
+
+    // -------- Donate in crypto (ETH) --------
     function donateCrypto(uint256 campaignId)
         external
         payable
@@ -161,6 +205,11 @@ contract Donatchain {
         Campaign storage c = campaigns[campaignId];
         require(c.beneficiary != address(0), "unknown campaign");
         require(c.active, "inactive");
+
+        // תורמים רק בין תאריך התחלה לתאריך סיום
+        require(block.timestamp >= c.startDate, "not started");
+        require(block.timestamp <= c.endDate, "ended");
+
         require(msg.value > 0, "no value");
 
         c.totalCrypto += msg.value;
@@ -171,25 +220,32 @@ contract Donatchain {
         emit CryptoDonation(campaignId, msg.sender, msg.value);
     }
 
-    // -------- רישום תרומת אשראי --------
-    function recordFiatDonation(
+    // -------- Record Credit donation --------
+    function recordCreditDonation(
         uint256 campaignId,
-        uint256 amountFiat,
+        uint256 originalAmount,
+        uint256 ILSAmount,
         string  calldata currency,
         string  calldata refCode
     )
         external
         onlyOwner
     {
-        require(campaigns[campaignId].beneficiary != address(0), "unknown campaign");
-        require(amountFiat > 0, "amount=0");
+        Campaign storage c = campaigns[campaignId];
+        require(c.beneficiary != address(0), "unknown campaign");
+        require(ILSAmount > 0, "amount=0");
 
-        campaigns[campaignId].totalFiat += amountFiat;
 
-        emit FiatDonationRecorded(campaignId, amountFiat, currency, refCode);
+        require(c.active, "inactive");
+        require(block.timestamp >= c.startDate, "not started");
+        require(block.timestamp <= c.endDate, "ended");
+
+        c.totalCredit += ILSAmount;
+
+        emit CreditDonationRecorded(campaignId, ILSAmount, originalAmount, currency, refCode);
     }
 
-    // -------- עזר --------
+    // -------- Ownership --------
     function transferOwnership(address newOwner) external onlyOwner {
         require(newOwner != address(0), "bad owner");
         owner = newOwner;

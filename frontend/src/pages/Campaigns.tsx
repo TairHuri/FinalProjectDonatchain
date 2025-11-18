@@ -50,7 +50,7 @@ export default function Campaigns() {
 
   const sortMap: Record<SortByType, (a: Campaign, b: Campaign) => number> = {
     title: (a, b) => a.title.localeCompare(b.title),
-    raised: (a, b) => b.raised - a.raised,
+    raised: (a, b) => b.totalRaised! - a.totalRaised!,
     goalLowToHigh: (a, b) => a.goal - b.goal,
     goalHighToLow: (a, b) => b.goal - a.goal,
     creationDateOldToNew: (a, b) =>

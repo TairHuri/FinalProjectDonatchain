@@ -67,8 +67,8 @@ const CampaignEdit = ({campaign,setEditMode,setCampaign,token,}: CampaignEditPro
       setAlert("יש למלא את כל השדות", true);
       return;
     }
-    if (Number(campaign.goal) < Number(campaign.raised)) {
-      setAlert(`לא ניתן להגדיר סכום יעד (${campaign.goal} ₪) קטן מהסכום שכבר גויס (${campaign.raised} ₪).`, true);
+    if (Number(campaign.goal) < Number(campaign.totalRaised)) {
+      setAlert(`לא ניתן להגדיר סכום יעד (${campaign.goal} ₪) קטן מהסכום שכבר גויס (${campaign.totalRaised} ₪).`, true);
       return;
     }
 

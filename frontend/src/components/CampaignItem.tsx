@@ -27,7 +27,7 @@ const CampaignItem = ({
   view?: "grid" | "list";
 }) => {
   const nav = useNavigate();
-  const percent = Math.min((c.raised / c.goal) * 100, 100);
+  const percent = Math.min(((c.totalRaised!) / c.goal) * 100, 100);
 
   const isEnded = (() => {
     const end = endOfDay(c.endDate);
@@ -60,7 +60,7 @@ const CampaignItem = ({
 
         <div className={styles['amount-row']}>
           <div className={styles.amount}>
-            {c.raised.toLocaleString()} ₪
+            {(c.totalRaised!).toLocaleString()} ₪
             <span className={styles.muted}> מתוך {c.goal.toLocaleString()} ₪</span>
           </div>
           <div className={styles.percent}>{Math.round(percent)}%</div>

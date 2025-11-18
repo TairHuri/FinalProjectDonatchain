@@ -3,6 +3,7 @@ import User from '../models/user.model';
 import Campaign from '../models/campaign.model';
 import Donation from '../models/donation.model';
 import Ngo from "../models/ngo.model";
+import campaignService from '../services/campaign.service';
 
 export const getAllDonors = async (req: Request, res: Response) => {
   try {
@@ -40,15 +41,15 @@ export const getAllDonors = async (req: Request, res: Response) => {
 
 export const getAdminStats = async (req: Request, res: Response) => {
   try {
-    const [usersCount, ngosCount, campaignsCount, donations] = await Promise.all([
+    const [usersCount, ngosCount, campaignsCount, donationsCount, campaigns] = await Promise.all([
       User.countDocuments(),
       Ngo.countDocuments(),
       Campaign.countDocuments(),
-      Donation.find({}, "amount"),
+      Donation.countDocuments(),
+      campaignService.getAll(),
     ]);
 
-    const donationsCount = donations.length;
-    const totalRaised = donations.reduce((sum, d) => sum + (d.amount || 0), 0);
+    const totalRaised = campaigns.reduce((sum, d) => sum + (d.totalRaised || 0), 0);
 
     res.json({
       usersCount,
@@ -63,22 +64,3 @@ export const getAdminStats = async (req: Request, res: Response) => {
   }
 };
 
-
-export const getStats = async (req: Request, res: Response) => {
-  try {
-    const usersCount = await User.countDocuments();
-    const campaignsCount = await Campaign.countDocuments();
-    const donationsCount = await Donation.countDocuments();
-    const totalRaised = await Donation.aggregate([
-      { $group: { _id: null, total: { $sum: "$amount" } } }
-    ]);
-    res.json({
-      usersCount,
-      campaignsCount,
-      donationsCount,
-      totalRaised: (totalRaised[0] && totalRaised[0].total) || 0
-    });
-  } catch (err: any) {
-    res.status(500).json({ message: err.message });
-  }
-};

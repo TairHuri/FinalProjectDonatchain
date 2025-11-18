@@ -1,9 +1,11 @@
 import { Request, Response } from 'express';
 import CampaignService from '../services/campaign.service';
+import blockchainService from '../services/blockchain.service';
 import { MediaFiles } from '../middlewares/multer.middleware';
 import { INgo } from '../models/ngo.model';
 import { ServerError } from '../middlewares/error.middleware';
 import { IUser } from '../models/user.model';
+import { ICampaign } from '../models/campaign.model';
 
 
 
@@ -23,7 +25,7 @@ export const createCampaign = async (req: Request, res: Response) => {
     const campaign = await CampaignService.create({
       title,
       description,
-      raised: 0,
+      raised: {crypto:0, credit:0},
       startDate,
       endDate,
       blockchainTx,
@@ -45,7 +47,7 @@ export const createCampaign = async (req: Request, res: Response) => {
 
 export const updateCampaign = async (req: Request, res: Response) => {
   const { campaignId } = req.params;
-  const { title, description, startDate, endDate, tags, goal, raised, isActive, blockchainTx, existingImages: images = [], existingMovie: movie, existingMainImage: mainImage } = req.body;
+  const { title, description, startDate, endDate, tags, goal, isActive, blockchainTx, existingImages: images = [], existingMovie: movie, existingMainImage: mainImage } = req.body;
 
   const user: { _id: string, ngoId: string } = (req as any).user;
   console.log('existingImages', images);
@@ -56,13 +58,11 @@ export const updateCampaign = async (req: Request, res: Response) => {
     const newMovie: string | null = mediaFiles.movie ? mediaFiles.movie[0].filename : null
     const newMainImage: string | null = mediaFiles.mainImage ? mediaFiles.mainImage[0].filename : null
 
-    console.log('movie', movie, newMovie, movie ? movie : newMovie);
-    console.log('mainImage', mainImage, newMainImage, mainImage || newMainImage);
+ 
     const campaign = await CampaignService.update({
       _id: campaignId,
       title,
       description,
-      raised,
       startDate,
       endDate,
       blockchainTx,
@@ -97,6 +97,7 @@ export const listCampaigns = async (req: Request, res: Response) => {
       page: Number(page),
       limit: Number(limit)
     });
+
     res.json(result);
   } catch (err: any) {
     res.status(500).json({ message: err.message });
@@ -106,7 +107,7 @@ export const listCampaigns = async (req: Request, res: Response) => {
 
 export const getCampaign = async (req: Request, res: Response) => {
   try {
-    const campaign = await CampaignService.getById(req.params.id);
+    const campaign = await CampaignService.getById(req.params.id, true);
     if (!campaign) {
       return res.status(404).json({ message: 'Campaign not found' });
     }
@@ -128,19 +129,10 @@ export const getAllCampaigns = async (req: Request, res: Response) => {
 export const toggleCampaignStatus = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const campaign = await CampaignService.getById(id);
+    const campaign = await CampaignService.getById(id, false) as ICampaign;
     if (!campaign) {
       return res.status(404).json({ message: "Campaign not found" });
     }
-
-    const user = req.user as any;
-
-    // נוודא שקיים user ושהשדות קיימים לפני שניגשים ל-toString
-    const userNgoId = user?.ngoId ? user.ngoId.toString() : null;
-    const campaignNgoId =
-      (campaign.ngo as any)?._id?.toString?.() ||
-      (typeof campaign.ngo === "string" ? campaign.ngo : null);
-
 
     // בדיקת הרשאה — רק מנהל מערכת או חבר באותה עמותה
     if (req.user!.role == 'admin' || (req.user as any).ngoId.toString() != (campaign.ngo as unknown as INgo)._id.toString()) return res.status(403).json({ message: "You are not part of this NGO" });

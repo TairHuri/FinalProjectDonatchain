@@ -73,7 +73,7 @@ const CampaignPage: React.FC = () => {
   if (!campaign) return <p>קמפיין לא נמצא</p>;
 
 
-  const percent = Math.min((campaign.raised / campaign.goal) * 100, 100);
+  const percent = Math.min((campaign.totalRaised! / campaign.goal) * 100, 100);
   return (
     <div dir="rtl" style={{ justifyContent: 'center', background: "white", padding: "24px", borderRadius: "12px", margin: "0 auto", width: "80vw" }}>
       {/* */}
@@ -88,7 +88,7 @@ const CampaignPage: React.FC = () => {
           <div style={{ width: `${percent}%`, height: "14px", background: "#22c55e", borderRadius: "10px" }} />
         </div>
         <p style={{ marginTop: "8px", fontSize: "14px" }}>
-          {campaign.raised.toLocaleString()} ₪ מתוך {campaign.goal.toLocaleString()} ₪
+          {campaign.totalRaised!.toLocaleString()} ₪ מתוך {campaign.goal.toLocaleString()} ₪
         </p>
         <p style={{ fontSize: "14px", color: "#666" }}>מספר תורמים: {campaign.numOfDonors}</p>
       </div>
@@ -148,4 +148,3 @@ const CampaignPage: React.FC = () => {
 
 
 export default CampaignPage;
-

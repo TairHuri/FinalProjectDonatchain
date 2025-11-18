@@ -1,17 +1,19 @@
 // src/services/campaign.service.ts
-import Campaign from '../models/campaign.model';
+import Campaign, { ICampaign } from '../models/campaign.model';
 import Donation from '../models/donation.model';
 import mongoose from 'mongoose';
 import tags from '../config/tags.json'
 import serverMessages from '../config/serverMessages.json'
+import blockchainService from './blockchain.service';
 import { ServerError } from '../middlewares/error.middleware';
-import {generateCampaignReport} from '../utils/pdfHelper'
+import { generateCampaignReport } from '../utils/pdfHelper'
 import { IUser } from '../models/user.model';
 import { INgo } from '../models/ngo.model';
 
+const calculateTotal = (campaigns: ICampaign[]) => campaigns.map(c => ({ ...c, totalRaised: c.raised.crypto * blockchainService.exchangeRate.eth + c.raised.credit }))
 export default {
 
-  async generateReport(campaignId: string, user:IUser, includeDonations: boolean, includeComments: boolean) {
+  async generateReport(campaignId: string, user: IUser, includeDonations: boolean, includeComments: boolean) {
     // const lang = 'he'
     // serverMessages.campaign.not_found[lang]
 
@@ -19,17 +21,18 @@ export default {
       .populate("ngo")
       .lean();
 
-    if (!campaign)throw new ServerError(serverMessages.campaign.not_found.he, 404);
-    if(user.ngoId!.toString() != (campaign.ngo as unknown as INgo)._id!.toString()){
+    if (!campaign) throw new ServerError(serverMessages.campaign.not_found.he, 404);
+    if (user.ngoId!.toString() != (campaign.ngo as unknown as INgo)._id!.toString()) {
       throw new ServerError(serverMessages.campaign.permissions.he, 403);
     }
     const donations = includeDonations
       ? await Donation.find({ campaign: campaignId })
-        .select("_id firstName lastName email phone amount currency comment txHash createdAt")
+        .select("_id firstName lastName email phone amount originalAmount currency comment txHash createdAt")
         .sort({ createdAt: -1 })
         .lean()
       : [];
-    const data = await generateCampaignReport(campaign, donations, includeDonations, includeComments)
+    const [calculatedCampaign] = calculateTotal([campaign])
+    const data = await generateCampaignReport(calculatedCampaign, donations, includeDonations, includeComments)
     return data;
   },
   async create(payload: any) {
@@ -47,40 +50,55 @@ export default {
     const filter: any = { isActive: true };
     if (tag) filter.tags = tag;
     if (q) filter.$text = { $search: q };
-    const items = await Campaign.find(filter).populate('ngo')
+    const items = await Campaign.find(filter).populate('ngo').lean()
       .skip((page - 1) * limit)
       .limit(limit)
       .sort({ createdAt: -1 });
+    
     const total = await Campaign.countDocuments(filter);
-    return { items, total, page, limit };
+    return { items: calculateTotal(items), total, page, limit };
   },
   async getAll() {
-    return await Campaign.find()
+    const campaigns = await Campaign.find()
       .populate('ngo')
+      .lean()
       .sort({ createdAt: -1 });
+    
+    return calculateTotal(campaigns);
   },
-  async getById(id: string) {
+  async getById(id: string, isLean:boolean) {
     if (!mongoose.Types.ObjectId.isValid(id)) return null;
-    return Campaign.findById(id).populate("ngo");
+    const campaign =await Campaign.findById(id).populate("ngo").lean();
+    if(!campaign)throw new ServerError(serverMessages.campaign.not_found.he, 404);
+    if(isLean){
+      const [cmp] = calculateTotal([campaign])
+      return cmp;
+    }else{
+      return campaign
+    }
   },
 
   async getByNgo(ngoId: string, page = 1, limit = 20) {
     if (!mongoose.Types.ObjectId.isValid(ngoId)) return null;
-    const items = await Campaign.find({ ngo: ngoId }).populate("ngo")
+    const items = await Campaign.find({ ngo: ngoId })
+      .populate("ngo").lean()
       .skip((page - 1) * limit)
       .limit(limit)
       .sort({ createdAt: -1 });
 
-    return { items, total: items.length, page, limit }
+    return { items:calculateTotal(items), total: items.length, page, limit }
   },
 
 
-  async addDonationToCampaign(campaignId: string, amount: number) {
+  async addDonationToCampaign(campaignId: string, amount: number, method: string) {
 
     try {
       const campaign = await Campaign.findById(campaignId);
       if (!campaign) throw new Error('Campaign not found');
-      campaign.raised = (+campaign.raised || 0) + +amount;
+      if (method == 'card')
+        campaign.raised.credit = (+campaign.raised || 0) + +amount;
+      else
+        campaign.raised.crypto = (+campaign.raised || 0) + +amount;
       campaign.numOfDonors = (campaign.numOfDonors || 0) + 1;
 
       await campaign.save();

@@ -1,6 +1,6 @@
 
 import puppeteer from "puppeteer";
-import { ICampaign } from "../models/campaign.model";
+import { ICampaign, ICampaignWithTotal } from "../models/campaign.model";
 import { IDonation } from "../models/donation.model";
 import fs from "node:fs";
 
@@ -10,7 +10,7 @@ import path from 'path';
 
 
 export const reportFolder = path.join(process.cwd(), 'reports')
-export const generateCampaignReport = async (campaign: ICampaign, donations: IDonation[], includeDonations: boolean, includeComments: boolean) => {
+export const generateCampaignReport = async (campaign: ICampaignWithTotal, donations: IDonation[], includeDonations: boolean, includeComments: boolean) => {
 
   // עוזר: עיצוב מספרים/תאריכים
   const fmt = new Intl.NumberFormat("he-IL");
@@ -49,7 +49,7 @@ export const generateCampaignReport = async (campaign: ICampaign, donations: IDo
 
  
   await browser.close();
-  const filename = `campaign-${campaign._id.toString()}.pdf`;
+  const filename = `campaign-${campaign._id!.toString()}.pdf`;
   //await fs.promises.writeFile(`${reportFolder}/${filename}`, pdf); //sava report on disk in report folder
   return { filename, pdf }
 
@@ -99,7 +99,7 @@ function buildHtml(opts: {
 }) {
   const { campaign, donations, fmtNumber, fmtDate, dateDonationFmt, includeDonations, includeComments, imagesBaseUrl, etherscanUrl } = opts;
 
-  const percent = Math.min((campaign.raised / Math.max(campaign.goal, 1)) * 100, 100);
+  const percent = Math.min((campaign.totalRaised / Math.max(campaign.goal, 1)) * 100, 100);
 
   // שימי לב: ל-RTL תקפידי על dir="rtl" ועל יישור ימין
   return `
@@ -148,7 +148,7 @@ function buildHtml(opts: {
       <h3>סטטוס גיוס</h3>
       <div class="bar"><div></div></div>
       <div class="row" style="justify-content:space-between; margin-top:8px;">
-        <div><strong>${fmtNumber(campaign.raised)} ₪</strong> נאספו</div>
+        <div><strong>${fmtNumber(campaign.totalRaised)} ₪</strong> נאספו</div>
         <div class="muted">${fmtNumber(campaign.goal)} ₪ יעד</div>
         <div class="pill">${percent.toFixed(1)}%</div>
       </div>
@@ -181,6 +181,7 @@ function buildHtml(opts: {
           <th class="right">תורם</th>
           <th class="right">אימייל</th>
           <th class="right">טלפון</th>
+          <th class="right">סכום בשקל</th>
           <th class="right">סכום</th>
           <th class="right">מטבע</th>
           <th class="right">תאריך</th>
@@ -198,6 +199,7 @@ function buildHtml(opts: {
                 <td class="right">${d.email || "-"}</td>
                 <td class="right">${d.phone || "-"}</td>
                 <td class="right">${fmtNumber(d.amount)}</td>
+                <td class="right">${fmtNumber(d.originalAmount)}</td>
                 <td class="right">${escapeHtml(d.currency || "")}</td>
                 <td class="right">${d.createdAt ? dateDonationFmt(d.createdAt) : "-"}</td>
                 <td class="right">${d.txHash ? `<a href="${etherscanUrl}/${d.txHash}" target="_blank">${escapeHtml(shortHash(d.txHash))}</a>` : "-"}</td>

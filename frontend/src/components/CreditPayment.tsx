@@ -1,8 +1,10 @@
 import { useState, type ChangeEvent } from "react";
 import { useCampaigns } from "../contexts/CampaignsContext";
 import { creditDonation } from "../services/api";
-import { buttonStyle, fildsPositionStyle, inputStyle, labelStyle } from "../css/dashboardStyles";
+import { buttonStyle } from "../css/dashboardStyles";
 import Spinner, { useSpinner } from "./Spinner";
+
+import "../css/campaign/CreditPayment.css";
 
 const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campaignId: string, userId: string }) => {
   const date = new Date();
@@ -104,11 +106,11 @@ const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campa
 
     start();
     try {
-      const chargeData = { 
-        ...ccForm, 
-        amount:0,
+      const chargeData = {
+        ...ccForm,
+        amount: 0,
         ownername: ccForm.ownerName, // השם שהטיפוס דורש
-        campaign: campaignId 
+        campaign: campaignId
       };
 
       const { data, status } = await creditDonation(chargeData, campaignId);
@@ -153,69 +155,117 @@ const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campa
     );
 
   return (
-    <form onSubmit={handlePayment} style={{ width: "100%", lineHeight: "1.5" }}>
-      <div style={fildsPositionStyle}>
-        <label htmlFor="firstName" style={labelStyle}>שם פרטי</label>
-        <input id="firstName" placeholder="שם פרטי" type="text" onChange={handleChange} style={inputStyle} />
-        <label htmlFor="lastName" style={labelStyle}>שם משפחה</label>
-        <input id="lastName" placeholder="שם משפחה" type="text" onChange={handleChange} style={inputStyle} />
+    <form onSubmit={handlePayment} className="donation-form">
+      {/* פרטי תורם */}
+      <h3 className="form-section-title">👤 פרטי תורם</h3>
+      <div className="form-row">
+        <div className="form-group">
+          <label htmlFor="firstName">שם פרטי</label>
+          <input id="firstName" placeholder="שם פרטי" type="text" onChange={handleChange} className="form-input" />
+        </div>
+        <div className="form-group">
+          <label htmlFor="lastName">שם משפחה</label>
+          <input id="lastName" placeholder="שם משפחה" type="text" onChange={handleChange} className="form-input" />
+        </div>
       </div>
 
-      <div style={fildsPositionStyle}>
-        <label htmlFor="phone" style={labelStyle}>פלאפון</label>
-        <input id="phone" placeholder="מספר פלאפון" type="tel" onChange={handleChange} style={inputStyle} />
-        <label htmlFor="email" style={labelStyle}>מייל</label>
-        <input id="email" placeholder="מייל" type="email" onChange={handleChange} style={inputStyle} />
+      <div className="form-row">
+        <div className="form-group">
+          <label htmlFor="phone">טלפון</label>
+          <input id="phone" placeholder="מספר טלפון" type="tel" onChange={handleChange} className="form-input" />
+        </div>
+        <div className="form-group">
+          <label htmlFor="email">מייל</label>
+          <input id="email" placeholder="מייל" type="email" onChange={handleChange} className="form-input" />
+        </div>
       </div>
 
-      <div dir="rtl">
-        <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", fontFamily: "calibri" }}>
-          <input type="checkbox" checked={ccForm.anonymous} onChange={(e) => handleAnonymouse(e.target.checked)} />
-          הישארו אנונימיים – אני רוצה שבעמוד הקמפיין יופיע רק סכום התרומה
+      {/* אנונימיות */}
+      <div className="form-checkbox-container" dir="rtl">
+        <label className="checkbox-label">
+          <input
+            type="checkbox"
+            checked={ccForm.anonymous}
+            onChange={(e) => handleAnonymouse(e.target.checked)}
+          />
+          <span> הישארו אנונימיים – אני רוצה שבעמוד הקמפיין יופיע רק סכום התרומה</span>
         </label>
       </div>
 
-      <div>
-        <label htmlFor="comment" style={labelStyle}>תגובה</label>
-        <textarea id="comment" placeholder="כמה מילים על תרומתך (לא חובה)" onChange={handleChange} style={inputStyle}></textarea>
+      {/* תגובה */}
+      <div className="form-group">
+        <label htmlFor="comment">הערות/תגובה</label>
+        <textarea
+          id="comment"
+          placeholder="כמה מילים על תרומתך (לא חובה)"
+          onChange={handleChange}
+          className="form-input textarea"
+        ></textarea>
       </div>
 
-      <p style={{ textAlign: "center", fontFamily: "calibri" }}>פרטי אשראי</p>
-      {message && <p style={{ color: "red", textAlign: "center", fontWeight: "bold" }}>{message}</p>}
+      <hr className="divider" />
 
-      <div style={fildsPositionStyle}>
-        <label htmlFor="amount" style={labelStyle}>סכום</label>
-        <input id="amount" placeholder="סכום התרומה" type="number" onChange={handleChange} style={inputStyle} />
-        <label htmlFor="currency" style={labelStyle}>מטבע</label>
-        <select id="currency" onChange={handleChange}>
-          <option value="ILS">ILS</option>
-          <option value="USD">USD</option>
-          <option value="EUR">EUR</option>
-        </select>
+      {/* פרטי תשלום */}
+      <h3 className="form-section-title">💳 פרטי תשלום</h3>
+
+      {message && <p className="error-message">{message}</p>}
+
+      {/* סכום ומטבע */}
+      <div className="form-row amount-currency-row">
+        <div className="form-group amount-group">
+          <label htmlFor="originalAmount">סכום התרומה</label>
+          <input id="originalAmount" placeholder="סכום" type="number" onChange={handleChange} className="form-input" />
+        </div>
+        <div className="form-group currency-group">
+          <label htmlFor="currency">מטבע</label>
+          <select id="currency" onChange={handleChange} className="form-select">
+            <option value="ILS"> ILS (ש"ח)</option>
+            <option value="USD"> USD (דולר)</option>
+            <option value="EUR"> EUR (אירו)</option>
+          </select>
+        </div>
       </div>
 
-      <div style={fildsPositionStyle}>
-        <label htmlFor="ccNumber" style={labelStyle}>כרטיס אשראי</label>
-        <input id="ccNumber" placeholder="מספר כרטיס" type="text" onChange={handleChange} style={inputStyle} />
-        <label style={labelStyle}>תאריך תפוגה</label>
-        <input id="expYear" type="number" min={date.getFullYear()} max={date.getFullYear() + 15} placeholder="שנה" onChange={handleChange} style={inputStyle} />
-        <input id="expMonth" type="number" min="1" max="12" placeholder="חודש" onChange={handleChange} style={inputStyle} />
-        <label htmlFor="cvv" style={labelStyle}>CVV code</label>
-        <input id="cvv" placeholder="cvv" type="number" onChange={handleChange} style={inputStyle} />
+      {/* פרטי אשראי */}
+      <div className="form-group">
+        <label htmlFor="ccNumber">מספר כרטיס אשראי</label>
+        <input id="ccNumber" placeholder="xxxx xxxx xxxx xxxx" type="text" onChange={handleChange} className="form-input" />
       </div>
 
-      <div style={fildsPositionStyle}>
-        <label htmlFor="ownerId" style={labelStyle}>ת"ז</label>
-        <input id="ownerId" type="text" placeholder="תעודת זהות בעל הכרטיס" onChange={handleChange} style={inputStyle} />
-        <label htmlFor="ownerName" style={labelStyle}>שם בעל הכרטיס</label>
-        <input id="ownerName" type="text" placeholder="שם בעל הכרטיס" onChange={handleChange} style={inputStyle} />
+      <div className="form-row small-fields-row">
+        <div className="form-group expiry-group">
+          <label>תאריך תפוגה</label>
+          <div className="expiry-fields">
+            <input id="expMonth" type="number" min="1" max="12" placeholder="חודש" onChange={handleChange} className="form-input small-input" />
+            <input id="expYear" type="number" min={new Date().getFullYear()} max={new Date().getFullYear() + 15} placeholder="שנה" onChange={handleChange} className="form-input small-input" />
+          </div>
+        </div>
+
+        <div className="form-group cvv-group">
+          <label htmlFor="cvv">קוד CVV</label>
+          <input id="cvv" placeholder="123" type="number" onChange={handleChange} className="form-input" />
+        </div>
       </div>
 
-      <div style={fildsPositionStyle}>
-        <button type="submit" style={buttonStyle}>תרום</button>
-        <button type="button" onClick={close} style={buttonStyle}>ביטול</button>
+      {/* פרטי בעל הכרטיס */}
+      <div className="form-row">
+        <div className="form-group">
+          <label htmlFor="ownerId">ת"ז בעל הכרטיס</label>
+          <input id="ownerId" type="text" placeholder="תעודת זהות" onChange={handleChange} className="form-input" />
+        </div>
+        <div className="form-group">
+          <label htmlFor="ownerName">שם בעל הכרטיס</label>
+          <input id="ownerName" type="text" placeholder="שם מלא" onChange={handleChange} className="form-input" />
+        </div>
+      </div>
+
+      {/* כפתורים */}
+      <div className="form-buttons-row">
+        <button type="submit" className="form-button primary-button"> תרום עכשיו</button>
+        <button type="button" onClick={close} className="form-button secondary-button">ביטול</button>
       </div>
     </form>
+
   );
 };
 

@@ -62,49 +62,25 @@ const AdminDashboard: React.FC = () => {
     try {
       const token = localStorage.getItem("token");
 
-    setStats({
-      usersCount: 0,
-      ngosCount: 0,
-      campaignsCount: 0,
-      donationsCount: 0,
-      totalRaised: 0,
-    });
+      const [statsRes] = await Promise.all([
+        axios.get(`${import.meta.env.VITE_API_URL}/admin/stats`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+      ]);
 
-    const [statsRes, ngosRes, donationsRes] = await Promise.all([
-      axios.get(`${import.meta.env.VITE_API_URL}/admin/stats`, {
-        headers: { Authorization: `Bearer ${token}` },
-      }),
-      axios.get(`${import.meta.env.VITE_API_URL}/ngos`),
-      axios.get(`${import.meta.env.VITE_API_URL}/donations`, {
-        headers: { Authorization: `Bearer ${token}` },
-      }),
-    ]);
+      setStats({
+        usersCount: statsRes.data.usersCount,
+        ngosCount: statsRes.data.ngosCount,
+        campaignsCount: statsRes.data.campaignsCount,
+        donationsCount: statsRes.data.donationsCount,
+        totalRaised: statsRes.data.totalRaised,
+      });
 
-
-    const totalRaisedFromDonations = Array.isArray(donationsRes.data)
-      ? donationsRes.data.reduce(
-          (sum: number, donation: any) => sum + (donation.amount || 0),
-          0
-        )
-      : 0;
-
-    const donationsCount = Array.isArray(donationsRes.data)
-      ? donationsRes.data.length
-      : 0;
-
-    setStats({
-      usersCount: statsRes.data.usersCount ?? 0,
-      ngosCount: ngosRes.data.items?.length ?? 0,
-      campaignsCount: statsRes.data.campaignsCount ?? 0,
-      donationsCount,
-      totalRaised: totalRaisedFromDonations,
-    });
-
-    console.log("✅ הנתונים רועננו בהצלחה!");
-  } catch (err) {
-    console.error("❌ שגיאה בטעינת הנתונים בדשבורד המנהל:", err);
-  }
-};
+      console.log("✅ הנתונים רועננו בהצלחה!");
+    } catch (err) {
+      console.error("❌ שגיאה בטעינת הנתונים בדשבורד המנהל:", err);
+    }
+  };
 
   const logout = () => {
     localStorage.clear();
@@ -207,7 +183,7 @@ const AdminDashboard: React.FC = () => {
       <div className="admin-container">
         {activePage === "dashboard" && (
           <div>
-            <h1 style={{fontFamily: 'calibri',fontSize: "28px",fontWeight: "bold",color: "#059669",}}>
+            <h1 style={{ fontFamily: 'calibri', fontSize: "28px", fontWeight: "bold", color: "#059669", }}>
               ברוך הבא, מנהל המערכת
             </h1>
             <p style={{ fontFamily: 'calibri', fontSize: "18px", marginTop: "10px" }}>
@@ -216,7 +192,7 @@ const AdminDashboard: React.FC = () => {
             {!stats ? (
               <p style={{ marginTop: "20px" }}>טוען נתונים...</p>
             ) : (
-              <div  style={{ fontFamily: 'calibri', display: "flex", gap: "20px", marginTop: "30px", flexWrap: "wrap", textAlign: 'center',}}>
+              <div style={{ fontFamily: 'calibri', display: "flex", gap: "20px", marginTop: "30px", flexWrap: "wrap", textAlign: 'center', }}>
                 {statCard("משתמשים", stats?.usersCount ?? 0)}
                 {statCard("עמותות", stats?.ngosCount ?? 0)}
                 {statCard("קמפיינים", stats?.campaignsCount ?? 0)}
@@ -240,7 +216,7 @@ const AdminDashboard: React.FC = () => {
               ניהול תקנון האתר
             </h2>
             {/* view */}
-            <RulesViewer /> 
+            <RulesViewer />
             {/*edit*/}
             <AdminRulesEditor />
           </div>

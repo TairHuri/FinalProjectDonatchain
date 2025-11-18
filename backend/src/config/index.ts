@@ -14,6 +14,7 @@ interface Config {
   aiProvider: string;
   aiApiKey: string;
   maxUploadFiles:number;
+  ethExchangeRateApi:string;
 }
 
 export const config: Config = {
@@ -27,5 +28,6 @@ export const config: Config = {
   contractPrivateKey: process.env.PRIVATE_KEY || '',
   aiProvider: process.env.AI_PROVIDER || 'mock',
   aiApiKey: process.env.AI_API_KEY || '',
-  maxUploadFiles:Number(process.env.MAX_UPLOAD_FILES) || 10
+  maxUploadFiles:Number(process.env.MAX_UPLOAD_FILES) || 10,
+  ethExchangeRateApi: process.env.ETH_EXCAHNGE_RATE_API ||'https://api.coingecko.com/api/v3/simple/price',
 };

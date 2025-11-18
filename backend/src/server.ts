@@ -4,6 +4,7 @@ import app from './app';
 import logger from './utils/logger';
 import { createAdmin } from './scripts/createAdmin';
 import { startCampaignStatusJob } from "./jobs/campaignScheduler"; // ✅
+import { startCryptoRateJob } from './jobs/cryptoExchangeRateScheduler';
 
 const start = async () => {
   try {
@@ -14,6 +15,8 @@ const start = async () => {
 
     //  הפעלת מתזמן הקמפיינים אחרי שהמסד מוכן
     startCampaignStatusJob();
+
+    startCryptoRateJob()
 
     app.listen(+config.port, '0.0.0.0', () =>
       logger.info(`Server listening on port ${config.port}`)

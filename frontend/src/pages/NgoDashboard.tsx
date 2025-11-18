@@ -162,7 +162,7 @@ console.log(user);
             {/* */}
             <div style={{ display: "flex", gap: "20px", marginTop: "30px" }}>
               {statCard("קמפיינים פעילים", campaigns.filter(campaignFilters[1]).length)}
-              {statCard("סכום כולל", "₪" + campaigns.reduce((a, c) => a + c.raised, 0).toFixed(2))}
+              {statCard("סכום כולל", "₪" + campaigns.reduce((a, c) => a + c.totalRaised!, 0).toFixed(2))}
               {statCard("תרומות", donationsCount)}
             </div>
           </div>

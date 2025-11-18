@@ -1,12 +1,11 @@
 import { Schema, model, Document } from 'mongoose';
 
-export interface ICampaign extends Document {
-  title: string;
+export interface BaseCampaign{
+   title: string;
   description: string;
   ngo: { type: Schema.Types.ObjectId, ref: 'Ngo' };
   goal: number;
-  currency: string;
-  raised: number;
+  raised: {crypto:number, credit:number};
   numOfDonors: number;
   startDate: string;
   endDate: string;
@@ -18,6 +17,13 @@ export interface ICampaign extends Document {
   isActive: boolean;
   createdAt: Date;
 }
+export interface ICampaign extends Document, BaseCampaign {
+  
+}
+export interface ICampaignWithTotal extends BaseCampaign{
+  totalRaised:number;
+  _id?:string;
+}
 
 const campaignSchema = new Schema(
   {
@@ -25,8 +31,7 @@ const campaignSchema = new Schema(
     description: { type: String, required: true, index: 'text' },
     ngo: { type: Schema.Types.ObjectId, ref: 'Ngo', required: true },
     goal: { type: Number, required: true },
-    currency: { type: String, default: 'USD' },
-    raised: { type: Number, default: 0 },
+    raised: {crypto:{ type: Number, default: 0 }, credit:{ type: Number, default: 0 }},
     numOfDonors: { type: Number, default: 0 },
     startDate: { type: Date },
     endDate: { type: Date },
