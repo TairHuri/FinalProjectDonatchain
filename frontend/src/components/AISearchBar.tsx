@@ -1,0 +1,172 @@
+
+
+// const useAiSearch = () => {
+//   const onSearch = async(query: string) => {
+//     const data = await search(query)
+//     console.log(data);
+    
+//   }
+//   return {onSearch}
+// }
+// export default function AISearchBar() {
+//   const [text, setText] = useState("");
+//   const {onSearch} = useAiSearch()
+
+//   return (
+
+// <div className="smart-search-wrapper">
+    
+//     <h1 className="search-title">בוא למצוא את העמותה המדויקת בשבילך .</h1>
+//     <p className="search-subtitle">מנוע חיפוש חכם - הטקסט עליך החיפוש עלינו.</p>
+
+//     <div className="smart-search-container">
+//         <input
+//             className="search-input"
+//             value={text}
+//             onChange={(e) => setText(e.target.value)}
+//             placeholder="תאר מה אתה מחפש בעמותה, לדוגמה: אני אוהב בעלי חיים ומחפש עמותה שתומכת בהם"
+//         />
+//         <button
+//             className="search-button"
+//             onClick={() => onSearch(text)}
+//         >
+//             חפש
+//         </button>
+//     </div>
+// </div>
+//   )
+// }
+
+
+
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { search } from "../services/aiApi";
+
+import "../css/general/AISearch.css";
+
+type SearchNgoResult = {
+  _id: string;
+  name: string;
+  logoUrl: string;
+};
+const IMAGE_URL = import.meta.env.VITE_IMAGES_URL || "http://localhost:4000/images";
+export default function AISearchBar() {
+  const [text, setText] = useState("");
+  const [results, setResults] = useState<SearchNgoResult[]>([]);
+  const [showResults, setShowResults] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleSearch = async () => {
+    if (!text.trim()) return;
+
+    try {
+      setLoading(true);
+
+      const data = await search(text);
+
+      const ngos: SearchNgoResult[] =
+        (data as SearchNgoResult[])?.slice(0, 5) 
+
+      setResults(ngos);
+      setShowResults(true);
+    } catch (err) {
+      console.error("AI search error:", err);
+      setResults([]);
+      setShowResults(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const closeModal = () => setShowResults(false);
+
+  return (
+    <>
+      <div className="smart-search-wrapper" dir="rtl">
+        <h1 className="search-title">מצא את העמותה המדויקת לך.</h1>
+        <p className="search-subtitle">מנוע חיפוש חכם - הטקסט עליך, החיפוש עלינו.</p>
+
+        <div className="smart-search-container">
+          <input
+            className="search-input"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder="תאר מה אתה מחפש בעמותה, לדוגמה: אני אוהב בעלי חיים ומחפש עמותה שתומכת בהם"
+          />
+          <button
+            className="search-button"
+            onClick={handleSearch}
+            disabled={loading}
+          >
+            {loading ? "מחפש..." : "חפש"}
+          </button>
+        </div>
+      </div>
+
+      {showResults && (
+        <div className="ai-search-modal-backdrop" onClick={closeModal}>
+          <div
+            className="ai-search-modal"
+            onClick={(e) => e.stopPropagation()} 
+          >
+            <div className="ai-search-modal-header">
+              <h2>העמותות הכי מתאימות עבורך</h2>
+              <button
+                className="ai-search-close"
+                type="button"
+                onClick={closeModal}
+                aria-label="סגירת חלונית תוצאות"
+              >
+                ×
+              </button>
+            </div>
+
+            {loading ? (
+              <div className="ai-search-loading">
+                <div className="ai-search-spinner" />
+                <span>טוען תוצאות...</span>
+              </div>
+            ) : results.length === 0 ? (
+              <p className="ai-search-empty">
+                לא נמצאו עמותות מתאימות לטקסט שחיפשת. נסה לנסח אחרת 😊
+              </p>
+            ) : (
+              <div className="ai-search-results-grid">
+                {results.map((ngo) => (
+                  <article key={ngo._id} className="ai-search-ngo-card">
+                    <div className="ai-search-ngo-logo-wrapper">
+                      <img
+                        src={`${IMAGE_URL}/${ngo.logoUrl}`}
+                        alt={ngo.name}
+                        className="ai-search-ngo-logo"
+                      />
+                    </div>
+                    <h3 className="ai-search-ngo-name">{ngo.name}</h3>
+
+                    <div className="ai-search-actions">
+                      <Link
+                        to={`/ngos/${ngo._id}`} 
+                        className="ai-search-btn primary"
+                        onClick={closeModal}
+                      >
+                        לדף העמותה
+                      </Link>
+                      <Link
+                        to={`/campaigns?ngo=${ngo._id}`} 
+                        className="ai-search-btn secondary"
+                        onClick={closeModal}
+                      >
+                        לקמפייני העמותה
+                      </Link>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </>
+  );
+}

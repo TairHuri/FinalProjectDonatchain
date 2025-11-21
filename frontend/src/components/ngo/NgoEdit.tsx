@@ -15,6 +15,7 @@ export type NgoEditProps = {
 }
 
 const NgoEdit = ({ token, ngoDetails, updateNgo, setEditMode }: NgoEditProps) => {
+    console.log('ngoDetails', ngoDetails);
     
     const { showAlert, isFailure, message, clearAlert, setAlert } = useAlertDialog();
     const [ngo, setNgo] = useState<Ngo>({ ...ngoDetails });

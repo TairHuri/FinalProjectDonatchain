@@ -15,7 +15,7 @@
 
 /* ===== Base ===== */
 .home{
-  min-height: calc(250dvh - var(--nav-h));
+  min-height: calc(315dvh - var(--nav-h));
   padding-top: var(--nav-h);
   padding-left: max(12px, env(safe-area-inset-left));
   padding-right: max(12px, env(safe-area-inset-right));
@@ -51,6 +51,7 @@
   color: var(--teal-dark);
   margin: 0 0 .6rem;
   letter-spacing: .2px;
+  font-weight:1000;
 }
 .quote{
   font-size: clamp(1.15rem, 2.6vw, 1.5rem);
@@ -132,6 +133,14 @@
 .card p{ color: var(--muted); font-size:.98rem; }
 .ic{ width: 34px; height:34px; color: var(--teal-dark); }
 
+.aiSearchSection{
+  padding: clamp(1.6rem, 4.5vw, 3rem);
+  /* background: linear-gradient(360deg, #c3dcdf ,#fff); */
+  border-top: 1px solid var(--ring);
+  text-align:center;
+ 
+}
+
 /* ===== How it works ===== */
 .blockchainExplainationSection{
   padding: clamp(1.6rem, 4.5vw, 3rem);
@@ -192,8 +201,9 @@
 /* ===== Categories (Blockchain-style tiles) ===== */
 .categories{
   padding: clamp(1.2rem, 4vw, 2rem);
-  max-width: 1200px;
+  /* max-width: 1200px; */
   margin: 0 auto;
+  width: 100%;
 }
 .categories-head{
   display:flex; align-items:center; justify-content:space-between;

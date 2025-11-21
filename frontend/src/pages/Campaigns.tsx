@@ -26,7 +26,7 @@ export default function Campaigns() {
   const params = useParams();
   const [queryTag, setQueryTag] = useSearchParams();
 
-
+  
   const fetchData = async () => {
     try {
       const data = await getCampaigns();
@@ -44,9 +44,13 @@ export default function Campaigns() {
   };
 
   useEffect(() => {
-    if (params.ngoId) loadNgoCampaigns(params.ngoId);
+    const ngoQueryString = queryTag.get("ngo")
+    if (params.ngoId || ngoQueryString) {
+      if(params.ngoId)loadNgoCampaigns(params.ngoId);
+      else if(ngoQueryString != null) loadNgoCampaigns(ngoQueryString);
+    }
     else fetchData();
-  }, [params]);
+  }, [params, queryTag]);
 
   const sortMap: Record<SortByType, (a: Campaign, b: Campaign) => number> = {
     title: (a, b) => a.title.localeCompare(b.title),

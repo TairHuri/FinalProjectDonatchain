@@ -1,0 +1,118 @@
+{
+  "ngos": [
+    {
+      "ngoName": "היו שלום",
+      "ngoNumber": "580717569",
+      "ngoEmail": "info@lev-lachayot.org.il",
+      "city": "ירושלים",
+      "phone": "035555555",
+      "website": "https://www.lev-lachayot.org.il",
+      "bankAccount":"12-123-1234567",
+      "walletAddress": "0x1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b",
+      "description": "",
+      "category": "רווחה",
+      "logo": "",
+      "file": ""
+    },
+    {
+      "ngoName": "עמותת פעמונים",
+      "ngoNumber": "580392702",
+      "ngoEmail": "contact@yad-layeled.org.il",
+      "city": "פתח תקווה",
+      "phone": "025555555",
+      "website": "",
+      "bankAccount": "10-456-7654321",
+      "walletAddress": "0x9f8e7d6c5b4a3928172615141312111000a1b2c",
+      "description": "ארגון פעמונים הוא ארגון חברתי ללא כוונות רווח. הארגון שואף למציאות שבה משקי בית בישראל מנהלים חיים כלכליים מאוזנים ואחראיים בדרך ישרה – מציאות שתסייע בבניית חוסן כלכלי-חברתי. פעמונים מדריך ומעניק ליווי פיננסי לכל המעוניין ומספק ידע, כלים ומיומנויות להתנהלות כלכלית נבונה. הארגון נותן מענה בפריסה ארצית לקהלי יעד שונים ומפעיל סל שירותים ותוכניות מגוון, המוצעים לכלל הציבור.",
+      "category": "רווחה",
+      "logo": "",
+      "file": ""
+    },
+    {
+      "ngoName": "תנו לחיות לחיות",
+      "ngoNumber": "580176832",
+      "ngoEmail": "office@atid-yarok.org",
+      "city": "רמת גן",
+      "phone": "048888888",
+      "website": "https://www.atid-yarok.org",
+      "bankAccount":"11-321-2468135",
+      "walletAddress": "0xabcd1234ef567890abcd1234ef567890abcd1234",
+      "description": "עמותה לקידום שמירה על הסביבה וחינוך לקיימות בבתי ספר.",
+      "category": "סביבה ובעלי חיים",
+      "logo": "",
+      "file": ""
+    },
+    {
+      "ngoName": "חסד בקהילה",
+      "ngoNumber": "580000004",
+      "ngoEmail": "info@chesed-community.org",
+      "city": "באר שבע",
+      "phone": "086666666",
+      "website": "",
+      "bankAccount": "20-789-9998887",
+      "walletAddress": "0x0f1e2d3c4b5a69788776655443322110ffeeddcc",
+      "description": "עמותה המסייעת למשפחות נזקקות במזון, ציוד וסיוע כלכלי.",
+      "category": "עזרה לנזקקים",
+      "logo": "",
+      "file": ""
+    },
+    {
+      "ngoName": "אור לחינוך",
+      "ngoNumber": "580000005",
+      "ngoEmail": "contact@or-education.org",
+      "city": "ראשון לציון",
+      "phone": "039999999",
+      "website": "https://www.or-education.org",
+      "bankAccount":"54-101-5556667",
+      "walletAddress": "0x1234567890abcdef1234567890abcdef12345678",
+      "description": "עמותה לקידום שוויון הזדמנויות בחינוך באמצעות מלגות ותכניות העשרה.",
+      "category": "חינוך",
+      "logo": "",
+      "file": ""
+    }
+  ],
+  "users": [
+    {
+      "name": "רננה כהן",
+      "email": "renana@example.com",
+      "phone": "0501234567",
+      "password": "Aa1234!@",
+      "ngoNumber": "580000001"
+    },
+    {
+      "name": "נתן לוי",
+      "email": "natan@example.com",
+      "phone": "0527654321",
+      "password": "Bb1234!@",
+      "ngoNumber": "580000001"
+    },
+    {
+      "name": "אורי ברק",
+      "email": "uri.barak@example.com",
+      "phone": "0539876543",
+      "password": "Cc1234!@",
+      "ngoNumber": "580000002"
+    },
+    {
+      "name": "שירה דן",
+      "email": "shira.dan@example.com",
+      "phone": "0541112233",
+      "password": "Dd1234!@",
+      "ngoNumber": "580000003"
+    },
+    {
+      "name": "טל יחזקאל",
+      "email": "tal.y@example.com",
+      "phone": "0554445566",
+      "password": "Ee1234!@",
+      "ngoNumber": "580000004"
+    },
+    {
+      "name": "מאיה שלום",
+      "email": "maya.shalom@example.com",
+      "phone": "0587778899",
+      "password": "Ff1234!@",
+      "ngoNumber": "580000005"
+    }
+  ]
+}

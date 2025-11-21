@@ -7,31 +7,47 @@ import nodemailer from "nodemailer";
 import Campaign from "../models/campaign.model";
 import service, { ApiSuccessType } from '../services/ngo.service'
 import ngoService from "../services/ngo.service";
+import aiService from '../services/ai.service'
+import { ServerError } from "../middlewares/error.middleware";
 
 
-export const verifyNgo = async (req: Request, res: Response) =>{
-  const {id} = req.params;
-  
-  if(!id){
-    return res.status(400).send({message:'הקלידו את מספר העמותה'})
+export const aiSearchNgo = async (req: Request, res: Response) => {
+  try {
+    const { q } = req.query;
+    if(!q){
+      throw new ServerError("invalid or empty query", 400)
+    }
+    const result:{message:string, data:{name:string, ngoNumber:number,Similarity_Score:number }[]} = await aiService.search(q.toString())
+    const ngoResults = await ngoService.getByNgoNumberList(result.data.map(d =>`${d.ngoNumber}`));
+    
+    res.send(ngoResults)
+  } catch (error) {
+    res.status((error as any).statusCode || 500).send({ message: (error as any).message })
+  }
+}
+export const verifyNgo = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  if (!id) {
+    return res.status(400).send({ message: 'הקלידו את מספר העמותה' })
   }
   const activeResult = await service.verifyNgoActive(id.toString());
-  if(!activeResult.status){
-    return res.status(400).send({message:activeResult.message})
+  if (!activeResult.status) {
+    return res.status(400).send({ message: activeResult.message })
   }
-  
+
   const approveResult = await service.verifyNgoApproved(id.toString());
   const year = new Date().getFullYear();
   const currentYear = `${year}` as keyof ApiSuccessType;
-  const lastYear = `${year-1}` as keyof ApiSuccessType;
-  if(approveResult.status === false){
-    return res.status(400).send({message: approveResult.message})
+  const lastYear = `${year - 1}` as keyof ApiSuccessType;
+  if (approveResult.status === false) {
+    return res.status(400).send({ message: approveResult.message })
   }
   const apiSuccess = approveResult as ApiSuccessType;
-  if(apiSuccess[currentYear].status ||apiSuccess[lastYear].status){
+  if (apiSuccess[currentYear].status || apiSuccess[lastYear].status) {
     return res.send();
   }
-  res.status(400).send({message: `${currentYear}: ${apiSuccess[currentYear].message}, ${lastYear}: ${apiSuccess[lastYear]}`})
+  res.status(400).send({ message: `${currentYear}: ${apiSuccess[currentYear].message}, ${lastYear}: ${apiSuccess[lastYear]}` })
 
 }
 
@@ -40,7 +56,7 @@ export const createNgo = async (req: Request, res: Response) => {
   const user = (req as any).user;
 
   try {
-        const existingNgo = await Ngo.findOne({
+    const existingNgo = await Ngo.findOne({
       $or: [
         { name: name.trim() },
         { ngoNumber: ngoNumber?.trim() }
@@ -168,12 +184,12 @@ export const toggleNgoStatus = async (req: Request, res: Response) => {
     for (const member of members) {
       if (!member.email) continue;
 
-await sendMemberStatusEmail({
-  to: member.email,
-  fullName: member.name || "מתנדב/ת יקר/ה", // 👈 משתמשים בשדה הקיים
-  ngoName: ngo.name,
-  isActive: ngo.isActive,
-});
+      await sendMemberStatusEmail({
+        to: member.email,
+        fullName: member.name || "מתנדב/ת יקר/ה", // 👈 משתמשים בשדה הקיים
+        ngoName: ngo.name,
+        isActive: ngo.isActive,
+      });
     }
 
     res.json({
@@ -210,9 +226,9 @@ async function sendMemberStatusEmail({
       <p>שלום ${fullName},</p>
       <p>עמותת <b>${ngoName}</b> ${isActive ? "הופעלה מחדש על ידי מנהל המערכת." : "הושהתה זמנית על ידי מנהל המערכת."}</p>
       ${isActive
-        ? "<p>הפעילות חזרה לסדרה ותוכל/י להשתמש שוב במערכת DonatChain.</p>"
-        : "<p>המערכת לא מאפשרת כניסה עד להודעה חדשה ממנהל המערכת.</p>"
-      }
+      ? "<p>הפעילות חזרה לסדרה ותוכל/י להשתמש שוב במערכת DonatChain.</p>"
+      : "<p>המערכת לא מאפשרת כניסה עד להודעה חדשה ממנהל המערכת.</p>"
+    }
       <hr style="margin:20px 0; border:none; border-top:1px solid #ddd;"/>
       <p>בברכה,<br/>צוות <b>DonatChain</b></p>
     </div>
@@ -275,16 +291,14 @@ async function sendNgoStatusEmail({
 export const updateNgo = async (req: Request, res: Response) => {
   const user = (req as any).user;
   try {
-    const ngo = await Ngo.findById(req.params.id);
-    if (!ngo) return res.status(404).json({ message: "עמותה לא נמצאה" });
 
     if (!['manager'].includes(user.role)) {
       return res.status(403).json({ message: "אין הרשאה לעדכן עמותה זו" });
     }
 
-    const updates = req.body;
-    Object.assign(ngo, updates);
-
+    const ngo = req.body;
+    const {id} = req.params;
+    
     const mediaFiles = req.files as NgoMediaFiles;
     if (mediaFiles?.logo) {
       ngo.logoUrl = mediaFiles.logo[0].filename;
@@ -292,10 +306,10 @@ export const updateNgo = async (req: Request, res: Response) => {
     if (mediaFiles?.certificate) {
       ngo.certificate = mediaFiles.certificate[0].filename;
     }
-    await ngo.save({ validateModifiedOnly: true });
+    const updatedNgo = await ngoService.update(id, ngo);
     await AuditLog.create({ action: "ngo_updated", user: user._id, meta: { ngoId: ngo._id } });
 
-    res.json(ngo);
+    res.json(updatedNgo);
   } catch (err: any) {
     res.status(500).json({ message: err.message });
   }

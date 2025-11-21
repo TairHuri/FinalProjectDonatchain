@@ -126,7 +126,7 @@ const NewNgo = ({ ngo, media, handleChangeNgo, handleChangeMedia }: Props) => {
         />
       </div>
 
-      <span className="section-title">בחירת קטגוריות</span>
+      <span className="section-title">בחירת קטגורית עמותה</span>
       <Tags tagLoader={getNgoTags} tags={ngo.tags} handleChange={handleChangeNgo}/>
 
       {/* upload logo */}
