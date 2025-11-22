@@ -85,12 +85,14 @@ export default function RegistrationNgo() {
     const validUser = validateUser(user)
     if (!validUser.status) {
       setAlert(validUser.message, true);
+      return;
     }
     if (newNgo) {
       // בדיקות חובה לעמותה חדשה (למעט website ולוגו)
       const validNgo = validateNgo(ngo, ngoList, media)
       if (!validNgo.status) {
         setAlert(validNgo.message, true);
+        return;
       }
     } else {
 
