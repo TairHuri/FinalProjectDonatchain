@@ -9,7 +9,8 @@ import '../../css/ShareCampaign.css'
 const ShareCampaign = ({ campaign }: { campaign: Campaign }) => {
   const [copied, setCopied] = useState(false);
 
-  const campaignUrl = window.location.href;
+  const campaignUrl = `${window.location.origin}/campaign/${campaign._id}`;
+
 
   const handleCopyLink = async () => {
     try {
