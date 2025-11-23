@@ -62,15 +62,24 @@ export default function RegistrationNgo() {
     setMedia({ ...media, [field]: value ? value[0] : null });
   };
 
-  const handleChangeData = (field: string, value: string | number) => {
-    const n = ngoList.find(
-      (x) =>
-        x.name === value ||
-        (x.ngoNumber && x.ngoNumber.toString() === value.toString())
-    );
-    if (!n) return;
-    setUser({ ...user, ngoId: n._id });
-  };
+const handleChangeData = (field: string, value: string | number) => {
+  // בדיקה מדויקת רק לפי ערך הקיים ברשימת העמותות
+  const selectedNgo = ngoList.find(
+    (x) =>
+      x.name.trim() === value.toString().trim() ||
+      (x.ngoNumber && x.ngoNumber.toString().trim() === value.toString().trim())
+  );
+
+  // אם לא קיימת עמותה כזו → איפוס user.ngoId
+  if (!selectedNgo) {
+    setUser({ ...user, ngoId: "" });
+    return;
+  }
+
+  // אם קיימת → הצמדה למשתמש
+  setUser({ ...user, ngoId: selectedNgo._id });
+};
+
 
 
   const loadNgoList = async () => {
@@ -81,14 +90,13 @@ export default function RegistrationNgo() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // בדיקות שדות חובה למשתמש
     const validUser = validateUser(user)
     if (!validUser.status) {
       setAlert(validUser.message, true);
       return;
     }
     if (newNgo) {
-      // בדיקות חובה לעמותה חדשה (למעט website ולוגו)
+
       const validNgo = validateNgo(ngo, ngoList, media)
       if (!validNgo.status) {
         setAlert(validNgo.message, true);
@@ -96,10 +104,11 @@ export default function RegistrationNgo() {
       }
     } else {
 
-      if (!user.ngoId) {
-        setAlert("יש לבחור עמותה קיימת מהרשימה", true);
-        return;
-      }
+if (!user.ngoId && !newNgo) {
+  setAlert("יש לבחור עמותה קיימת מהרשימה בלבד. אין להקליד ידנית.", true);
+  return;
+}
+
     }
 
     try {
