@@ -84,7 +84,7 @@ const UserPersonalDetails = ({ editMode, setEditMode }: { editMode: string, setE
     try {
       const user = await editUser(formData);
       updateUser(user);
-      setEditMode('view');
+      setAlert("הפרטים עודכנו בהצלחה", false)
     } catch (error) {
       setAlert((error as any).message, true)
     }
@@ -95,6 +95,7 @@ const UserPersonalDetails = ({ editMode, setEditMode }: { editMode: string, setE
       logout();
       nav('/');
     } else {
+      clearAlert()
       setEditMode("view")
     }
   }
