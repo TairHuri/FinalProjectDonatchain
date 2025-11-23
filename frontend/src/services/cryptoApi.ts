@@ -125,7 +125,7 @@ export async function toggleCampaignState(opts: {
   if (network.chainId !== TARGET_CHAIN_ID) { return { status: false, message: "נא לעבור לרשת Sepolia בארנק." } }
   const signer = await provider.getSigner();
   const hub = new ethers.Contract(CONTRACT, hubAbi.abi as any, signer);
-  const tx = await hub.setCampaignActive(
+  const tx = await hub.updateCampaignActive(
     opts.blockchainTx,
     opts.newActive,
   );

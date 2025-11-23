@@ -6,9 +6,9 @@ import type { TypedContractEvent, TypedDeferredTopicFilter, TypedEventLog, Typed
   
 
   export interface DonatchainInterface extends Interface {
-    getFunction(nameOrSignature: "campaigns" | "createCampaign" | "donateCrypto" | "nextCampaignId" | "owner" | "paused" | "recordCreditDonation" | "setCampaignActive" | "setPaused" | "transferOwnership" | "updateCampaign"): FunctionFragment;
+    getFunction(nameOrSignature: "campaigns" | "createCampaign" | "donateCrypto" | "nextCampaignId" | "owner" | "paused" | "recordCreditDonation" | "setPaused" | "transferOwnership" | "updateCampaign" | "updateCampaignActive" | "updateManyCampaignsActive"): FunctionFragment;
 
-    getEvent(nameOrSignatureOrTopic: "CampaignCreated" | "CampaignStatusChanged" | "CampaignUpdated" | "CreditDonationRecorded" | "CryptoDonation"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: "CampaignCreated" | "CampaignStatusChanged" | "CampaignUpdated" | "CreditDonationRecorded" | "CryptoDonation" | "ManyCampaignsStatusChanged"): EventFragment;
 
     encodeFunctionData(functionFragment: 'campaigns', values: [BigNumberish]): string;
 encodeFunctionData(functionFragment: 'createCampaign', values: [string, BigNumberish, BigNumberish, BigNumberish, BigNumberish, AddressLike]): string;
@@ -17,10 +17,11 @@ encodeFunctionData(functionFragment: 'nextCampaignId', values?: undefined): stri
 encodeFunctionData(functionFragment: 'owner', values?: undefined): string;
 encodeFunctionData(functionFragment: 'paused', values?: undefined): string;
 encodeFunctionData(functionFragment: 'recordCreditDonation', values: [BigNumberish, BigNumberish, BigNumberish, string, string]): string;
-encodeFunctionData(functionFragment: 'setCampaignActive', values: [BigNumberish, boolean]): string;
 encodeFunctionData(functionFragment: 'setPaused', values: [boolean]): string;
 encodeFunctionData(functionFragment: 'transferOwnership', values: [AddressLike]): string;
 encodeFunctionData(functionFragment: 'updateCampaign', values: [BigNumberish, string, BigNumberish, BigNumberish, BigNumberish]): string;
+encodeFunctionData(functionFragment: 'updateCampaignActive', values: [BigNumberish, boolean]): string;
+encodeFunctionData(functionFragment: 'updateManyCampaignsActive', values: [BigNumberish[], boolean]): string;
 
     decodeFunctionResult(functionFragment: 'campaigns', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'createCampaign', data: BytesLike): Result;
@@ -29,10 +30,11 @@ decodeFunctionResult(functionFragment: 'nextCampaignId', data: BytesLike): Resul
 decodeFunctionResult(functionFragment: 'owner', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'paused', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'recordCreditDonation', data: BytesLike): Result;
-decodeFunctionResult(functionFragment: 'setCampaignActive', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'setPaused', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'transferOwnership', data: BytesLike): Result;
 decodeFunctionResult(functionFragment: 'updateCampaign', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'updateCampaignActive', data: BytesLike): Result;
+decodeFunctionResult(functionFragment: 'updateManyCampaignsActive', data: BytesLike): Result;
   }
 
   
@@ -88,6 +90,18 @@ decodeFunctionResult(functionFragment: 'updateCampaign', data: BytesLike): Resul
       export type InputTuple = [campaignId: BigNumberish, donor: AddressLike, amount: BigNumberish];
       export type OutputTuple = [campaignId: bigint, donor: string, amount: bigint];
       export interface OutputObject {campaignId: bigint, donor: string, amount: bigint };
+      export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>
+      export type Filter = TypedDeferredTopicFilter<Event>
+      export type Log = TypedEventLog<Event>
+      export type LogDescription = TypedLogDescription<Event>
+    }
+
+  
+
+    export namespace ManyCampaignsStatusChangedEvent {
+      export type InputTuple = [campaignId: BigNumberish, active: boolean];
+      export type OutputTuple = [campaignId: bigint, active: boolean];
+      export interface OutputObject {campaignId: bigint, active: boolean };
       export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>
       export type Filter = TypedDeferredTopicFilter<Event>
       export type Log = TypedEventLog<Event>
@@ -186,14 +200,6 @@ decodeFunctionResult(functionFragment: 'updateCampaign', data: BytesLike): Resul
     
 
     
-    setCampaignActive: TypedContractMethod<
-      [campaignId: BigNumberish, newActive: boolean, ],
-      [void],
-      'nonpayable'
-    >
-    
-
-    
     setPaused: TypedContractMethod<
       [p: boolean, ],
       [void],
@@ -212,6 +218,22 @@ decodeFunctionResult(functionFragment: 'updateCampaign', data: BytesLike): Resul
     
     updateCampaign: TypedContractMethod<
       [campaignId: BigNumberish, campaignName: string, newStartDate: BigNumberish, newEndDate: BigNumberish, newGoalAmount: BigNumberish, ],
+      [void],
+      'nonpayable'
+    >
+    
+
+    
+    updateCampaignActive: TypedContractMethod<
+      [campaignId: BigNumberish, newActive: boolean, ],
+      [void],
+      'nonpayable'
+    >
+    
+
+    
+    updateManyCampaignsActive: TypedContractMethod<
+      [campaignIds: BigNumberish[], newActive: boolean, ],
       [void],
       'nonpayable'
     >
@@ -255,11 +277,6 @@ getFunction(nameOrSignature: 'recordCreditDonation'): TypedContractMethod<
       [void],
       'nonpayable'
     >;
-getFunction(nameOrSignature: 'setCampaignActive'): TypedContractMethod<
-      [campaignId: BigNumberish, newActive: boolean, ],
-      [void],
-      'nonpayable'
-    >;
 getFunction(nameOrSignature: 'setPaused'): TypedContractMethod<
       [p: boolean, ],
       [void],
@@ -275,12 +292,23 @@ getFunction(nameOrSignature: 'updateCampaign'): TypedContractMethod<
       [void],
       'nonpayable'
     >;
+getFunction(nameOrSignature: 'updateCampaignActive'): TypedContractMethod<
+      [campaignId: BigNumberish, newActive: boolean, ],
+      [void],
+      'nonpayable'
+    >;
+getFunction(nameOrSignature: 'updateManyCampaignsActive'): TypedContractMethod<
+      [campaignIds: BigNumberish[], newActive: boolean, ],
+      [void],
+      'nonpayable'
+    >;
 
     getEvent(key: 'CampaignCreated'): TypedContractEvent<CampaignCreatedEvent.InputTuple, CampaignCreatedEvent.OutputTuple, CampaignCreatedEvent.OutputObject>;
 getEvent(key: 'CampaignStatusChanged'): TypedContractEvent<CampaignStatusChangedEvent.InputTuple, CampaignStatusChangedEvent.OutputTuple, CampaignStatusChangedEvent.OutputObject>;
 getEvent(key: 'CampaignUpdated'): TypedContractEvent<CampaignUpdatedEvent.InputTuple, CampaignUpdatedEvent.OutputTuple, CampaignUpdatedEvent.OutputObject>;
 getEvent(key: 'CreditDonationRecorded'): TypedContractEvent<CreditDonationRecordedEvent.InputTuple, CreditDonationRecordedEvent.OutputTuple, CreditDonationRecordedEvent.OutputObject>;
 getEvent(key: 'CryptoDonation'): TypedContractEvent<CryptoDonationEvent.InputTuple, CryptoDonationEvent.OutputTuple, CryptoDonationEvent.OutputObject>;
+getEvent(key: 'ManyCampaignsStatusChanged'): TypedContractEvent<ManyCampaignsStatusChangedEvent.InputTuple, ManyCampaignsStatusChangedEvent.OutputTuple, ManyCampaignsStatusChangedEvent.OutputObject>;
 
     filters: {
       
@@ -302,6 +330,10 @@ getEvent(key: 'CryptoDonation'): TypedContractEvent<CryptoDonationEvent.InputTup
 
       'CryptoDonation(uint256,address,uint256)': TypedContractEvent<CryptoDonationEvent.InputTuple, CryptoDonationEvent.OutputTuple, CryptoDonationEvent.OutputObject>;
       CryptoDonation: TypedContractEvent<CryptoDonationEvent.InputTuple, CryptoDonationEvent.OutputTuple, CryptoDonationEvent.OutputObject>;
+    
+
+      'ManyCampaignsStatusChanged(uint256,bool)': TypedContractEvent<ManyCampaignsStatusChangedEvent.InputTuple, ManyCampaignsStatusChangedEvent.OutputTuple, ManyCampaignsStatusChangedEvent.OutputObject>;
+      ManyCampaignsStatusChanged: TypedContractEvent<ManyCampaignsStatusChangedEvent.InputTuple, ManyCampaignsStatusChangedEvent.OutputTuple, ManyCampaignsStatusChangedEvent.OutputObject>;
     
     };
   }

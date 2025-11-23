@@ -68,6 +68,11 @@ contract Donatchain {
         bool active
     );
 
+      event ManyCampaignsStatusChanged(
+        uint256 indexed campaignId,
+        bool active
+    );
+
     event CryptoDonation(
         uint256 indexed campaignId,
         address indexed donor,
@@ -137,7 +142,7 @@ contract Donatchain {
         );
     }
 
-    // -------- Update campaign (without active) --------
+    // -------- Update campaign --------
     function updateCampaign(
         uint256 campaignId,
         string  calldata campaignName,
@@ -156,7 +161,7 @@ contract Donatchain {
         c.campaignName = campaignName;
 
         //Conditions for updating start date
-        if (newStartDate != c.startDate) {
+        if (newStartDate != 0) {
             require(block.timestamp < c.startDate, "start already passed");
             require(newStartDate >= block.timestamp, "start in past");
             require(newStartDate < c.endDate, "start >= end");
@@ -164,7 +169,7 @@ contract Donatchain {
         }
 
         //Conditions for updating end date
-        if (newEndDate != c.endDate) {
+        if (newEndDate != 0) {
             require(block.timestamp < c.endDate, "end already passed");
             require(newEndDate > c.startDate, "end <= start");
             c.endDate = newEndDate;
@@ -199,20 +204,22 @@ contract Donatchain {
     function updateManyCampaignsActive(uint256[] calldata campaignIds,bool newActive) 
     external 
     {
-    for (uint256 i = 0; i < campaignIds.length; i++) {
+         address sender = msg.sender;
+
+        for (uint256 i = 0; i < campaignIds.length; i++) {
         uint256 campaignId = campaignIds[i];
         Campaign storage c = campaigns[campaignId];
 
         require(c.manager != address(0), "unknown campaign");
         require(
-            msg.sender == owner || msg.sender == c.manager,
+           sender == owner || sender == c.manager,
             "not owner/manager"
         );
 
         c.active = newActive;
         emit ManyCampaignsStatusChanged(campaignId, c.active);
     }
-}
+    }
 
     // -------- Donate in crypto (ETH) --------
     function donateCrypto(uint256 campaignId)

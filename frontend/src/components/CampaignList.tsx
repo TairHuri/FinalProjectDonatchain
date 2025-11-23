@@ -38,9 +38,13 @@ export default function CampaignList() {
     }
   };
 
-  const handleToggle = async (id: string) => {
+  const handleToggle = async (id: string, blockchainTx:number, isActive:boolean) => {
     try {
       setActionLoading(id);
+      const result = await toggleCryptoCampaignStatus({ blockchainTx: blockchainTx!, newActive: isActive })
+      if (result.status == false) {
+        setAlert(result.message || "עדכון הסטטוס נכשל", false);
+      }
       const res = await toggleCampaignStatus(id, token);
       setAlert(res.message || "הסטטוס עודכן בהצלחה ✅", false);
       await fetchCampaigns();
@@ -137,8 +141,8 @@ export default function CampaignList() {
               <tr
                 key={c._id}
                 className={`transition-all duration-300 ${c.isActive
-                    ? "bg-white hover:bg-blue-50"
-                    : "bg-gray-100 opacity-80 hover:opacity-100"
+                  ? "bg-white hover:bg-blue-50"
+                  : "bg-gray-100 opacity-80 hover:opacity-100"
                   }`}
               >
                 <td className="border px-4 py-2 font-semibold text-blue-700">
@@ -165,11 +169,11 @@ export default function CampaignList() {
                 <td className="border px-4 py-2 text-center">
                   <motion.button
                     whileTap={{ scale: 0.9 }}
-                    onClick={() => handleToggle(c._id)}
+                    onClick={() => handleToggle(c._id, c.blockchainTx, c.isActive)}
                     disabled={actionLoading === c._id}
                     className={`flex items-center justify-center gap-2 mx-auto px-4 py-2 rounded-lg text-white font-semibold shadow transition-all duration-300 ${c.isActive
-                        ? "bg-red-600 hover:bg-red-700"
-                        : "bg-green-600 hover:bg-green-700"
+                      ? "bg-red-600 hover:bg-red-700"
+                      : "bg-green-600 hover:bg-green-700"
                       } disabled:opacity-60`}
                   >
                     {actionLoading === c._id ? (

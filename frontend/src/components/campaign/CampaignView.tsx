@@ -8,6 +8,7 @@ import Modal from "../gui/Modal";
 import ReportDialog from "./ReportDialog";
 
 import "../../css/campaign/EditCampaign.css"
+import { toggleCampaignState as toggleCryptoCampaignStatus } from "../../services/cryptoApi";
 
 export type CampaignViewProps = {
   campaign: Campaign;
@@ -25,11 +26,15 @@ const CampaignView = ({ campaign, setCampaign, token, setEditMode }: CampaignVie
 
   const handleToggle = async (id: string) => {
     try {
+      const result = await toggleCryptoCampaignStatus({blockchainTx: +campaign.blockchainTx!, newActive:!campaign?.isActive})
+      if(result.status == false){
+        setAlert(result.message || "עדכון הסטטוס נכשל", false);
+      }
       const res = await toggleCampaignStatus(id, token);
-      setAlert(res.message || "הסטטוס עודכן בהצלחה", false)
+      setAlert(res.message || "הסטטוס עודכן בהצלחה", false);
       setCampaign({ ...campaign!, isActive: !campaign?.isActive })
     } catch (err) {
-      console.error((err as any).message);
+      console.error((err as any).message, err);
       closeConfirm()
       setAlert((err as any).message || "שגיאה בעדכון הסטטוס", true)
     } finally {
