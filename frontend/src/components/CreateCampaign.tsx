@@ -16,6 +16,7 @@ import Tags from "./gui/Tags";
 
 import "../css/campaign/CreateCampaign.css";               // ⬅️ חדש: קובץ העיצוב לעמוד
 import { createCampaignOnChain } from "../services/cryptoApi";
+import { formatDates } from "../validations/campaignDates";
 
 
 // const IMAGE_URL = import.meta.env.VITE_IMAGES_URL || "http://localhost:4000/images";
@@ -80,19 +81,23 @@ const CreateCampaign = ({ postSave }: { postSave: () => void }) => {
 
     const images: File[] = [];
     if (form.images) for (const img of form.images) images.push(img);
-
+try{
+    const {startDate, endDate} = formatDates(newCampaign.startDate, newCampaign.endDate);
+    
     const blockchainTx = await createCampaignOnChain({
       campaignName: newCampaign.title,
       charityId: +ngo.ngoNumber,
-      charityName: ngo.name,
+      startDate: startDate.getTime()/1000,
+      endDate: endDate.getTime()/1000,
+      goalAmount: newCampaign.goal,
       beneficiary: ngo.wallet
     });
     if (!blockchainTx.status) { 
-      stop(); 
+      
       setAlert(blockchainTx.message, true)
       return; 
     }
-
+ 
     newCampaign.blockchainTx = blockchainTx.onchainId.toString();
     const success = await addCampaign(newCampaign, images, form.movie, form.mainImage);
     if (!success) {
@@ -104,6 +109,11 @@ const CreateCampaign = ({ postSave }: { postSave: () => void }) => {
       images: null, movie: null, mainImage: null, tags: []
     });
     postSave();
+     }catch(error){
+      console.log(error);
+      setAlert((error as any).message, true)
+      stop(); 
+    }
   };
 
   const getImages = () => {

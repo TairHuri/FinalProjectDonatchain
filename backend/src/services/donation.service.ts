@@ -79,6 +79,7 @@ export default {
         const txHash = await blockchainService.recordFiatDonation(
           +(campaign?.blockchainTx),
           data.charge,
+          originalAmount,
           currency,
           data.code
         );

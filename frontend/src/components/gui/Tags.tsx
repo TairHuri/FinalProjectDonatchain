@@ -10,7 +10,6 @@ const Tags = ({ tags, tagLoader, handleChange }: TagProps) => {
     const loadTags = async () => {
         const t = await tagLoader();
         setAllTags(t);
-        console.log('loaded tags', t)
     }
     useEffect(() => {
         loadTags();
@@ -27,7 +26,7 @@ const Tags = ({ tags, tagLoader, handleChange }: TagProps) => {
         handleChange('tags', [...tags, tag])
     };
     const removeTag = (tag: string) => handleChange('tags', tags.filter(t => t !== tag));
-    console.log('alltages tags', allTags)
+    
     return (
         <>
             {/* <span className="section-title">בחירת קטגוריות</span> */}

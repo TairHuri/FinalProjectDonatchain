@@ -1,13 +1,5 @@
-// Array of possible tags
-const tags = [
-  "רווחה",
-  "מורשת או הנצחה",
-  "סביבה ובעלי חיים",
-  "התנדבות וקרנות פילנטרופיות",
-  "שיכון ופיתוח עירוני",
-  "קהילה וחברה",
-  "דת"
-];
+
+
 
 // Simple CSV escape: wrap in quotes and escape inner quotes
 function csvEscape(value) {
@@ -25,18 +17,18 @@ const cursor = db.ngos.find(
   {
     name: 1,
     ngoNumber: 1,
-    description: 1
+    description: 1,
+    tags:1
   }
 );
 
 cursor.forEach(doc => {
-  const randomTag = tags[Math.floor(Math.random() * tags.length)];
 
   const line = [
     csvEscape(doc.name),
     csvEscape(doc.ngoNumber),
     csvEscape(doc.description),
-    csvEscape(randomTag)
+    csvEscape(doc.tags)
   ].join(",");
 
   print(line);

@@ -2,9 +2,18 @@
 pragma solidity ^0.8.19;
 
 contract Donatchain {
+    
     // -------- Basic permissions --------
     address public owner;
     modifier onlyOwner() { require(msg.sender == owner, "not owner"); _; }
+
+    modifier onlyOwnerOrManager(uint256 campaignId) {
+        require(
+            msg.sender == owner || msg.sender == campaigns[campaignId].manager,
+            "not manager/owner"
+        );
+        _;
+    }
 
     // -------- Pause --------
     bool public paused;
@@ -19,25 +28,20 @@ contract Donatchain {
 
         uint64  startDate;   // unix timestamp (seconds)
         uint64  endDate;     // unix timestamp (seconds)
+        
         uint256 goalAmount;
-
         uint256 totalCrypto;     
-        uint256 totalFiat;
+        uint256 totalCredit;
+
         address manager;       
         address beneficiary;
+
         bool    active;    
     }
 
     uint256 public nextCampaignId;
     mapping(uint256 => Campaign) public campaigns;
 
-    modifier onlyOwnerOrManager(uint256 campaignId) {
-        require(
-            msg.sender == owner || msg.sender == campaigns[campaignId].manager,
-            "not manager/owner"
-        );
-        _;
-    }
 
     // -------- Events --------
     event CampaignCreated(
@@ -56,13 +60,12 @@ contract Donatchain {
         string  campaignName,
         uint64  startDate,
         uint64  endDate,
-        uint256 goalAmount,
-        address beneficiary
+        uint256 goalAmount
     );
 
     event CampaignStatusChanged(
         uint256 indexed campaignId,
-        bool    active
+        bool active
     );
 
     event CryptoDonation(
@@ -73,7 +76,8 @@ contract Donatchain {
 
     event CreditDonationRecorded(
         uint256 indexed campaignId,
-        uint256 amount,
+        uint256 ILSAmount,
+        uint256 originalAmount,
         string  currency,
         string  refCode
     );
@@ -94,6 +98,7 @@ contract Donatchain {
         address         beneficiary
     )
         external
+        whenNotPaused
         returns (uint256 id)
     {
         require(bytes(campaignName).length > 0, "empty name");
@@ -138,21 +143,19 @@ contract Donatchain {
         string  calldata campaignName,
         uint64          newStartDate,
         uint64          newEndDate,
-        uint256         newGoalAmount,
-        address         newBeneficiary
+        uint256         newGoalAmount
     )
         external
         onlyOwnerOrManager(campaignId)
+        whenNotPaused
     {
         Campaign storage c = campaigns[campaignId];
         require(c.manager != address(0), "unknown campaign");
         require(bytes(campaignName).length > 0, "empty name");
-        require(newBeneficiary != address(0), "bad beneficiary");
 
-        // שם תמיד אפשר לעדכן
         c.campaignName = campaignName;
 
-        // עדכון תאריך התחלה – רק אם עדיין לא עבר התאריך הישן
+        //Conditions for updating start date
         if (newStartDate != c.startDate) {
             require(block.timestamp < c.startDate, "start already passed");
             require(newStartDate >= block.timestamp, "start in past");
@@ -160,40 +163,36 @@ contract Donatchain {
             c.startDate = newStartDate;
         }
 
-        // עדכון תאריך סיום – רק אם עדיין לא עבר התאריך הישן
+        //Conditions for updating end date
         if (newEndDate != c.endDate) {
             require(block.timestamp < c.endDate, "end already passed");
             require(newEndDate > c.startDate, "end <= start");
             c.endDate = newEndDate;
         }
 
-        // יעד
+        require(newGoalAmount > 0, "goal=0");
         c.goalAmount = newGoalAmount;
-
-        // beneficiary
-        c.beneficiary = newBeneficiary;
 
         emit CampaignUpdated(
             campaignId,
             c.campaignName,
             c.startDate,
             c.endDate,
-            c.goalAmount,
-            c.beneficiary
+            c.goalAmount
         );
     }
 
     // -------- Update active flag separately --------
-    function setCampaignActive(uint256 campaignId, bool active_)
+    function setCampaignActive(uint256 campaignId, bool newActive)
         external
         onlyOwnerOrManager(campaignId)
     {
         Campaign storage c = campaigns[campaignId];
         require(c.manager != address(0), "unknown campaign");
 
-        c.active = active_;
+        c.active = newActive;
 
-        emit CampaignStatusChanged(campaignId, active_);
+        emit CampaignStatusChanged(campaignId, c.active);
     }
 
     // -------- Donate in crypto (ETH) --------
@@ -206,7 +205,7 @@ contract Donatchain {
         require(c.beneficiary != address(0), "unknown campaign");
         require(c.active, "inactive");
 
-        // תורמים רק בין תאריך התחלה לתאריך סיום
+        // Donate only between start date and end date
         require(block.timestamp >= c.startDate, "not started");
         require(block.timestamp <= c.endDate, "ended");
 
@@ -230,6 +229,7 @@ contract Donatchain {
     )
         external
         onlyOwner
+        whenNotPaused
     {
         Campaign storage c = campaigns[campaignId];
         require(c.beneficiary != address(0), "unknown campaign");
@@ -237,6 +237,7 @@ contract Donatchain {
 
 
         require(c.active, "inactive");
+        // Donate only between start date and end date
         require(block.timestamp >= c.startDate, "not started");
         require(block.timestamp <= c.endDate, "ended");
 

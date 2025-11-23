@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import "../css/RegistrationNgo.css";
 import AlertDialog, { useAlertDialog } from "../components/gui/AlertDialog";
 import { validateNgo, validateUser } from "../validations/registration.validation";
+import { verifyNgoNumber } from "../services/ngoApi";
 
 
 
@@ -84,12 +85,19 @@ export default function RegistrationNgo() {
     const validUser = validateUser(user)
     if (!validUser.status) {
       setAlert(validUser.message, true);
+      return;
     }
     if (newNgo) {
       // בדיקות חובה לעמותה חדשה (למעט website ולוגו)
       const validNgo = validateNgo(ngo, ngoList, media)
       if (!validNgo.status) {
         setAlert(validNgo.message, true);
+        return;
+      }
+      const result = await verifyNgoNumber(ngo.ngoNumber)
+      if (!result.status) {
+        setAlert(result.message, true);
+        return;
       }
     } else {
 

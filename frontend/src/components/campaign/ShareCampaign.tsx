@@ -22,11 +22,20 @@ const ShareCampaign = ({ campaign }: { campaign: Campaign }) => {
   };
 
 
-  const handleShareWhatsapp = () => {
-    const text = `תראה את הקמפיין הזה: ${campaign.title} - ${campaignUrl}`;
+const handleShareWhatsapp = () => {
+  const text = `תראה את הקמפיין הזה: ${campaign.title} - ${campaignUrl}`;
+
+  if (navigator.share) {
+    navigator.share({ text, url: campaignUrl }).catch(() => {
+      const waUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
+      window.open(waUrl, "_blank", "noopener,noreferrer");
+    });
+  } else {
     const waUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
-    window.open(waUrl, "_blank");
-  };
+    window.open(waUrl, "_blank", "noopener,noreferrer");
+  }
+};
+
 
 
   const handleNativeShare = () => {
@@ -68,7 +77,7 @@ const ShareCampaign = ({ campaign }: { campaign: Campaign }) => {
             marginBottom: "12px",
           }}
         >
-          שתפו את הקמפיין ותעזרו לנו להגיע לעוד אנשים
+          שתפו את הקמפיין ועזרו לנו להגיע לעוד אנשים
         </div>
 
         {/* קבוצת הכפתורים */}

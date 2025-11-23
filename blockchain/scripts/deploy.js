@@ -2,8 +2,8 @@
 import hre from "hardhat";
 
 async function main() {
-  const conn = await hre.network.connect(); // Hardhat v3
-  const Factory = await conn.ethers.getContractFactory("Donatchain"); // שם החוזה בקובץ .sol
+  const conn = await hre.network.connect(); 
+  const Factory = await conn.ethers.getContractFactory("Donatchain");
   const hub = await Factory.deploy();
   await hub.waitForDeployment();
 

@@ -9,19 +9,24 @@ from clustering import predict_category
 
 
 MODEL_NAME = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
-embedding_model = SentenceTransformer(MODEL_NAME)
+embedding_model = None
 # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # embedding_model.to(device)
 
+def load_model():
+    global embedding_model
+    if embedding_model == None:
+        embedding_model = SentenceTransformer(MODEL_NAME)   
+    else:
+        embedding_model
 
 def create_query_embedding(query_text):
+    load_model()
     query_embedding = embedding_model.encode(
         [query_text],
         convert_to_tensor=False
     )
     return query_embedding
-
-
 
 
 def retrieve_top_k_ngos(user_query, k=5):
@@ -36,8 +41,6 @@ def retrieve_top_k_ngos(user_query, k=5):
     relevant_metadata = NGO_METADATA[NGO_METADATA[TAG] == predicted_label].copy()
 
     relevant_indices = relevant_metadata.index.tolist()
-    print("relevant_metadata", relevant_metadata)
-    print("relevant_indices", relevant_indices)
 
     if not relevant_indices:
         return pd.DataFrame({'name': ['לא נמצאו עמותות בקטגוריה זו']})

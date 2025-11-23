@@ -53,21 +53,25 @@ async function ensureSepolia() {
 export async function createCampaignOnChain(opts: {
   campaignName: string;
   charityId: number;
-  charityName: string;
+  startDate: number,
+  endDate: number,
+  goalAmount: number,
   beneficiary: string;
-}):Promise<{status:true, onchainId:string}|{status:false, message:string}> {
-  if (!window.ethereum) { return{status:false, message:"לא נמצא ארנק בדפדפן (MetaMask)."}}
+}): Promise<{ status: true, onchainId: string } | { status: false, message: string }> {
+  if (!window.ethereum) { return { status: false, message: "לא נמצא ארנק בדפדפן (MetaMask)." } }
   await ensureSepolia();
   const provider = new ethers.BrowserProvider(window.ethereum);
   await provider.send("eth_requestAccounts", []);
   const network = await provider.getNetwork();
-  if (network.chainId !== TARGET_CHAIN_ID) { return {status:false, message:"נא לעבור לרשת Sepolia בארנק."} }
+  if (network.chainId !== TARGET_CHAIN_ID) { return { status: false, message: "נא לעבור לרשת Sepolia בארנק." } }
   const signer = await provider.getSigner();
   const hub = new ethers.Contract(CONTRACT, hubAbi.abi as any, signer);
   const tx = await hub.createCampaign(
     opts.campaignName,
     BigInt(opts.charityId),
-    opts.charityName,
+    opts.startDate,
+    opts.endDate,
+    opts.goalAmount,
     opts.beneficiary
   );
   const receipt = await tx.wait();
@@ -75,12 +79,80 @@ export async function createCampaignOnChain(opts: {
     .map((log: { topics: ReadonlyArray<string>; data: string; }) => { try { return hub.interface.parseLog(log); } catch { return null; } })
     .find((p: { name: string; } | null) => p && (p as any).name === "CampaignCreated");
   const onchainId = (event as any)?.args?.campaignId;
-  return {status:true, onchainId};
+  return { status: true, onchainId };
+}
+
+
+export async function updateCampaignOnChain(opts: {
+  blockchainTx: number;
+  campaignName: string;
+  startDate: number,
+  endDate: number,
+  goalAmount: number,
+}): Promise<{ status: true, onchainId: string } | { status: false, message: string }> {
+  if (!window.ethereum) { return { status: false, message: "לא נמצא ארנק בדפדפן (MetaMask)." } }
+  await ensureSepolia();
+  const provider = new ethers.BrowserProvider(window.ethereum);
+  await provider.send("eth_requestAccounts", []);
+  const network = await provider.getNetwork();
+  if (network.chainId !== TARGET_CHAIN_ID) { return { status: false, message: "נא לעבור לרשת Sepolia בארנק." } }
+  const signer = await provider.getSigner();
+  const hub = new ethers.Contract(CONTRACT, hubAbi.abi as any, signer);
+  const tx = await hub.updateCampaign(
+    opts.blockchainTx,
+    opts.campaignName,
+    opts.startDate,
+    opts.endDate,
+    opts.goalAmount,
+  );
+  const receipt = await tx.wait();
+  const event = receipt.logs
+    .map((log: { topics: ReadonlyArray<string>; data: string; }) => { try { return hub.interface.parseLog(log); } catch { return null; } })
+    .find((p: { name: string; } | null) => p && (p as any).name === "CampaignUpdated");
+  const onchainId = (event as any)?.args?.campaignId;
+  return { status: true, onchainId };
+}
+
+export async function toggleCampaignState(opts: {
+  blockchainTx: number;
+  newActive: boolean;
+}): Promise<{ status: true, onchainId: string } | { status: false, message: string }> {
+  if (!window.ethereum) { return { status: false, message: "לא נמצא ארנק בדפדפן (MetaMask)." } }
+  await ensureSepolia();
+  const provider = new ethers.BrowserProvider(window.ethereum);
+  await provider.send("eth_requestAccounts", []);
+  const network = await provider.getNetwork();
+  if (network.chainId !== TARGET_CHAIN_ID) { return { status: false, message: "נא לעבור לרשת Sepolia בארנק." } }
+  const signer = await provider.getSigner();
+  const hub = new ethers.Contract(CONTRACT, hubAbi.abi as any, signer);
+  const tx = await hub.setCampaignActive(
+    opts.blockchainTx,
+    opts.newActive,
+  );
+
+  const receipt = await tx.wait();
+  const event = receipt.logs
+    .map((log: { topics: ReadonlyArray<string>; data: string; }) => { try { return hub.interface.parseLog(log); } catch { return null; } })
+    .find((p: { name: string; } | null) => p && (p as any).name === "CampaignStatusChanged");
+  const onchainId = (event as any)?.args?.campaignId;
+  return { status: true, onchainId };
+  
+}
+
+export const getCampaignOnChain = async (blockchainTx: number) => {
+  //const provider = new ethers.JsonRpcProvider(RPC_URL);
+  const provider = new ethers.BrowserProvider(window.ethereum);
+  const contract = new ethers.Contract(CONTRACT, hubAbi.abi, provider);
+
+  const campaignOnChain = await contract.campaigns(blockchainTx);
+  console.log(campaignOnChain);
+  return campaignOnChain;
+  
 }
 
 export // ===== פונקציות עזר לקריפטו =====
 
-const HUB_ABI = hubAbiJson.abi as Abi;
+  const HUB_ABI = hubAbiJson.abi as Abi;
 const CAMPAIGN_ID = Number(import.meta.env.VITE_CAMPAIGN_ID ?? 0);
 
 export const useCryptoPayment = () => {

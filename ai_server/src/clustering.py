@@ -3,11 +3,11 @@ import torch
 import json
 import pandas as pd
 
-MODEL_PATH_1 = "best_classifier_model"
-MODEL_PATH_2 = "best_classifier_model_2"
-MODEL_PATH_3 = "best_classifier_model_3"
+MODEL_PATH_1 = "../best_classifier_model"
+MODEL_PATH_2 = "../best_classifier_model_2"
+MODEL_PATH_3 = "../best_classifier_model_3"
 
-MAP_PATH ="files/id_to_label_map.json"
+MAP_PATH ="../files/id_to_label_map.json"
 
 #----------- loading map label from json file
 def load_category_map():

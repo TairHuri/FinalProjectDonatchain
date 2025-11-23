@@ -45,6 +45,7 @@ import { search } from "../services/aiApi";
 
 import "../css/general/AISearch.css";
 
+
 type SearchNgoResult = {
   _id: string;
   name: string;

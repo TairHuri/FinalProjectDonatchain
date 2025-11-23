@@ -10,6 +10,7 @@ app = Bottle()
 # app.install(cors_plugin(origins=["http://localhost:4000", "http:///10.100.102.9:4000"]))
 app.install(cors_plugin("*"))
 
+
 @app.route('/api/ngo', method="POST")
 def add_ngo():
     try:
@@ -62,7 +63,7 @@ def search_ngo():
         return {"message":"query was empty", "data":{}}
     try:
         query = query.encode("latin1").decode("utf-8")
-        result = retrieve_top_k_ngos(query)
+        result =retrieve_top_k_ngos(query)
         
         return json.dumps({"message":"result", "data":result.to_dict(orient="records")}, ensure_ascii=False)
     except Exception as ex:

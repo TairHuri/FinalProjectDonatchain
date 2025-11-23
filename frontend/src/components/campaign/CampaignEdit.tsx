@@ -6,8 +6,10 @@ import { getCampaignTags, updateCampaign } from "../../services/campaignApi";
 import AlertDialog, { useAlertDialog } from "./../gui/AlertDialog";
 import Tags from "./../gui/Tags";
 
-import "../../css/campaign/CreateCampaign.css"; 
+import "../../css/campaign/CreateCampaign.css";
 import "../../css/campaign/EditCampaign.css"
+import { getCampaignOnChain, updateCampaignOnChain } from "../../services/cryptoApi";
+import { formatDates } from "../../validations/campaignDates";
 
 type MediaType = {
   images: { value: FileList | null, ref: React.RefObject<HTMLInputElement | null> },
@@ -15,19 +17,20 @@ type MediaType = {
   mainImage: { value: File | null, ref: React.RefObject<HTMLInputElement | null> },
 };
 
-export type SetCampaign = (func:  (c: Campaign | null) => Campaign | null) => void;
+export type SetCampaign = (func: (c: Campaign | null) => Campaign | null) => void;
 export type CampaignEditProps = {
   token: string;
   setCampaign: SetCampaign;
   campaign: Campaign;
   setEditMode: (mode: "view" | "edit") => void;
 }
-const CampaignEdit = ({campaign,setEditMode,setCampaign,token,}: CampaignEditProps) => {
-  
+const CampaignEdit = ({ campaign, setEditMode, setCampaign, token, }: CampaignEditProps) => {
+
   const IMAGE_URL = import.meta.env.VITE_IMAGES_URL || "http://localhost:4000/images";
 
   const { showAlert, isFailure, message, clearAlert, setAlert } = useAlertDialog();
   const [disableStartDate, setDisableStartDate] = useState<boolean>(false)
+  const [origCampaign, setOrigCampaign] = useState<Campaign>({ ...campaign })
   const { postUpdateCampaign } = useCampaigns();
   const [media, setMedia] = useState<MediaType>({
     images: { value: null as FileList | null, ref: useRef<HTMLInputElement>(null) },
@@ -62,7 +65,9 @@ const CampaignEdit = ({campaign,setEditMode,setCampaign,token,}: CampaignEditPro
   }
 
   const handleSaveChanges = async () => {
-    if (!campaign || token) return;
+
+    if (!campaign || !token) return;
+
     if (!campaign.title || !campaign._id) {
       setAlert("יש למלא את כל השדות", true);
       return;
@@ -72,10 +77,33 @@ const CampaignEdit = ({campaign,setEditMode,setCampaign,token,}: CampaignEditPro
       return;
     }
 
+
     const images: File[] = [];
     if (media.images.value) for (const img of media.images.value) images.push(img);
-
     try {
+      const chainFields: Partial<Record<keyof Campaign, boolean>> = { title: false, startDate: false, endDate: false, goal: false };
+      for (const k in chainFields) {
+        if (origCampaign[k as keyof Campaign] != campaign[k as keyof Campaign]) {
+          chainFields[k as keyof Campaign] = true;
+        }
+      }
+      const { startDate, endDate } = formatDates(campaign.startDate, campaign.endDate);
+      const hasChanged = Object.values(chainFields).reduce((acc, curr) => acc || curr, false)
+      
+      if (hasChanged) {
+        const campaignOnChain = await getCampaignOnChain(+campaign.blockchainTx!);
+        const finalStartDate = chainFields.startDate? startDate.getTime() / 1000 : campaignOnChain.startDate;
+        const finalEndDate = chainFields.endDate? endDate.getTime() / 1000 : campaignOnChain.endDate;
+        console.log(finalStartDate, finalEndDate);
+        await updateCampaignOnChain({
+          blockchainTx: +campaign.blockchainTx!,
+          campaignName: campaign.title,
+          startDate: finalStartDate,
+          endDate: finalEndDate,
+          goalAmount: campaign.goal
+        })
+      }
+
       const updatedCampaign = await updateCampaign(
         campaign,
         token,
@@ -84,12 +112,12 @@ const CampaignEdit = ({campaign,setEditMode,setCampaign,token,}: CampaignEditPro
         media.mainImage.value
       );
       if (updatedCampaign._id) postUpdateCampaign(updatedCampaign);
-      
+
       setAlert("קמפיין עודכן בהצלחה", false);
       setEditMode("view");
     } catch (error) {
       console.log(error);
-      setAlert("עדכון הקמפיין נכשל",true);
+      setAlert("עדכון הקמפיין נכשל", true);
     }
   };
 

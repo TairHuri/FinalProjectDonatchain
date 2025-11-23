@@ -1,23 +1,30 @@
+
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useCampaigns } from "../contexts/CampaignsContext";
-import { useEffect, useState } from "react";
-import CreditPayment from "../components/CreditPayment";
-import Modal from "../components/gui/Modal";
-import CryptoPayment from "../components/CryptoPayment";
-import SimpleGallery from "../components/SimpleGallery";
-import type { Ngo } from "../models/Ngo";
-import { type Campaign } from "../models/Campaign";
 import { getCampaign } from "../services/api";
-import { useAuth } from "../contexts/AuthContext";
+
+// Components
+import CreditPayment from "../components/CreditPayment";
+import CryptoPayment from "../components/CryptoPayment";
+import Modal from "../components/gui/Modal";
 import CampaignDonations from "../components/campaign/CampaignDonations";
 import NgoDetailsCard from "../components/ngo/NgoDetailsCard";
 import ShareCampaign from "../components/campaign/ShareCampaign";
 
+// Types
+import type { Ngo } from "../models/Ngo";
+import { type Campaign } from "../models/Campaign";
 
+// Icons
+import { Calendar, Clock, Tag, Link as LinkIcon, Users, CreditCard, Bitcoin} from "lucide-react";
 
-import '../css/campaign/CampaignPage.css'
+import '../css/campaign/CampaignPage.css';
 
 const IMAGE_URL = import.meta.env.VITE_IMAGES_URL || "http://localhost:4000/images";
+const CAMPAIGM_DEATAILS_URL = import.meta.env.VITE_CAMPAIGN_DEATAILS_ON_CHAIN_URL || "https://sepolia.etherscan.io/address/0x738eC6b1a557d2a3E0304d159Cc5542B5CEF2BD3#readContract#F1";
+
+// Helpers
 function endOfDay(dateStr?: string) {
   if (!dateStr) return null;
   const d = new Date(dateStr);
@@ -30,121 +37,217 @@ function startOfDay(dateStr?: string) {
   d.setHours(0, 0, 0, 0);
   return d;
 }
+function formatDate(dateStr?: string) {
+  if (!dateStr) return "לא נקבע";
+  return new Date(dateStr).toLocaleDateString('he-IL', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
 const CampaignPage: React.FC = () => {
   const params = useParams();
   const { campaigns } = useCampaigns();
-  const { user } = useAuth()
 
-
-  const [showCreditPay, setShowCreditPay] = useState<boolean>(false)
-  const [showCryptoPay, setShowCryptoPay] = useState<boolean>(false)
-  // TODO load Ngo and set its logo as campaign logo
-
+  const [showCreditPay, setShowCreditPay] = useState<boolean>(false);
+  const [showCryptoPay, setShowCryptoPay] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<"project" | "ngo" | "donations">("project");
-  const [campaign, setCampaign] = useState<Campaign | null>(null)
+  const [campaign, setCampaign] = useState<Campaign | null>(null);
 
+  // Gallery State
+  const [selectedMedia, setSelectedMedia] = useState<string | null>(null);
+  const [isVideo, setIsVideo] = useState<boolean>(false);
 
   const loadCampaign = async (id: string) => {
-    const campaign = await getCampaign(id);
-    setCampaign(campaign)
-  }
+    try {
+      const data = await getCampaign(id);
+      setCampaign(data);
+      if (data?.images && data.images.length > 0) {
+        setSelectedMedia(data.images[0]);
+        setIsVideo(false);
+      }
+    } catch (err) {
+      console.error("Failed loading campaign", err);
+    }
+  };
 
   useEffect(() => {
     if (!params.id) return;
-
-    const campaign = campaigns.find((c) => c._id! === (params.id));
-    if (campaign) {
-      setCampaign(campaign)
+    const existing = campaigns.find((c) => c._id === params.id);
+    if (existing) {
+      setCampaign(existing);
+      if (existing.images?.length > 0) setSelectedMedia(existing.images[0]);
     } else {
-      loadCampaign(params.id)
+      loadCampaign(params.id);
     }
-
-  }, [params])
+  }, [params, campaigns]);
 
   const isPayable = () => {
     if (!campaign) return false;
     const end = endOfDay(campaign.endDate);
     const start = startOfDay(campaign.startDate);
-    console.log('isPayable', start, start! <= new Date());
-    
-    return campaign && campaign?.isActive && end && end >= new Date() && start && start <= new Date()
-  }
+    return campaign.isActive && end && end >= new Date() && start && start <= new Date();
+  };
 
-  if (!campaign) return <p>קמפיין לא נמצא</p>;
+  const handleMediaClick = (src: string, isVid: boolean) => {
+    setSelectedMedia(src);
+    setIsVideo(isVid);
+  };
 
+  if (!campaign) return <div style={{ textAlign: 'center', marginTop: 50 }}>טוען קמפיין...</div>;
 
   const percent = Math.min((campaign.totalRaised! / campaign.goal) * 100, 100);
+  const ngo = campaign.ngo as unknown as Ngo;
+
   return (
-    <div dir="rtl" style={{ justifyContent: 'center', background: "white", padding: "24px", borderRadius: "12px", margin: "0 auto", width: "80vw" }}>
-      {/* */}
-      <div style={{ display: "flex", alignItems: "center" }}>
-        <img src={`${IMAGE_URL}/${(campaign.ngo as unknown as Ngo).logoUrl}`} alt="ngo logo" style={{ width: "130px", height: "auto", borderRadius: "50%" }} />
-        <h1 style={{ flex: 1, fontSize: '3rem', color: "#000000ff", textAlign: 'center' }}>{campaign.title}</h1>
-      </div>
+    <div className="campaign-container" dir="rtl">
 
-      {/**/}
-      <div style={{ marginTop: "20px" }}>
-        <div style={{ width: "100%", background: "#e5e7eb", borderRadius: "10px", height: "14px" }}>
-          <div style={{ width: `${percent}%`, height: "14px", background: "#22c55e", borderRadius: "10px" }} />
+
+
+      {/* 1. Middle Section: Key Info & Actions */}
+      <section className="info-card">
+        <div className="header-row">
+          <div className="title-area">
+            <div className="ngo-badge">
+              <img src={`${IMAGE_URL}/${ngo.logoUrl}`} alt="logo" className="ngo-logo-small" />
+              {ngo.name}
+            </div>
+            <h1 className="campaign-title">{campaign.title}</h1>
+
+            {/* Tags */}
+            <div className="tags-container">
+              {campaign.tags.map((tag, index) => (
+                <span key={index} className="tag-badge">
+                  <Tag size={12} style={{ marginLeft: 4 }} />
+                  {tag}
+                </span>
+              ))}
+            </div>
+
+            {/* Meta Data */}
+            <div className="meta-data-box" style={{ marginTop: '16px' }}>
+              <div className="meta-item">
+                <Calendar size={16} /> <span>התחלה: {formatDate(campaign.startDate)}</span>
+              </div>
+              <div className="meta-item">
+                <Clock size={16} /> <span>סיום: {formatDate(campaign.endDate)}</span>
+              </div>
+              <div className="meta-item">
+                <LinkIcon size={16} />
+                <a href={CAMPAIGM_DEATAILS_URL} target="_blank" className="blockchain-link">לצפייה בפרטי הקמפיין בבלוקצ'יין - הזינו מספר {campaign.blockchainTx} בשורת החיפוש </a>
+              </div>
+            </div>
+          </div>
+
+
         </div>
-        <p style={{ marginTop: "8px", fontSize: "14px" }}>
-          {campaign.totalRaised!.toLocaleString()} ₪ מתוך {campaign.goal.toLocaleString()} ₪
-        </p>
-        <p style={{ fontSize: "14px", color: "#666" }}>מספר תורמים: {campaign.numOfDonors}</p>
-      </div>
+        <div>
+          <div className="progress-area">
+            <h3>{campaign.totalRaised!.toLocaleString()} ₪ <span style={{ fontSize: '1rem', color: '#666', fontWeight: 400 }}>מתוך {campaign.goal.toLocaleString()} ₪</span></h3>
+            <div className="progress-bg">
+              <div className="progress-fill" style={{ width: `${percent}%` }} />
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#666' }}>
+              <span><Users size={16} style={{ verticalAlign: 'middle' }} /> {campaign.numOfDonors} תורמים</span>
+              <span>{Math.round(percent)}% מהיעד</span>
+            </div>
+          </div>
+        </div>
+        {/* Stats & Buttons Grid */}
+        <div className="stats-action-container">
+          {/* Left: Stats */}
 
-      {/* */}
-      <div style={{ display: "flex", gap: "12px", marginTop: "20px" }}>
-        <button className='donate-button' style={{ flex: 1, backgroundColor: "green", color: "white", padding: "10px", borderRadius: "8px", border: "none" }}
-          onClick={() => setShowCreditPay(true)}
-          disabled={ !isPayable()}>
-          תרומה באשראי
-        </button>
+          {/* Share Button (Top Left) */}
+          <div style={{ alignSelf: 'flex-start' }}>
+            <ShareCampaign campaign={campaign} />
+          </div>
 
-        <button className='donate-button' style={{ flex: 1, backgroundColor: "#4b5563", color: "white", padding: "10px", borderRadius: "8px", border: "none" }}
-          onClick={() =>  setShowCryptoPay(true)}
-          disabled={ !isPayable()}>
-          תרומה בקריפטו
-        </button>
-      </div>
-      <Modal show={showCryptoPay} onClose={() => setShowCryptoPay(false)} component={<CryptoPayment close={() => setShowCryptoPay(false)} campaignId={campaign._id!} userId={campaign.ngo} />} />
-      <Modal show={showCreditPay} onClose={() => setShowCreditPay(false)} component={<CreditPayment close={() => setShowCreditPay(false)} campaignId={campaign._id!} userId={campaign.ngo} />} />
-      <ShareCampaign campaign={campaign} />
-      {/* */}
-      <div style={{ display: "flex", gap: "10px", marginTop: "20px", overflowX: "hidden" }}>
-        <SimpleGallery
-          images={campaign.images}
-          imageBaseUrl={IMAGE_URL}  
-          movie={campaign.movie}
-        />
-      </div>
+          {/* Right: Buttons */}
+          <div className="buttons-area">
+            <button
+              className="btn-donate btn-credit"
+              onClick={() => setShowCreditPay(true)}
+              disabled={!isPayable()}
+            >
+              <CreditCard size={20} /> תרומה באשראי
+            </button>
 
-      {/**/}
-      <div style={{ marginTop: "24px" }}>
-        <div style={{ display: "flex", gap: "16px", borderBottom: "1px solid #ccc" }}>
-          <button onClick={() => setActiveTab("project")} style={{ padding: "8px", fontWeight: activeTab === "project" ? "bold" : "normal" }}>
+            <button
+              className="btn-donate btn-crypto"
+              onClick={() => setShowCryptoPay(true)}
+              disabled={!isPayable()}
+            >
+              <Bitcoin size={20} /> תרומה בקריפטו
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* 2. Top Section: Visuals (Full Width) */}
+      <section className="media-section">
+        <div className="main-stage">
+          {isVideo && campaign.movie ? (
+            <video src={`${IMAGE_URL}/${campaign.movie}`} controls autoPlay className="gallery-media" />
+          ) : (
+            <img src={`${IMAGE_URL}/${selectedMedia}`} alt="Main visual" />
+          )}
+        </div>
+
+        {/* Thumbnails Row */}
+        <div className="thumbnails-row">
+          {campaign.movie && (
+            <button
+              className={`thumb-btn ${isVideo ? 'active' : ''}`}
+              onClick={() => handleMediaClick(campaign.movie!, true)}
+            >
+              <span style={{ fontSize: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', background: '#000', color: '#fff' }}>▶️</span>
+            </button>
+          )}
+          {campaign.images?.map((img, idx) => (
+            <button
+              key={idx}
+              className={`thumb-btn ${selectedMedia === img && !isVideo ? 'active' : ''}`}
+              onClick={() => handleMediaClick(img, false)}
+            >
+              <img src={`${IMAGE_URL}/${img}`} alt={`thumb ${idx}`} />
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* 3. Bottom Section: Tabs & Details */}
+      <section className="details-section">
+        <div className="tabs-nav">
+          <button
+            className={`tab-link ${activeTab === "project" ? "active" : ""}`}
+            onClick={() => setActiveTab("project")}
+          >
             על הפרויקט
           </button>
-          <button onClick={() => setActiveTab("ngo")} style={{ padding: "8px", fontWeight: activeTab === "ngo" ? "bold" : "normal" }}>
+          <button
+            className={`tab-link ${activeTab === "ngo" ? "active" : ""}`}
+            onClick={() => setActiveTab("ngo")}
+          >
             על העמותה
           </button>
-          <button onClick={() => setActiveTab("donations")} style={{ padding: "8px", fontWeight: activeTab === "donations" ? "bold" : "normal" }}>
-            תרומות אחרונות
+          <button
+            className={`tab-link ${activeTab === "donations" ? "active" : ""}`}
+            onClick={() => setActiveTab("donations")}
+          >
+            תרומות
           </button>
         </div>
 
-        <div style={{ padding: "16px" }}>
-          {activeTab === "project" && <p>{campaign.description}</p>}
-          {activeTab === "ngo" && (
-            <NgoDetailsCard ngo={campaign.ngo as unknown as Ngo} />
-          )}
+        <div className="tab-content">
+          {activeTab === "project" && <div style={{ whiteSpace: 'pre-line' }}>{campaign.description}</div>}
+          {activeTab === "ngo" && <NgoDetailsCard ngo={ngo} />}
           {activeTab === "donations" && <CampaignDonations campaignId={campaign._id!} />}
         </div>
-      </div>
+      </section>
+
+      {/* Modals */}
+      <Modal show={showCryptoPay} onClose={() => setShowCryptoPay(false)} component={<CryptoPayment close={() => setShowCryptoPay(false)} campaignId={campaign._id!} userId={campaign.ngo} />} />
+      <Modal show={showCreditPay} onClose={() => setShowCreditPay(false)} component={<CreditPayment close={() => setShowCreditPay(false)} campaignId={campaign._id!} userId={campaign.ngo} />} />
+
     </div>
   );
 };
-
-
 
 export default CampaignPage;

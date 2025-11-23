@@ -30,16 +30,16 @@ export default {
   //   if (!config.contractAddress) throw new Error('No contract address configured');
   //   return new ethers.Contract(config.contractAddress, abi, wallet ?? provider);
   // },
-  async recordFiatDonation(campaignId:number, amountFiat:number,currency:string, refCode:string) {
+  async recordFiatDonation(campaignId:number, ILSAmount:number, originalAmount:number,currency:string, refCode:string) {
     // const campaignId = 0;
     // const amountFiat = 5000; // באגורות = 50₪
     // const currency = "ILS";
     // const refCode = "PAY12345";
 
-    const tx = await contract.recordFiatDonation(campaignId, amountFiat, currency, refCode);
+    const tx = await contract.recordCreditDonation(campaignId,ILSAmount ,originalAmount, currency, refCode);
     console.log("tx sent:", tx.hash);
     await tx.wait();
-    console.log("התרומה נרשמה בבלוקצ’יין✅");
+    console.log("התרומה נרשמה בבלוקצ’יין");
     return tx.hash;
   },
   async getTransaction(txHash: string) {

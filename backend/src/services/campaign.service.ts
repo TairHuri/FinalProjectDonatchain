@@ -45,7 +45,13 @@ export default {
 
     return campaign;
   },
-
+  async toggleCampaignStatus(campaignId: string) {
+    const campaign = await Campaign.findById(campaignId);
+    if (!campaign) throw new ServerError(serverMessages.campaign.not_found.he, 400)
+    // שינוי סטטוס
+    campaign.isActive = !campaign.isActive;
+    await campaign.save();
+  },
   async search({ q, tag, page = 1, limit = 10 }: any) {
     const filter: any = { isActive: true };
     if (tag) filter.tags = tag;
@@ -54,7 +60,7 @@ export default {
       .skip((page - 1) * limit)
       .limit(limit)
       .sort({ createdAt: -1 });
-    
+
     const total = await Campaign.countDocuments(filter);
     return { items: calculateTotal(items), total, page, limit };
   },
@@ -63,17 +69,17 @@ export default {
       .populate('ngo')
       .lean()
       .sort({ createdAt: -1 });
-    
+
     return calculateTotal(campaigns);
   },
-  async getById(id: string, isLean:boolean) {
+  async getById(id: string, isLean: boolean) {
     if (!mongoose.Types.ObjectId.isValid(id)) return null;
-    const campaign =await Campaign.findById(id).populate("ngo").lean();
-    if(!campaign)throw new ServerError(serverMessages.campaign.not_found.he, 404);
-    if(isLean){
+    const campaign = await Campaign.findById(id).populate("ngo").lean();
+    if (!campaign) throw new ServerError(serverMessages.campaign.not_found.he, 404);
+    if (isLean) {
       const [cmp] = calculateTotal([campaign])
       return cmp;
-    }else{
+    } else {
       return campaign
     }
   },
@@ -86,7 +92,7 @@ export default {
       .limit(limit)
       .sort({ createdAt: -1 });
 
-    return { items:calculateTotal(items), total: items.length, page, limit }
+    return { items: calculateTotal(items), total: items.length, page, limit }
   },
 
 

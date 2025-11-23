@@ -6,6 +6,7 @@ import { INgo } from '../models/ngo.model';
 import { ServerError } from '../middlewares/error.middleware';
 import { IUser } from '../models/user.model';
 import { ICampaign } from '../models/campaign.model';
+import campaignService from '../services/campaign.service';
 
 
 
@@ -136,13 +137,9 @@ export const toggleCampaignStatus = async (req: Request, res: Response) => {
 
     // בדיקת הרשאה — רק מנהל מערכת או חבר באותה עמותה
     if (req.user!.role == 'admin' || (req.user as any).ngoId.toString() != (campaign.ngo as unknown as INgo)._id.toString()) return res.status(403).json({ message: "You are not part of this NGO" });
-
-    // שינוי סטטוס
-    campaign.isActive = !campaign.isActive;
-    await campaign.save();
-
+    await campaignService.toggleCampaignStatus(id);
     res.json({
-      message: `קמפיין ${campaign.isActive ? "הופעל מחדש " : "הושהה "}`,
+      message: `קמפיין ${campaign.isActive ? "הושהה ": "הופעל מחדש " }`,
       campaign,
     });
   } catch (err: any) {

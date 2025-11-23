@@ -1,28 +1,33 @@
 from sentence_transformers import SentenceTransformer
 import numpy as np
 import pandas as pd
-import torch
 
 
-EMBEDDINGS_FILE_PATH = "all_ngo_embeddings.npy"
-NGO_DATA_PATH = "ngo.csv"
+
+EMBEDDINGS_FILE_PATH = "../files/all_ngo_embeddings.npy"
+NGO_DATA_PATH = "../files/ngo.csv"
 MODEL_NAME = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
-embedding_model = SentenceTransformer(MODEL_NAME)   
+embedding_model = None
 
-# def get_model():
-#     embedding_model = SentenceTransformer(MODEL_NAME)
-#     return embedding_model
+def load_model():
+    global embedding_model
+    if embedding_model == None:
+        embedding_model = SentenceTransformer(MODEL_NAME)   
+    else:
+        embedding_model
 
 # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # embedding_model.to(device)
 
 
 def new_ngo_controller(name, description):
+    load_model()
     ngo_vector = create_new_ngo_embedding(name, description, embedding_model)
     add_new_ngo_embedding(ngo_vector)
 
 
 def update_ngo_controller(name, description, tags, ngoNumber):
+    load_model()
     ngo_vector = create_new_ngo_embedding(name, description, embedding_model)
     status, error = update_existing_ngo_embedding(ngoNumber, ngo_vector, name, description, tags)
     return status, error
@@ -78,7 +83,7 @@ def update_existing_ngo_embedding(ngo_number_to_update, updated_vector, name, de
 
 #embedding all the Ngos in the system
 def embedding_all_ngo():
-    
+    load_model()
     df_ngos = pd.read_csv(NGO_DATA_PATH)
     df_ngos['combined_text'] = df_ngos.apply(
         lambda row: f" {row['name']} {row['description']}",
@@ -93,5 +98,3 @@ def embedding_all_ngo():
     )
     np.save(EMBEDDINGS_FILE_PATH, all_ngo_embeddings)
     print(f"The embeddings matrix was saved in:  {EMBEDDINGS_FILE_PATH}")
-
-
