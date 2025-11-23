@@ -182,8 +182,8 @@ contract Donatchain {
         );
     }
 
-    // -------- Update active flag separately --------
-    function setCampaignActive(uint256 campaignId, bool newActive)
+    // -------- Update active field --------
+    function updateCampaignActive(uint256 campaignId, bool newActive)
         external
         onlyOwnerOrManager(campaignId)
     {
@@ -194,6 +194,25 @@ contract Donatchain {
 
         emit CampaignStatusChanged(campaignId, c.active);
     }
+
+  // -------- Update active field for many campaigns --------
+    function updateManyCampaignsActive(uint256[] calldata campaignIds,bool newActive) 
+    external 
+    {
+    for (uint256 i = 0; i < campaignIds.length; i++) {
+        uint256 campaignId = campaignIds[i];
+        Campaign storage c = campaigns[campaignId];
+
+        require(c.manager != address(0), "unknown campaign");
+        require(
+            msg.sender == owner || msg.sender == c.manager,
+            "not owner/manager"
+        );
+
+        c.active = newActive;
+        emit ManyCampaignsStatusChanged(campaignId, c.active);
+    }
+}
 
     // -------- Donate in crypto (ETH) --------
     function donateCrypto(uint256 campaignId)
