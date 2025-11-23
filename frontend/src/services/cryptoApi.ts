@@ -50,6 +50,20 @@ async function ensureSepolia() {
     }
   }
 }
+
+const setupHubConnection = async () => {
+  if (!window.ethereum) { throw new Error("לא נמצא ארנק בדפדפן (MetaMask)." ) }
+  await ensureSepolia();
+  const provider = new ethers.BrowserProvider(window.ethereum);
+  await provider.send("eth_requestAccounts", []);
+  const network = await provider.getNetwork();
+  if (network.chainId !== TARGET_CHAIN_ID) { throw new Error("נא לעבור לרשת Sepolia בארנק." ) }
+  const signer = await provider.getSigner();
+  const hub = new ethers.Contract(CONTRACT, hubAbi.abi as any, signer);
+  if(!hub)throw new Error("נא לעבור לרשת Sepolia בארנק." ) 
+  return hub
+}
+
 export async function createCampaignOnChain(opts: {
   campaignName: string;
   charityId: number;
@@ -113,18 +127,11 @@ export async function updateCampaignOnChain(opts: {
   return { status: true, onchainId };
 }
 
-export async function toggleCampaignState(opts: {
+export async function toggleCryptoCampaignStatus(opts: {
   blockchainTx: number;
   newActive: boolean;
 }): Promise<{ status: true, onchainId: string } | { status: false, message: string }> {
-  if (!window.ethereum) { return { status: false, message: "לא נמצא ארנק בדפדפן (MetaMask)." } }
-  await ensureSepolia();
-  const provider = new ethers.BrowserProvider(window.ethereum);
-  await provider.send("eth_requestAccounts", []);
-  const network = await provider.getNetwork();
-  if (network.chainId !== TARGET_CHAIN_ID) { return { status: false, message: "נא לעבור לרשת Sepolia בארנק." } }
-  const signer = await provider.getSigner();
-  const hub = new ethers.Contract(CONTRACT, hubAbi.abi as any, signer);
+  const hub = await setupHubConnection();  
   const tx = await hub.updateCampaignActive(
     opts.blockchainTx,
     opts.newActive,
@@ -134,6 +141,24 @@ export async function toggleCampaignState(opts: {
   const event = receipt.logs
     .map((log: { topics: ReadonlyArray<string>; data: string; }) => { try { return hub.interface.parseLog(log); } catch { return null; } })
     .find((p: { name: string; } | null) => p && (p as any).name === "CampaignStatusChanged");
+  const onchainId = (event as any)?.args?.campaignId;
+  return { status: true, onchainId };
+  
+}
+export async function toggleCryptoCampaignsStatus(opts: {
+  campaignIds: number[];
+  newActive: boolean;
+}): Promise<{ status: true, onchainId: string } | { status: false, message: string }> {
+  const hub = await setupHubConnection();  
+  const tx = await hub.updateManyCampaignsActive(
+    opts.campaignIds,
+    opts.newActive,
+  );
+
+  const receipt = await tx.wait();
+  const event = receipt.logs
+    .map((log: { topics: ReadonlyArray<string>; data: string; }) => { try { return hub.interface.parseLog(log); } catch { return null; } })
+    .find((p: { name: string; } | null) => p && (p as any).name === "ManyCampaignsStatusChanged");
   const onchainId = (event as any)?.args?.campaignId;
   return { status: true, onchainId };
   

@@ -8,7 +8,7 @@ import Modal from "../gui/Modal";
 import ReportDialog from "./ReportDialog";
 
 import "../../css/campaign/EditCampaign.css"
-import { toggleCampaignState as toggleCryptoCampaignStatus } from "../../services/cryptoApi";
+import { toggleCryptoCampaignStatus } from "../../services/cryptoApi";
 
 export type CampaignViewProps = {
   campaign: Campaign;

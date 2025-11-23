@@ -7,6 +7,10 @@ import Modal from "../gui/Modal";
 import AdminNgoDetails from "./AdminNgoDetails";
 import type { Ngo } from "../../models/Ngo";
 import AlertDialog, { useAlertDialog } from "../gui/AlertDialog";
+import { getCampaigns } from "../../services/api";
+import type { Campaign } from "../../models/Campaign";
+import { toggleCryptoCampaignsStatus } from "../../services/cryptoApi";
+import ConfirmDialog, { useConfirmDialog } from "../gui/ConfirmDialog";
 
 
 export default function AdminNgoList() {
@@ -15,7 +19,10 @@ export default function AdminNgoList() {
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [selectedNgo, setSelectedNgo] = useState<Ngo | null>(null);
   const [detailsLoading, setDetailsLoading] = useState(false);
+  const [statusNgo, setStatusNgo] = useState<{id:string, isActive:boolean}>({id:'', isActive:true});
   const token = localStorage.getItem("token") || "";
+
+  const { showConfirm, openConfirm, closeConfirm } = useConfirmDialog()
 
   const { showAlert, isFailure, message, clearAlert, setAlert } = useAlertDialog();
 
@@ -40,16 +47,18 @@ export default function AdminNgoList() {
   };
 
 
-  const handleToggle = async (id: string) => {
-    if (!window.confirm("האם את/ה בטוח/ה שברצונך לשנות את סטטוס העמותה?")) return;
-
+  const handleToggle = async (id: string, isActive:boolean) => {
+    closeConfirm()
     try {
       setActionLoading(id);
+      const campaigns = await getCampaigns(id)
+      const blockchainTxList = (campaigns.items as Campaign[]).map(c => +c.blockchainTx!)
+      const cryptoResult = await toggleCryptoCampaignsStatus({campaignIds:blockchainTxList, newActive:!isActive })
       const res = await toggleNgoStatus(id, token);
       setAlert(res.message, false);
       await fetchNgos();
     } catch (err) {
-      setAlert("שגיאה בעדכון הסטטוס", true);
+      setAlert((err as any).message ||  "שגיאה בעדכון הסטטוס", true);
     } finally {
       setActionLoading(null);
     }
@@ -132,7 +141,10 @@ export default function AdminNgoList() {
                 <motion.button
                   whileTap={{ scale: 0.9 }}
                   disabled={actionLoading === n._id}
-                  onClick={() => handleToggle(n._id)}
+                  onClick={() =>{
+                    setStatusNgo({id:n._id, isActive:n.isActive})
+                    openConfirm()
+                  }}
                   className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-white font-semibold shadow transition-all ${n.isActive
                       ? "bg-red-600 hover:bg-red-700"
                       : "bg-green-600 hover:bg-green-700"
@@ -161,8 +173,15 @@ export default function AdminNgoList() {
                 successTitle=""
                 message={message}
                 failureOnClose={clearAlert}
+                successOnClose={clearAlert}
                 isFailure={isFailure}
               />
+                 <ConfirmDialog
+        show={showConfirm}
+        onYes={() => handleToggle(statusNgo.id, statusNgo.isActive)}
+        onNo={closeConfirm}
+        message={"האם את/ה בטוח/ה שברצונך לשנות את סטטוס העמותה?"}
+      />
       {/* חלון פרטי עמותה */}
       <Modal show={selectedNgo != null} onClose={() => setSelectedNgo(null)}>
         <AdminNgoDetails setSelectedNgo={setSelectedNgo} detailsLoading={detailsLoading} selectedNgo={selectedNgo!}/>

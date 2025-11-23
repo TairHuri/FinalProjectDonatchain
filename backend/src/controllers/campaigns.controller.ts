@@ -136,7 +136,7 @@ export const toggleCampaignStatus = async (req: Request, res: Response) => {
     }
 
     // בדיקת הרשאה — רק מנהל מערכת או חבר באותה עמותה
-    if (req.user!.role == 'admin' || (req.user as any).ngoId.toString() != (campaign.ngo as unknown as INgo)._id.toString()) return res.status(403).json({ message: "You are not part of this NGO" });
+    if (req.user!.role != 'admin' && (req.user as any).ngoId.toString() != (campaign.ngo as unknown as INgo)._id.toString()) return res.status(403).json({ message: "You are not part of this NGO" });
     await campaignService.toggleCampaignStatus(id);
     res.json({
       message: `קמפיין ${campaign.isActive ? "הושהה ": "הופעל מחדש " }`,

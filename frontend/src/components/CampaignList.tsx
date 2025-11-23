@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 
 import "../css/adminDashboard.css";
 import AlertDialog, { useAlertDialog } from "./gui/AlertDialog";
+import {toggleCryptoCampaignStatus} from '../services/cryptoApi.ts'
 
 export default function CampaignList() {
   const [campaigns, setCampaigns] = useState<any[]>([]);
@@ -15,6 +16,7 @@ export default function CampaignList() {
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "paused">("all");
 
   const { showAlert, isFailure, message, clearAlert, setAlert } = useAlertDialog();
+  
 
   const token = localStorage.getItem("token") || "";
 
@@ -41,7 +43,7 @@ export default function CampaignList() {
   const handleToggle = async (id: string, blockchainTx:number, isActive:boolean) => {
     try {
       setActionLoading(id);
-      const result = await toggleCryptoCampaignStatus({ blockchainTx: blockchainTx!, newActive: isActive })
+      const result = await toggleCryptoCampaignStatus({ blockchainTx: blockchainTx!, newActive: !isActive })
       if (result.status == false) {
         setAlert(result.message || "עדכון הסטטוס נכשל", false);
       }
@@ -194,7 +196,7 @@ export default function CampaignList() {
           )}
         </tbody>
       </table>
-      <AlertDialog message={message} isFailure={isFailure} show={showAlert} failureOnClose={clearAlert} />
+      <AlertDialog message={message} isFailure={isFailure} show={showAlert} failureOnClose={clearAlert} successOnClose={clearAlert} />
     </motion.div>
   );
 }
