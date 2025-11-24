@@ -6,12 +6,12 @@ import type { Ngo, NgoMediaType } from "../models/Ngo";
 
 import NewNgo from "../components/NewNgo";
 import { useNavigate } from 'react-router-dom';
-import "../css/RegistrationNgo.css";
 import AlertDialog, { useAlertDialog } from "../components/gui/AlertDialog";
 import { validateNgo, validateUser } from "../validations/registration.validation";
 import { verifyNgoNumber } from "../services/ngoApi";
 import PickerList, { usePickerList } from "../components/gui/PickerList";
 
+import "../css/RegistrationNgo.css";
 
 
 export default function RegistrationNgo() {
@@ -63,24 +63,32 @@ export default function RegistrationNgo() {
     setMedia({ ...media, [field]: value ? value[0] : null });
   };
 
-const handleChangeData = (field: string, value: string | number) => {
+// const handleChangeData = (field: string, value: string | number) => {
   // בדיקה מדויקת רק לפי ערך הקיים ברשימת העמותות
-  const selectedNgo = ngoList.find(
-    (x) =>
-      x.name.trim() === value.toString().trim() ||
-      (x.ngoNumber && x.ngoNumber.toString().trim() === value.toString().trim())
-  );
+  // const selectedNgo = ngoList.find(
+  //   (x) =>
+  //     x.name.trim() === value.toString().trim() ||
+  //     (x.ngoNumber && x.ngoNumber.toString().trim() === value.toString().trim())
+  // );
 
-  // אם לא קיימת עמותה כזו → איפוס user.ngoId
-  if (!selectedNgo) {
-    setUser({ ...user, ngoId: "" });
+//   // אם לא קיימת עמותה כזו → איפוס user.ngoId
+//   if (!selectedItemId) {
+//     setUser({ ...user, ngoId: "" });
+//     return;
+//   }
+
+//   // אם קיימת → הצמדה למשתמש
+//   setUser({ ...user, ngoId: selectedItemId });
+// };
+
+useEffect(() => {
+  if (!selectedItemId) {
+    setUser(prev => ({ ...prev, ngoId: "" }));
     return;
   }
 
-  // אם קיימת → הצמדה למשתמש
-  setUser({ ...user, ngoId: selectedNgo._id });
-};
-
+  setUser(prev => ({ ...prev, ngoId: selectedItemId }));
+}, [selectedItemId]);
 
 
   const loadNgoList = async () => {
@@ -223,10 +231,10 @@ if (!user.ngoId && !newNgo) {
                 />
               </>
             ) : (
-              <div className="input-group">
+              <div className="input-group input-existing-ngo">
 
                 <Building2 className="input-icon" />
-                <PickerList useCss={true} openPicker={openPicker} setOpenPicker={setOpenPicker} selectedItemId={selectedItemId} setSelectedItemId={setSelectedItemId} list={ngoList.map(c => ({ _id: c._id, name: `${c.name} ${c.ngoNumber}` }))} />
+                <PickerList useNgo={true} openPicker={openPicker} setOpenPicker={setOpenPicker} selectedItemId={selectedItemId} setSelectedItemId={setSelectedItemId} list={ngoList.map(c => ({ _id: c._id, name: `${c.name} | ${c.ngoNumber}` }))} />
                 {/* <input
                   type="text"
                   list="ngoList"

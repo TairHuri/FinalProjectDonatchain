@@ -98,7 +98,7 @@ export default function AdminAboutEditor() {
       <button onClick={saveChanges} className="bg-blue-700 text-white px-6 py-2 rounded-lg mt-4 hover:bg-blue-800">
         שמור שינויים
       </button>
-      <AlertDialog show={showAlert} message={message} isFailure={isFailure} failureOnClose={clearAlert} />
+      <AlertDialog show={showAlert} message={message} isFailure={isFailure} failureOnClose={clearAlert} successOnClose={clearAlert}/>
     </div>
   );
 }

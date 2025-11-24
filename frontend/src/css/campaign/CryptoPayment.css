@@ -66,18 +66,18 @@
   }
 }
 
-.input-group {
+.input-group_crypto {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
-.input-group.full-width {
+.input-group_crypto.full-width {
   grid-column: span 2; /* אלמנטים שתופסים את כל הרוחב */
 }
 
 @media (max-width: 600px) {
-  .input-group.full-width {
+  .input-group_crypto.full-width {
     grid-column: span 1;
   }
 }

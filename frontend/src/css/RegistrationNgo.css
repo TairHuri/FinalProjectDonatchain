@@ -1,4 +1,4 @@
-/* ממחזר את ההתחברות — אפשר להשאיר כמו שיש לך כבר: */
+
 .login-page {
   margin-top: 10px;
   display: flex;
@@ -14,7 +14,7 @@
   border-radius: 20px;
   padding: 50px 40px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-  width: 420px; /* מעט רחב יותר כי הרשמה ארוכה יותר */
+  width: 420px;
   animation: fadeIn 0.8s ease;
 }
 
@@ -36,6 +36,9 @@
   position: relative;
   display: flex;
   align-items: center;
+}
+.input-existing-ngo{
+ direction: rtl;
 }
 
 .input-icon {
@@ -86,7 +89,7 @@
   cursor: not-allowed;
 }
 
-/* תגית התקנון בשורה אחת אלגנטית */
+
 .agree-inline {
   display: inline-flex;
   align-items: center;

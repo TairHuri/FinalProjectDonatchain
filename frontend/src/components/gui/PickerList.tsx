@@ -15,9 +15,9 @@ export type PickerListProps = {
     setOpenPicker: React.Dispatch<React.SetStateAction<boolean>>;
     selectedItemId: string;
     setSelectedItemId: React.Dispatch<React.SetStateAction<string>>;
-    useCss?: boolean
+    useNgo?: boolean
 }
-const PickerList = ({ list, openPicker, setOpenPicker, selectedItemId, setSelectedItemId, useCss=false}: PickerListProps) => {
+const PickerList = ({ list, openPicker, setOpenPicker, selectedItemId, setSelectedItemId, useNgo=false}: PickerListProps) => {
     
     const [query, setQuery] = useState<string>("");
     
@@ -28,16 +28,16 @@ const PickerList = ({ list, openPicker, setOpenPicker, selectedItemId, setSelect
       }, [list, query]);
 
     return (
-        <div className={useCss?'pickerlist_input-field':'picker'}>
+        <div className={useNgo?'pickerlist_input-field':'picker'}>
             <button
                 type="button"
-                className={`picker__button ${useCss? 'input-field_picker__button' :''}`}
+                className={`picker__button ${useNgo? 'input-field_picker__button' :''}`}
                 onClick={() => setOpenPicker((v:boolean) => !v)}
                 aria-expanded={openPicker}
                 aria-haspopup="listbox"
             >
                 <span className="picker__label">
-                    {selectedItemId === "all" ? "כל הקמפיינים" : (list.find(c => c._id === selectedItemId)?.name ?? "בחרו")}
+                    {selectedItemId === "all" ? (useNgo?"עמותות קיימות": "כל הקמפיינים") : (list.find(c => c._id === selectedItemId)?.name ?? "בחרו")}
                 </span>
                 <ChevronDown size={16} className={`chev ${openPicker ? "open" : ""}`} />
             </button>
@@ -47,7 +47,7 @@ const PickerList = ({ list, openPicker, setOpenPicker, selectedItemId, setSelect
                     <Search size={16} />
                     <input
                         type="text"
-                        placeholder="חיפוש ..."
+                        placeholder="חיפוש..."
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                     />
@@ -58,7 +58,7 @@ const PickerList = ({ list, openPicker, setOpenPicker, selectedItemId, setSelect
                     )}
                 </div>
 
-                {!useCss && <button
+                {!useNgo && <button
                     type="button"
                     className={`picker__option ${selectedItemId === "all" ? "active" : ""}`}
                     onClick={() => { setSelectedItemId("all"); setOpenPicker(false); }}

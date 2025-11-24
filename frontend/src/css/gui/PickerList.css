@@ -26,8 +26,9 @@
   transition: box-shadow .12s ease, transform .12s ease;
 }
 .input-field_picker__button {
-  border: 1px solid var(--border);
+  border: white;
   padding: 0px 12px;
+  font-weight: 400;
 }
 .picker__button:hover { box-shadow: var(--shadow-sm); transform: translateY(-1px); }
 .picker__label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
