@@ -89,7 +89,7 @@ console.log(user);
   if (!user || !user.ngoId) return;
   return (
     <div dir="rtl" className="ngo-dashboard-container">
-      {/* סרגל צד */}
+      {/*  */}
       <div
         style={{
           width: "20vw",

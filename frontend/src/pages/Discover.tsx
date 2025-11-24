@@ -44,7 +44,7 @@ export default function Discover() {
   const next = () => setStep((s) => Math.min(s + 1, steps.length - 1));
   const prev = () => setStep((s) => Math.max(s - 1, 0));
 
-  // למנוע גלילה ברקע כשמודאל פתוח
+
   useEffect(() => {
     if (!open && !zoomSrc) return;
     const prev = document.body.style.overflow;
@@ -52,7 +52,6 @@ export default function Discover() {
     return () => { document.body.style.overflow = prev; };
   }, [open, zoomSrc]);
 
-  // ESC לסגירה (גם למודאל וגם ל־zoom)
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -71,8 +70,7 @@ export default function Discover() {
           ייחודיות DonatChain
         </motion.h1>
         <motion.p className="dc-hero-sub" initial={{opacity:0}} animate={{opacity:1}} transition={{delay:.1}}>
-          {/* שילוב של <strong>בלוקצ׳יין</strong> לשקיפות ואמינות,
-          יחד עם <strong>בינה מלאכותית</strong> שמציעה קמפיינים מותאמים אישית. */}
+          {/**/}
           DonatChain באה לשנות את כללי המשחק בכל מה שקשור לעולם גיוס התרומות כאשר היא שמה דגש על שקיפות ואמינות מול התורם  
         <br />
         בעזרת טכנולוגיית הבלוקצ'יין כל תרומה נרשמת ומתועדת בלתי יכולת לזיוף או שינוי
@@ -86,7 +84,7 @@ export default function Discover() {
         </div>
       </section>
 
-      {/* מודאל השלבים */}
+      {/*  */}
       <AnimatePresence>
         {open && (
           <>
