@@ -102,10 +102,10 @@ async verifyNgoActive(ngoNumber: string)  {
     return Ngo.find({ngoNumber :{$in: ngoNumberList}},{name:1, logoUrl:1});
   },
 
-  async list({ page = 1, limit = 20 } = {}) {
-    const items = await Ngo.find().skip((page - 1) * limit).limit(limit).sort({ createdAt: -1 });
-    const total = await Ngo.countDocuments();
-    return { items, total, page, limit };
+  async list() {
+    const items = await Ngo.find().sort({ createdAt: -1 });
+    
+    return { items, total:items.length,};
   },
 
   async update(id: string, updates: any) {

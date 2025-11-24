@@ -48,7 +48,7 @@ export async function updateCampaign(data: Campaign, token: string, images: File
         },
         body: formData,
     });
-    if (res.status != 201) {
+    if (res.status != 200) {
         throw new Error(await res.text())
     }
     return res.json();

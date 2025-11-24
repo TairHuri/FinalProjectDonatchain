@@ -75,7 +75,7 @@ export const updateCampaign = async (req: Request, res: Response) => {
       ngo: user.ngoId,
       isActive
     });
-    res.status(201).json(campaign);
+    res.json(campaign);
   } catch (err: any) {
     console.log(err);
 
@@ -85,7 +85,7 @@ export const updateCampaign = async (req: Request, res: Response) => {
 
 
 export const listCampaigns = async (req: Request, res: Response) => {
-  const { q, tag, page = 1, limit = 20, ngoId } = req.query as any;
+  const { q, tag, ngoId } = req.query as any;
   try {
     if (ngoId) {
       const result = await CampaignService.getByNgo(ngoId);
@@ -94,9 +94,7 @@ export const listCampaigns = async (req: Request, res: Response) => {
     }
     const result = await CampaignService.search({
       q,
-      tag,
-      page: Number(page),
-      limit: Number(limit)
+      tag
     });
 
     res.json(result);

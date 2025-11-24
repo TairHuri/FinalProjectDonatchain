@@ -12,7 +12,7 @@ import type { Message } from "../../models/Message";
 import { getMessagesByNgoId, saveMessage } from "../../services/messageApi";
 
 
-// ----- טיפוסים בסיסיים -----
+
 
 type Tab = "members" | "pending" | "board";
 
@@ -158,9 +158,6 @@ const NgoUsers = () => {
 
 export default NgoUsers;
 
-// ------------------------------------------------------------------
-// subcomponents (ויזואלי בלבד, בלי קריאות לשרת)
-// ------------------------------------------------------------------
 
 function MembersTable({ members, loggedinUser, changeUserRole, declineUser, isCurrentManager }: { members: User[], loggedinUser: User, changeUserRole: (userId: string, role: string) => void, declineUser: (userId: string) => void, isCurrentManager: boolean }) {
     const canDemote = members.find(m => m._id != loggedinUser._id && m.role == 'manager')
@@ -262,11 +259,7 @@ function MessageBoard({ messages, newMessage, setNewMessage, createMessage }: Me
     return (
         <div className={'boardWrapper'}>
             <div className={'messagesList'}>
-                {messages.length === 0 && (
-                    <div className={'emptyState'}>
-                        אין הודעות עדיין. תהיי הראשונה לכתוב משהו
-                    </div>
-                )}
+                {messages.length === 0 && (<div className={'emptyState'}> אין הודעות עדיין.</div>)}
 
                 {messages.map(msg => (
                     <div key={msg._id} className={'messageCard'}>

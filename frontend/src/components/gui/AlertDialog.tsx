@@ -31,7 +31,7 @@ const AlertDialog: React.FC<AlertDialogProps> = ({ show, message, failureTitle, 
           {message}
         </div>
 
-        <button className="alertButton" onClick={isFailure ? failureOnClose : successOnClose}>
+        <button className="alertButton" onClick={isFailure==true ? failureOnClose : successOnClose}>
           אישור
         </button>
       </div>

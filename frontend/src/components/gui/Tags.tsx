@@ -4,8 +4,9 @@ export type TagProps = {
     tags: string[];
     tagLoader: () => Promise<{ [key: string]: string }[]>;
     handleChange: (field: string, value: string | number | string[]) => void;
+    maxTags?: number;
 }
-const Tags = ({ tags, tagLoader, handleChange }: TagProps) => {
+const Tags = ({ tags, tagLoader, handleChange, maxTags=3 }: TagProps) => {
     const [allTags, setAllTags] = useState<{ [key: string]: string }[]>([]);
     const loadTags = async () => {
         const t = await tagLoader();
@@ -21,7 +22,7 @@ const Tags = ({ tags, tagLoader, handleChange }: TagProps) => {
         const exists = tags.includes(tag);
         if (exists) return handleChange('tags', tags.filter(t => t !== tag))
 
-        if (tags.length >= 1) return;               // מגבלה עד 3
+        if (tags.length >= maxTags) return;               // מגבלה עד 3
 
         handleChange('tags', [...tags, tag])
     };
@@ -33,7 +34,7 @@ const Tags = ({ tags, tagLoader, handleChange }: TagProps) => {
             <div className="cc-chips">
                 {allTags.map(({ tag }) => {
                     const selected = tags.includes(tag);
-                    const disabled = !selected && tags.length >= 1;
+                    const disabled = !selected && tags.length >= maxTags;
                     return (
                         <button
                             key={tag}

@@ -10,6 +10,7 @@ import "../css/RegistrationNgo.css";
 import AlertDialog, { useAlertDialog } from "../components/gui/AlertDialog";
 import { validateNgo, validateUser } from "../validations/registration.validation";
 import { verifyNgoNumber } from "../services/ngoApi";
+import PickerList, { usePickerList } from "../components/gui/PickerList";
 
 
 
@@ -19,7 +20,7 @@ export default function RegistrationNgo() {
   const [newNgo, setNewNgo] = useState<boolean>(false);
   const [ngoList, setNgoList] = useState<Ngo[]>([]);
   const [media, setMedia] = useState<NgoMediaType>({ logoUrl: null, certificate: null });
-
+  const { openPicker, setOpenPicker, selectedItemId, setSelectedItemId } = usePickerList();
   const { showAlert, isFailure, message, clearAlert, setAlert } = useAlertDialog();
 
   const [user, setUser] = useState<User>({
@@ -223,8 +224,10 @@ if (!user.ngoId && !newNgo) {
               </>
             ) : (
               <div className="input-group">
+
                 <Building2 className="input-icon" />
-                <input
+                <PickerList useCss={true} openPicker={openPicker} setOpenPicker={setOpenPicker} selectedItemId={selectedItemId} setSelectedItemId={setSelectedItemId} list={ngoList.map(c => ({ _id: c._id, name: `${c.name} ${c.ngoNumber}` }))} />
+                {/* <input
                   type="text"
                   list="ngoList"
                   placeholder="חפשי ובחרי עמותה קיימת…"
@@ -239,7 +242,7 @@ if (!user.ngoId && !newNgo) {
                       label={n.ngoNumber ? `(${n.ngoNumber})` : ""}
                     />
                   ))}
-                </datalist>
+                </datalist> */}
 
               </div>
             )}

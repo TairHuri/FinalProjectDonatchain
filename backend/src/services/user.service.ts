@@ -31,10 +31,10 @@ export default {
     return user;
   },
 
-  async listAll({ page = 1, limit = 50 } = {}) {
-    const items = await User.find().select('-passwordHash').skip((page - 1) * limit).limit(limit);
-    const total = await User.countDocuments();
-    return { items, total, page, limit };
+  async listAll() {
+    const items = await User.find().select('-passwordHash');;
+  
+    return { items, total:items.length};
   },
 
    async approveUser(userId: string) {

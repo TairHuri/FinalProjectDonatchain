@@ -181,7 +181,7 @@ const CampaignPage: React.FC = () => {
       </section>
 
       {/* 2. Top Section: Visuals (Full Width) */}
-      <section className="media-section">
+      {(campaign.images.length >0 || campaign.movie)&&  <section className="media-section">
         <div className="main-stage">
           {isVideo && campaign.movie ? (
             <video src={`${IMAGE_URL}/${campaign.movie}`} controls autoPlay className="gallery-media" />
@@ -210,7 +210,7 @@ const CampaignPage: React.FC = () => {
             </button>
           ))}
         </div>
-      </section>
+      </section>}
 
       {/* 3. Bottom Section: Tabs & Details */}
       <section className="details-section">

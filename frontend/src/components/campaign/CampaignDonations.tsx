@@ -5,7 +5,7 @@ import { getDonationsByCampaign } from "../../services/donationApi";
 
 
 const CampaignDonations = ({ campaignId }: { campaignId: string }) => {
-    const [donations, setDonations] = useState<Pick<Donation, "_id" | "firstName" | "lastName" | "originalAmount" | "currency" | "comment" | "txHash">[]>([])
+    const [donations, setDonations] = useState<Pick<Donation, "_id" | "firstName" | "lastName"|"anonymous" | "originalAmount" | "currency" | "comment" | "txHash">[]>([])
     const { isLoading, start, stop } = useSpinner();
 
     const loadDonations = async () => {
@@ -87,11 +87,7 @@ const CampaignDonations = ({ campaignId }: { campaignId: string }) => {
                 }}
             >
                 {donations.map((donation) => {
-                    const isAnon =
-                        donation.firstName.toLowerCase() === "anonymous" ||
-                        donation.lastName.toLowerCase() === "anonymous";
-
-                    const donorName = isAnon
+                    const donorName = donation.anonymous
                         ? "תורם אנונימי"
                         : `${donation.firstName} ${donation.lastName}`;
 

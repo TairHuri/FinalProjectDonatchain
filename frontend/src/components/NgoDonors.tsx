@@ -5,34 +5,24 @@ import { useCampaigns } from "../contexts/CampaignsContext";
 import type { Donation } from "../models/Donation";
 import { getDonationsByCampaign, getDonationsByNgo } from "../services/donationApi";
 import { useAuth } from "../contexts/AuthContext";
-import { Users, Gift, ChevronDown, X, Search } from "lucide-react";
+import { Users, } from "lucide-react";
+import PickerList, { usePickerList } from './gui/PickerList';
 
 const NgoDonors = () => {
   const { user } = useAuth();
   const { campaigns } = useCampaigns();
-
-
-  const [selectedCampaignId, setSelectedCampaignId] = useState<string | "all">("all");
-  const [openPicker, setOpenPicker] = useState(false);
-  const [query, setQuery] = useState("");
-
-
+  const { openPicker, setOpenPicker, selectedItemId, setSelectedItemId } = usePickerList();
+  
   const [donations, setDonations] = useState<Donation[]>([]);
   const [loading, setLoading] = useState(false);
-
-  const visibleCampaigns = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return campaigns;
-    return campaigns.filter((c) => c.title?.toLowerCase().includes(q));
-  }, [campaigns, query]);
 
   const loadDonors = async (campaignId: string) => {
     setLoading(true);
     try {
-      const rows:Donation[] = await getDonationsByCampaign(campaignId);
-      const uniqueDonners:{[email:string]:Donation} = {}
+      const rows: Donation[] = await getDonationsByCampaign(campaignId);
+      const uniqueDonners: { [email: string]: Donation } = {}
       console.log(rows)
-      for(const d in rows){
+      for (const d in rows) {
         uniqueDonners[rows[d].email] = rows[d];
       }
       setDonations(Object.values(uniqueDonners));
@@ -45,11 +35,9 @@ const NgoDonors = () => {
     if (!user) return;
     setLoading(true);
     try {
-      const rows:Donation[] = await getDonationsByNgo(user.ngoId);
-
-         const uniqueDonations:{[email:string]:Donation} = {}
-      console.log(rows)
-      for(const d in rows){
+      const rows: Donation[] = await getDonationsByNgo(user.ngoId);
+      const uniqueDonations: { [email: string]: Donation } = {}
+      for (const d in rows) {
         uniqueDonations[rows[d].email] = rows[d];
       }
       setDonations(Object.values(uniqueDonations));
@@ -63,24 +51,24 @@ const NgoDonors = () => {
     loadNgoDonors();
   }, []);
 
- 
+
   useEffect(() => {
-    if (selectedCampaignId === "all") {
+    if (selectedItemId === "all") {
       loadNgoDonors();
-    } else if (selectedCampaignId) {
-      loadDonors(selectedCampaignId);
+    } else if (selectedItemId) {
+      loadDonors(selectedItemId);
     }
-  }, [selectedCampaignId]);
+  }, [selectedItemId]);
 
   return (
     <div className="ngo-donors" dir="rtl">
 
       <div className="ngo-donors__header">
-        <h2 className="ngo-donors__title"><Users size={18}/> תורמי העמותה</h2>
+        <h2 className="ngo-donors__title"><Users size={18} /> תורמי העמותה</h2>
 
         <div className="toolbar">
-
-          <div className="picker">
+          <PickerList openPicker={openPicker} setOpenPicker={setOpenPicker} selectedItemId={selectedItemId} setSelectedItemId={setSelectedItemId} list={campaigns.map(c => ({ _id: c._id!, name: c.title }))} />
+          {/* <div className="picker">
             <button
               type="button"
               className="picker__button"
@@ -124,7 +112,7 @@ const NgoDonors = () => {
                   {visibleCampaigns.length === 0 && (
                     <div className="picker__empty">לא נמצאו קמפיינים</div>
                   )}
-                  {visibleCampaigns.map((c) => (
+                  {visibleCampaigns.sort( (c1, c2)=> c1.title.localeCompare(c2.title)).map((c) => (
                     <button
                       key={c._id}
                       type="button"
@@ -137,14 +125,14 @@ const NgoDonors = () => {
                 </div>
               </div>
             )}
-          </div>
+          </div> */}
 
 
-          {selectedCampaignId !== "all" && (
+          {selectedItemId !== "all" && (
             <button
               type="button"
               className="btn btn--ghost"
-              onClick={() => setSelectedCampaignId("all")}
+              onClick={() => setSelectedItemId("all")}
               title="נקה סינון"
             >
               נקה
@@ -153,10 +141,10 @@ const NgoDonors = () => {
         </div>
       </div>
 
- 
+
       <div className="panel">
         <div className="panel__title">
-          <Users size={18}/> {selectedCampaignId === "all" ? "כל התורמים" : "תורמי הקמפיין"}
+          <Users size={18} /> {selectedItemId === "all" ? "כל התורמים" : "תורמי הקמפיין"}
           {loading && <span className="loader" aria-label="טוען…"></span>}
         </div>
 

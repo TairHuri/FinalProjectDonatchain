@@ -38,7 +38,7 @@ const NgoEdit = ({ token, ngoDetails, updateNgo, setEditMode }: NgoEditProps) =>
         try {
             const res = await editNgo(ngo, token, media);
             if (res) {
-                setAlert("העמותה עודכנה בהצלחה", true);
+                setAlert("העמותה עודכנה בהצלחה", false);
                 updateNgo(res);
                 setNgo(res)
                 setMedia({ logoUrl: null, certificate: null })
@@ -52,8 +52,8 @@ const NgoEdit = ({ token, ngoDetails, updateNgo, setEditMode }: NgoEditProps) =>
         setNgo({ ...ngo, [field]: value })
     }
     const handleUpdateSuccess = () => {
-        setEditMode('view');
         clearAlert();
+        setEditMode('view');
     }
     return (
         <div>
@@ -61,14 +61,14 @@ const NgoEdit = ({ token, ngoDetails, updateNgo, setEditMode }: NgoEditProps) =>
                 עריכת פרטי העמותה
             </h2>
             <InputText field='name' value={ngo.name} placeholder="שם העמותה" onChange={handleChange} />
-            <InputText field='ngoNumber' value={ngo.ngoNumber} placeholder="מספר העמותה" onChange={handleChange} />
+            <InputText disabled={true} field='ngoNumber' value={ngo.ngoNumber} placeholder="מספר העמותה" onChange={handleChange} />
             <InputText field='email' type="email" value={ngo.email || ""} placeholder="אימייל" onChange={handleChange} />
             <InputText field='phone' type="tel" value={ngo.phone || ""} placeholder="טלפון" onChange={handleChange} />
             <InputText field='address' type="text" value={ngo.address || ""} placeholder="כתובת" onChange={handleChange} />
             <InputText field='bankAccount' type="text" value={ngo.bankAccount || ""} placeholder="חשבון בנק" onChange={handleChange} />
             <InputText field='wallet' type="text" value={ngo.wallet || ""} placeholder="ארנק" onChange={handleChange} />
             <InputText field='description' isMultiLine={true} value={ngo.description || ""} placeholder="תיאור" onChange={handleChange} />
-            <Tags tagLoader={getNgoTags} tags={ngo.tags} handleChange={handleChange} />
+            <Tags tagLoader={getNgoTags} tags={ngo.tags} handleChange={handleChange} maxTags={1}/>
             <label>לוגו עמותה :</label>
             <input type="file" accept="image/*"
                 onChange={(e) => handleChangeMedia("logoUrl", e.target.files)} style={inputStyle} />

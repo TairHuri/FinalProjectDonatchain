@@ -33,7 +33,8 @@ const CampaignItem = ({
     const end = endOfDay(c.endDate);
     return end ? end < new Date() : false;
   })();
-
+  console.log('sdfdsfds', c);
+  
   return (
     <div className={`${view === "grid" ? styles['grid_container_grid']:styles["grid_container_flex"]} ${styles['campaign-card']}` }>
       {isEnded && <span className={styles['campaign-badge']}>הסתיים</span>}

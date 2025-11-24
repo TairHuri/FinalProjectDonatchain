@@ -91,9 +91,9 @@ const CampaignEdit = ({ campaign, setEditMode, setCampaign, token, }: CampaignEd
       const hasChanged = Object.values(chainFields).reduce((acc, curr) => acc || curr, false)
       
       if (hasChanged) {
-        const campaignOnChain = await getCampaignOnChain(+campaign.blockchainTx!);
-        const finalStartDate = chainFields.startDate? startDate.getTime() / 1000 : campaignOnChain.startDate;
-        const finalEndDate = chainFields.endDate? endDate.getTime() / 1000 : campaignOnChain.endDate;
+        //const campaignOnChain = await getCampaignOnChain(+campaign.blockchainTx!);
+        const finalStartDate = chainFields.startDate? startDate.getTime() / 1000 : 0;
+        const finalEndDate = chainFields.endDate? endDate.getTime() / 1000 : 0;
         console.log(finalStartDate, finalEndDate);
         await updateCampaignOnChain({
           blockchainTx: +campaign.blockchainTx!,
@@ -111,10 +111,14 @@ const CampaignEdit = ({ campaign, setEditMode, setCampaign, token, }: CampaignEd
         media.movie.value,
         media.mainImage.value
       );
-      if (updatedCampaign._id) postUpdateCampaign(updatedCampaign);
+      if (updatedCampaign._id){
+        console.log('updatedCampaign', updatedCampaign);
+        
+         postUpdateCampaign(updatedCampaign);
+      }
 
       setAlert("קמפיין עודכן בהצלחה", false);
-      setEditMode("view");
+
     } catch (error) {
       console.log(error);
       setAlert("עדכון הקמפיין נכשל", true);
@@ -164,7 +168,10 @@ const CampaignEdit = ({ campaign, setEditMode, setCampaign, token, }: CampaignEd
     if (media.images.value) for (const img of media.images.value) images.push(img);
     return images;
   }
-
+  const handleSuccess = () => {
+    setEditMode("view");
+    clearAlert();
+  }
   return (
     <div className="cc-card cc-compact-media" style={cardStyle} dir="rtl">
       <h2 className="cc-title">פרטי קמפיין</h2>
@@ -290,7 +297,7 @@ const CampaignEdit = ({ campaign, setEditMode, setCampaign, token, }: CampaignEd
         </button>
       </div>
 
-      <AlertDialog message={message} show={showAlert} isFailure={isFailure} failureOnClose={clearAlert} successOnClose={clearAlert} />
+      <AlertDialog message={message} show={showAlert} isFailure={isFailure} failureOnClose={clearAlert} successOnClose={handleSuccess} />
     </div>
   )
 }

@@ -22,7 +22,7 @@ const CampaignDetails = ({ campaignId, editMode, setEditMode }: CampaignDetailsT
         if (c) {
             setCampaign(c)
         }
-    }, [])
+    }, [campaigns])
 
     if (!user) return <p>לא בוצעה התחברות</p>
     if (!campaign) return <p>קמפיין לא נמצא</p>;

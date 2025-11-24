@@ -127,7 +127,7 @@ export const login = async (req: Request, res: Response) => {
     if (!user.approved)
       return res
         .status(400)
-        .json({ success: false, message: "המשתמש ממתין לאישור מנהל" });
+        .json({ success: false, message: "המשתמש ממתין לאישור מנהל עמותה" });
 
     const ok = await AuthService.comparePassword(password, user.password);
     if (!ok)

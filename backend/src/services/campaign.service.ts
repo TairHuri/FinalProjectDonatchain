@@ -43,7 +43,7 @@ export default {
   async update(payload: any) {
     const campaign = await Campaign.findByIdAndUpdate(payload._id, payload, { new: true }).populate('ngo')
 
-    return campaign;
+    return calculateTotal([campaign!])[0];
   },
   async toggleCampaignStatus(campaignId: string) {
     const campaign = await Campaign.findById(campaignId);
@@ -52,17 +52,14 @@ export default {
     campaign.isActive = !campaign.isActive;
     await campaign.save();
   },
-  async search({ q, tag, page = 1, limit = 10 }: any) {
+  async search({ q, tag}: any) {
     const filter: any = { isActive: true };
     if (tag) filter.tags = tag;
     if (q) filter.$text = { $search: q };
-    const items = await Campaign.find(filter).populate('ngo').lean()
-      .skip((page - 1) * limit)
-      .limit(limit)
+    const items = await Campaign.find(filter).populate('ngo').lean()      
       .sort({ createdAt: -1 });
 
-    const total = await Campaign.countDocuments(filter);
-    return { items: calculateTotal(items), total, page, limit };
+    return {items: calculateTotal(items), total:items.length };
   },
   async getAll() {
     const campaigns = await Campaign.find()
@@ -84,15 +81,13 @@ export default {
     }
   },
 
-  async getByNgo(ngoId: string, page = 1, limit = 20) {
+  async getByNgo(ngoId: string) {
     if (!mongoose.Types.ObjectId.isValid(ngoId)) return null;
     const items = await Campaign.find({ ngo: ngoId })
       .populate("ngo").lean()
-      .skip((page - 1) * limit)
-      .limit(limit)
       .sort({ createdAt: -1 });
 
-    return { items: calculateTotal(items), total: items.length, page, limit }
+    return { items: calculateTotal(items), total: items.length }
   },
 
 
