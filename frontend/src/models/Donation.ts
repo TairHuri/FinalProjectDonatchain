@@ -9,8 +9,8 @@ export interface Donation {
   amount: number;
   originalAmount:number;
   currency: string;
-  method?: string; // e.g. 'card','wallet','onchain'
-  txHash?: string; // blockchain tx if onchain
+  method?: string; 
+  txHash?: string;
   comment?: string;
   createdAt?: Date;
   anonymous?: boolean

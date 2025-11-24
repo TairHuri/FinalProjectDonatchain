@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useCampaigns } from "../contexts/CampaignsContext";
 import { getCampaign } from "../services/api";
-
 // Components
 import CreditPayment from "../components/CreditPayment";
 import CryptoPayment from "../components/CryptoPayment";
@@ -11,7 +10,6 @@ import Modal from "../components/gui/Modal";
 import CampaignDonations from "../components/campaign/CampaignDonations";
 import NgoDetailsCard from "../components/ngo/NgoDetailsCard";
 import ShareCampaign from "../components/campaign/ShareCampaign";
-
 // Types
 import type { Ngo } from "../models/Ngo";
 import { type Campaign } from "../models/Campaign";

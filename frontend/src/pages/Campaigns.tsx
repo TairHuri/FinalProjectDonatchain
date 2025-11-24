@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useMemo } from "react";
 import { Grid, List, Search } from "lucide-react";
 import { useParams, Link, useSearchParams } from "react-router-dom";
@@ -81,16 +80,14 @@ export default function Campaigns() {
         : c.title?.toLowerCase().includes(query.toLowerCase())
     );
 
-    //  סינון פעילים בלבד אם המשתמש בחר
     if (showActiveOnly) {
       result = result.filter((c) => !isEnded(c));
     }
 
-    //  מיון כך שפעילים למעלה והסתיימים למטה
     result = result.sort((a, b) => {
       const aEnded = isEnded(a);
       const bEnded = isEnded(b);
-      if (aEnded !== bEnded) return aEnded ? 1 : -1; // פעילים קודם
+      if (aEnded !== bEnded) return aEnded ? 1 : -1; 
       return sortMap[sortBy](a, b);
     });
 
