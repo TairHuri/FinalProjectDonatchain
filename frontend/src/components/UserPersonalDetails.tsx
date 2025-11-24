@@ -38,6 +38,15 @@ const UserPersonalDetails = ({ editMode, setEditMode }: { editMode: string, setE
 
     return count > 1
   }
+  const isValidEmail = (email: string) => {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+};
+
+const isValidIsraeliPhone = (phone: string) => {
+  if (!phone) return false;
+  const clean = phone.replace(/\D/g, "");
+  return /^05\d{8}$/.test(clean);
+};
 
   const handleChangePassword = async () => {
     if (passwords.newPass !== passwords.confirmPass) {
@@ -76,19 +85,37 @@ const UserPersonalDetails = ({ editMode, setEditMode }: { editMode: string, setE
     }
     // request to server
   }
-  const handleSaveChanges = async () => {
-    if (!formData.name || !formData._id) {
-      setAlert("יש למלא את כל השדות", true);
-      return;
-    }
-    try {
-      const user = await editUser(formData);
-      updateUser(user);
-      setAlert("הפרטים עודכנו בהצלחה", false)
-    } catch (error) {
-      setAlert((error as any).message, true)
-    }
-  };
+const handleSaveChanges = async () => {
+
+  // ולידציה שם
+  if (!formData.name || formData.name.trim().length < 2) {
+    setAlert("יש להזין שם מלא תקין", true);
+    return;
+  }
+
+  // ולידציה אימייל
+  if (!isValidEmail(formData.email || "")) {
+    setAlert("האימייל שהוזן אינו תקין", true);
+    return;
+  }
+
+  // ולידציה טלפון ישראלי
+  if (!isValidIsraeliPhone(formData.phone || "")) {
+    setAlert("מספר הטלפון אינו תקין. יש להזין מספר ישראלי בפורמט 05XXXXXXXX", true);
+    return;
+  }
+
+  // ניסיון שמירת נתונים
+  try {
+    const updated = await editUser(formData);
+    updateUser(updated);
+
+    setAlert("הפרטים עודכנו בהצלחה", false);
+
+  } catch (error) {
+    setAlert("עדכון הפרטים נכשל. נסי שוב מאוחר יותר", true);
+  }
+};
 
   const handleAlertSuccess = () => {
     if (editMode == 'deleteUser') {
