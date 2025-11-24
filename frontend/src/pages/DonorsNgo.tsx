@@ -30,10 +30,10 @@ export default function DonorsNgo() {
 
   return (
     <div dir="rtl" style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-      {/* כותרת */}
+      {/*  */}
       <h1 style={{ fontSize: "24px", fontWeight: "bold", color: "#374151" }}>רשימת עמותות</h1>
 
-      {/* חיפוש + מיון */}
+      {/* */}
       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
         <select
           value={sortBy}
@@ -61,7 +61,7 @@ export default function DonorsNgo() {
           }}
         />
 
-        {/* כפתורי תצוגה */}
+        {/* */}
         <div style={{ display: "flex", gap: "8px" }}>
           <button
             onClick={() => setView("list")}
@@ -90,7 +90,7 @@ export default function DonorsNgo() {
         </div>
       </div>
 
-      {/* רשימת עמותות */}
+      {/*  */}
       {view === "grid" ? (
         <div
           style={{

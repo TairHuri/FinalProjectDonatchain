@@ -74,7 +74,7 @@ const LoginNgo: React.FC = () => {
             />
           </div>
 
-          {/* שדה סיסמה */}
+          {/*  */}
           <div className="input-group">
             <Lock className="input-icon" />
             <input
@@ -93,13 +93,13 @@ const LoginNgo: React.FC = () => {
             </button>
           </div>
 
-          {/* כפתור התחברות */}
+          {/*  */}
           <button type="submit" className="login-btn" disabled={loading}>
             {loading ? <span className=""></span> : <LogIn size={20} />}
             {loading ? "מתחבר..." : "התחבר"}
           </button>
 
-          {/* שכחתי סיסמה */}
+          {/*  */}
           <div className="login-footer">
             <Link to="/forgot-password">שכחתי סיסמה</Link>
           </div>
