@@ -5,18 +5,24 @@ import type { Ngo } from "../../models/Ngo";
 import '../../css/admin/AdminNgoDetails.css'
 
 export type AdminNgoDetailsProps={
+  // Callback to close the modal by setting the selected NGO to null
   setSelectedNgo:(p:null)=>void;
+  // Indicates whether NGO details are currently being loaded
   detailsLoading:boolean;
+  // The selected NGO whose details are being displayed
   selectedNgo:Ngo;
 }
 
 const AdminNgoDetails = ({setSelectedNgo, detailsLoading, selectedNgo}:AdminNgoDetailsProps) => {
   return(
+      // ----- Modal overlay with fade-in/out animation -----
     <motion.div
           className="inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
+
+          // Prevent modal from closing when clicking inside the content
           onClick={() => setSelectedNgo(null)}
         >
           <motion.div
@@ -24,8 +30,10 @@ const AdminNgoDetails = ({setSelectedNgo, detailsLoading, selectedNgo}:AdminNgoD
             animate={{ scale: 1, y: 0, opacity: 1 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
             className="relative bg-white w-full max-w-md md:max-w-lg rounded-2xl shadow-2xl p-6 text-right"
+            
             onClick={(e) => e.stopPropagation()}
           >
+            {/* ----- Close button (top-left corner) ----- */}
             <button
               onClick={() => setSelectedNgo(null)}
               className="absolute top-3 left-3 text-gray-500 hover:text-gray-800 transition"
@@ -33,6 +41,7 @@ const AdminNgoDetails = ({setSelectedNgo, detailsLoading, selectedNgo}:AdminNgoD
               ✖
             </button>
 
+              {/* ----- Loading spinner while details are being fetched ----- */}
             {detailsLoading ? (
               <div className="flex justify-center py-10">
                 <Loader2 className="animate-spin text-gray-600" size={36} />
@@ -52,6 +61,7 @@ const AdminNgoDetails = ({setSelectedNgo, detailsLoading, selectedNgo}:AdminNgoD
                   </h3>
                 </div>
 
+                {/* ----- NGO Information Section ----- */}
                 <div className="space-y-2 text-gray-700">
                   <p>
                     <b>תיאור:</b> {selectedNgo.description || "אין תיאור"}
@@ -73,6 +83,7 @@ const AdminNgoDetails = ({setSelectedNgo, detailsLoading, selectedNgo}:AdminNgoD
                   </p>
                 </div>
 
+                {/* ----- Close modal button at the bottom ----- */}
                 <div className="flex justify-center mt-6">
                   <button
                     onClick={() => setSelectedNgo(null)}
