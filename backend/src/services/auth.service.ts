@@ -12,7 +12,7 @@ export async function registerUser(user:IUser) {
   const existing = await User.findOne({ email:user.email });
   if (existing) throw new Error("מייל זה קיים במערכת. נסה להירשם עם מייל אחר.");
 
-  const passwordHash = await encryptPassword(user.password); // await bcrypt.hash(user.password, config.bcryptSaltRounds);
+  const passwordHash = await encryptPassword(user.password); 
   const {_id, createdAt, updatedAt, ...newUser} = user;
   const userToCreate = new User({
     ...newUser, password:passwordHash,
@@ -25,7 +25,7 @@ export async function registerUser(user:IUser) {
 
 export function signJwt(payload: object) {
   const options: SignOptions = {
-    expiresIn: config.jwtExpiresIn as SignOptions["expiresIn"], // ← זה המפתח
+    expiresIn: config.jwtExpiresIn as SignOptions["expiresIn"], 
   };
 
   return jwt.sign(

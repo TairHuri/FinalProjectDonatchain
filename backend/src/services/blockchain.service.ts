@@ -2,7 +2,7 @@ import { config } from '../config';
 import { ethers } from 'ethers';
 import logger from '../utils/logger';
 
-import DonatchainABI from "../../../frontend/src/abi/Donatchain.json" //assert { type: "json" };
+import DonatchainABI from "../../../frontend/src/abi/Donatchain.json" 
 
 const provider = new ethers.JsonRpcProvider(config.rpcProvider);
 let wallet: ethers.Wallet | null = null;
