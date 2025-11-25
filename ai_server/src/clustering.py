@@ -3,18 +3,12 @@ import torch
 import json
 
 
-# ----- Paths to saved fine-tuned models and label mappings -----
+# ----- Paths to saved fine-tuned model and label mappings -----
 MODEL_PATH_1 = "../best_classifier_model"
-MODEL_PATH_2 = "../best_classifier_model_2"
-MODEL_PATH_3 = "../best_classifier_model_3"
-
-MAP_PATH ="../files/id_to_label_map.json"
-model = tokenizer = None
-
-MAP_PATH = "../files/id_to_label_map.json"
 
 # Global references for lazy loading
-model, tokenizer = None
+MAP_PATH ="../files/id_to_label_map.json"
+model = tokenizer = None
 
 
 # -----------------------------------------------------------------
