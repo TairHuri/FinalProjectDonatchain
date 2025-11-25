@@ -3,12 +3,12 @@ import { Request, Response } from "express";
 import Ngo from "../models/ngo.model";
 import AuditLog from "../models/auditlog.model";
 import { NgoMediaFiles } from "../middlewares/multer.middleware";
-import nodemailer from "nodemailer";
 import Campaign from "../models/campaign.model";
 import service, { ApiSuccessType } from '../services/ngo.service'
 import ngoService from "../services/ngo.service";
 import aiService from '../services/ai.service'
 import { ServerError } from "../middlewares/error.middleware";
+import { sendMemberStatusEmail, sendNgoStatusEmail } from "../middlewares/email.middleware";
 
 
 export const aiSearchNgo = async (req: Request, res: Response) => {
@@ -139,13 +139,7 @@ export const getNgo = async (req: Request, res: Response) => {
   }
 };
 
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+
 
 export const toggleNgoStatus = async (req: Request, res: Response) => {
   try {
@@ -153,6 +147,7 @@ export const toggleNgoStatus = async (req: Request, res: Response) => {
     if (!ngo) return res.status(404).json({ message: "עמותה לא נמצאה" });
 
     // הפעלה/השהיה של העמותה
+    
     ngo.isActive = !ngo.isActive;
     await ngo.save({ validateModifiedOnly: true });
 
@@ -205,88 +200,88 @@ export const toggleNgoStatus = async (req: Request, res: Response) => {
   }
 };
 
-async function sendMemberStatusEmail({
-  to,
-  fullName,
-  ngoName,
-  isActive,
-}: {
-  to: string;
-  fullName: string;
-  ngoName: string;
-  isActive: boolean;
-}) {
-  const subject = isActive
-    ? `העמותה "${ngoName}" הופעלה מחדש`
-    : `העמותה "${ngoName}" הושהתה`;
+// async function sendMemberStatusEmail({
+//   to,
+//   fullName,
+//   ngoName,
+//   isActive,
+// }: {
+//   to: string;
+//   fullName: string;
+//   ngoName: string;
+//   isActive: boolean;
+// }) {
+//   const subject = isActive
+//     ? `העמותה "${ngoName}" הופעלה מחדש`
+//     : `העמותה "${ngoName}" הושהתה`;
 
-  const html = `
-    <div style="direction: rtl; text-align: right; font-family: 'Assistant', Arial; background-color:#f9f9f9; padding:25px;">
-      <h2 style="color:${isActive ? "#2e7d32" : "#c62828"};">${subject}</h2>
-      <p>שלום ${fullName},</p>
-      <p>עמותת <b>${ngoName}</b> ${isActive ? "הופעלה מחדש על ידי מנהל המערכת." : "הושהתה זמנית על ידי מנהל המערכת."}</p>
-      ${isActive
-      ? "<p>הפעילות חזרה לסדרה ותוכל/י להשתמש שוב במערכת DonatChain.</p>"
-      : "<p>המערכת לא מאפשרת כניסה עד להודעה חדשה ממנהל המערכת.</p>"
-    }
-      <hr style="margin:20px 0; border:none; border-top:1px solid #ddd;"/>
-      <p>בברכה,<br/>צוות <b>DonatChain</b></p>
-    </div>
-  `;
+//   const html = `
+//     <div style="direction: rtl; text-align: right; font-family: 'Assistant', Arial; background-color:#f9f9f9; padding:25px;">
+//       <h2 style="color:${isActive ? "#2e7d32" : "#c62828"};">${subject}</h2>
+//       <p>שלום ${fullName},</p>
+//       <p>עמותת <b>${ngoName}</b> ${isActive ? "הופעלה מחדש על ידי מנהל המערכת." : "הושהתה זמנית על ידי מנהל המערכת."}</p>
+//       ${isActive
+//       ? "<p>הפעילות חזרה לסדרה ותוכל/י להשתמש שוב במערכת DonatChain.</p>"
+//       : "<p>המערכת לא מאפשרת כניסה עד להודעה חדשה ממנהל המערכת.</p>"
+//     }
+//       <hr style="margin:20px 0; border:none; border-top:1px solid #ddd;"/>
+//       <p>בברכה,<br/>צוות <b>DonatChain</b></p>
+//     </div>
+//   `;
 
-  try {
-    await transporter.sendMail({
-      from: `"DonatChain" <${process.env.EMAIL_USER}>`,
-      to,
-      subject,
-      html,
-    });
-    console.log(`📧 נשלח מייל לחבר בעמותה: ${to}`);
-  } catch (err) {
-    console.error("❌ שגיאה בשליחת מייל לחבר עמותה:", err);
-  }
-}
+//   try {
+//     await transporter.sendMail({
+//       from: `"DonatChain" <${process.env.EMAIL_USER}>`,
+//       to,
+//       subject,
+//       html,
+//     });
+//     console.log(`📧 נשלח מייל לחבר בעמותה: ${to}`);
+//   } catch (err) {
+//     console.error("❌ שגיאה בשליחת מייל לחבר עמותה:", err);
+//   }
+// }
 
-async function sendNgoStatusEmail({
-  to,
-  ngoName,
-  isActive,
-}: {
-  to: string;
-  ngoName: string;
-  isActive: boolean;
-}) {
-  const subject = isActive
-    ? ` העמותה "${ngoName}" הופעלה מחדש`
-    : ` העמותה "${ngoName}" הושהתה זמנית`;
+// async function sendNgoStatusEmail({
+//   to,
+//   ngoName,
+//   isActive,
+// }: {
+//   to: string;
+//   ngoName: string;
+//   isActive: boolean;
+// }) {
+//   const subject = isActive
+//     ? ` העמותה "${ngoName}" הופעלה מחדש`
+//     : ` העמותה "${ngoName}" הושהתה זמנית`;
 
-  const html = `
-    <div style="direction: rtl; text-align: right; font-family: 'Assistant', Arial; background-color:#f9f9f9; padding:25px;">
-      <h2 style="color:${isActive ? "#2e7d32" : "#c62828"};">${subject}</h2>
-      <p>שלום רב,</p>
-      <p>עמותת <b>${ngoName}</b> ${isActive ? "הופעלה מחדש על ידי מנהל המערכת." : "הושהתה זמנית על ידי מנהל המערכת."}</p>
-      ${isActive
-      ? "<p>העמותה יכולה כעת להתחבר למערכת ולנהל קמפיינים כרגיל.</p>"
-      : "<p>המערכת לא מאפשרת כניסה עד להודעה חדשה ממנהל המערכת.</p>"
-    }
-      <hr style="margin:20px 0; border:none; border-top:1px solid #ddd;"/>
-      <p>בברכה,<br/>צוות <b>DonatChain</b></p>
-    </div>
-  `;
+//   const html = `
+//     <div style="direction: rtl; text-align: right; font-family: 'Assistant', Arial; background-color:#f9f9f9; padding:25px;">
+//       <h2 style="color:${isActive ? "#2e7d32" : "#c62828"};">${subject}</h2>
+//       <p>שלום רב,</p>
+//       <p>עמותת <b>${ngoName}</b> ${isActive ? "הופעלה מחדש על ידי מנהל המערכת." : "הושהתה זמנית על ידי מנהל המערכת."}</p>
+//       ${isActive
+//       ? "<p>העמותה יכולה כעת להתחבר למערכת ולנהל קמפיינים כרגיל.</p>"
+//       : "<p>המערכת לא מאפשרת כניסה עד להודעה חדשה ממנהל המערכת.</p>"
+//     }
+//       <hr style="margin:20px 0; border:none; border-top:1px solid #ddd;"/>
+//       <p>בברכה,<br/>צוות <b>DonatChain</b></p>
+//     </div>
+//   `;
 
-  try {
-    await transporter.sendMail({
-      from: `"DonatChain" <${process.env.EMAIL_USER}>`,
-      to,
-      subject,
-      html,
-    });
+//   try {
+//     await transporter.sendMail({
+//       from: `"DonatChain" <${process.env.EMAIL_USER}>`,
+//       to,
+//       subject,
+//       html,
+//     });
 
-    console.log(` מייל נשלח בהצלחה לעמותה: ${to} (${ngoName})`);
-  } catch (err) {
-    console.error(" שגיאה בשליחת מייל לעמותה:", err);
-  }
-}
+//     console.log(` מייל נשלח בהצלחה לעמותה: ${to} (${ngoName})`);
+//   } catch (err) {
+//     console.error(" שגיאה בשליחת מייל לעמותה:", err);
+//   }
+// }
 
 export const updateNgo = async (req: Request, res: Response) => {
   const user = (req as any).user;

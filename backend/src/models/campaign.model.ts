@@ -1,7 +1,7 @@
 import { Schema, model, Document } from 'mongoose';
 
 export interface BaseCampaign{
-   title: string;
+  title: string;
   description: string;
   ngo: { type: Schema.Types.ObjectId, ref: 'Ngo' };
   goal: number;

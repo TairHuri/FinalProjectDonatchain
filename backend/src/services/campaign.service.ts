@@ -9,6 +9,7 @@ import { ServerError } from '../middlewares/error.middleware';
 import { generateCampaignReport } from '../utils/pdfHelper'
 import { IUser } from '../models/user.model';
 import { INgo } from '../models/ngo.model';
+import ngoService from './ngo.service';
 
 const calculateTotal = (campaigns: ICampaign[]) => campaigns.map(c => ({ ...c, totalRaised: c.raised.crypto * blockchainService.exchangeRate.eth + c.raised.credit }))
 export default {
@@ -52,8 +53,41 @@ export default {
     campaign.isActive = !campaign.isActive;
     await campaign.save();
   },
+  async toggleAdminCampaignStatus(campaignId: string) {
+    const campaign = await Campaign.findById(campaignId);
+    if (!campaign) throw new ServerError(serverMessages.campaign.not_found.he, 400)
+    const result = await blockchainService.toggleCryptoCampaignStatus({
+    blockchainTx: +campaign.blockchainTx!, 
+    newActive: !campaign.isActive,
+  })
+  if(result.status == true){
+  // שינוי סטטוס
+    campaign.isActive = !campaign.isActive;
+    return await campaign.save();
+  }
+  throw new ServerError(serverMessages.campaign.status_campaign.he, 502)
+  },
+  async toggleAdminCampaignsStatus(campaignIds: string[], activeState: boolean, ngoId:string) {
+    const blockchainTxList = await Campaign.find({_id: {$in:campaignIds }},{_id:0, blockchainTx:1}).lean();
+    
+    if (campaignIds.length != blockchainTxList.length) throw new ServerError(serverMessages.campaign.not_found.he, 400)
+      
+    const result = await blockchainService.toggleCryptoCampaignsStatus({
+    campaignIds: blockchainTxList.map(bc =>+bc.blockchainTx!), 
+    newActive: activeState,
+  })
+  if(result.status == true){
+  // שינוי סטטוס
+    // await Campaign.updateMany({ ngo: ngoId }, { isActive: activeState });
+    await this.changeCampainsStatus(ngoId, activeState);
+    return;
+    
+  }
+  
+  throw new ServerError(serverMessages.campaign.status_campaign.he, 502)
+  },
   async search({ q, tag}: any) {
-    const filter: any = { isActive: true };
+    const filter: any = {  }; 
     if (tag) filter.tags = tag;
     if (q) filter.$text = { $search: q };
     const items = await Campaign.find(filter).populate('ngo').lean()      
@@ -80,7 +114,9 @@ export default {
       return campaign
     }
   },
-
+async changeCampainsStatus(ngoId: string, isActive:boolean){
+  await Campaign.updateMany({ ngo: ngoId }, { isActive: isActive });
+},
   async getByNgo(ngoId: string) {
     if (!mongoose.Types.ObjectId.isValid(ngoId)) return null;
     const items = await Campaign.find({ ngo: ngoId })

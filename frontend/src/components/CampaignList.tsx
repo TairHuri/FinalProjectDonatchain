@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { getAllCampaigns, toggleCampaignStatus } from "../services/campaignApi";
+import { getAllCampaigns } from "../services/campaignApi";
+import { toggleAdminCampaignStatus } from "../services/adminApi";
+
 import { PauseCircle, PlayCircle, Loader2, Search } from "lucide-react";
 import { motion } from "framer-motion";
 
 import "../css/adminDashboard.css";
 import AlertDialog, { useAlertDialog } from "./gui/AlertDialog";
-import {toggleCryptoCampaignStatus} from '../services/cryptoApi.ts'
+
 
 export default function CampaignList() {
   const [campaigns, setCampaigns] = useState<any[]>([]);
@@ -16,7 +18,7 @@ export default function CampaignList() {
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "paused">("all");
 
   const { showAlert, isFailure, message, clearAlert, setAlert } = useAlertDialog();
-  
+
 
   const token = localStorage.getItem("token") || "";
 
@@ -40,15 +42,17 @@ export default function CampaignList() {
     }
   };
 
-  const handleToggle = async (id: string, blockchainTx:number, isActive:boolean) => {
+  const handleToggle = async (id: string) => {
     try {
       setActionLoading(id);
-      const result = await toggleCryptoCampaignStatus({ blockchainTx: blockchainTx!, newActive: !isActive })
+      const result = await toggleAdminCampaignStatus(token, id)
+      //const result = await toggleCryptoCampaignStatus({ blockchainTx: blockchainTx!, newActive: !isActive })
       if (result.status == false) {
         setAlert(result.message || "עדכון הסטטוס נכשל", false);
+        return;
       }
-      const res = await toggleCampaignStatus(id, token);
-      setAlert(res.message || "הסטטוס עודכן בהצלחה ✅", false);
+
+      setAlert("הסטטוס עודכן בהצלחה ✅", false);
       await fetchCampaigns();
     } catch (err) {
       setAlert("שגיאה בעדכון הסטטוס ❌", true);
@@ -171,7 +175,7 @@ export default function CampaignList() {
                 <td className="border px-4 py-2 text-center">
                   <motion.button
                     whileTap={{ scale: 0.9 }}
-                    onClick={() => handleToggle(c._id, c.blockchainTx, c.isActive)}
+                    onClick={() => handleToggle(c._id)}
                     disabled={actionLoading === c._id}
                     className={`flex items-center justify-center gap-2 mx-auto px-4 py-2 rounded-lg text-white font-semibold shadow transition-all duration-300 ${c.isActive
                       ? "bg-red-600 hover:bg-red-700"

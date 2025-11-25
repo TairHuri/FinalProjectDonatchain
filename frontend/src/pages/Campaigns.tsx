@@ -5,6 +5,7 @@ import { getCampaigns } from "../services/api";
 import CampaignItem from "../components/CampaignItem";
 import type { Campaign } from "../models/Campaign";
 import "../css/Campaigns.css";
+import type { Ngo } from "../models/Ngo";
 
 type SortByType =
   | "title"
@@ -26,11 +27,14 @@ export default function Campaigns() {
   const [queryTag, setQueryTag] = useSearchParams();
 
   
+  const filterActive = (campaigns:Campaign[]) => campaigns.filter(c => (c.ngo as unknown as Ngo).isActive == true)
+  
   const fetchData = async () => {
     try {
       const data = await getCampaigns();
-      if (data && Array.isArray(data.campaigns)) setCampaigns(data.campaigns);
-      else if (data && Array.isArray(data.items)) setCampaigns(data.items);
+      
+      if (data && Array.isArray(data.campaigns)) setCampaigns(filterActive(data.campaigns));
+      else if (data && Array.isArray(data.items)) setCampaigns((data.items));
       else setCampaigns([]);
     } catch {
       setCampaigns([]);
@@ -81,7 +85,7 @@ export default function Campaigns() {
     );
 
     if (showActiveOnly) {
-      result = result.filter((c) => !isEnded(c));
+      result = result.filter((c) => !isEnded(c) || !c.isActive);
     }
 
     result = result.sort((a, b) => {
@@ -94,6 +98,8 @@ export default function Campaigns() {
     return result;
   }, [campaigns, query, sortBy, showActiveOnly]);
 
+  console.log(campaigns.length);
+  
   return (
     <div className="camps-page" dir="rtl">
       {/* Header */}

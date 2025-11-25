@@ -9,8 +9,9 @@ import type { Ngo } from "../../models/Ngo";
 import AlertDialog, { useAlertDialog } from "../gui/AlertDialog";
 import { getCampaigns } from "../../services/api";
 import type { Campaign } from "../../models/Campaign";
-import { toggleCryptoCampaignsStatus } from "../../services/cryptoApi";
+
 import ConfirmDialog, { useConfirmDialog } from "../gui/ConfirmDialog";
+import { toggleAdminNgoStatus } from "../../services/adminApi";
 
 
 export default function AdminNgoList() {
@@ -52,10 +53,10 @@ export default function AdminNgoList() {
     try {
       setActionLoading(id);
       const campaigns = await getCampaigns(id)
-      const blockchainTxList = (campaigns.items as Campaign[]).map(c => +c.blockchainTx!)
-      const cryptoResult = await toggleCryptoCampaignsStatus({campaignIds:blockchainTxList, newActive:!isActive })
-      const res = await toggleNgoStatus(id, token);
-      setAlert(res.message, false);
+      const campaignIds = (campaigns.items as Campaign[]).map(c => c._id!)
+      const ngoResult = await toggleAdminNgoStatus(token, campaignIds, !isActive, id )
+      //const res = await toggleNgoStatus(id, token);
+      setAlert(ngoResult.message, false);
       await fetchNgos();
     } catch (err) {
       setAlert((err as any).message ||  "שגיאה בעדכון הסטטוס", true);

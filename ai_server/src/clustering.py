@@ -8,7 +8,8 @@ MODEL_PATH_2 = "../best_classifier_model_2"
 MODEL_PATH_3 = "../best_classifier_model_3"
 
 MAP_PATH ="../files/id_to_label_map.json"
-model, tokenizer = None
+model = tokenizer = None
+
 
 #----------- loading map label from json file
 def load_category_map():

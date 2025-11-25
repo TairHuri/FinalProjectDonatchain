@@ -143,26 +143,9 @@ export async function toggleCryptoCampaignStatus(opts: {
     .find((p: { name: string; } | null) => p && (p as any).name === "CampaignStatusChanged");
   const onchainId = (event as any)?.args?.campaignId;
   return { status: true, onchainId };
-  
 }
-export async function toggleCryptoCampaignsStatus(opts: {
-  campaignIds: number[];
-  newActive: boolean;
-}): Promise<{ status: true, onchainId: string } | { status: false, message: string }> {
-  const hub = await setupHubConnection();  
-  const tx = await hub.updateManyCampaignsActive(
-    opts.campaignIds,
-    opts.newActive,
-  );
 
-  const receipt = await tx.wait();
-  const event = receipt.logs
-    .map((log: { topics: ReadonlyArray<string>; data: string; }) => { try { return hub.interface.parseLog(log); } catch { return null; } })
-    .find((p: { name: string; } | null) => p && (p as any).name === "ManyCampaignsStatusChanged");
-  const onchainId = (event as any)?.args?.campaignId;
-  return { status: true, onchainId };
-  
-}
+
 
 export const getCampaignOnChain = async (blockchainTx: number) => {
   //const provider = new ethers.JsonRpcProvider(RPC_URL);

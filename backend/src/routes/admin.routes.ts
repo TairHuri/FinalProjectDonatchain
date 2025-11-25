@@ -2,12 +2,13 @@
 import { Router } from 'express';
 import authMiddleware from '../middlewares/auth.middleware';
 import roleMiddleware from '../middlewares/role.middleware';
-import { getStats } from '../controllers/admin.controller';
-import { getAllDonors } from '../controllers/admin.controller';
-import { getAdminStats } from "../controllers/admin.controller";
+import { getAdminStats, toggleCampignStatus, toggleCampignsStatus, getAllDonors } from "../controllers/admin.controller";
+
 
 const router = Router();
 
+router.patch('/campaigns/:campaignId', authMiddleware, roleMiddleware(['admin']), toggleCampignStatus)
+router.patch('/ngos/:ngoId', authMiddleware, roleMiddleware(['admin']), toggleCampignsStatus)
 router.get('/stats', authMiddleware, roleMiddleware(['admin']), getAdminStats);
 router.get(
   '/donors',

@@ -1,8 +1,22 @@
 {
+    "ngo":{
+        "statusUpdate":{
+            "en":"status updated successfully",
+            "he":"סטטוס עודכן בהצלחה"
+        }
+    },
     "campaign":{
         "not_found":{
             "en":"Campain was not found",
             "he":"הקמפיין לא נמצא"
+        },
+        "status_campaign":{
+            "en":"failed to update campaign status",
+            "he":"עדכון סטטוס הקמפיין נכשל"
+        },
+        "status_campaigns":{
+            "en":"failed to update campaigns status",
+            "he":"עדכון סטטוס הקמפיינים נכשל"
         },
         "permissions":{
             "en":"You do not have permissions for this campaign",

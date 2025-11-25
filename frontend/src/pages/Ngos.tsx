@@ -17,7 +17,7 @@ export default function Ngos() {
     const loadNgoList = async () => {
         try {
             const ngos = await getNgoList();
-            setNgos(ngos.items);
+            setNgos(ngos.items.filter(n => n.isActive==true));
         } catch (error) {
             console.log(error);
             setAlert('error loading ngos', true)

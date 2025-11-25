@@ -9,6 +9,7 @@ import ReportDialog from "./ReportDialog";
 
 import "../../css/campaign/EditCampaign.css"
 import { toggleCryptoCampaignStatus } from "../../services/cryptoApi";
+import Spinner, { useSpinner } from "../Spinner";
 
 export type CampaignViewProps = {
   campaign: Campaign;
@@ -22,25 +23,31 @@ const CampaignView = ({ campaign, setCampaign, token, setEditMode }: CampaignVie
   const { showConfirm, openConfirm, closeConfirm } = useConfirmDialog()
   const { showAlert, isFailure, message, clearAlert, setAlert } = useAlertDialog();
   const [showReportOptions, setShowReportOptions] = useState<boolean>(false);
+  const {start, stop, isLoading} = useSpinner()
 
 
   const handleToggle = async (id: string) => {
     try {
+      closeConfirm()
+      start()
       const result = await toggleCryptoCampaignStatus({blockchainTx: +campaign.blockchainTx!, newActive:!campaign?.isActive})
       if(result.status == false){
         setAlert(result.message || "עדכון הסטטוס נכשל", false);
+        return;
       }
       const res = await toggleCampaignStatus(id, token);
       setAlert(res.message || "הסטטוס עודכן בהצלחה", false);
       setCampaign({ ...campaign!, isActive: !campaign?.isActive })
     } catch (err) {
       console.error((err as any).message, err);
-      closeConfirm()
       setAlert((err as any).message || "שגיאה בעדכון הסטטוס", true)
     } finally {
-      closeConfirm()
+      stop()
     }
   };
+
+
+  if (isLoading) return (<Spinner />);
   return (
     <div className="cc-card cc-compact-media" style={cardStyle} dir="rtl">
       <h2 className="cc-title">פרטי קמפיין</h2>
