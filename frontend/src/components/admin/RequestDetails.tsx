@@ -1,40 +1,47 @@
-
 import { useEffect, useState } from "react";
 import { categoryLabel, type IAdminRequestByUser, type RequestStatusType, statusLabel } from "../../models/Request";
 
+// Formats ISO date into a readable local date and time string
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleString("he-IL", { dateStyle: "short", timeStyle: "short" });
 
 type RequestDetailsType = {
-  request: IAdminRequestByUser | null;
-  changeStatus: (id: string[], status: RequestStatusType, adminComment:string) => void;
-  drawerOpen: boolean;
-  setDrawerOpen: (b: boolean) => void;
+  request: IAdminRequestByUser | null;                         // Selected request data to display in the drawer
+  changeStatus: (id: string[], status: RequestStatusType, adminComment: string) => void; // Callback for updating request status
+  drawerOpen: boolean;                                         // Sidebar open/close state
+  setDrawerOpen: (b: boolean) => void;                         // Setter to control drawer visibility
 };
 
 const RequestDetails = ({ drawerOpen, setDrawerOpen, request, changeStatus }: RequestDetailsType) => {
+  // Stores the currently selected status for update
   const [selectedStatus, setSelectedStatus] = useState<RequestStatusType>("pending");
+
+  // Stores the admin comment that may be added to the request
   const [adminComment, setAdminComment] = useState("");
 
+  // Load status and comment when drawer opens or request changes
   useEffect(() => {
     if (request) {
       setSelectedStatus(request.status);
-      setAdminComment(request.adminComment||"");
+      setAdminComment(request.adminComment || "");
     }
   }, [request, drawerOpen]);
 
+  // Show comment field only when status becomes "done"
   const showNote = selectedStatus === "done";
 
-  const statusRules :Record<RequestStatusType, RequestStatusType[]> = {
-    pending:['inprogress', 'done'],
-    inprogress:['done'],
-    done:[]
-  }
+  // Defines valid state transitions for the request lifecycle
+  const statusRules: Record<RequestStatusType, RequestStatusType[]> = {
+    pending: ["inprogress", "done"],
+    inprogress: ["done"],
+    done: []
+  };
 
+  // Update the request (only if an ID exists) and close the drawer afterward
   const onUpdate = () => {
     if (!request?._id) return;
     changeStatus([request._id], selectedStatus, adminComment);
-    // אם תרצי לשמור גם את ההערה - קראי כאן ל-API נוסף
+    // If additional API call for saving notes is needed, it can be added here
     setDrawerOpen(false);
   };
 
@@ -46,7 +53,7 @@ const RequestDetails = ({ drawerOpen, setDrawerOpen, request, changeStatus }: Re
       aria-label="פירוט בקשה"
       dir="rtl"
     >
-
+      {/* Drawer header showing subject, status, and close button */}
       <div className="ar-drawer-header sticky-top">
         <div className="ar-drawer-title">
           <div className="ar-drawer-subject">{request?.subject}</div>
@@ -56,16 +63,17 @@ const RequestDetails = ({ drawerOpen, setDrawerOpen, request, changeStatus }: Re
             </span>
           )}
         </div>
-        <button className="ar-close" onClick={() => setDrawerOpen(false)} aria-label="סגירה">
+        <button className="ar-close" onClick={() => setDrawerOpen(false)} aria-label="Close Drawer">
           ✕
         </button>
       </div>
 
+      {/* Drawer body only appears once a request is loaded */}
       {request && (
         <>
-
           <div className="ar-drawer-body">
 
+            {/* Request metadata section (requester, NGO, date, category) */}
             <div className="ar-drawer-row">
               <div><strong>קטגוריה:</strong> {categoryLabel[request.category]}</div>
               <div><strong>עמותה:</strong> {request.ngo.name} {request.ngo.ngoNumber}</div>
@@ -73,13 +81,14 @@ const RequestDetails = ({ drawerOpen, setDrawerOpen, request, changeStatus }: Re
               <div><strong>תאריך:</strong> {formatDate(request.createdAt)}</div>
             </div>
 
-            {/* גוף בקשה */}
+            {/* Request content (full body text) */}
             <label className="ar-label">תוכן הבקשה</label>
             <pre className="ar-body">{request.body}</pre>
 
-            {/* עדכון סטטוס (לפני ההערה) */}
+            {/* Status update radio buttons */}
             <label className="ar-label">עדכון סטטוס הבקשה</label>
-            <div className="ar-status-group" role="radiogroup" aria-label="עדכון סטטוס">
+            <div className="ar-status-group" role="radiogroup" aria-label="Update Request Status">
+              {/* Pending option */}
               <label className="ar-radio">
                 <input
                   type="radio"
@@ -91,6 +100,8 @@ const RequestDetails = ({ drawerOpen, setDrawerOpen, request, changeStatus }: Re
                 />
                 <span className="ar-radio-chip ar-badge ar-badge--pending">בהמתנה</span>
               </label>
+
+              {/* In Progress option */}
               <label className="ar-radio">
                 <input
                   type="radio"
@@ -102,6 +113,8 @@ const RequestDetails = ({ drawerOpen, setDrawerOpen, request, changeStatus }: Re
                 />
                 <span className="ar-radio-chip ar-badge ar-badge--inprogress">בטיפול</span>
               </label>
+
+              {/* Done option */}
               <label className="ar-radio">
                 <input
                   type="radio"
@@ -115,6 +128,7 @@ const RequestDetails = ({ drawerOpen, setDrawerOpen, request, changeStatus }: Re
               </label>
             </div>
 
+            {/* Optional admin note (shown only when closing request) */}
             <div
               className="ar-collapsible"
               data-open={showNote ? "true" : "false"}
@@ -126,19 +140,20 @@ const RequestDetails = ({ drawerOpen, setDrawerOpen, request, changeStatus }: Re
                 rows={3}
                 placeholder="סיכום טיפול / קישור לטיקט / פרטים רלוונטיים…"
                 value={adminComment}
-                disabled={request.status==='done'}
+                disabled={request.status === "done"}
                 onChange={(e) => setAdminComment(e.target.value)}
               />
             </div>
           </div>
 
-
+          {/* Drawer footer with buttons: cancel and update */}
           <div className="ar-drawer-footer">
             <button className="ar-btn" onClick={() => setDrawerOpen(false)}>בטל</button>
-            {request.status !== 'done' && <button 
-              className="ar-btn primary" 
-              onClick={onUpdate} 
-              >עדכן בקשה</button>}
+            {request.status !== "done" && (
+              <button className="ar-btn primary" onClick={onUpdate}>
+                עדכן בקשה
+              </button>
+            )}
           </div>
         </>
       )}
@@ -147,4 +162,3 @@ const RequestDetails = ({ drawerOpen, setDrawerOpen, request, changeStatus }: Re
 };
 
 export default RequestDetails;
-

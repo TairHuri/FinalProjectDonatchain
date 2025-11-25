@@ -12,8 +12,8 @@ export interface BaseCampaign{
   images: string[];
   movie?: string;
   mainImage?: string;
-  tags: string[]; // for recommendations
-  blockchainTx?: string; // optional tx that created campaign on-chain
+  tags: string[]; 
+  blockchainTx?: string; 
   isActive: boolean;
   createdAt: Date;
 }

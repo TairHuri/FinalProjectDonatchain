@@ -102,7 +102,6 @@ export default {
         await campaignService.addDonationToCampaign(campaignId, +data.charge, 'card');
         await AuditLog.create({ action: 'donation_created', meta: { donationId: donation._id } });
 
-        //  שליחת מייל קבלה לתורם באשראי
         await sendReceiptEmail({
           donorEmail: donation.email,
           donorFirstName: donation.firstName,
@@ -125,7 +124,6 @@ export default {
   },
 
 
-  // -------------------- רשימות תרומות --------------------
   async listByUser(userId: string) {
     return Donation.find({ donor: userId })
       .populate('campaign')

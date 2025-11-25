@@ -5,8 +5,8 @@ import tags from '../config/tags.json'
 import aiService from './ai.service';
 import { ServerError } from '../middlewares/error.middleware';
 
-const VERIFY_NGO_RES_AMUTOT = "be5b7935-3922-45d4-9638-08871b17ec95"; // עמותות רשומות
-const VERIFY_NGO_RES_NIHUL_TAKIN = "cb12ac14-7429-4268-bc03-460f48157858"; // אישור ניהול תקין
+const VERIFY_NGO_RES_AMUTOT = "be5b7935-3922-45d4-9638-08871b17ec95"; 
+const VERIFY_NGO_RES_NIHUL_TAKIN = "cb12ac14-7429-4268-bc03-460f48157858"; 
 const VERIFY_NGO_RES_LIMIT = 5;
 
   export type ApiErrorType = {status:false, message:string}
@@ -31,7 +31,7 @@ const getNgoGovData = async (urlRes: string, filters: {}) => {
 export default {
 
 
-// בודק אם העמותה פעילה
+
 async verifyNgoActive(ngoNumber: string)  {
   const filters = { "מספר עמותה": `${ngoNumber}` }
   const response = await getNgoGovData(VERIFY_NGO_RES_AMUTOT, filters)
@@ -50,7 +50,7 @@ async verifyNgoActive(ngoNumber: string)  {
   }
 
 },
-//בודק אם העמותה קיבלה אישור שנתי לשנה שעברה
+
  async verifyNgoApproved(ngoNumber: string)  {
   const year = new Date().getFullYear();
   const yearsToCheck = [year, year - 1];

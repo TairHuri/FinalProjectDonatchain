@@ -14,7 +14,7 @@ const storage = multer.diskStorage({
         }
     },
     filename: (req, file, cb) => {
-        const arr = file.originalname.split(".");   // my pic.campaign.jpeg
+        const arr = file.originalname.split(".");   
         const ext = arr[arr.length - 1]
         cb(null, `${v4()}.${ext}`)
     }

@@ -69,7 +69,6 @@ export const createNgo = async (req: Request, res: Response) => {
       });
     }
 
-    // ✅ יצירת עמותה חדשה אם לא קיימת
     const ngo = new Ngo({
       name,
       ngoNumber,
@@ -145,23 +144,15 @@ export const toggleNgoStatus = async (req: Request, res: Response) => {
   try {
     const ngo = await Ngo.findById(req.params.id);
     if (!ngo) return res.status(404).json({ message: "עמותה לא נמצאה" });
-
-    // הפעלה/השהיה של העמותה
-    
     ngo.isActive = !ngo.isActive;
     await ngo.save({ validateModifiedOnly: true });
-
-    // עדכון כל הקמפיינים של העמותה
     await Campaign.updateMany({ ngo: ngo._id }, { isActive: ngo.isActive });
-
-    // שמירה ביומן פעילות (AuditLog)
     await AuditLog.create({
       action: ngo.isActive ? "ngo_reactivated" : "ngo_suspended",
       user: (req as any).user._id,
       meta: { ngoId: ngo._id, newStatus: ngo.isActive },
     });
 
-    // שליחת מייל לעמותה עצמה
     if (ngo.email) {
       await sendNgoStatusEmail({
         to: ngo.email,
@@ -172,8 +163,7 @@ export const toggleNgoStatus = async (req: Request, res: Response) => {
       console.warn("⚠️ לא נמצא אימייל לעמותה:", ngo.name);
     }
 
-    // 🔹 שליחת מייל לכל החברים של העמותה
-    const User = (await import("../models/user.model")).default; // טעינה דינמית למניעת import מעגלי
+    const User = (await import("../models/user.model")).default; 
     const members = await User.find({ ngoId: ngo._id });
 
     for (const member of members) {
@@ -181,7 +171,7 @@ export const toggleNgoStatus = async (req: Request, res: Response) => {
 
       await sendMemberStatusEmail({
         to: member.email,
-        fullName: member.name || "מתנדב/ת יקר/ה", // 👈 משתמשים בשדה הקיים
+        fullName: member.name || "מתנדב/ת יקר/ה", 
         ngoName: ngo.name,
         isActive: ngo.isActive,
       });

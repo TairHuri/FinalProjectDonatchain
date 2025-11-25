@@ -15,26 +15,33 @@ import { toggleAdminNgoStatus } from "../../services/adminApi";
 
 
 export default function AdminNgoList() {
-  const [ngos, setNgos] = useState<Ngo[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [actionLoading, setActionLoading] = useState<string | null>(null);
-  const [selectedNgo, setSelectedNgo] = useState<Ngo | null>(null);
-  const [detailsLoading, setDetailsLoading] = useState(false);
-  const [statusNgo, setStatusNgo] = useState<{id:string, isActive:boolean}>({id:'', isActive:true});
-  const token = localStorage.getItem("token") || "";
+  // ----- State Management -----
+  const [ngos, setNgos] = useState<Ngo[]>([]); // List of NGOs
+  const [loading, setLoading] = useState(true);// Page loading state
+  const [actionLoading, setActionLoading] = useState<string | null>(null); // Loading indicator for action buttons
+  const [selectedNgo, setSelectedNgo] = useState<Ngo | null>(null);// Selected NGO for modal details
+  const [detailsLoading, setDetailsLoading] = useState(false); // Loading state for NGO details
+  const [statusNgo, setStatusNgo] = useState<{id:string, isActive:boolean}>({id:'', isActive:true});// NGO being approved/paused
+  const token = localStorage.getItem("token") || "";// Auth token from local storage
 
+   // ----- Dialog Hooks (Custom Hooks for reusable dialogs) -----
   const { showConfirm, openConfirm, closeConfirm } = useConfirmDialog()
-
   const { showAlert, isFailure, message, clearAlert, setAlert } = useAlertDialog();
 
+  // Load NGOs when the component is first rendered
   useEffect(() => {
     fetchNgos();
   }, []);
 
+   // ----------------------------------------------------------------------
+  // Fetches the complete list of NGOs from the server and formats the data
+  // ----------------------------------------------------------------------
   const fetchNgos = async () => {
     try {
       setLoading(true);
       const res = await getNgoList();
+    
+     // Format the date to JavaScript Date object
       const ngosWithDates = res.items.map((ngo: any) => ({
         ...ngo,
         createdAt: new Date(ngo.createdAt),
@@ -48,15 +55,24 @@ export default function AdminNgoList() {
   };
 
 
+  // ------------------------------------------------------------------------------------
+  // Toggle active status of an NGO (pause / activate). Updates both backend + blockchain
+  // ------------------------------------------------------------------------------------
   const handleToggle = async (id: string, isActive:boolean) => {
     closeConfirm()
     try {
       setActionLoading(id);
+     // Fetch related campaigns and build a list of blockchain transaction IDs
       const campaigns = await getCampaigns(id)
       const campaignIds = (campaigns.items as Campaign[]).map(c => c._id!)
       const ngoResult = await toggleAdminNgoStatus(token, campaignIds, !isActive, id )
       //const res = await toggleNgoStatus(id, token);
       setAlert(ngoResult.message, false);
+      const blockchainTxList = (campaigns.items as Campaign[]).map(c => +c.blockchainTx!)
+      const cryptoResult = await toggleCryptoCampaignsStatus({campaignIds:blockchainTxList, newActive:!isActive })
+      // Update campaign state on the blockchain network
+      const res = await toggleNgoStatus(id, token);
+      setAlert(res.message, false);
       await fetchNgos();
     } catch (err) {
       setAlert((err as any).message ||  "שגיאה בעדכון הסטטוס", true);
@@ -65,6 +81,9 @@ export default function AdminNgoList() {
     }
   };
 
+  // ------------------------------------------------------------------
+  // Fetch additional detailed NGO information and display in a modal
+  // ------------------------------------------------------------------
   const showNgoDetails = async (id: string) => {
     try {
       setDetailsLoading(true);
@@ -79,6 +98,7 @@ export default function AdminNgoList() {
     }
   };
 
+   // ----- Show loading state while initial NGO list is being fetched -----
   if (loading)
     return <p className="text-center mt-6 text-gray-600">טוען עמותות...</p>;
 
@@ -93,6 +113,7 @@ export default function AdminNgoList() {
       <div>
         <h2 style={{ color: "#059669", fontFamily: 'calibri', fontSize: "28px", fontWeight: "bold", margin: '10px auto' }}>רשימת עמותות</h2>
       </div>
+       {/* ----------------------------- Table of NGOs ----------------------------- */}
       <table className="w-full border border-gray-300 shadow-sm rounded-xl overflow-hidden">
         <thead>
           <tr className="bg-gray-100 text-gray-700">
@@ -122,13 +143,15 @@ export default function AdminNgoList() {
               >
                 {n.isActive ? "פעילה" : "מושהית"}
               </td>
+               {/* Creation Date */}
               <td className="p-2 border">
                 {n.createdAt
                   ? new Date(n.createdAt).toLocaleDateString("he-IL")
                   : "-"}
               </td>
+              {/* Action Buttons: View + Pause/Activate */}
               <td className="p-2 border text-center flex justify-center gap-3">
-                {/* כפתור הצג */}
+                {/* ----- View NGO Details Button ----- */}
                 <motion.button
                   whileTap={{ scale: 0.9 }}
                   onClick={() => showNgoDetails(n._id)}
@@ -138,7 +161,7 @@ export default function AdminNgoList() {
                   הצג
                 </motion.button>
 
-                {/* כפתור השהה / הפעל */}
+               {/* ----- Toggle Status Button (Activate / Suspend) ----- */}
                 <motion.button
                   whileTap={{ scale: 0.9 }}
                   disabled={actionLoading === n._id}
@@ -168,6 +191,8 @@ export default function AdminNgoList() {
           ))}
         </tbody>
       </table>
+
+      {/* ----- Alert (Error / Message Dialog) ----- */}
          <AlertDialog
                 show={showAlert}
                 failureTitle="שגיאה"
@@ -177,13 +202,14 @@ export default function AdminNgoList() {
                 successOnClose={clearAlert}
                 isFailure={isFailure}
               />
+                 {/* ----- Confirmation Dialog (Before Status Change) ----- */}
                  <ConfirmDialog
         show={showConfirm}
         onYes={() => handleToggle(statusNgo.id, statusNgo.isActive)}
         onNo={closeConfirm}
         message={"האם את/ה בטוח/ה שברצונך לשנות את סטטוס העמותה?"}
       />
-      {/* חלון פרטי עמותה */}
+      {/* ----- NGO Details Modal Window ----- */}
       <Modal show={selectedNgo != null} onClose={() => setSelectedNgo(null)}>
         <AdminNgoDetails setSelectedNgo={setSelectedNgo} detailsLoading={detailsLoading} selectedNgo={selectedNgo!}/>
       </Modal>

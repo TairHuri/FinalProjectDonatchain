@@ -7,7 +7,6 @@ import {
   getDonationsByNgo,
   getAllDonations, 
 } from "../controllers/donations.controller";
-import authMiddleware from '../middlewares/auth.middleware';
 
 
 const router = Router();
