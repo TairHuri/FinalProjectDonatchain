@@ -2,7 +2,6 @@
 import { Router } from 'express';
 import authMiddleware from '../middlewares/auth.middleware';
 import roleMiddleware from '../middlewares/role.middleware';
-import { getStats } from '../controllers/admin.controller';
 import { getAllDonors } from '../controllers/admin.controller';
 import { getAdminStats } from "../controllers/admin.controller";
 

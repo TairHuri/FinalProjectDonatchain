@@ -13,7 +13,6 @@ export async function createAdmin() {
     const email = "admin@donatchain.com";
     const password = "Admin123!";
 
-    // בדיקה אם כבר יש אדמין
     const existing = await User.findOne({ email });
     if (existing) {
       console.log("⚠️ Admin user already exists!");
@@ -39,7 +38,6 @@ export async function createAdmin() {
   }
 }
 
-// הפונקציה תרוץ רק אם הקובץ מורץ ישירות (npm run create-admin)
 if (require.main === module) {
   mongoose
     .connect(mongoUri)
