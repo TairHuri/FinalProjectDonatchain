@@ -9,7 +9,7 @@ import AdminAboutEditor from "./AdminAboutEditor";
 import RulesViewer from "./RulesViewer";
 import AdminRulesEditor from "./AdminRulesEditor";
 import AdminNgoList from "../../components/admin/AdminNgoList";
-
+import { useAuth } from "../../contexts/AuthContext"; 
 import '../../css/AdminDashboard.css'
 import RequestFromUsers from "../../components/admin/RequestFromUsers";
 
@@ -29,6 +29,7 @@ const AdminDashboard: React.FC = () => {
   >("dashboard");
   const navigate = useNavigate();
   const [selectedNgo, setSelectedNgo] = useState<any | null>(null);
+  const { logout } = useAuth(); 
 
 
   // useEffect(() => {
@@ -82,10 +83,13 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  const logout = () => {
-    localStorage.clear();
-    navigate("/admin/login");
-  };
+const handleLogout = () => {
+  logout(); // מאפס את ה־context
+  localStorage.clear();
+  navigate("/login");
+
+};
+
 
   return (
     <div
@@ -173,7 +177,7 @@ const AdminDashboard: React.FC = () => {
 
         <button
           style={{ ...menuBtnStyle, color: "#f87171", marginBottom: '1px', paddingBottom: '1px' }}
-          onClick={logout}
+          onClick={handleLogout}
         >
           <LogOut size={20} /> יציאה
         </button>
