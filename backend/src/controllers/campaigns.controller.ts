@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import CampaignService from '../services/campaign.service';
-import blockchainService from '../services/blockchain.service';
 import { MediaFiles } from '../middlewares/multer.middleware';
 import { INgo } from '../models/ngo.model';
 import { ServerError } from '../middlewares/error.middleware';
@@ -133,7 +132,6 @@ export const toggleCampaignStatus = async (req: Request, res: Response) => {
       return res.status(404).json({ message: "Campaign not found" });
     }
 
-    // בדיקת הרשאה — רק מנהל מערכת או חבר באותה עמותה
     if (req.user!.role != 'admin' && (req.user as any).ngoId.toString() != (campaign.ngo as unknown as INgo)._id.toString()) return res.status(403).json({ message: "You are not part of this NGO" });
     await campaignService.toggleCampaignStatus(id);
     res.json({

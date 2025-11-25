@@ -7,7 +7,6 @@ import { NgoMediaFiles } from "../middlewares/multer.middleware";
 import nodemailer from "nodemailer";
 import bcrypt from "bcryptjs";
 
-/* ----------------------------- הרשמה לעמותה ----------------------------- */
 export const registerNewNgo = async (req: Request, res: Response) => {
   try {
     const {
@@ -77,7 +76,7 @@ export const registerNewNgo = async (req: Request, res: Response) => {
   }
 };
 
-/* ----------------------------- הרשמה רגילה ----------------------------- */
+
 export const registerExistingNgo = async (req: Request, res: Response) => {
   try {
     const { user }: { user: IUser } = req.body;
@@ -109,7 +108,6 @@ export const registerExistingNgo = async (req: Request, res: Response) => {
   }
 };
 
-/* ----------------------------- התחברות ----------------------------- */
 export const login = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
@@ -159,7 +157,6 @@ export const login = async (req: Request, res: Response) => {
   }
 };
 
-/* ----------------------------- פרופיל משתמש ----------------------------- */
 export const me = async (req: Request, res: Response) => {
   const user = (req as any).user;
   res.json({
@@ -173,7 +170,7 @@ export const me = async (req: Request, res: Response) => {
   });
 };
 
-/* ----------------------------- שכחתי סיסמה ----------------------------- */
+
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
