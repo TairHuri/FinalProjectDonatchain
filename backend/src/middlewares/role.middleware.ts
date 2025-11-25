@@ -1,4 +1,3 @@
-import { log } from 'console';
 import { Request, Response, NextFunction } from 'express';
 
 export default function(allowedRoles: string[]) {
@@ -6,7 +5,6 @@ export default function(allowedRoles: string[]) {
     const user = (req as any).user;
     if (!user) return res.status(401).json({ message: 'Unauthorized' });
     //user.roles = ['ngo']
-    
     const has = allowedRoles.includes(user.role);
     if (!has) return res.status(403).json({ message: 'Forbidden' });
     next();
