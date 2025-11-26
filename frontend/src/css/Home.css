@@ -23,7 +23,7 @@
 /* ===== Base ===== */
 .home {
   /* min-height: calc(315dvh - var(--nav-h)); */
-  padding-top: var(--nav-h);
+  /* padding-top: var(--nav-h); */
   padding-left: max(12px, env(safe-area-inset-left));
   padding-right: max(12px, env(safe-area-inset-right));
   background:

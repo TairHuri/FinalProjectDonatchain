@@ -10,6 +10,7 @@ import { setUserRoleApi, deleteUserApi } from "../../services/userApi";
 import AlertDialog, { useAlertDialog } from "../gui/AlertDialog";
 import type { Message } from "../../models/Message";
 import { getMessagesByNgoId, saveMessage } from "../../services/messageApi";
+import ConfirmDialog, { useConfirmDialog } from "../gui/ConfirmDialog";
 
 
 
@@ -161,7 +162,20 @@ export default NgoUsers;
 
 function MembersTable({ members, loggedinUser, changeUserRole, declineUser, isCurrentManager }: { members: User[], loggedinUser: User, changeUserRole: (userId: string, role: string) => void, declineUser: (userId: string) => void, isCurrentManager: boolean }) {
     const canDemote = members.find(m => m._id != loggedinUser._id && m.role == 'manager')
-
+    const {openConfirm, showConfirm,closeConfirm} = useConfirmDialog();
+    const [userId, setUserId] = useState<string>("")
+    const [message, setMessage] = useState<string>("")
+    const confirmDecline = (userId:string) =>{
+        setUserId(userId)
+        const user = members.find(m => m._id == userId);
+        if(!user) return;
+        setMessage(`האם למחוק את ${user.name}`)
+        openConfirm()
+    }
+    const removeUser = () => {
+        closeConfirm();
+        declineUser(userId)
+    }
     return (
         <div className={'tableWrapper'}>
             <table className={'table'}>
@@ -201,7 +215,7 @@ function MembersTable({ members, loggedinUser, changeUserRole, declineUser, isCu
                                         </button>}
                                     {(isCurrentManager && loggedinUser._id != m._id) && <button
                                         className={'smallDangerBtn'}
-                                        onClick={() => declineUser(m._id!)}
+                                        onClick={() => confirmDecline(m._id!)}
                                     >
                                         מחק משתמש
                                     </button>}
@@ -212,6 +226,7 @@ function MembersTable({ members, loggedinUser, changeUserRole, declineUser, isCu
                     ))}
                 </tbody>
             </table>
+            <ConfirmDialog show={showConfirm} message={message} onYes={removeUser} onNo={closeConfirm}/>
         </div>
     );
 }

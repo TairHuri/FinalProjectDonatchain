@@ -30,7 +30,7 @@ const CampaignDetails = ({ campaignId, editMode, setEditMode }: CampaignDetailsT
         <>
             {user ? (
                 editMode === "view" ? 
-                <CampaignView campaign={campaign} setEditMode={setEditMode} setCampaign={setCampaign} token={user.token!} />
+                <CampaignView campaign={campaign} setEditMode={setEditMode} setCampaign={setCampaign} token={user.token!} userRole={user.role} />
                  : 
                  <CampaignEdit setEditMode={setEditMode} campaign={campaign} setCampaign={setCampaign as unknown as SetCampaign} token={user.token!} />
             ) 

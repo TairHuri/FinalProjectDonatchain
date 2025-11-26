@@ -68,11 +68,6 @@ export default function AdminNgoList() {
       const ngoResult = await toggleAdminNgoStatus(token, campaignIds, !isActive, id )
       //const res = await toggleNgoStatus(id, token);
       setAlert(ngoResult.message, false);
-      const blockchainTxList = (campaigns.items as Campaign[]).map(c => +c.blockchainTx!)
-      const cryptoResult = await toggleCryptoCampaignsStatus({campaignIds:blockchainTxList, newActive:!isActive })
-      // Update campaign state on the blockchain network
-      const res = await toggleNgoStatus(id, token);
-      setAlert(res.message, false);
       await fetchNgos();
     } catch (err) {
       setAlert((err as any).message ||  "שגיאה בעדכון הסטטוס", true);
@@ -211,7 +206,9 @@ export default function AdminNgoList() {
       />
       {/* ----- NGO Details Modal Window ----- */}
       <Modal show={selectedNgo != null} onClose={() => setSelectedNgo(null)}>
-        <AdminNgoDetails setSelectedNgo={setSelectedNgo} detailsLoading={detailsLoading} selectedNgo={selectedNgo!}/>
+        <div style={{maxHeight:'90dvh', width:'100%', overflowY:'auto'}}>
+          <AdminNgoDetails setSelectedNgo={setSelectedNgo} detailsLoading={detailsLoading} selectedNgo={selectedNgo!}/>
+        </div>
       </Modal>
     </motion.div>
   );

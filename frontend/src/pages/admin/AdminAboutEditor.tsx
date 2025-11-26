@@ -31,7 +31,7 @@ export default function AdminAboutEditor() {
 
   return (
     <div dir="rtl" className="p-6">
-      <h2 style={{ color: "#059669", fontFamily: 'calibri', fontSize: "28px", fontWeight: "bold", marginBottom: "16px" }}>עריכת עמוד עלינו</h2>
+      <h2 style={{ color: "#059669", fontFamily: 'calibri', fontSize: "28px", fontWeight: "bold", marginBottom: "16px" }}>מי אנחנו</h2>
 
       <input
         type="text"

@@ -14,7 +14,7 @@ const NgoDetails = ({ editMode, setEditMode }: { editMode: string, setEditMode: 
     return (
         <div style={cardStyle}>
             {editMode === "view" ? (
-                <NgoView ngo={ngo} setEditMode={setEditMode} />
+                <NgoView ngo={ngo} setEditMode={setEditMode} userRole={user.role} />
             ) : (
                 <NgoEdit token={token!} ngoDetails={ngo} setEditMode={setEditMode} updateNgo={updateNgo} />
             )}

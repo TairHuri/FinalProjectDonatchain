@@ -119,7 +119,6 @@ export default function Campaigns() {
               placeholder="חיפוש לפי שם קמפיין…"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              aria-label="חיפוש"
             />
           </div>
 
@@ -127,16 +126,15 @@ export default function Campaigns() {
             className="camps-select"
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as SortByType)}
-            aria-label="מיון"
           >
-            <option value="title">שם (א׳→ת׳)</option>
-            <option value="raised">סכום שגויס (גבוה→נמוך)</option>
-            <option value="goalLowToHigh">יעד (נמוך→גבוה)</option>
-            <option value="goalHighToLow">יעד (גבוה→נמוך)</option>
-            <option value="creationDateNewToOld">יצירה (חדש→ישן)</option>
-            <option value="creationDateOldToNew">יצירה (ישן→חדש)</option>
-            <option value="endDateNewToOld">סיום (חדש→ישן)</option>
-            <option value="endDateOldToNew">סיום (ישן→חדש)</option>
+            <option value="title">שם (א׳ עד ת׳)</option>
+            <option value="raised">סכום שגויס (גבוה לנמוך)</option>
+            <option value="goalLowToHigh">יעד (נמוך לגבוה)</option>
+            <option value="goalHighToLow">יעד (גבוה לנמוך)</option>
+            <option value="creationDateNewToOld">יצירה (חדש לישן)</option>
+            <option value="creationDateOldToNew">יצירה (ישן לחדש)</option>
+            <option value="endDateNewToOld">סיום (חדש לישן)</option>
+            <option value="endDateOldToNew">סיום (ישן לחדש)</option>
           </select>
 
           <div className="camps-view">
@@ -144,7 +142,6 @@ export default function Campaigns() {
               type="button"
               className={`view-btn ${view === "list" ? "is-active" : ""}`}
               onClick={() => setView("list")}
-              aria-label="תצוגת רשימה"
             >
               <List size={18} />
             </button>
@@ -152,7 +149,6 @@ export default function Campaigns() {
               type="button"
               className={`view-btn ${view === "grid" ? "is-active" : ""}`}
               onClick={() => setView("grid")}
-              aria-label="תצוגת גריד"
             >
               <Grid size={18} />
             </button>

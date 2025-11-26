@@ -16,8 +16,9 @@ export type CampaignViewProps = {
   setCampaign: (campaign: Campaign) => void;
   token: string;
   setEditMode: (mode: "view" | "edit") => void;
+  userRole:string;
 }
-const CampaignView = ({ campaign, setCampaign, token, setEditMode }: CampaignViewProps) => {
+const CampaignView = ({ campaign, setCampaign, token, setEditMode, userRole }: CampaignViewProps) => {
 
   const IMAGE_URL = import.meta.env.VITE_IMAGES_URL || "http://localhost:4000/images";
   const { showConfirm, openConfirm, closeConfirm } = useConfirmDialog()
@@ -69,7 +70,7 @@ const CampaignView = ({ campaign, setCampaign, token, setEditMode }: CampaignVie
         <button onClick={() => setEditMode("edit")} style={{ ...primaryBtnStyle }}>
           עריכת פרטים
         </button>
-        <button style={{ ...primaryBtnStyle }} onClick={openConfirm}>
+        <button style={{ ...primaryBtnStyle }} onClick={openConfirm} disabled={userRole != 'manager'}>
           {campaign.isActive ? 'השהייה/מחיקה' : 'הפעל'}
         </button>
         <button style={{ ...primaryBtnStyle }} onClick={() => setShowReportOptions(prev => !prev)}>

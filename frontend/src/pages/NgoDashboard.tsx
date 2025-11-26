@@ -1,10 +1,10 @@
-import {  useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useCampaigns } from "../contexts/CampaignsContext";
 import { PlusCircle, Home, Users, LogOut, FileText, Settings, FilePenLine } from "lucide-react";
 import NgoDonors from "../components/NgoDonors";
 import CampaignItem from "../components/CampaignItem";
-import { cardStyle,  menuBtnStyle } from "../css/dashboardStyles";
+import { cardStyle, menuBtnStyle } from "../css/dashboardStyles";
 
 import NgoUsers from "../components/ngo/NgoUsers";
 import UserPersonalDetails from "../components/UserPersonalDetails";
@@ -20,54 +20,54 @@ import type { Campaign } from "../models/Campaign";
 import AdminRequest from "../components/ngo/AdminRequest";
 
 
-const tabs = [{id:0, label:"כל הקמפיינים"}, {id:1, label:"קמפיינים פעילים"}, {id:2, label:"קמפיינים מתוכננים"}, {id:3, label:"קמפיינים לא פעילים"},{id:4, label:"קמפיינים מושהים/מחוקים"} ]
+const tabs = [{ id: 0, label: "כל הקמפיינים" }, { id: 1, label: "קמפיינים פעילים" }, { id: 2, label: "קמפיינים מתוכננים" }, { id: 3, label: "קמפיינים לא פעילים" }, { id: 4, label: "קמפיינים מושהים/מחוקים" }]
 const NgoDashboard: React.FC = () => {
   const { user, logout } = useAuth();
   const { campaigns } = useCampaigns();
   const navigate = useNavigate();
   const [activePage, setActivePage] = useState<
-    "dashboard" | "newCampaign" | "campaigns" |"CampaignDetails"| "profile" | "donors" | "ngoUsers" | "ngoDetails"| "adminRequest"
+    "dashboard" | "newCampaign" | "campaigns" | "CampaignDetails" | "profile" | "donors" | "ngoUsers" | "ngoDetails" | "adminRequest"
   >("dashboard");
-  const [campaignId, setCampaignId] = useState<string|null>(null)
+  const [campaignId, setCampaignId] = useState<string | null>(null)
   console.log('campaigns', campaigns);
-  const {active, setActive} = useTabsButtons()
+  const { active, setActive } = useTabsButtons()
   const now = new Date()
-    const campaignFilters :{[n: number]:(campaign:Campaign)=>boolean} = {
-    0:(campaign:Campaign) => true,
-    1: (campaign:Campaign) => campaign.startDate.toString().localeCompare(now.toISOString()) <= 0 && campaign.endDate.toString().localeCompare(now.toISOString()) >= 0 && campaign.isActive==true,
-    2: (campaign:Campaign) => campaign.startDate.toString().localeCompare(now.toISOString()) >= 0 , 
-    3: (campaign:Campaign) => campaign.endDate.toString().localeCompare(now.toISOString ()) <= 0 ,
-    4: (campaign:Campaign) => campaign.isActive==false , 
-    
+  const campaignFilters: { [n: number]: (campaign: Campaign) => boolean } = {
+    0: (campaign: Campaign) => true,
+    1: (campaign: Campaign) => campaign.startDate.toString().localeCompare(now.toISOString()) <= 0 && campaign.endDate.toString().localeCompare(now.toISOString()) >= 0 && campaign.isActive == true,
+    2: (campaign: Campaign) => campaign.startDate.toString().localeCompare(now.toISOString()) >= 0,
+    3: (campaign: Campaign) => campaign.endDate.toString().localeCompare(now.toISOString()) <= 0,
+    4: (campaign: Campaign) => campaign.isActive == false,
+
   }
   //const showCampaigns = useCallback(() => setActivePage("campaigns"), [])
 
-  const [editMode, setEditMode] = useState<"view" | "edit" | "password"|'deleteUser'>("view");
+  const [editMode, setEditMode] = useState<"view" | "edit" | "password" | 'deleteUser'>("view");
 
 
   const [donationsCount, setDonationsCount] = useState<number>(0)
 
   useEffect(() => {
-    if(user!= null) getDonationsCount();
+    if (user != null) getDonationsCount();
   }, [user])
 
   useEffect(() => {
     setEditMode('view')
   }, [activePage])
-const getDonationsCount = async () => {
-  if (!user || !user.ngoId) return;
-  const donations = await getDonationsByNgo(user.ngoId);
-  
-  setDonationsCount(donations.length);
-};
+  const getDonationsCount = async () => {
+    if (!user || !user.ngoId) return;
+    const donations = await getDonationsByNgo(user.ngoId);
+
+    setDonationsCount(donations.length);
+  };
 
 
-  const editCampaign = (id:string) => {
-setActivePage("CampaignDetails");
-setCampaignId(id);
+  const editCampaign = (id: string) => {
+    setActivePage("CampaignDetails");
+    setCampaignId(id);
   }
-console.log(user);
- const getDashboardSizeClass = () => {
+  console.log(user);
+  const getDashboardSizeClass = () => {
     switch (activePage) {
       case "dashboard":
         return "medium";
@@ -88,7 +88,14 @@ console.log(user);
 
   if (!user || !user.ngoId) return;
   return (
-    <div dir="rtl" className="ngo-dashboard-container">
+    <div dir="rtl"
+    style={{
+        display: "flex",
+        // minHeight: "100vh",
+        height: '100%',
+        backgroundColor: "#f7f9fc",
+        width: "100%",
+      }}>
       {/*  */}
       <div
         style={{
@@ -149,7 +156,7 @@ console.log(user);
       </div>
 
       {/**/}
-      <div className={`dashboard-content ${getDashboardSizeClass()}`} style={{ flex: 1, padding: "30px" }}>
+      <div className={`ngo-dashboard-container`} style={{ flex: 1, padding: "10px" }}>
         {activePage === "ngoDetails" && <NgoDetails editMode={editMode} setEditMode={setEditMode} />}
         {activePage === "ngoUsers" && <NgoUsers />}
         {activePage === "dashboard" && (
@@ -178,7 +185,7 @@ console.log(user);
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <TabsButtons active={active} setActive={setActive} tabs={tabs} />
             </div>
-            <div style={{ display: "grid",gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))",gap: "20px",}}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: "20px", }}>
               {campaigns.filter(campaignFilters[active]).map((c) => (
                 <div key={c._id}>
                   <CampaignItem c={c} showButtons={true} edit={editCampaign} />

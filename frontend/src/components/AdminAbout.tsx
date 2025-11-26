@@ -5,17 +5,22 @@ import axios from "axios";
 import AlertDialog, { useAlertDialog } from "./gui/AlertDialog";
 
 export default function AdminAbout() {
+  const [about, setAbout] = useState<any>(null);
+    const { showAlert, message,isFailure, clearAlert, setAlert } = useAlertDialog();
   const [aboutData, setAboutData] = useState({
-    title: "",
+    heroTitle: "",
+    heroText: "",
+    visionTitle: "",
+    visionText: "",
     subtitle: "",
     vision: "",
     features: [] as { title: string; text: string }[],
-    closing: "",
+    closingText: "",
   });
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const { showAlert, isFailure, message, clearAlert, setAlert } = useAlertDialog();
+  
 
   useEffect(() => {
     fetchAboutData();
@@ -31,6 +36,8 @@ export default function AdminAbout() {
       setLoading(false);
     }
   };
+
+
 
   const handleChange = (field: string, value: string) => {
     setAboutData({ ...aboutData, [field]: value });
@@ -58,7 +65,7 @@ export default function AdminAbout() {
     setSaving(true);
     try {
       const token = localStorage.getItem("token");
-      await axios.put(`${import.meta.env.VITE_API_URL}/admin/about`, aboutData, {
+      await axios.put(`${import.meta.env.VITE_API_URL}/about`, aboutData, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setAlert("עמוד 'עלינו' עודכן בהצלחה!", false);
@@ -81,27 +88,35 @@ export default function AdminAbout() {
       <label>כותרת ראשית:</label>
       <input
         type="text"
-        value={aboutData.title}
+        value={aboutData.heroTitle}
         onChange={(e: ChangeEvent<HTMLInputElement>) =>
-          handleChange("title", e.target.value)
+          handleChange("heroTitle", e.target.value)
         }
         style={inputStyle}
       />
 
       <label>תיאור קצר (מתחת לכותרת):</label>
       <textarea
-        value={aboutData.subtitle}
+        value={aboutData.heroText}
         onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
-          handleChange("subtitle", e.target.value)
+          handleChange("heroText", e.target.value)
         }
         style={textareaStyle}
       />
 
       <label>חזון:</label>
       <textarea
-        value={aboutData.vision}
+        value={aboutData.visionTitle}
         onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
-          handleChange("vision", e.target.value)
+          handleChange("visionTitle", e.target.value)
+        }
+        style={textareaStyle}
+      />
+      <label>טקסט החזון:</label>
+      <textarea
+        value={aboutData.visionText}
+        onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
+          handleChange("visionText", e.target.value)
         }
         style={textareaStyle}
       />
@@ -132,12 +147,12 @@ export default function AdminAbout() {
       <button onClick={addFeature} style={addBtnStyle}>
         ➕ הוספת מאפיין חדש
       </button>
-
+      <br/>
       <label style={{ marginTop: "20px" }}>הודעת סיום:</label>
       <textarea
-        value={aboutData.closing}
+        value={aboutData.closingText}
         onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
-          handleChange("closing", e.target.value)
+          handleChange("closingText", e.target.value)
         }
         style={textareaStyle}
       />
@@ -145,7 +160,7 @@ export default function AdminAbout() {
       <button onClick={saveChanges} disabled={saving} style={saveBtnStyle}>
         {saving ? "שומר..." : "שמור שינויים"}
       </button>
-      <AlertDialog show={showAlert} message={message} failureOnClose={clearAlert} isFailure={isFailure} />
+      <AlertDialog show={showAlert} message={message} failureOnClose={clearAlert} successOnClose={clearAlert} isFailure={isFailure} />
     </div>
   );
 }

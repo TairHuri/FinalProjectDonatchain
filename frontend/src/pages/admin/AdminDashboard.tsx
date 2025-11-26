@@ -12,6 +12,7 @@ import AdminNgoList from "../../components/admin/AdminNgoList";
 import { useAuth } from "../../contexts/AuthContext"; 
 import '../../css/AdminDashboard.css'
 import RequestFromUsers from "../../components/admin/RequestFromUsers";
+import AdminAbout from "../../components/AdminAbout";
 
 
 interface Stats {
@@ -165,7 +166,7 @@ const handleLogout = () => {
             onClick={() => setActivePage("about")}
             style={menuBtnStyle}
           >
-            <Settings size={20} /> עמוד "עלינו"
+            <Settings size={20} />מי אנחנו
           </button>
           <button
             onClick={() => setActivePage("request")}
@@ -212,7 +213,7 @@ const handleLogout = () => {
         {activePage === "donors" && <AdminDonors />}
         {activePage === "ngos" && <AdminNgoList />}
         {activePage === "campaigns" && <CampaignList />}
-        {activePage === "about" && <AdminAboutEditor />}
+        {activePage === "about" && <AdminAbout />}
         {activePage === "request" && <RequestFromUsers />}
         {activePage === "terms" && (
           <div>

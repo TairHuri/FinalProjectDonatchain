@@ -1,31 +1,29 @@
 import { Router, Request, Response } from "express";
 
+import { readFile, writeFile } from 'node:fs/promises';
+import path from 'path';
 const router = Router();
 
-
-let aboutContent = {
-  heroTitle: "מי אנחנו",
-  heroText: "מערכת חדשנית לגיוס תרומות בשילוב טכנולוגיית בלוקצ'יין ובינה מלאכותית — למען עתיד חברתי חכם, מאובטח ושקוף יותר",
-  visionTitle: "החזון שלנו",
-  visionText: "אנו שואפים לשנות את הדרך שבה אנשים תורמים – להפוך כל תרומה לחוויה שקופה, אמינה ומבוססת נתונים. שילוב של טכנולוגיה מתקדמת עם ערכים חברתיים הוא הלב של הפרויקט שלנו",
-  features: [
-    { title: "שקיפות וביטחון", text: "באמצעות טכנולוגיית הבלוקצ'יין, כל תרומה נרשמת ומאומתת בצורה מאובטחת ובלתי ניתנת לשינוי" },
-    { title: "בינה מלאכותית חכמה", text: "המערכת מנתחת טקסטים וממליצה לתורמים על פרויקטים שמתאימים לערכים ולתחומי העניין שלהם" },
-    { title: "חיבור אמיתי", text: "יצירת מערכת יחסים מבוססת אמון בין תורמים לארגונים – מתוך מטרה משותפת להשפעה חברתית חיובית" },
-    { title: "השפעה עולמית", text: "חזון גלובלי שמחבר בין טכנולוגיה וקהילה, ומאפשר לתרום מכל מקום בעולם בצורה פשוטה ושקופה" },
-  ],
-  closingText: "אנו מאמינים שטכנולוגיה יכולה להפוך כל תרומה לסיפור של אמון, השפעה ונתינה. הצטרפו אלינו למסע אל עתיד של שקיפות, אחריות וחדשנות חברתית",
-};
+const ABOUT_PATH = path.join(__dirname, '..', 'config', 'aboutContent.json');
 
 
-router.get("/", (req: Request, res: Response) => {
+router.get("/", async(req: Request, res: Response) => {
+  const fileContent = await readFile(ABOUT_PATH, 'utf8');
+    const aboutContent = JSON.parse(fileContent || '{}');
   res.json(aboutContent);
 });
 
 
-router.put("/", (req: Request, res: Response) => {
+router.put("/", async (req: Request, res: Response) => {
   const updates = req.body;
-  aboutContent = { ...aboutContent, ...updates };
+  
+const fileContent = await readFile(ABOUT_PATH, 'utf8');
+    const aboutContent = JSON.parse(fileContent || '{}');
+
+  const updatedContent = { ...aboutContent, ...updates }
+  const data = JSON.stringify(updatedContent, null, 2)
+  
+  await writeFile(ABOUT_PATH, data,'utf8')
   res.json(aboutContent);
 });
 

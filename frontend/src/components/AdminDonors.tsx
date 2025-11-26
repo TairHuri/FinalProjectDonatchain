@@ -31,7 +31,7 @@ const AdminDonors = () => {
         כל התורמים באתר
       </h2>
 
-      <div style={{ height: "70vh", overflowY: "auto", marginTop: "15px" }}>
+      <div style={{  marginTop: "15px" }}>
         {donations.length === 0 ? (
           <p>אין תרומות עדיין.</p>
         ) : (

@@ -3,9 +3,10 @@ import type { Ngo } from "../../models/Ngo";
 
 export type NgoViewProps = {
     ngo: Ngo;
-    setEditMode: (mode: 'edit' | 'view') => void
+    setEditMode: (mode: 'edit' | 'view') => void;
+    userRole:string;
 }
-const NgoView = ({ ngo, setEditMode }: NgoViewProps) => {
+const NgoView = ({ ngo, setEditMode, userRole }: NgoViewProps) => {
     const CERTIFICATES_URL = import.meta.env.VITE_CERTIFICATES_URL || "http://localhost:4000/certificates";
     const IMAGE_URL = import.meta.env.VITE_IMAGES_URL || "http://localhost:4000/images";
     return (
@@ -26,7 +27,8 @@ const NgoView = ({ ngo, setEditMode }: NgoViewProps) => {
             {ngo.certificate && <p><strong><a href={`${CERTIFICATES_URL}/${ngo.certificate}`} target="_blank">אישור עמותה</a></strong></p>}
             <button
                 onClick={() => setEditMode("edit")}
-                style={{ ...primaryBtnStyle, marginTop: "15px" }}>
+                style={{ ...primaryBtnStyle, marginTop: "15px" }}
+                disabled={userRole != 'manager'}>
                 עריכת פרטים
             </button>
 

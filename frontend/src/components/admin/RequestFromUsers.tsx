@@ -117,7 +117,7 @@ export default function RequestFromUsers() {
     new Date(iso).toLocaleString("he-IL", { dateStyle: "short", timeStyle: "short" });
 
   return (
-    <div className="ar-card" dir="rtl" role="region" aria-label="מרכז ניהול בקשות">
+    <div className="ar-card" dir="rtl" role="region">
      {/* Section Title */}
       <div>
         <h2 style={{ color: "#059669", fontFamily: 'calibri', fontSize: "28px", fontWeight: "bolder", marginBottom: "16px" }}>ניהול בקשות</h2>

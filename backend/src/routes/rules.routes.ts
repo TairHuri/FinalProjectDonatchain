@@ -1,24 +1,22 @@
 import { Router, Request, Response } from "express";
+import { readFile, writeFile } from 'node:fs/promises';
+import path from 'path';
 
 const router = Router();
-
-let rulesContent = [
-  { title: "כללי", text: "מטרת המערכת היא להעניק פלטפורמה חדשנית לגיוס תרומות תוך שמירה על שקיפות, אבטחת מידע ואמינות מלאה. השימוש במערכת מהווה הסכמה מלאה לכל תנאי התקנון" },
-  { title: "אחריות המשתמש", text: "המשתמש מתחייב להזין מידע מדויק ואמין בלבד, ולהימנע מכל שימוש לרעה במערכת. כל פעולה שתבוצע בשם המשתמש היא באחריותו הבלעדית" },
-  { title: "פרטיות ושקיפות", text: "אנו מתחייבים לשמור על פרטיות המשתמשים בהתאם לחוק. טכנולוגיית הבלוקצ'יין מבטיחה תיעוד שקוף של תרומות מבלי לחשוף מידע אישי רגיש" },
-  { title: "שימוש בטכנולוגיה", text: "המערכת משלבת בינה מלאכותית לניתוח טקסטים והצעת קמפיינים רלוונטיים. המלצות אלו אינן מחייבות והן נועדו לשפר את חוויית המשתמש בלבד" },
-  { title: "קניין רוחני", text: "כל הקוד, התוכן והעיצוב במערכת הם קניינם הבלעדי של צוות הפיתוח. אין להעתיק, להפיץ או לעשות בהם שימוש ללא אישור כתוב מראש" },
-  { title: "שינויים בתקנון", text: "הנהלת המערכת רשאית לעדכן את תנאי התקנון מעת לעת. המשך השימוש במערכת לאחר עדכון ייחשב כהסכמה מלאה לתנאים החדשים" },
-];
+const ABOUT_PATH = path.join(__dirname, '..', 'config', 'rulesContent.json');
 
 
-router.get("/", (req: Request, res: Response) => {
+router.get("/", async (req: Request, res: Response) => {
+  const fileContent = await readFile(ABOUT_PATH, 'utf8');
+  const rulesContent = JSON.parse(fileContent || '{}');
   res.json(rulesContent);
 });
 
-router.put("/", (req: Request, res: Response) => {
-  const updates = req.body; 
-  rulesContent = updates;
+router.put("/", async (req: Request, res: Response) => {
+  const rulesContent = req.body;
+  const data = JSON.stringify(rulesContent, null, 2)
+  await writeFile(ABOUT_PATH, data,'utf8')      
+  
   res.json(rulesContent);
 });
 

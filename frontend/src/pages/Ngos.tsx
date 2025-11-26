@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Grid, List } from "lucide-react"; // אייקונים
+import { Grid, List, Search } from "lucide-react"; // אייקונים
 import NgoItem from "../components/NgoItem";
 import { getNgoList } from "../services/ngoApi";
 import type { Ngo } from "../models/Ngo";
@@ -12,12 +12,12 @@ export default function Ngos() {
     const [sortBy, setSortBy] = useState("name");
     const [ngos, setNgos] = useState<Ngo[]>([])
     const [view, setView] = useState<"grid" | "list">("grid"); // מצב תצוגה
-    const { showAlert, message,isFailure, clearAlert, setAlert } = useAlertDialog();
+    const { showAlert, message, isFailure, clearAlert, setAlert } = useAlertDialog();
 
     const loadNgoList = async () => {
         try {
             const ngos = await getNgoList();
-            setNgos(ngos.items.filter(n => n.isActive==true));
+            setNgos(ngos.items.filter(n => n.isActive == true));
         } catch (error) {
             console.log(error);
             setAlert('error loading ngos', true)
@@ -33,9 +33,9 @@ export default function Ngos() {
                 return a.name.localeCompare(b.name)
             } else if (sortBy === "createdOld") {
                 return a.createdAt.toString().localeCompare(b.createdAt.toString())
-            } else if(sortBy === 'createdNew') {
+            } else if (sortBy === 'createdNew') {
                 return b.createdAt.toString().localeCompare(a.createdAt.toString())
-            }else{
+            } else {
                 const ngoa = (a as any)
                 const ngob = (b as any)
                 return ngob.ngoCampaignsCount - ngoa.ngoCampaignsCount
@@ -44,74 +44,71 @@ export default function Ngos() {
         );
 
     return (
-        <div dir="rtl" style={{ display: "flex", flexDirection: "column", gap: "20px", width: "80%" }}>
-            {/* כותרת */}
-            <h1 style={{ fontSize: "24px", fontWeight: "bold", color: "#374151" }}>רשימת עמותות</h1>
-
-            {/* חיפוש + מיון */}
-            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
-                    style={{
-                        border: "1px solid #d1d5db",
-                        borderRadius: "8px",
-                        padding: "8px",
-                    }}
-                >
-                    <option value="name">מיין לפי שם</option>
-                    <option value="createdOld">מיין לפי תאריך הקמה מהישן</option>
-                    <option value="createdNew">מיין לפי תאריך הקמה מהחדש</option>
-                    <option value="ngoCampaignsCount">מיין לפי מספר קמפיינים  </option>
-                </select>
-
-                <input
-                    type="text"
-                    placeholder="חיפוש..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    style={{
-                        flex: 1,
-                        border: "1px solid #d1d5db",
-                        borderRadius: "8px",
-                        padding: "8px",
-                    }}
-                />
-
-                {/* כפתורי תצוגה */}
-                <div style={{ display: "flex", gap: "8px" }}>
-                    <button
-                        onClick={() => setView("list")}
-                        style={{
-                            padding: "8px",
-                            borderRadius: "8px",
-                            border: "1px solid #d1d5db",
-                            background: view === "list" ? "#e5e7eb" : "white",
-                            cursor: "pointer",
-                        }}
-                    >
-                        <List size={20} />
-                    </button>
-                    <button
-                        onClick={() => setView("grid")}
-                        style={{
-                            padding: "8px",
-                            borderRadius: "8px",
-                            border: "1px solid #d1d5db",
-                            background: view === "grid" ? "#e5e7eb" : "white",
-                            cursor: "pointer",
-                        }}
-                    >
-                        <Grid size={20} />
-                    </button>
+        <div dir="rtl" className="ngos-page">
+            {/* Header */}
+            <header className="ngos-header">
+                <div className="ngos-title-wrap">
+                    <h1 className="ngos-title">רשימת עמותות</h1>
+                    <span className="ngos-count">{ngos.length} עמותות</span>
                 </div>
-            </div>
+
+                {/* חיפוש + מיון */}
+                <div className="ngos-filters">
+                    <div className="ngos-input-wrap">
+                        <Search size={18} />
+                        <input
+                            type="text"
+                            className="ngos-input"
+                            placeholder="חיפוש..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                        />
+                    </div>
+
+                    <select
+                        className="ngos-select"
+                        value={sortBy}
+                        onChange={(e) => setSortBy(e.target.value)}
+                    >
+                        <option value="name">מיין לפי שם</option>
+                        <option value="createdOld">מיין לפי תאריך הקמה מהישן</option>
+                        <option value="createdNew">מיין לפי תאריך הקמה מהחדש</option>
+                        <option value="ngoCampaignsCount">מיין לפי מספר קמפיינים  </option>
+                    </select>
+
+
+                    {/* כפתורי תצוגה */}
+                    <div className="ngos-view">
+                        <button
+                            type="button"
+                            className={`ngos-view-btn ${view === "list" ? "is-active" : ""}`}
+                            onClick={() => setView("list")}
+                        >
+                            <List size={20} />
+                        </button>
+                        <button
+                            type="button"
+                            className={`ngos-view-btn ${view === "grid" ? "is-active" : ""}`}
+                            onClick={() => setView("grid")}
+                        >
+                            <Grid size={20} />
+                        </button>
+                    </div>
+                </div>
+            </header>
+
             <AlertDialog show={showAlert} message={message} isFailure={isFailure} failureOnClose={clearAlert} />
             {/* רשימת עמותות */}
-                <div className={view == 'grid'?'ngos-container_grid':'ngos-container_flex'}>
-                    {filteredNgos.map((ngo) => <NgoItem key={ngo._id} ngo={ngo} view={view}/>)}
-                </div> 
-        </div>
+            {filteredNgos.length === 0 ? (
+                <div className="ngos-empty">
+                    לא נמצאו עמותות תואמות. נסו לשנות את החיפוש או המיון.
+                </div>
+            ) : (
+                <div className={view == 'grid' ? 'ngos-items-container_grid' : 'ngos-items-container_flex'}>
+                    {filteredNgos.map((ngo) => <NgoItem key={ngo._id} ngo={ngo} view={view} />)}
+                </div>
+            )}
+        </div >
     );
 }
 

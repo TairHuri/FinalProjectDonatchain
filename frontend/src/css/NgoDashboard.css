@@ -3,12 +3,19 @@
     background-color: #f7f9fc;
     width: 100%;
     margin-top: 5px;
+    max-height: calc(100dvh - 79px);
+    overflow-y: auto;
+}
+.ngo-dashboard-container > div{
+  width: 100%;
 }
 
 .ngo-campaigns-container {
+  max-height: 100%;
   display: flex;
   flex-direction: column;
   gap: 20px;
+  overflow-y: auto;
 }
 
 /* עיצוב קבוע לדשבורד */

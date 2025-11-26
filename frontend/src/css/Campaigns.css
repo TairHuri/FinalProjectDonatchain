@@ -10,7 +10,11 @@
 
   display:flex;flex-direction:column;gap:14px;
   color:var(--fg);font-family:"Heebo",system-ui,Segoe UI,Arial,sans-serif;
-  width: 80%;
+    width: 100%;
+  height: 100%;
+  justify-content: flex-start;
+  padding: 1px 15px;
+  padding-top: 30px;
 }
 
 /* ===== Header ===== */
