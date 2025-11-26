@@ -4,6 +4,7 @@ import { ServerError } from "../middlewares/error.middleware";
 import { UndecodedEventLog } from "ethers";
 
 export default {
+    // Create a new admin request
   async create(data: AdminRequestByUser) {
     console.log(data);
 
@@ -11,6 +12,7 @@ export default {
     const createdRequest = await request.save();
     return createdRequest;
   },
+    // Update an existing admin request
   async update(requestId: string, data: IAdminRequestByUser) {
     if (requestId != data._id) {
       throw new ServerError('invalid requestId', 400);
@@ -18,14 +20,14 @@ export default {
     const updatedRequest = await AdminRequestModel.findByIdAndUpdate(requestId, data)
     return updatedRequest;
   },
+    // Get all admin requests, optionally excluding those marked as "done"
   async getRequests(includeDone = true) {
     const predicate: FilterQuery<IAdminRequestByUser>= {}
     if (!includeDone) {
       
       predicate.status = { $ne: "done" };
     }
-    //const requests = await AdminRequestModel.find(predicate);
-    const requests = await AdminRequestModel.aggregate([
+  const requests = await AdminRequestModel.aggregate([
       {
         $match: predicate
       },

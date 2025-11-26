@@ -9,14 +9,13 @@ import { ServerError } from '../middlewares/error.middleware';
 import { generateCampaignReport } from '../utils/pdfHelper'
 import { IUser } from '../models/user.model';
 import { INgo } from '../models/ngo.model';
-import ngoService from './ngo.service';
 
+// Helper function to calculate total raised amount in a campaign (crypto converted to ETH + credit)
 const calculateTotal = (campaigns: ICampaign[]) => campaigns.map(c => ({ ...c, totalRaised: c.raised.crypto * blockchainService.exchangeRate.eth + c.raised.credit }))
 export default {
 
+    // Generates a PDF report for a campaign
   async generateReport(campaignId: string, user: IUser, includeDonations: boolean, includeComments: boolean) {
-    // const lang = 'he'
-    // serverMessages.campaign.not_found[lang]
 
     const campaign = await Campaign.findById(campaignId)
       .populate("ngo")
@@ -36,23 +35,29 @@ export default {
     const data = await generateCampaignReport(calculatedCampaign, donations, includeDonations, includeComments)
     return data;
   },
+    // Create a new campaign
   async create(payload: any) {
     const campaign = new Campaign(payload);
     await campaign.save();
     return campaign;
   },
+
+    // Update an existing campaign
   async update(payload: any) {
     const campaign = await Campaign.findByIdAndUpdate(payload._id, payload, { new: true }).populate('ngo')
 
     return calculateTotal([campaign!])[0];
   },
+    // Toggle the active status of a campaign (simple toggle)
   async toggleCampaignStatus(campaignId: string) {
     const campaign = await Campaign.findById(campaignId);
     if (!campaign) throw new ServerError(serverMessages.campaign.not_found.he, 400)
-    // שינוי סטטוס
+  
     campaign.isActive = !campaign.isActive;
     await campaign.save();
   },
+
+    // Toggle campaign status through blockchain admin control
   async toggleAdminCampaignStatus(campaignId: string) {
     const campaign = await Campaign.findById(campaignId);
     if (!campaign) throw new ServerError(serverMessages.campaign.not_found.he, 400)
@@ -61,12 +66,13 @@ export default {
     newActive: !campaign.isActive,
   })
   if(result.status == true){
-  // שינוי סטטוס
+
     campaign.isActive = !campaign.isActive;
     return await campaign.save();
   }
   throw new ServerError(serverMessages.campaign.status_campaign.he, 502)
   },
+    // Toggle multiple campaigns status at once for an NGO
   async toggleAdminCampaignsStatus(campaignIds: string[], activeState: boolean, ngoId:string) {
     const blockchainTxList = await Campaign.find({_id: {$in:campaignIds }},{_id:0, blockchainTx:1}).lean();
     
@@ -77,9 +83,7 @@ export default {
     newActive: activeState,
   })
   if(result.status == true){
-  // שינוי סטטוס
-    // await Campaign.updateMany({ ngo: ngoId }, { isActive: activeState });
-    await this.changeCampainsStatus(ngoId, activeState);
+ await this.changeCampainsStatus(ngoId, activeState);
     return;
     
   }
@@ -95,6 +99,7 @@ export default {
 
     return {items: calculateTotal(items), total:items.length };
   },
+    // Get all campaigns
   async getAll() {
     const campaigns = await Campaign.find()
       .populate('ngo')
@@ -103,6 +108,7 @@ export default {
 
     return calculateTotal(campaigns);
   },
+  // Get a campaign by ID
   async getById(id: string, isLean: boolean) {
     if (!mongoose.Types.ObjectId.isValid(id)) return null;
     const campaign = await Campaign.findById(id).populate("ngo").lean();
@@ -114,6 +120,8 @@ export default {
       return campaign
     }
   },
+
+    // Change all campaigns status for an NGO
 async changeCampainsStatus(ngoId: string, isActive:boolean){
   await Campaign.updateMany({ ngo: ngoId }, { isActive: isActive });
 },

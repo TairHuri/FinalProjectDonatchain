@@ -11,7 +11,9 @@ import aboutRoutes from "./about.routes";
 import rulesRoutes from "./rules.routes";
 
 const router = Router();
-
+// This file aggregates and registers all API routes for the application.
+// Each route group handles a specific domain: authentication, campaigns, donations, NGOs, users, admin operations, messages, requests, about info, and rules.
+// The root "/" route is a simple health check returning { ok: true }.
 router.use("/auth", authRoutes);
 router.use("/campaigns", campaignsRoutes);
 router.use("/donations", donationsRoutes);

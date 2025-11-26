@@ -10,15 +10,16 @@ import { sendReceiptEmail } from "../utils/receiptEmail";
 import mongoose from 'mongoose';
 
 export default {
-
+  // Handles a cryptocurrency donation for a given campaign
   cryptoDonate: async (donation: DonationIF, campaignId: string) => {
 
     try {
+      // Fetch the campaign from the database
       const campaign = await Campaign.findById(campaignId);
 
       if (!campaign) throw new ServerError('Campaign not found', 404)
 
-    
+          // Verify blockchain transaction if crypto method is used
       if (donation.method === 'crypto' && donation.txHash) {
         const receipt = await blockchainService.getTransaction(donation.txHash);
         if (!receipt || receipt.status !== 1) {
@@ -29,9 +30,11 @@ export default {
       const createdDonation = new Donation({ ...donation, campaign: campaign._id, });
       await createdDonation.save();
 
+      // Update campaign totals and number of donors
       await campaignService.addDonationToCampaign(campaignId, donation.amount, 'crypto');
       await AuditLog.create({ action: 'donation_created', meta: { donationId: createdDonation._id } });
 
+      // Send a receipt email to the donor
       await sendReceiptEmail({
         donorEmail: donation.email,
         donorFirstName: donation.firstName,
@@ -50,6 +53,7 @@ export default {
     }
   },
 
+    // Handles a credit card donation for a given campaign
   creditDonate: async (creditDonation: Omit<CreditDonation, "method">, campaignId: string) => {
     try {
       const campaign = await campaignService.getById(campaignId, false);

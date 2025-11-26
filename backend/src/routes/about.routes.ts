@@ -2,7 +2,8 @@ import { Router, Request, Response } from "express";
 
 const router = Router();
 
-
+// In-memory "About Us" content object
+// This simulates static content for the website and can be updated via PUT request
 let aboutContent = {
   heroTitle: "מי אנחנו",
   heroText: "מערכת חדשנית לגיוס תרומות בשילוב טכנולוגיית בלוקצ'יין ובינה מלאכותית — למען עתיד חברתי חכם, מאובטח ושקוף יותר",
