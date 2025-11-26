@@ -4,26 +4,30 @@ import dotenv from "dotenv";
 import fetch from 'node-fetch';
 import cron from 'node-cron'
 
+// Load environment variables from .env file
 dotenv.config();
 
+// Server configuration
 const PORT = process.env.PORT || 8890;
 const BANK_OF_ISRAEL_API = process.env.BANK_OF_ISRAEL_API || 8890;
 const app = express();
 
+// Enable CORS for cross-origin requests
 app.use(cors());
+// Parse incoming JSON requests, limit to 5MB to prevent huge payload attacks
+
 app.use(express.json({ limit: "5mb" }));
 
+// Default exchange rates (fallback values)
 const exchangeRate = {
   USD: 3.5,
   EUR: 4.2,
   ILS: 1,
 }
-
+// Type definitions for Bank of Israel API responses
 type BOISuccess = { key: string; currentExchangeRate: number; currentChange: number; unit: number, lastUpdate: string }
 type BOIFailure = { succeeded: boolean, failException: string | null, title: string | null, message: string }
-// https://boi.org.il/PublicApi/GetExchangeRate?key=USD
-// {"key":"USD","currentExchangeRate":3.235,"currentChange":0.810221252726706138984107200,"unit":1,"lastUpdate":"2025-11-14T10:29:30.5727452Z"}
-//{"succeeded":false,"failException":null,"title":null,"message":"There is no such exchange rate"}
+// Fetch current exchange rates from Bank of Israel API and update local rates
 const getExchangeRates = async () => {
   try {
     for (const key in exchangeRate) {
@@ -51,7 +55,7 @@ scheduleDailyRate();
 
 app.post("/api/charge", async (req: Request, res: Response) => {
   try {
-    // כאן רק ביצוע החיוב בפועל (ללא שליחת מייל)
+
     const { amount, currency }: { amount: number, currency: keyof typeof exchangeRate } = req.body;
     let charge = +amount;
 
@@ -62,7 +66,7 @@ app.post("/api/charge", async (req: Request, res: Response) => {
       throw new Error(`invalid currency ${currency}`)
     }
 
-    // שליחה של תגובה ל-backend
+
     res.send({ message: "ok", charge, code: `PAY${Date.now()}` });
   } catch (error: any) {
     console.error("Charge error:", error.message);
