@@ -1,13 +1,10 @@
-/* === פונט יפה (Rubik) ===
-   הוסיפי ל-index.html ב-<head>:
-<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;800&display=swap" rel="stylesheet">
-*/
+
 .dc-page{
   --nav-h:64px;
   --bg:#eaf1f0;
   --ink:#263432;
   --muted:#586c69;
-  --brand:#345e6c;  /* מעט כהה יותר */
+  --brand:#345e6c;  
   --brand2:#739a86;
   --ring:#d9e5e2;
   --card:#ffffff;
@@ -16,10 +13,7 @@
 
   min-height: calc(100dvh - var(--nav-h));
   padding: clamp(16px, 2.4vw, 28px);
-  /* background:
-    radial-gradient(800px 420px at 8% -6%, #e4eeec 0%, transparent 60%),
-    radial-gradient(900px 450px at 95% -10%, #eaf3f6 0%, transparent 55%),
-    var(--bg); */
+
   color: var(--ink);
   font-family: "Rubik", "Heebo", system-ui, Segoe UI, Arial, sans-serif;
 }
@@ -29,11 +23,8 @@
 .dc-hero-title{ font-weight:800; color:var(--brand); font-size:clamp(1.9rem,5vw,2.6rem); margin:0 0 .4rem; }
 .dc-hero-sub{ 
   color:black; 
-  /* color:var(--muted);  */
   font-size:clamp(1rem,2.1vw,1.12rem); max-width:68ch; margin:0 auto 1rem; }
 .dc-hero-cta{ display:flex; justify-content:center; gap:.6rem; flex-wrap:wrap; }
-
-/* Buttons – פחות עגול */
 .dc-btn{
     font-family: "Rubik", "Heebo", system-ui, Segoe UI, Arial, sans-serif;
   display:inline-flex; align-items:center; gap:.5rem;
@@ -71,11 +62,10 @@
 
 .dc-card-body{ padding:1rem 1.1rem; }
 
-/* ⬅️ תמונה גדולה יותר + טקסט יותר שמאלה (מרווח גדול) */
 .dc-step{
   display:grid; align-items:center;
-  grid-template-columns: 1.7fr 0.9fr;  /* תמונה גדולה יותר */
-  column-gap: clamp(18px, 3vw, 34px);  /* מרווח גדול יותר בין תמונה לטקסט */
+  grid-template-columns: 1.7fr 0.9fr; 
+  column-gap: clamp(18px, 3vw, 34px); 
 }
 
 .dc-step-media { position:relative; }
@@ -84,7 +74,7 @@
 }
 .dc-step-media img{
   display:block; width:100%;
-  aspect-ratio: 16 / 9;               /* יותר גבוה ורחב */
+  aspect-ratio: 16 / 9;               
   object-fit: cover;
   border-radius:12px;
   box-shadow:0 12px 24px rgba(25,35,33,.14);
@@ -96,7 +86,6 @@
 
 .dc-card-foot{ display:flex; justify-content:space-between; gap:.6rem; padding:.75rem 1rem; border-top:1px solid var(--ring); }
 
-/* רספונסיביות */
 @media (max-width: 900px){
   .dc-step{ grid-template-columns:1fr; }
   .dc-step-text{ padding-inline-start: 0; }
@@ -122,5 +111,4 @@
   box-shadow: 0 20px 50px rgba(0,0,0,.35);
 }
 
-/* להפוך את הצ׳ברונים ב-RTL */
 .dc-page [dir="rtl"] .dc-btn svg{ transform:scaleX(-1); }

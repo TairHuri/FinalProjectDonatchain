@@ -3,8 +3,8 @@
   --ar-fg:#22302d;
   --ar-soft:#f7fbfa;
   --ar-border:#e3ece9;
-  --ar-primary:#345e6c;    /* כחול-ירקרק עמוק */
-  --ar-primary-2:#739a86;  /* ירקרק רך */
+  --ar-primary:#345e6c;    
+  --ar-primary-2:#739a86;  
   --ar-muted:#6b7a76;
 
   --ar-warn:#f59e0b;
@@ -132,7 +132,7 @@
 .ar-textarea:focus{border-color:#cfe0dc;box-shadow:0 0 0 3px rgba(52,94,108,.12)}
 .ar-drawer-actions{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.2rem}
 
-/* קבוצה לבחירת סטטוס */
+
 .ar-status-group{
   display: flex;
   gap: .4rem;
@@ -155,7 +155,6 @@
   padding: .28rem .6rem;
 }
 
-/* כפתור ראשי */
 .ar-btn.primary{
   color: #fff;
   background: linear-gradient(135deg, var(--ar-primary), var(--ar-primary-2));
@@ -167,7 +166,6 @@
   transform: translateY(-1px);
 }
 
-/* גובה מלא, חלוקה ל-Header/Body/Footer */
 .ar-drawer{
   position: fixed;
   inset-block: 0;
@@ -180,11 +178,10 @@
   z-index: 60;
   display:flex;
   flex-direction:column;
-  height: 100dvh; /* מונע גלילה של הדף, רק המגירה גוללת */
+  height: 100dvh; 
 }
 .ar-drawer.is-open{ inset-inline-end: 0; }
 
-/* Header דביק */
 .sticky-top{
   position: sticky;
   top: 0;
@@ -192,10 +189,10 @@
   z-index: 2;
 }
 
-/* גוף המגירה מגלגל פנימה */
+
 .ar-drawer-body{
   flex: 1;
-  min-height: 0;            /* הכרחי כדי שה-overflow יעבוד בפלקס */
+  min-height: 0;       
   overflow: auto;
   padding: .8rem .9rem;
   display: flex;
@@ -203,7 +200,7 @@
   gap: .6rem;
 }
 
-/* Footer דביק בתחתית */
+
 .ar-drawer-footer{
   position: sticky;
   bottom: 0;
@@ -216,7 +213,7 @@
   z-index: 2;
 }
 
-/* שורת מטא-דאטה קומפקטית ורספונסיבית */
+
 .ar-drawer-row{
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -227,20 +224,20 @@
   .ar-drawer-row{ grid-template-columns: 1fr; }
 }
 
-/* גוף הבקשה קומפקטי, גלילה עצמאית */
+
 .ar-body{
   white-space: pre-wrap;
   background: var(--ar-soft);
   border: 1px solid var(--ar-border);
   border-radius: 10px;
   padding: .6rem;
-  max-height: 28vh; /* לא יתפוס יותר מדי מקום */
+  max-height: 28vh; 
   overflow: auto;
   font-family: inherit;
   font-size: .95rem;
 }
 
-/* סטטוס צ׳יפים */
+
 .ar-status-group{
   display: flex;
   gap: .4rem;
@@ -263,7 +260,7 @@
   padding: .28rem .6rem;
 }
 
-/* קולאפס חלק — לא דוחף את הדף החוצה, רק בתוך הגוף */
+
 .ar-collapsible{
   max-height: 0;
   overflow: hidden;
@@ -272,11 +269,10 @@
   will-change: max-height, opacity;
 }
 .ar-collapsible[data-open="true"]{
-  max-height: 240px; /* מרחב לשדה + ריווח */
+  max-height: 240px;
   opacity: 1;
 }
 
-/* כפתור ראשי */
 .ar-btn.primary{
   color: #fff;
   background: linear-gradient(135deg, var(--ar-primary), var(--ar-primary-2));
@@ -288,7 +284,7 @@
   transform: translateY(-1px);
 }
 
-/* התאמות מובייל קטנות */
+
 @media (max-width: 420px){
   .ar-drawer{
     width: 100vw;

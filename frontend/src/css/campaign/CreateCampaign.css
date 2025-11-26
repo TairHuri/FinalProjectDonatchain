@@ -1,4 +1,4 @@
-/* עמוד יצירת קמפיין – RTL, רספונסיבי, צבעים תואמי לוגו */
+
 .cc-card{
   direction: rtl;
   background: #fff;
@@ -45,7 +45,7 @@
 
 .cc-row2{ display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-/* מדיה */
+
 .cc-media-field{ margin-bottom: .6rem; }
 .cc-main-preview{
   width: 240px; height: 160px; object-fit: cover; border-radius: 12px;
@@ -61,7 +61,7 @@
 }
 .cc-video{ width: 100%; max-width: 340px; border-radius: 12px; box-shadow: 0 8px 18px rgba(25,35,33,.12); }
 
-/* קטגוריות (chips) */
+
 .cc-chips{
   display: flex; flex-wrap: wrap; gap: .5rem;
 }
@@ -83,20 +83,17 @@
   padding: .35rem .6rem; border-radius: 999px; font-weight: 700; cursor: pointer;
 }
 
-/* פעולות */
 .cc-actions{ display:flex; justify-content:flex-start; margin-top: .6rem; }
 .cc-submit{ min-width: 180px; }
 
-/* רספונסיביות */
 @media (max-width: 900px){
   .cc-grid{ grid-template-columns: 1fr; }
   .cc-row2{ grid-template-columns: 1fr; }
   .cc-main-preview{ width: 100%; height: auto; aspect-ratio: 3/2; }
 }
 
-/* מצב קומפקטי למדיה */
 .cc-compact-media .cc-main-preview {
-  /* קטנה, לא תגרור את הגובה */
+
   width: clamp(180px, 26vw, 300px);
   aspect-ratio: 4 / 3;
   height: auto;
@@ -107,14 +104,13 @@
 
 .cc-compact-media .cc-video {
   width: 100%;
-  max-width: 420px;         /* מקסימום רוחב */
-  aspect-ratio: 16 / 9;     /* קיבוע יחס */
+  max-width: 420px;         
+  aspect-ratio: 16 / 9;    
   height: auto;
   border-radius: 12px;
   box-shadow: 0 8px 18px rgba(25,35,33,.12);
 }
 
-/* גלריה קטנה וצפופה יותר */
 .cc-compact-media .cc-gallery {
   grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
   gap: 8px;
@@ -122,14 +118,14 @@
 }
 .cc-compact-media .cc-thumb {
   width: 100%;
-  aspect-ratio: 1 / 1;      /* ריבועיות כדי לחסוך גובה */
+  aspect-ratio: 1 / 1;      
   object-fit: cover;
   border-radius: 10px;
   box-shadow: 0 6px 14px rgba(25,35,33,.1);
   max-height: 110px;
 }
 
-/* אריח מדיה קומפקטי */
+
 .cc-compact-media .image-tile {
   position: relative;
   display: inline-block;
@@ -146,7 +142,7 @@
   cursor: pointer;
 }
 
-/* רספונסיביות – במסכים קטנים עוד יותר קומפקטי */
+
 @media (max-width: 640px) {
   .cc-compact-media .cc-main-preview { width: clamp(160px, 48vw, 260px); }
   .cc-compact-media .cc-video       { max-width: 100%; }

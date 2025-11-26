@@ -10,42 +10,26 @@
 
 
 .smart-search-wrapper {
-
-    /* max-width: 900px; */
-    /* margin: 10px auto; */
-    /* padding: 30px; */
-    /* text-align: center; */
-    
-
     padding: 40px;
     text-align: center;
-    /* background-color: #f7f7f7; */
     background-color: #f7f8f1;
     border-radius: 12px;
     margin: 5px auto;
-    /* max-width: 900px; */
      width: 100%;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     direction: rtl;
 }
 
 .search-title {
-    /* color: #aebfaa; */
-   /* color: #0f172a; */
    color: #476468;
-    /* color: #5e726e; */
     font-size: 2.4rem;
     font-weight:100;
     margin-bottom: 5px;
     font-family: "M PLUS 1p", sans-serif;
-     /* font-family: "Varela Round", sans-serif; */
-    /* font-family: "Rubik Doodle Shadow", system-ui; */
-    /* font-family: "Rubik Spray Paint", system-ui; */
 }
 
 .search-subtitle {
-    /* color: var(--text-dark); */
-    /* color: #0f172a; */
+
     color: #aebfaa;
     font-weight: 50;
     font-size: 1.3rem;
@@ -138,9 +122,6 @@
 }
 
 
-
-
-/* חלונית תוצאות – רקע כהה שקוף */
 .ai-search-modal-backdrop {
   position: fixed;
   inset: 0;
@@ -152,7 +133,7 @@
   z-index: 9999;
 }
 
-/* החלונית עצמה */
+
 .ai-search-modal {
   background: #ffffff;
   border-radius: 18px;
@@ -165,7 +146,7 @@
   direction: rtl;
 }
 
-/* כותרת וחיווי סגירה */
+
 .ai-search-modal-header {
   display: flex;
   align-items: center;
@@ -201,7 +182,6 @@
   transform: translateY(-1px);
 }
 
-/* מצב טעינה */
 .ai-search-loading {
   display: flex;
   flex-direction: column;
@@ -227,7 +207,6 @@
   }
 }
 
-/* ללא תוצאות */
 .ai-search-empty {
   text-align: center;
   padding: 2rem 0;
@@ -235,14 +214,12 @@
   font-size: 0.98rem;
 }
 
-/* רשת עמותות – רספונסיבי */
 .ai-search-results-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1.25rem;
 }
 
-/* כרטיס עמותה */
 .ai-search-ngo-card {
   background: linear-gradient(135deg, #f9fafb 0%, #f3f4ff 100%);
   border-radius: 16px;
@@ -260,7 +237,6 @@
   box-shadow: 0 18px 35px rgba(20, 27, 52, 0.14);
 }
 
-/* לוגו עמותה */
 .ai-search-ngo-logo-wrapper {
   width: 78px;
   height: 78px;
@@ -279,7 +255,6 @@
   object-fit: contain;
 }
 
-/* שם עמותה */
 .ai-search-ngo-name {
   margin: 0 0 0.9rem;
   font-size: 1.02rem;
@@ -287,7 +262,6 @@
   color: #111827;
 }
 
-/* כפתורי פעולה */
 .ai-search-actions {
   display: flex;
   flex-direction: column;
@@ -310,7 +284,6 @@
     transform 0.12s ease;
 }
 
-/* תוכלי להתאים את הצבעים ללוגו שלך */
 .ai-search-btn.primary {
   background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
   color: #ffffff;
@@ -331,7 +304,7 @@
   background: #eef0ff;
 }
 
-/* מובייל – מעט התאמות */
+
 @media (max-width: 600px) {
   .ai-search-modal {
     padding: 1.3rem 1.1rem 1.6rem;

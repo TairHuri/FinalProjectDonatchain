@@ -113,7 +113,6 @@
     filter: brightness(1.03);
 }
 
-/* רספונסיביות */
 @media (max-width: 520px) {
     .report-dialog {
         padding: 14px 12px;
