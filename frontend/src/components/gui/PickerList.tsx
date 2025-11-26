@@ -3,20 +3,25 @@ import { X, Search, ChevronDown } from "lucide-react";
 
 import '../../css/gui/PickerList.css';
 
+// Entity type used to represent selectable items in the picker
 export interface Entity {
     _id: string;
     name: string;
 
 }
+
+// Type alias for any boolean setter
 export type StateFunc = (b: boolean) => void
+
+// Component props
 export type PickerListProps = {
-    list: Entity[];
-    openPicker: boolean;
-    setOpenPicker: React.Dispatch<React.SetStateAction<boolean>>;
-    selectedItemId: string;
-    setSelectedItemId: React.Dispatch<React.SetStateAction<string>>;
-    useNgo?: boolean
-}
+    list: Entity[]; // List of items to choose from
+    openPicker: boolean; // Controls whether the dropdown is open
+    setOpenPicker: React.Dispatch<React.SetStateAction<boolean>>; // Setter for openPicker
+    selectedItemId: string; // Stores the selected item ID ("all" is treated as default)
+    setSelectedItemId: React.Dispatch<React.SetStateAction<string>>; // Setter for selectedItemId
+    useNgo?: boolean; // Determines if the picker is used specifically for NGOs
+};
 const PickerList = ({ list, openPicker, setOpenPicker, selectedItemId, setSelectedItemId, useNgo=false}: PickerListProps) => {
     
     const [query, setQuery] = useState<string>("");
