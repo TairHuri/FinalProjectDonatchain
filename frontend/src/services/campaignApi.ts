@@ -2,8 +2,21 @@ import type { Campaign } from "../models/Campaign";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
 
+
+/**
+ * Updates an existing campaign.
+ * Sends multipart/form-data including metadata, existing media references,
+ * and optional new media files.
+ *
+ * @param data - The full campaign object containing updated fields
+ * @param token - Authorization token
+ * @param images - New images to upload (optional)
+ * @param movie - New video file to upload (optional)
+ * @param mainImage - New main image file to upload (optional)
+ * @returns The updated campaign data from the server
+ * @throws Error if the server response is not status 200
+ */
 export async function updateCampaign(data: Campaign, token: string, images: File[] | null, movie: File | null, mainImage: File | null) {
-    // content type: multipart/formdata
 
     const formData = new FormData()
     formData.append("title", data.title)
@@ -54,6 +67,14 @@ export async function updateCampaign(data: Campaign, token: string, images: File
     return res.json();
 }
 
+/**
+ * Toggles a campaign's active status (enable/disable).
+ *
+ * @param id - ID of the campaign
+ * @param token - Authorization token
+ * @returns The updated status response
+ * @throws Error if request fails
+ */
 export async function toggleCampaignStatus(id: string, token: string) {
   const res = await fetch(`${API_URL}/campaigns/${id}/toggle-status`, {
     method: "PUT",
@@ -64,6 +85,13 @@ export async function toggleCampaignStatus(id: string, token: string) {
   return result;
 }
 
+/**
+ * Retrieves all campaigns (admin only).
+ *
+ * @param token - Authorization token
+ * @returns List of all campaigns
+ * @throws Error if request fails
+ */
 export async function getAllCampaigns(token: string) {
   const res = await fetch(`${API_URL}/campaigns/admin/all`, {
     headers: { Authorization: `Bearer ${token}` },
@@ -71,9 +99,17 @@ export async function getAllCampaigns(token: string) {
   if (!res.ok) throw new Error(await res.text());
   return res.json();
 }
+
+/**
+ * Generates and downloads a campaign report PDF.
+ *
+ * @param token - Authorization token
+ * @param campaignId - Campaign ID
+ * @param includeDonations - Whether to include donation data
+ * @param includeComments - Whether to include comments
+ */
 export async function getCampaignReport(token: string, campaignId:string, includeDonations:string, includeComments:string) {
-  //window.open(`/api/campaigns/${id}/export.pdf`, '_blank');
-  const res = await fetch(`${API_URL}/campaigns/reports/${campaignId}?includeDonations=${includeDonations}&includeComments=${includeComments}`, {
+ const res = await fetch(`${API_URL}/campaigns/reports/${campaignId}?includeDonations=${includeDonations}&includeComments=${includeComments}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!res.ok) throw new Error(await res.text());
@@ -83,6 +119,12 @@ export async function getCampaignReport(token: string, campaignId:string, includ
   
   
 }
+/**
+ * Retrieves all available campaign tags.
+ *
+ * @returns List of tags
+ * @throws Error if request fails
+ */
 export async function getCampaignTags() {
   const res = await fetch(`${API_URL}/campaigns/tags`);
   if (!res.ok) throw new Error(await res.text());

@@ -1,7 +1,9 @@
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
 
+
+// Fetch all donations (admin/general endpoint)
 export const getAllDonations = async () => {
-  const url = `${API_URL}/donations`; // נתיב כללי שיחזיר את כל התרומות
+  const url = `${API_URL}/donations`; 
   try {
     const res = await fetch(url);
     if (!res.ok) {
@@ -17,6 +19,7 @@ export const getAllDonations = async () => {
   }
 };
 
+// Fetch donations filtered by a specific campaign
 export const getDonationsByCampaign = async (campaignId: string) => {
     const url = `${API_URL}/donations/campaign/ngomember?campaignId=${campaignId}`  // שים לב לשימוש ב-query param
     try {
@@ -34,6 +37,7 @@ export const getDonationsByCampaign = async (campaignId: string) => {
     }
 }
 
+// Fetch donations filtered by a specific NGO
 export const getDonationsByNgo = async (ngoId: string) => {
   const url = `${API_URL}/donations/ngo?ngoId=${ngoId}`  // שים לב לשימוש ב-query param
   

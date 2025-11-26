@@ -2,7 +2,7 @@ import type { Message } from "../models/Message";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
 
-
+// Save a new message related to an NGO
 export const saveMessage = async (message:Message, token:string) => {
        const res = await fetch(`${API_URL}/messages`, {
         method: "POST",
@@ -17,7 +17,7 @@ export const saveMessage = async (message:Message, token:string) => {
     }
     return res.json();
 }
-
+// Fetch all messages for a specific NGO using its ID
 export const getMessagesByNgoId = async(ngoId:string, token:string) => {
     const res = await fetch(`${API_URL}/messages/${ngoId}`, {
         headers:{"Authorization": `Bearer ${token}`,}

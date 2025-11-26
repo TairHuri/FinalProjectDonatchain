@@ -21,7 +21,7 @@ import "./App.css";
 import Ngos from "./pages/Ngos";
 import NgoPageForUsers from "./components/NgoPageForUsers";
 
-// ✅ הוספת דפי שחזור סיסמה
+
 import ForgotPassword from "./pages/ForgotPassword";
 import VerifyCode from "./pages/VerifyCode";
 import ResetPassword from "./pages/ResetPassword";
@@ -33,10 +33,8 @@ const App: React.FC = () => {
         <div
           className=" h-screen bg-gray-100 text-gray-900 flex flex-col"
         >
-          {/* סרגל ניווט עליון */}
           <Navbar />
 
-          {/* תוכן ראשי */}
           <div className=" max-w-6xl px-4
             min-h-[calc(100dvh-70px)]
             max-h-[calc(100dvh-70px)]
@@ -59,12 +57,12 @@ const App: React.FC = () => {
               <Route path="/ngos" element={<Ngos />} />
               <Route path="/ngos/:id" element={<NgoPageForUsers />} />
 
-              {/*  דפי שחזור סיסמה */}
+
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/verify-code" element={<VerifyCode />} />
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/login" element={<LoginNgo />} />
-              {/*  נתיב מוגן — רק מנהל מורשה */}
+ 
               <Route
                 path="/admin/dashboard"
                 element={
