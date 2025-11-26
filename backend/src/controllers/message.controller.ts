@@ -2,6 +2,10 @@ import { Request, Response } from 'express';
 import messageService from "../services/message.service";
 import { ServerError } from '../middlewares/error.middleware';
 
+/**
+ * Create a new message record in the system.
+ * Expects a message body and delegates creation to the messageService.
+ */
 export const createMessage = async (req: Request, res: Response) => {
     try{
         const {message} = req.body;
@@ -12,6 +16,10 @@ export const createMessage = async (req: Request, res: Response) => {
     }
 }
 
+/**
+ * Get all messages associated with a specific NGO.
+ * NGO ID is provided as a route parameter.
+ */
 export const getMessagesByNgo = async (req: Request, res: Response) => {
     try{
         const {ngoid} = req.params;

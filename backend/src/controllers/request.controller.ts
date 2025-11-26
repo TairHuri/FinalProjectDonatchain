@@ -3,6 +3,9 @@ import requestService from "../services/requests.service";
 import { ServerError } from '../middlewares/error.middleware';
 import templates from  '../config/requestTemplates.json'
 
+// =======================================
+//  Create new request
+// =======================================
 export const createdRequest = async (req: Request, res: Response) => {
     try{
         const {request} = req.body;
@@ -14,6 +17,10 @@ export const createdRequest = async (req: Request, res: Response) => {
         res.status((error as ServerError).statusCode||500).send({ message: (error as any).message });
     }
 }
+
+// =======================================
+//  Update existing request
+// =======================================
 export const updateRequest = async (req: Request, res: Response) => {
     try{
         const {requestId} = req.params;
@@ -25,6 +32,9 @@ export const updateRequest = async (req: Request, res: Response) => {
     }
 }
 
+// =======================================
+//  Get all requests for a specific NGO
+// =======================================
 export const getRequestsByNgo = async (req: Request, res: Response) => {
     try{
         const {ngoid} = req.params;
@@ -36,6 +46,9 @@ export const getRequestsByNgo = async (req: Request, res: Response) => {
         res.status((error as ServerError).statusCode||500).send({ message: (error as any).message });
     }
 }
+// =======================================
+//  Get all requests (optionally include completed)
+// =======================================
 export const getRequests = async (req: Request, res: Response) => {
     try{
         const {includeDone} = req.query;
@@ -46,7 +59,9 @@ export const getRequests = async (req: Request, res: Response) => {
         res.status((error as ServerError).statusCode||500).send({ message: (error as any).message });
     }
 }
-
+// =======================================
+//  Return predefined request templates
+// =======================================
 export const getTemplates = (req: Request, res: Response) =>{
     res.send(templates)
 }

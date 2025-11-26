@@ -9,8 +9,12 @@ import { sendMemberStatusEmail, sendNgoStatusEmail } from '../middlewares/email.
 import ngoService from '../services/ngo.service';
 import serverMessages from '../config/serverMessages.json'
 
+// ----------------------------
+// Get all donors and total donated
+// ----------------------------
 export const getAllDonors = async (req: Request, res: Response) => {
   try {
+        // Aggregate donors with their donations and calculate total donated amount
     const donors = await User.aggregate([
       { $match: { role: 'donor' } },
       {
@@ -43,8 +47,12 @@ export const getAllDonors = async (req: Request, res: Response) => {
   }
 };
 
+// ----------------------------
+// Get general admin statistics
+// ----------------------------
 export const getAdminStats = async (req: Request, res: Response) => {
   try {
+        // Run all database operations in parallel for better performance
     const [usersCount, ngosCount, campaignsCount, donationsCount, campaigns] = await Promise.all([
       User.countDocuments(),
       Ngo.countDocuments(),
@@ -53,6 +61,7 @@ export const getAdminStats = async (req: Request, res: Response) => {
       campaignService.getAll(),
     ]);
 
+      // Calculate total raised from all campaigns
     const totalRaised = campaigns.reduce((sum, d) => sum + (d.totalRaised || 0), 0);
 
     res.json({
@@ -68,6 +77,9 @@ export const getAdminStats = async (req: Request, res: Response) => {
   }
 };
 
+// ----------------------------
+// Toggle single campaign status by admin
+// ----------------------------
 export const toggleCampignStatus = async(req: Request, res: Response) =>{
   const {campaignId} = req.params;
   try{
@@ -77,6 +89,11 @@ export const toggleCampignStatus = async(req: Request, res: Response) =>{
     res.status((error as ServerError).statusCode||500).send({status:false, message: (error as any).message})
   }
 }
+
+// ----------------------------
+// Toggle multiple campaigns + NGO status
+// Send email to NGO + all members
+// ----------------------------
 export const toggleCampignsStatus = async(req: Request, res: Response) =>{
   const {ngoId} = req.params;
   const {campaignIds, isActive} = req.body;
@@ -97,8 +114,7 @@ export const toggleCampignsStatus = async(req: Request, res: Response) =>{
       console.warn("⚠️ לא נמצא אימייל לעמותה:", ngo.name);
     }
 
-    // 🔹 שליחת מייל לכל החברים של העמותה
-    const User = (await import("../models/user.model")).default; // טעינה דינמית למניעת import מעגלי
+ const User = (await import("../models/user.model")).default; // טעינה דינמית למניעת import מעגלי
     const members = await User.find({ ngoId: ngo._id });
 
     for (const member of members) {

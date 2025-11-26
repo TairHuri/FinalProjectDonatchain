@@ -10,7 +10,9 @@ import aiService from '../services/ai.service'
 import { ServerError } from "../middlewares/error.middleware";
 import { sendMemberStatusEmail, sendNgoStatusEmail } from "../middlewares/email.middleware";
 
-
+// ===============================
+//  AI-based NGO search controller
+// ===============================
 export const aiSearchNgo = async (req: Request, res: Response) => {
   try {
     const { q } = req.query;
@@ -25,6 +27,10 @@ export const aiSearchNgo = async (req: Request, res: Response) => {
     res.status((error as any).statusCode || 500).send({ message: (error as any).message })
   }
 }
+
+// =====================================
+//  Verify NGO (Active + Approved check)
+// =====================================
 export const verifyNgo = async (req: Request, res: Response) => {
   const { id } = req.params;
 
@@ -51,6 +57,9 @@ export const verifyNgo = async (req: Request, res: Response) => {
 
 }
 
+// ===============================
+//  Create new NGO
+// ===============================
 export const createNgo = async (req: Request, res: Response) => {
   const { name, description, website, contactEmail, logoUrl, certificate, ngoNumber } = req.body;
   const user = (req as any).user;
@@ -95,6 +104,9 @@ export const createNgo = async (req: Request, res: Response) => {
   }
 };
 
+// ===============================
+// 📋 List NGOs with campaign count
+// ===============================
 export const listNgos = async (_req: Request, res: Response) => {
   try {
     const items = await Ngo.aggregate([
@@ -127,7 +139,9 @@ export const listNgos = async (_req: Request, res: Response) => {
 };
 
 
-
+// ===============================
+//  Get single NGO with creator info
+// ===============================
 export const getNgo = async (req: Request, res: Response) => {
   try {
     const ngo = await Ngo.findById(req.params.id).populate("createdBy", "name email");
@@ -139,7 +153,9 @@ export const getNgo = async (req: Request, res: Response) => {
 };
 
 
-
+// ============================================
+//  Toggle NGO status (activate/suspend NGO)
+// ============================================
 export const toggleNgoStatus = async (req: Request, res: Response) => {
   try {
     const ngo = await Ngo.findById(req.params.id);
@@ -190,89 +206,9 @@ export const toggleNgoStatus = async (req: Request, res: Response) => {
   }
 };
 
-// async function sendMemberStatusEmail({
-//   to,
-//   fullName,
-//   ngoName,
-//   isActive,
-// }: {
-//   to: string;
-//   fullName: string;
-//   ngoName: string;
-//   isActive: boolean;
-// }) {
-//   const subject = isActive
-//     ? `העמותה "${ngoName}" הופעלה מחדש`
-//     : `העמותה "${ngoName}" הושהתה`;
-
-//   const html = `
-//     <div style="direction: rtl; text-align: right; font-family: 'Assistant', Arial; background-color:#f9f9f9; padding:25px;">
-//       <h2 style="color:${isActive ? "#2e7d32" : "#c62828"};">${subject}</h2>
-//       <p>שלום ${fullName},</p>
-//       <p>עמותת <b>${ngoName}</b> ${isActive ? "הופעלה מחדש על ידי מנהל המערכת." : "הושהתה זמנית על ידי מנהל המערכת."}</p>
-//       ${isActive
-//       ? "<p>הפעילות חזרה לסדרה ותוכל/י להשתמש שוב במערכת DonatChain.</p>"
-//       : "<p>המערכת לא מאפשרת כניסה עד להודעה חדשה ממנהל המערכת.</p>"
-//     }
-//       <hr style="margin:20px 0; border:none; border-top:1px solid #ddd;"/>
-//       <p>בברכה,<br/>צוות <b>DonatChain</b></p>
-//     </div>
-//   `;
-
-//   try {
-//     await transporter.sendMail({
-//       from: `"DonatChain" <${process.env.EMAIL_USER}>`,
-//       to,
-//       subject,
-//       html,
-//     });
-//     console.log(`📧 נשלח מייל לחבר בעמותה: ${to}`);
-//   } catch (err) {
-//     console.error("❌ שגיאה בשליחת מייל לחבר עמותה:", err);
-//   }
-// }
-
-// async function sendNgoStatusEmail({
-//   to,
-//   ngoName,
-//   isActive,
-// }: {
-//   to: string;
-//   ngoName: string;
-//   isActive: boolean;
-// }) {
-//   const subject = isActive
-//     ? ` העמותה "${ngoName}" הופעלה מחדש`
-//     : ` העמותה "${ngoName}" הושהתה זמנית`;
-
-//   const html = `
-//     <div style="direction: rtl; text-align: right; font-family: 'Assistant', Arial; background-color:#f9f9f9; padding:25px;">
-//       <h2 style="color:${isActive ? "#2e7d32" : "#c62828"};">${subject}</h2>
-//       <p>שלום רב,</p>
-//       <p>עמותת <b>${ngoName}</b> ${isActive ? "הופעלה מחדש על ידי מנהל המערכת." : "הושהתה זמנית על ידי מנהל המערכת."}</p>
-//       ${isActive
-//       ? "<p>העמותה יכולה כעת להתחבר למערכת ולנהל קמפיינים כרגיל.</p>"
-//       : "<p>המערכת לא מאפשרת כניסה עד להודעה חדשה ממנהל המערכת.</p>"
-//     }
-//       <hr style="margin:20px 0; border:none; border-top:1px solid #ddd;"/>
-//       <p>בברכה,<br/>צוות <b>DonatChain</b></p>
-//     </div>
-//   `;
-
-//   try {
-//     await transporter.sendMail({
-//       from: `"DonatChain" <${process.env.EMAIL_USER}>`,
-//       to,
-//       subject,
-//       html,
-//     });
-
-//     console.log(` מייל נשלח בהצלחה לעמותה: ${to} (${ngoName})`);
-//   } catch (err) {
-//     console.error(" שגיאה בשליחת מייל לעמותה:", err);
-//   }
-// }
-
+// ===============================
+// Update NGO (including media files)
+// ===============================
 export const updateNgo = async (req: Request, res: Response) => {
   const user = (req as any).user;
   try {

@@ -8,7 +8,10 @@ import { ICampaign } from '../models/campaign.model';
 import campaignService from '../services/campaign.service';
 
 
-
+/**
+ * Create a new campaign for the logged-in NGO user.
+ * Handles uploaded media files: images, main image, and movie.
+ */
 export const createCampaign = async (req: Request, res: Response) => {
 
   const { title, description, startDate, endDate, tags, goal, isActive, blockchainTx } = req.body;
@@ -45,6 +48,10 @@ export const createCampaign = async (req: Request, res: Response) => {
   }
 }
 
+/**
+ * Update an existing campaign.
+ * Supports adding new media while keeping existing ones.
+ */
 export const updateCampaign = async (req: Request, res: Response) => {
   const { campaignId } = req.params;
   const { title, description, startDate, endDate, tags, goal, isActive, blockchainTx, existingImages: images = [], existingMovie: movie, existingMainImage: mainImage } = req.body;
@@ -82,7 +89,10 @@ export const updateCampaign = async (req: Request, res: Response) => {
   }
 }
 
-
+/**
+ * List campaigns.
+ * Supports: search, filter by tag, filter by NGO ID.
+ */
 export const listCampaigns = async (req: Request, res: Response) => {
   const { q, tag, ngoId } = req.query as any;
   try {
@@ -102,7 +112,9 @@ export const listCampaigns = async (req: Request, res: Response) => {
   }
 };
 
-
+/**
+ * Get campaign by ID with full details.
+ */
 export const getCampaign = async (req: Request, res: Response) => {
   try {
     const campaign = await CampaignService.getById(req.params.id, true);
@@ -115,6 +127,9 @@ export const getCampaign = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * Get all campaigns (for admin or system view).
+ */
 export const getAllCampaigns = async (req: Request, res: Response) => {
   try {
     const campaigns = await CampaignService.getAll();
@@ -124,6 +139,10 @@ export const getAllCampaigns = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * Toggle campaign active/suspended status.
+ * Only the campaign's NGO or admin can modify it.
+ */
 export const toggleCampaignStatus = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -144,7 +163,9 @@ export const toggleCampaignStatus = async (req: Request, res: Response) => {
   }
 };
 
-
+/**
+ * Get campaigns filtered by NGO ID.
+ */
 export const getCampagnsByNgo = async (req: Request, res: Response) => {
   try {
     const { ngoId } = req.query;
@@ -155,11 +176,18 @@ export const getCampagnsByNgo = async (req: Request, res: Response) => {
   }
 }
 
+/**
+ * Get list of available campaign tags.
+ */
 export const getCampaignTags = (req: Request, res: Response) => {
   const tags = CampaignService.getCampaignTags();
   res.send(tags)
 }
 
+/**
+ * Generate a downloadable PDF report for a campaign.
+ * Supports including donations and comments.
+ */
 export const getCampaignReport = async (req: Request, res: Response) => {
   const { id } = req.params;
   const includeDonations = req.query.includeDonations === "1";
