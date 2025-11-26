@@ -17,6 +17,7 @@ const CampaignDetails = ({ campaignId, editMode, setEditMode }: CampaignDetailsT
     const [campaign, setCampaign] = useState<Campaign | null>();
 
 
+    // Load campaign data when campaigns list updates
     useEffect(() => {
         const c = campaigns.find((x) => x._id! === (campaignId));
         if (c) {
@@ -24,11 +25,14 @@ const CampaignDetails = ({ campaignId, editMode, setEditMode }: CampaignDetailsT
         }
     }, [campaigns])
 
+   // If user is not logged in, access should be denied
     if (!user) return <p>לא בוצעה התחברות</p>
+    // If campaign doesn't exist, show a fallback message
     if (!campaign) return <p>קמפיין לא נמצא</p>;
     return (
         <>
             {user ? (
+                // Allow switching between view and edit modes based on `editMode` state
                 editMode === "view" ? 
                 <CampaignView campaign={campaign} setEditMode={setEditMode} setCampaign={setCampaign} token={user.token!} />
                  : 
@@ -36,6 +40,8 @@ const CampaignDetails = ({ campaignId, editMode, setEditMode }: CampaignDetailsT
             ) 
             :
             (
+ 
+                 // Fallback if user session expired or invalid
                 <p>לא נמצאו פרטים, אנא התחבר שוב.</p>
             )}
         </>
