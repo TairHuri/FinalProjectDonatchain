@@ -92,6 +92,8 @@ const CampaignView = ({ campaign, setCampaign, token, setEditMode, userRole }: C
         </button>
        {/* Toggle active status (activate / suspend) */}
         <button style={{ ...primaryBtnStyle }} onClick={openConfirm} disabled={userRole != 'manager'}>
+       {/* Toggle active status (activate / suspend) */}
+        
           {campaign.isActive ? 'השהייה/מחיקה' : 'הפעל'}
         </button>
          {/* Open report modal */}
