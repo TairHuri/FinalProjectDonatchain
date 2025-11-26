@@ -12,6 +12,10 @@ type NgoDetailsProps = {
   };
 };
 
+/**
+ * Card component that displays full NGO information.
+ * Includes NGO identity, description and contact details.
+ */
 const NgoDetailsCard: React.FC<NgoDetailsProps> = ({ ngo }) => {
   return (
     <div

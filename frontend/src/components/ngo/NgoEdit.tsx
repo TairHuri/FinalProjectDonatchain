@@ -10,20 +10,24 @@ import Tags from "../gui/Tags";
 export type NgoEditProps = {
     token: string;
     ngoDetails: Ngo;
-    updateNgo:(ngo:Ngo)=>void;
-    setEditMode: (mode: 'edit' | 'view') => void
+    updateNgo: (ngo: Ngo) => void;                      // Callback to update NGO data in parent component
+    setEditMode: (mode: 'edit' | 'view') => void        // Toggle edit/view mode
 }
 
 const NgoEdit = ({ token, ngoDetails, updateNgo, setEditMode }: NgoEditProps) => {
     console.log('ngoDetails', ngoDetails);
-    
+    // Alert handler hook for user notifications
     const { showAlert, isFailure, message, clearAlert, setAlert } = useAlertDialog();
+  // Current editable NGO object
     const [ngo, setNgo] = useState<Ngo>({ ...ngoDetails });
+   // Media upload fields: NGO logo + certificate PDF
     const [media, setMedia] = useState<NgoMediaType>({ logoUrl: null, certificate: null });
 
+    // Handle media file selection (logo / certificate)
     const handleChangeMedia = (field: keyof NgoMediaType, value: FileList | null) => {
         setMedia({ ...media, [field]: value ? value[0] : null });
     };
+    // Save NGO updates (including media uploads)
     const handleSaveChanges = async () => {
         if (!ngo.name || !ngo._id) {
             setAlert("יש למלא את כל השדות", true);
@@ -48,9 +52,11 @@ const NgoEdit = ({ token, ngoDetails, updateNgo, setEditMode }: NgoEditProps) =>
         }
     };
 
+    // Handle text fields change (generic for all fields)
     const handleChange = (field: string, value: string | number | string[]) => {
         setNgo({ ...ngo, [field]: value })
     }
+     // When update succeeds, exit edit mode and clear alert
     const handleUpdateSuccess = () => {
         clearAlert();
         setEditMode('view');

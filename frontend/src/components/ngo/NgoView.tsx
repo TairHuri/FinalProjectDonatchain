@@ -6,13 +6,16 @@ export type NgoViewProps = {
     setEditMode: (mode: 'edit' | 'view') => void
 }
 const NgoView = ({ ngo, setEditMode }: NgoViewProps) => {
+      // Base URLs for loading NGO images and certificates from the backend
     const CERTIFICATES_URL = import.meta.env.VITE_CERTIFICATES_URL || "http://localhost:4000/certificates";
     const IMAGE_URL = import.meta.env.VITE_IMAGES_URL || "http://localhost:4000/images";
     return (
         <div>
+            {/* Section title */}
             <h2 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "20px" }}>
                 פרטי העמותה
             </h2>
+            {/* NGO logo */}
             <img src={`${IMAGE_URL}/${ngo.logoUrl}`} alt="ngo logo" style={{ width: "60px", height: "60px", borderRadius: "50%" }} />
             <p><strong>שם העמותה:</strong> {ngo.name}</p>
             <p><strong>מספר העמותה:</strong> {ngo.ngoNumber}</p>
