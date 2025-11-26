@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useCampaigns } from "../contexts/CampaignsContext";
-import { getCampaign } from "../services/api";
+import { getCampaign } from "../services/campaignApi";
 // Components
 import CreditPayment from "../components/CreditPayment";
 import CryptoPayment from "../components/CryptoPayment";

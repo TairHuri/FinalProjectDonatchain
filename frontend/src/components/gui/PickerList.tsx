@@ -36,7 +36,7 @@ const PickerList = ({ list, openPicker, setOpenPicker, selectedItemId, setSelect
         <div className={useNgo?'pickerlist_input-field':'picker'}>
             <button
                 type="button"
-                className={`picker__button ${useNgo? 'input-field_picker__button' :''}`}
+                className={`picker__button ${useNgo? 'input-field_picker__button picker__button-in-ngo' :''}`}
                 onClick={() => setOpenPicker((v:boolean) => !v)}
                 aria-expanded={openPicker}
                 aria-haspopup="listbox"

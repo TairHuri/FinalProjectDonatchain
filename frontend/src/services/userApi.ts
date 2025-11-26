@@ -44,3 +44,43 @@ export async function deleteUserApi(userId: string) {
   const res = await fetch(`${API_URL}/users/${userId}`, { method: 'DELETE', headers: { "Authorization": `Bearer ${token}` } })
   return res.json();
 }
+
+
+/**
+ * Logs in a user using email and password.
+ *
+ * @param data - Login credentials
+ * @returns Authentication result including token if successful
+ */
+export async function loginUser(data: { email: string; password: string }) {
+  const res = await fetch(`${API_URL}/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  return res.json();
+}
+
+/**
+ * Retrieves users belonging to a specific NGO.
+ *
+ * @param ngoId - The NGO ID
+ * @returns List of users under that NGO
+ */
+export async function getUsers(ngoId: string) {
+  const token = localStorage.getItem("token")
+  const res = await fetch(`${API_URL}/users/ngo/${ngoId}`, { headers: { "Authorization": `Bearer ${token}` } })
+  return res.json();
+}
+
+/**
+ * Approves a user under an NGO (Admin/NGO manager action).
+ *
+ * @param userId - ID of the user to approve
+ * @returns Updated user or status
+ */
+export async function approveUserApi(userId: string) {
+  const token = localStorage.getItem("token")
+  const res = await fetch(`${API_URL}/users/approve/${userId}`, { method: 'PATCH', headers: { "Authorization": `Bearer ${token}` } })
+  return res.json();
+}

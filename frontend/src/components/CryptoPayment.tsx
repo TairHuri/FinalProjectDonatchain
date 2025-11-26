@@ -1,7 +1,7 @@
 
 import { useState, type ChangeEvent, useEffect } from "react";
 import { useCampaigns } from "../contexts/CampaignsContext";
-import { cryptoDonation } from "../services/api";
+import { cryptoDonation } from "../services/donationApi";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useDisconnect } from 'wagmi';
 import type { Donation } from "../models/Donation";

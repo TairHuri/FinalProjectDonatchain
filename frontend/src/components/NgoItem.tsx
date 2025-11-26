@@ -45,12 +45,7 @@ export default function NgoItem({ ngo, view }: { ngo: Ngo; view: "grid" | "list"
           <h2 className={styles['title-flex']}>{ngo.name}</h2>
         )}
         <div className={styles.meta}>
-          {ngo.website && (
-            <div className={styles.line} title={ngo.website}>
-              <span className={styles.key}>אתר:</span>
-              <span className={`${styles.value} ${styles.url}`}>{host(ngo.website)}</span>
-            </div>
-          )}
+
           {ngo.address && (
             <div className={styles.line} title={ngo.address}>
               <span className={styles.key}>כתובת:</span>

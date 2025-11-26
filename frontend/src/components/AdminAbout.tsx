@@ -85,9 +85,9 @@ export default function AdminAbout() {
   if (loading) return <p>טוען נתונים...</p>;
 
   return (
-    <div style={{ maxWidth: "800px", margin: "auto", textAlign: "right" }}>
-      <h2 style={{ fontSize: "24px", fontWeight: "bold", color: "#2563eb" }}>
-        עריכת עמוד "עלינו"
+    <div style={{ width: "100%", margin: "auto", textAlign: "right" }}>
+      <h2 style={{ fontSize: "24px", fontWeight: "bold", color: "#059669" }}>
+        עריכת מי אנחנו
       </h2>
 
       <label>כותרת ראשית:</label>

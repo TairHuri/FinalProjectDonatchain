@@ -78,6 +78,7 @@ const NewNgo = ({ ngo, media, handleChangeNgo, handleChangeMedia }: Props) => {
           value={ngo.phone || ""}
           onChange={(e) => handleChangeNgo("phone", e.target.value)}
           className="input-field"
+          dir="rtl"
         />
       </div>
 

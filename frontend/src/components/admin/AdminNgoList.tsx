@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getNgoList, toggleNgoStatus } from "../../services/ngoApi";
+import { getNgoList } from "../../services/ngoApi";
 import { Loader2, PauseCircle, PlayCircle, Eye } from "lucide-react";
 import { motion } from "framer-motion";
 import axios from "axios";
@@ -7,7 +7,7 @@ import Modal from "../gui/Modal";
 import AdminNgoDetails from "./AdminNgoDetails";
 import type { Ngo } from "../../models/Ngo";
 import AlertDialog, { useAlertDialog } from "../gui/AlertDialog";
-import { getCampaigns } from "../../services/api";
+import { getCampaigns } from "../../services/campaignApi";
 import type { Campaign } from "../../models/Campaign";
 
 import ConfirmDialog, { useConfirmDialog } from "../gui/ConfirmDialog";

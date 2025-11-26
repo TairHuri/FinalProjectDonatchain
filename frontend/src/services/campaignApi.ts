@@ -130,3 +130,87 @@ export async function getCampaignTags() {
   if (!res.ok) throw new Error(await res.text());
   return res.json();
 }
+
+
+/**
+ * Creates a new campaign with images, videos, and metadata.
+ * Uses multipart/form-data for media upload.
+ *
+ * @param data - Campaign data excluding "raised"
+ * @param token - Authorization token
+ * @param images - Optional list of campaign images
+ * @param movie - Optional video file
+ * @param mainImage - Optional main image file
+ * @returns Created campaign data
+ */
+export async function createCampaign(data: Omit<Campaign, "raised">, token: string, images: File[] | null, movie: File | null, mainImage: File | null) {
+  const formData = new FormData()
+  formData.append("title", data.title)
+  formData.append("description", data.description)
+  formData.append("ngo", data.ngo)
+  formData.append("blockchainTx", data.blockchainTx!)
+  formData.append("goal", `${data.goal}`)
+  if (images) {
+    for (const image of images) {
+      formData.append("images", image)
+    }
+  }
+  if (movie) {
+    formData.append("movie", movie)
+  }
+  if (mainImage) {
+    formData.append("mainImage", mainImage)
+  }
+  formData.append("startDate", data.startDate)
+  formData.append("endDate", data.endDate)
+  for(const tag of data.tags){
+    formData.append('tags', tag)
+  }
+  formData.append("isActive", `${data.isActive}`)
+  const res = await fetch(`${API_URL}/campaigns`, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${token}`,
+    },
+    body: formData,
+  });
+  if (res.status != 201) {
+    throw new Error(await res.text())
+  }
+  return res.json();
+}
+
+export const getCampaigns = async (ngoId?: string) => {
+  const url = ngoId
+    ? `${API_URL}/campaigns?ngoId=${ngoId}`  
+    : `${API_URL}/campaigns`;
+
+  const res = await fetch(url);
+  if (!res.ok) {
+    const text = await res.text();
+    console.error("Failed fetching campaigns:", text);
+    return [];
+  }
+  const data = await res.json();
+  return data;
+}
+
+/**
+ * Retrieves campaigns, optionally filtered by NGO.
+ *
+ * @param ngoId - Optional NGO ID to filter by
+ * @returns List of campaigns
+ */
+export const getCampaign = async (campaignId: string) => {
+  const url = `${API_URL}/campaigns/${campaignId}`
+
+  const res = await fetch(url);
+  if (!res.ok) {
+    const text = await res.text();
+    console.error("Failed fetching campaigns:", text);
+    return null;
+  }
+
+  const data = await res.json();
+  return data;
+};

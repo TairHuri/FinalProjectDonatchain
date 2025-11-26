@@ -31,6 +31,11 @@
   font-weight: 400;
 }
 .picker__button:hover { box-shadow: var(--shadow-sm); transform: translateY(-1px); }
+.picker__button-in-ngo:hover{
+  box-shadow: unset; 
+  
+  transform: unset;
+}
 .picker__label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .chev { transition: transform .15s ease; }
 .chev.open { transform: rotate(180deg); }
@@ -107,7 +112,8 @@
 }
 .pickerlist_input-field {
   width: 100%;
-  padding: 8px 40px 8px 42px;
+  /*       top right bottom left       */
+  padding: 8px 10px 8px 42px;
   border: 1.5px solid #d1d5db;
   border-radius: 9999px;
   font-size: 15px;

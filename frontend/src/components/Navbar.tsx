@@ -251,7 +251,7 @@ export default function Navbar() {
   <div className="contactModal" onClick={() => setShowContact(false)}>
     <div className="contactContent" onClick={(e) => e.stopPropagation()}>
       <h2>📬 צור קשר</h2>
-      <p>נשמח לשמוע ממך! ניתן לפנות אלינו ישירות למייל של המערכת:</p>
+      <p>נשמח לשמוע ממך! ניתן לפנות אלינו ישירות למייל של המערכת</p>
 
       <div className="emailBox">
         <span className="emailText">DonatChainSM@gmail.com</span>

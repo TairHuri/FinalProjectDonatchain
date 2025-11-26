@@ -2,7 +2,7 @@
 import type { User } from "../../models/User";
 import { useAuth } from "../../contexts/AuthContext";
 import { useEffect, useMemo, useState } from "react"
-import { approveUserApi, getUsers } from "../../services/api";
+import { approveUserApi, getUsers } from "../../services/userApi";
 import UserItem from "../UserItem";
 
 import "../../css/NgoUsers.css";

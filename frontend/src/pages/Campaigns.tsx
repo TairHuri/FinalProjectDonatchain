@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { Grid, List, Search } from "lucide-react";
 import { useParams, Link, useSearchParams } from "react-router-dom";
-import { getCampaigns } from "../services/api";
+import { getCampaigns } from "../services/campaignApi";
 import CampaignItem from "../components/CampaignItem";
 import type { Campaign } from "../models/Campaign";
 import "../css/Campaigns.css";

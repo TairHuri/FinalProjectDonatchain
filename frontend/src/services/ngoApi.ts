@@ -1,6 +1,7 @@
 import axios from "axios";
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
 import type { Ngo, NgoMediaType } from "../models/Ngo";
+import type { User } from "../models/User";
 
 // Verify if an NGO number exists in the system
 export async function verifyNgoNumber(ngoNumber: string){
@@ -68,12 +69,6 @@ export async function toggleNgoStatus(id: string, token: string) {
   return res.json();
 }
 
-// Fetch a list of all NGOs
-export const getNgoList = async (): Promise<{ items: Ngo[] }> => {
-  const res = await axios.get<{ items: Ngo[] }>(`${API_URL}/ngos`);
-
-  return res.data; 
-};
 
 // Fetch a single NGO by its ID
 export const getNgoById = async ( ngoId:string): Promise<Ngo> => {
@@ -89,3 +84,89 @@ export async function getNgoTags() {
   if (!res.ok) throw new Error(await res.text());
   return res.json();
 }
+
+
+/**
+ * Registers a new NGO and a new user together.
+ * Sends multipart/form-data including user data, NGO details, and media files.
+ *
+ * @param user - The user data to register
+ * @param ngo - NGO details
+ * @param media - NGO media files (logo, certificate, optional)
+ * @returns Server response with success or error message
+ */
+export async function registerUserNewNgo(user: User, ngo: Ngo, media: NgoMediaType) {
+  const formData = new FormData();
+  formData.append("userJson", JSON.stringify(user));
+  formData.append("name", ngo.name);
+  formData.append("description", ngo.description);
+  formData.append("ngoNumber", ngo.ngoNumber);
+  formData.append("certificate", media.certificate!);
+  if (ngo.website) formData.append("website", ngo.website);
+  if (ngo.bankAccount) formData.append("bankAccount", ngo.bankAccount);
+  if (ngo.wallet) formData.append("wallet", ngo.wallet);
+  if (ngo.address) formData.append("address", ngo.address);
+  if (ngo.phone) formData.append("phone", ngo.phone);
+  if (ngo.email) formData.append("email", ngo.email);
+
+  if (media.logoUrl) formData.append("logo", media.logoUrl);
+  for(const tag of ngo.tags){        
+        formData.append("tags", tag)
+    }
+
+  try {
+    const res = await fetch(`${API_URL}/auth/register/newngo`, {
+      method: "POST",
+      body: formData,
+    })
+
+    const json = await res.json(); // נקרא תמיד את התגובה, גם אם status != 200
+
+    if (!res.ok) {
+      return { success: false, message: json.message || `שגיאת שרת: ${res.status}` };
+    }
+
+    return json;
+  } catch (err: any) {
+    return { success: false, message: err.message ?? "שגיאה לא צפויה" };
+  }
+}
+
+
+/**
+ * Registers a user under an existing NGO.
+ *
+ * @param user - User registration data
+ * @returns Server response with success or error message
+ */
+export async function registerUserExistingNgo(user: User) {
+  try {
+    const res = await fetch(`${API_URL}/auth/register/existingngo`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user }),
+    });
+
+    const json = await res.json(); // נקרא תמיד את התגובה, גם אם status != 200
+
+    if (!res.ok) {
+      return { success: false, message: json.message || `שגיאת שרת: ${res.status}` };
+    }
+
+    return json;
+  } catch (err: any) {
+    return { success: false, message: err.message ?? "שגיאה לא צפויה" };
+  }
+}
+
+/**
+ * Retrieves a list of all NGOs.
+ *
+ * @returns A list of NGOs as a typed response
+ */
+export const getNgoList = async (): Promise<{ items: Ngo[] }> => {
+  const res = await axios.get<{ items: Ngo[] }>(`${API_URL}/ngos`);
+
+  return res.data; 
+};
+

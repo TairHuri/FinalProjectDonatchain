@@ -81,6 +81,8 @@ export const cardStyle: React.CSSProperties = {
   padding: "20px",
   borderRadius: "12px",
   boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
+  overflowY: 'auto',
+  height: '100%',
 };
 
 export const labelStyle: React.CSSProperties = {

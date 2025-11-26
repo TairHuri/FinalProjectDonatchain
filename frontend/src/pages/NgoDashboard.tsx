@@ -171,11 +171,11 @@ console.log(user);
       </div>
 
       {/**/}
-      <div className={`ngo-dashboard-container`} style={{ flex: 1, padding: "10px" }}>
+      <div className={`ngo-dashboard-container`} style={{ flex: 1, padding: "10px", alignItems:'start' }}>
         {activePage === "ngoDetails" && <NgoDetails editMode={editMode} setEditMode={setEditMode} />}
-        {activePage === "ngoUsers" && <NgoUsers />}
+        {activePage === "ngoUsers" && <div style={cardStyle}><NgoUsers /></div>}
         {activePage === "dashboard" && (
-          <div>
+          <div  style={{...cardStyle}}>
             <h1 style={{ fontSize: "28px", fontWeight: "bold", color: "#059669" }}>
               ברוך הבא, {user?.name}
             </h1>
@@ -189,13 +189,13 @@ console.log(user);
             </div>
           </div>
         )}
-        {activePage == "adminRequest" && <AdminRequest />}
-        {activePage == "donors" && <NgoDonors />}
+        {activePage == "adminRequest" && <div style={cardStyle}><AdminRequest /></div>}
+        {activePage == "donors" && <div style={cardStyle}><NgoDonors /></div>}
         {activePage === "newCampaign" && <CreateCampaign postSave={() => setActivePage("campaigns")} />}
         {activePage === "profile" && <UserPersonalDetails editMode={editMode} setEditMode={setEditMode} />}
 
         {activePage === "campaigns" && (
-          <div className="ngo-campaigns-container">
+          <div className="ngo-campaigns-container"  style={cardStyle}>
             <h2 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "20px" }}>הקמפיינים שלי</h2>
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <TabsButtons active={active} setActive={setActive} tabs={tabs} />

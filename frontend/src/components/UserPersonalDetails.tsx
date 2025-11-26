@@ -8,7 +8,7 @@ import { cardStyle, primaryBtnStyle } from "../css/dashboardStyles"
 import InputText from "./gui/InputText";
 import type { User } from "../models/User";
 import { changePassword, deleteUserApi, editUser } from "../services/userApi";
-import { getUsers } from "../services/api";
+import { getUsers } from "../services/userApi";
 
 
 import '../css/user/UserPersonalDetails.css'

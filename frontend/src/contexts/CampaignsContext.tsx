@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
-import { getCampaigns, createCampaign, getCampaign } from "../services/api";
+import { getCampaigns, createCampaign, getCampaign } from "../services/campaignApi";
 import { useAuth } from "../contexts/AuthContext";
 import type { Campaign } from "../models/Campaign";
 

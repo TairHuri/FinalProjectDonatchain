@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import axios from "axios";
 import { Users, Building2, FileText, Heart, Settings, Home, LogOut, FilePenLine, } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -173,7 +173,7 @@ const AdminDashboard: React.FC = () => {
     {/* Main content area */}
       <div className="admin-container">
         {activePage === "dashboard" && (
-          <div>
+          <div style={cardStyle}>
             <h1 style={{ fontFamily: 'calibri', fontSize: "28px", fontWeight: "bold", color: "#059669", }}>
               ברוך הבא, מנהל המערכת
             </h1>
@@ -194,13 +194,13 @@ const AdminDashboard: React.FC = () => {
             )}
           </div>
         )}
-        {activePage === "donors" && <AdminDonors />}
-        {activePage === "ngos" && <AdminNgoList />}
-        {activePage === "campaigns" && <CampaignList />}
-        {activePage === "about" && <AdminAbout />}
-        {activePage === "request" && <RequestFromUsers />}
+        {activePage === "donors" && <CardWrapper><AdminDonors /></CardWrapper>}
+        {activePage === "ngos" && <CardWrapper><AdminNgoList /></CardWrapper>}
+        {activePage === "campaigns" && <CardWrapper><CampaignList /></CardWrapper>}
+        {activePage === "about" &&  <CardWrapper><AdminAbout /></CardWrapper>}
+        {activePage === "request" &&  <CardWrapper><RequestFromUsers /></CardWrapper>}
         {activePage === "terms" && (
-          <div>
+           <CardWrapper>
             <h2 style={{ color: "#059669", fontFamily: 'calibri', fontSize: "28px", fontWeight: "bold", marginBottom: "16px" }}>
               ניהול תקנון האתר
             </h2>
@@ -208,13 +208,20 @@ const AdminDashboard: React.FC = () => {
             <RulesViewer />
             {/*edit*/}
             <AdminRulesEditor />
-          </div>
+           </CardWrapper>
         )}
       </div>
     </div>
   );
 };
 
+const CardWrapper = ({children}:{children:ReactNode}) => {
+  return(
+    <div className="admin-card">
+      {children}
+    </div>
+  )
+}
 const statCard = (title: string, value: string | number) => (
   <div style={cardStyle}>
     <h3 style={{ fontSize: "16px", fontWeight: "bold" }}>{title}</h3>

@@ -90,9 +90,8 @@ const CampaignView = ({ campaign, setCampaign, token, setEditMode, userRole }: C
         <button onClick={() => setEditMode("edit")} style={{ ...primaryBtnStyle }}>
           עריכת פרטים
         </button>
-        <button style={{ ...primaryBtnStyle }} onClick={openConfirm} disabled={userRole != 'manager'}>
        {/* Toggle active status (activate / suspend) */}
-        <button style={{ ...primaryBtnStyle }} onClick={openConfirm}>
+        <button style={{ ...primaryBtnStyle }} onClick={openConfirm} disabled={userRole != 'manager'}>
           {campaign.isActive ? 'השהייה/מחיקה' : 'הפעל'}
         </button>
          {/* Open report modal */}

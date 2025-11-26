@@ -30,7 +30,7 @@ const AdminDonors = () => {
   if (loading) return <p>טוען נתוני תרומות...</p>;
 
   return (
-    <div className="admin-donors-card" dir="rtl">
+    <div dir="rtl">
     <div>
       <h2 className="h1-admin-donors">
         כל התורמים באתר

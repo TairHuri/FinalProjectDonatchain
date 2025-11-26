@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getNgoList, registerUserExistingNgo, registerUserNewNgo } from "../services/api";
+import { getNgoList, registerUserExistingNgo, registerUserNewNgo } from "../services/ngoApi";
 import { Building2, Mail, Lock, Phone } from "lucide-react";
 import type { User, UserRoleType } from "../models/User";
 import type { Ngo, NgoMediaType } from "../models/Ngo";
@@ -199,6 +199,7 @@ if (!user.ngoId && !newNgo) {
                 onChange={(e) => handleChangeUser("phone", e.target.value)}
                 className="input-field"
                 required
+                dir="rtl"
               />
             </div>
 

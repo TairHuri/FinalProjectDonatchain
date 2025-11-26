@@ -1,9 +1,9 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
-import { loginUser, registerUserExistingNgo } from "../services/api";
+import { loginUser, } from "../services/userApi";
+import { registerUserExistingNgo, getNgoById } from "../services/ngoApi";
 
 import type { User } from "../models/User";
 import type { Ngo } from "../models/Ngo";
-import { getNgoById } from "../services/ngoApi";
 
 
 // Defines the shape of the authentication context

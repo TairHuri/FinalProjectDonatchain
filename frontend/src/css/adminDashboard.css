@@ -4,6 +4,18 @@
     max-height: calc(100dvh - 67px);
     overflow-y: auto;
     flex: 1; 
-    padding: 20px; 
+    padding: 20px 10px; 
     padding-top: '5px';
+}
+
+.admin-card {
+    background: var(--ar-bg);
+    border: 1px solid var(--ar-border);
+    border-radius: 16px;
+    box-shadow: 0 10px 28px rgba(30, 40, 38, .10);
+    padding: clamp(14px, 2.4vw, 18px);
+    max-width: 1200px;
+    margin-inline: auto;
+    color: var(--ar-fg);
+    font-family: "Heebo", system-ui, Segoe UI, Arial, sans-serif;
 }
