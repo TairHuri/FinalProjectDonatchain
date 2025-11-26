@@ -90,7 +90,6 @@ export const labelStyle: React.CSSProperties = {
 };
 
 
-// A wrapper container for both buttons
 export const toggleGroup: React.CSSProperties = {
   display: 'inline-flex',
   border: "1px solid #ccc",
@@ -99,7 +98,6 @@ export const toggleGroup: React.CSSProperties = {
   width: "100%",
 };
 
-// Common ground for both situations
 export const toggleBase: React.CSSProperties = {
   cursor: 'pointer',
   width: "100%",
@@ -109,14 +107,12 @@ export const toggleBase: React.CSSProperties = {
   fontSize: "16px",
 };
 
-// Active mode
 export const toggleOn: React.CSSProperties = {
   ...toggleBase,
   background: '#fff',
   color: '#111827',
 };
 
-// Off mode
 export const toggleOff: React.CSSProperties = {
   ...toggleBase,
   background: 'transparent',

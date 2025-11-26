@@ -1,33 +1,3 @@
-/* .ngo-grid-item {
-    background: white;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    border-radius: 12px;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-}
-
-.ngo-flex-item {
-    background: white;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    border-radius: 12px;
-    padding: 12px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-
-.ngo-link_item {
-    display: block;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    text-decoration: none;
-    color: inherit;
-} */
 
 .grid_container_grid,
 .grid_container_flex {
@@ -59,7 +29,7 @@
   border-inline-end: 1px solid #e9f0ee
 }
 
-/* Card */
+
 .card {
   position: relative;
   background: #fff;
@@ -68,9 +38,7 @@
   box-shadow: 0 8px 22px rgba(30, 40, 38, .08);
   overflow: hidden;
   transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
-  /* height:100%;
-  display:flex;
-  flex-direction:column; */
+
 }
 
 .card:hover {
@@ -106,10 +74,9 @@
   margin: 12px 0 6px
 }
 
-/* Grid vs List */
+
 .grid .media {
-  /* כמו בקמפיינים יש area ויזואלית קבועה, אבל 1:1 ללוגו */
-  aspect-ratio: 1/1;
+ aspect-ratio: 1/1;
   min-height: 136px;
   background: #f0f2f1;
   display: grid;
@@ -135,7 +102,6 @@
   margin: 12px 12px 12px 0;
 }
 
-/* Logo */
 .logo {
   width: 72%;
   height: 72%;
@@ -152,7 +118,6 @@
   font-size: .9rem;
 }
 
-/* Content */
 .content {
   flex: 1;
   display: flex;
@@ -162,7 +127,6 @@
   min-width: 0;
 }
 
-/* Title (single line ellipsis כמו שביקשת) */
 .title {
   margin: 0;
   color: #1f2b29;
@@ -174,7 +138,6 @@
   text-overflow: ellipsis;
 }
 
-/* Meta */
 .meta {
   margin: 0 14px 8px;
   color: #6b7a76;
@@ -208,7 +171,7 @@
   text-align: left;
 }
 
-/* Footer chip */
+
 .footer {
   margin-top: auto;
   display: flex;
@@ -225,7 +188,6 @@
   border-radius: 999px;
 }
 
-/* Mobile */
 @media (max-width:600px) {
   .list .media {
     width: 76px;

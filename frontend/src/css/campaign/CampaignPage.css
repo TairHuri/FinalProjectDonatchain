@@ -16,7 +16,6 @@
   color: var(--text-dark);
 }
 
-/* --- Hero / Media Section (Top) --- */
 .media-section {
   background-color: white;
   padding: 20px;
@@ -49,7 +48,7 @@
 
 .thumbnails-row {
   display: flex;
-  justify-content: center; /* ממורכז */
+  justify-content: center; 
   gap: 12px;
   overflow-x: auto;
   padding: 4px;
@@ -81,7 +80,6 @@
   object-fit: cover;
 }
 
-/* --- Main Info Card (Middle) --- */
 .info-card {
   background: white;
   margin: 15px 0;
@@ -112,7 +110,6 @@
   color: rgb(0, 0, 0);
   line-height: 1.1;
   font-family: "Heebo", serif;
-  /* font-family: "Suez One", serif; */
 }
 
 .ngo-badge {
@@ -147,7 +144,6 @@
   font-size: 0.8rem;
 }
 
-/* Meta Data (Dates & Link) */
 .meta-data-box {
   display: flex;
   gap: 20px;
@@ -170,10 +166,9 @@
   border-bottom: 1px dashed var(--primary-color);
 }
 
-/* Stats & Action Grid */
 .stats-action-container {
   display: grid;
-  grid-template-columns: 1fr 1.5fr; /* 60% stats, 40% buttons */
+  grid-template-columns: 1fr 1.5fr; 
   gap: 40px;
   align-items: center;
   margin-top: 30px;
@@ -205,7 +200,6 @@
 .progress-fill {
   height: 100%;
   background:#16a34a; 
-  /* background: linear-gradient(90deg, var(--secondary-color), var(--primary-color)); */
   border-radius: 8px;
 }
 
@@ -256,7 +250,6 @@
   background-color: #ccc;
 }
 
-/* --- Tabs Section (Bottom) --- */
 .details-section {
   margin: 15px 0;
   background: white;

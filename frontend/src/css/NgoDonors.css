@@ -39,7 +39,6 @@
   gap: 6px;
 }
 
-/* ===== Toolbar (Picker + clear) ===== */
 .toolbar {
   display: flex;
   align-items: center;
@@ -60,7 +59,6 @@
 .btn--ghost { background: #fff; }
 
 
-/* ===== Panel ===== */
 .panel {
   background: var(--card-bg);
   border: 1px solid var(--border);
@@ -80,7 +78,6 @@
   font-weight: 800;
 }
 
-/* ===== Donors grid ===== */
 .donors-grid {
   padding: 12px;
   display: grid;
@@ -114,13 +111,11 @@
 
 .empty-state { text-align: center; color: var(--muted); padding: 20px 0; }
 
-/* ===== Scrollbars ===== */
 .custom-scroll { scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent; }
 .custom-scroll::-webkit-scrollbar { height: 8px; width: 8px; }
 .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; }
 .custom-scroll::-webkit-scrollbar-track { background: transparent; }
 
-/* Loader קטן בכותרת */
 .loader {
   margin-right: 8px;
   width: 14px; height: 14px;

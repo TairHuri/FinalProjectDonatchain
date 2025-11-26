@@ -8,7 +8,7 @@
   --card: #ffffff;
   --drawer-w: 280px;
   --logout-menu: 200px;
-  /* width of the drawer on mobile */
+
 }
 
 [data-theme="dark"] {
@@ -30,8 +30,7 @@
   align-items: center;
   padding: .75rem 1rem;
   background: var(--bg);
- /* background-color: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(5px); */
+
   border-bottom: 1px solid var(--border);
   color: var(--fg);
   direction: rtl;
@@ -92,8 +91,6 @@
   padding: .5rem;
   z-index: 30;
   margin: 0;
-   /* backdrop-filter: blur(20px);
-   background-color: rgba(255, 255, 255, 0.4); */
 }
 
 .dropdown-mobile {
@@ -224,7 +221,6 @@ color: var(--fg);
   }
 }
 
-/* Only show drawer on mobile */
 @media (min-width: 1025px) {
 
   .drawer,
@@ -239,48 +235,41 @@ color: var(--fg);
 
 .hamburgerBtn {
   order: -999;
-  /* first in the row */
+
   margin-inline-end: auto;
-  /* pushes the rest away so it's flush-left */
 }
 
-/* just in case some layout flips to row-reverse somewhere */
 [dir="rtl"] .hamburgerBtn {
   order: -999;
 }
 
-/* Drawer panel (left) */
 .drawer {
   position: fixed;
   top: 0;
   right: 0;
-  /* ⟵ anchor to right */
+
   left: auto;
   width: var(--drawer-w);
   height: 100dvh;
   background: var(--card);
   border-inline-start: 1px solid var(--border);
-  /* border on the left side of the drawer */
-  box-shadow: 0 10px 24px rgba(2, 6, 23, .12);
+ box-shadow: 0 10px 24px rgba(2, 6, 23, .12);
   z-index: 60;
 
   display: flex;
   flex-direction: column;
   padding: 12px;
 
-  /* start off-screen to the RIGHT */
   translate: 100% 0;
-  /* ⟵ key change */
+
   transition: translate .35s ease;
   font-family: "Heebo", system-ui, Segoe UI, Roboto, "Noto Sans", sans-serif;
 }
 
-/* Open state */
 .drawer[data-open="true"] {
   translate: 0 0;
 }
 
-/* Drawer header */
 .drawerHeader {
   display: flex;
   align-items: center;
@@ -300,7 +289,6 @@ color: var(--fg);
   margin-inline-start: auto;
 }
 
-/* Drawer list (reuse your button/link styles) */
 .drawerList {
   margin: 0;
   padding: 10px 4px 8px;
@@ -313,21 +301,16 @@ color: var(--fg);
 .drawerList .navBtn {
   inline-size: auto;
   width:100%;
-  /* was 100% implicitly */
   min-inline-size: max-content;
-  /* fit label + icon */
   max-inline-size: calc(var(--drawer-w) - 24px);
   padding: .45rem .75rem;
-  /* a bit tighter */
   border-radius: .5rem;
   gap: .5rem;
   white-space: nowrap;
-  /* don't wrap long labels */
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* Light scrim that doesn't cover the page entirely visually */
 .scrim {
   position: fixed;
   inset: 0;
@@ -343,10 +326,6 @@ color: var(--fg);
   pointer-events: auto;
 }
 
-/* =========================
-   Contact Modal styles
-   ========================= */
-
 .contactModal {
   position: fixed;
   inset: 0;
@@ -354,8 +333,7 @@ color: var(--fg);
   justify-content: center;
   align-items: center;
   background: rgba(2, 6, 23, 0.44);
-  /* slightly darker scrim to pop the modal */
-  z-index: 2000;
+ z-index: 2000;
   animation: contactFade .24s ease;
   -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
@@ -375,7 +353,6 @@ color: var(--fg);
   animation: contactSlideUp .28s cubic-bezier(.2, .9, .26, 1);
 }
 
-/* dark mode tweak: make background use card and subtle border */
 [data-theme="dark"] .contactContent {
   background: linear-gradient(180deg, rgba(14, 18, 24, 0.92), var(--card));
   border: 1px solid rgba(255, 255, 255, 0.03);
@@ -395,7 +372,6 @@ color: var(--fg);
   color: var(--muted);
 }
 
-/* email box: LTR so email looks natural and monospace */
 .emailBox {
   display: flex;
   gap: 0.6rem;
@@ -409,7 +385,6 @@ color: var(--fg);
   border: 1px solid var(--border);
 }
 
-/* dark mode for email box */
 [data-theme="dark"] .emailBox {
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.03);
@@ -424,7 +399,6 @@ color: var(--fg);
   white-space: nowrap;
 }
 
-/* copy button */
 .copyBtn {
   display: inline-flex;
   align-items: center;
@@ -446,7 +420,6 @@ color: var(--fg);
   opacity: .98;
 }
 
-/* when copied - you might prefer a green outline, but keep same bg */
 .copyBtn:active {
   transform: translateY(0);
 }
@@ -461,7 +434,6 @@ color: var(--fg);
   text-decoration: underline;
 }
 
-/* small helper for a tiny subtitle row or extra actions if needed */
 .contactActions {
   display: flex;
   gap: .6rem;
@@ -470,14 +442,12 @@ color: var(--fg);
   margin-top: .35rem;
 }
 
-/* responsive: slightly bigger padding on small screens */
 @media (min-width: 480px) {
   .contactContent {
     padding: 1.8rem 1.9rem;
   }
 }
 
-/* Animations */
 @keyframes contactFade {
   from {
     opacity: 0;

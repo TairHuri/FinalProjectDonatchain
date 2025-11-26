@@ -18,7 +18,6 @@
   font-family: "Rubik", "Heebo", system-ui, Segoe UI, Arial, sans-serif;
 }
 
-/* HERO */
 .dc-hero{ max-width:940px; margin:0 auto; text-align:center; }
 .dc-hero-title{ font-weight:800; color:var(--brand); font-size:clamp(1.9rem,5vw,2.6rem); margin:0 0 .4rem; }
 .dc-hero-sub{ 
@@ -39,12 +38,12 @@
 .dc-btn-ghost{ background:#fff; color:var(--brand); border-color:#dfe9e6; }
 .dc-btn-ghost:hover{ background:#f4f8f7; }
 
-/* MODAL */
+
 .dc-backdrop{ position:fixed; inset:0; background:#0b1211; opacity:.55; z-index:1000; border:none; }
 .dc-modal{ position:fixed; inset:0; z-index:1001; display:grid; place-items:center; padding: clamp(10px, 3vw, 24px); }
 
 .dc-card{
-  width:min(820px, 100%);             /* ⬅️ מעט רחב יותר */
+  width:min(820px, 100%);            
   background:var(--card);
   border:1px solid var(--ring);
   border-radius:var(--radius);
@@ -97,7 +96,6 @@
   .dc-card-foot{ padding:.65rem .85rem; }
 }
 
-/* Lightbox */
 .dc-lightbox{
   position:fixed; inset:0; z-index:1100;
   display:grid; place-items:center;

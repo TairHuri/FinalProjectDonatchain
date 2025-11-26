@@ -14,7 +14,7 @@
   box-shadow: 0 12px 32px rgba(30, 40, 38, .12);
 }
 
-/* ===== Badge (הסתיים) ===== */
+
 .campaign-badge {
   position: absolute;
   inset-inline-start: 10px;
@@ -29,7 +29,7 @@
   box-shadow: 0 6px 18px rgba(177, 19, 50, .25);
 }
 
-/* ===== Media ===== */
+
 .campaign-media {
   position: relative;
   aspect-ratio: 16/9;
@@ -49,7 +49,6 @@
   transform: scale(1.03)
 }
 
-/* ===== Content layout for both views ===== */
 .grid_container_grid,
 .grid_container_flex {
   display: block
@@ -77,7 +76,7 @@
   font-size: .93rem
 }
 
-/* Amount + percent row */
+
 .amount-row {
   display: flex;
   align-items: center;
@@ -107,7 +106,7 @@
   padding: .15rem .5rem;
 }
 
-/* Progress bar */
+
 .progress {
   margin: 0 14px 14px;
   height: 9px;
@@ -124,7 +123,6 @@
   transition: width .35s ease;
 }
 
-/* Actions (optional in grid) */
 .card-actions {
   display: flex;
   gap: .6rem;
@@ -143,8 +141,7 @@
   padding: .55rem .8rem;
   color: #fff;
   background: #345e6c;
-  /* background:linear-gradient(135deg,#345e6c,#739a86); */
-  box-shadow: 0 8px 18px rgba(214, 229, 234, 0.2);
+ box-shadow: 0 8px 18px rgba(214, 229, 234, 0.2);
   transition: filter .15s, transform .15s;
 }
 
@@ -153,7 +150,6 @@
   transform: translateY(-1px)
 }
 
-/* ===== List view tweaks ===== */
 .grid_container_flex {
   display: grid;
   grid-template-columns: 220px 1fr;
@@ -176,7 +172,6 @@
   }
 }
 
-/* (לניקוי ישנים אם היו) */
 .image-grid,
 .image-flex,
 .progress-grid_bar,
