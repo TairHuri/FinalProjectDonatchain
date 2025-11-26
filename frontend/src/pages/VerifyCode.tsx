@@ -3,12 +3,18 @@ import { useNavigate, useLocation } from "react-router-dom";
 import "../css/LoginNgo.css";
 
 const VerifyCode = () => {
+  //  Local state to store the entered verification code and potential error message
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
+
+  // Router hooks to navigate and receive data passed from previous page
   const navigate = useNavigate();
   const { state } = useLocation();
+
+  //  Retrieve email sent from the "Forgot Password" page
   const email = state?.email;
 
+  //  Handle verification process when user submits the code
   const handleVerify = async (e: any) => {
     e.preventDefault();
     const res = await fetch("http://localhost:4000/api/auth/verify-code", {

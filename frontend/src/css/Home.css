@@ -1,28 +1,25 @@
-/* ===== Palette (יותר רוויה ועדיין עדין) ===== */
 :root {
   --nav-h: 65px;
-  /* עדכני אם ה־Navbar שלך גבוה/נמוך יותר */
-  --bg: #e8eeec;
-  /* היה בהיר יותר; חיזקנו מעט */
+ --bg: #e8eeec;
+
   --ink: #273331;
-  /* טקסט כהה רך */
+
   --muted: #5e726e;
-  /* טקסט משני */
+
   --sage: #9eb49b;
-  /* ירקרק-סייג' רווי יותר */
+
   --teal: #5f8085;
-  /* טורקיז-אפור רווי יותר */
+ 
   --teal-dark: #476468;
-  /* כהה יותר לקונטרסט */
+
   --card: #ffffff;
   --ring: #d2ded9;
   --radius: 16px;
   --shadow: 0 10px 24px rgba(25, 35, 33, .10);
 }
 
-/* ===== Base ===== */
 .home {
-  /* min-height: calc(315dvh - var(--nav-h)); */
+
   padding-top: var(--nav-h);
   padding-left: max(12px, env(safe-area-inset-left));
   padding-right: max(12px, env(safe-area-inset-right));
@@ -32,11 +29,10 @@
     var(--bg);
   color: var(--ink);
   font-family: "Heebo", system-ui, Segoe UI, Arial, sans-serif;
-  /* overflow-x: hidden; */
+ 
   width: 100%;
 }
 
-/* ===== Hero (ימין טקסט / שמאל לוגו) ===== */
 .hero {
   display: grid;
   grid-template-columns: 1.2fr 0.9fr;
@@ -141,9 +137,6 @@
   }
 }
 
-
-
-/* ===== Features ===== */
 .features {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -187,13 +180,11 @@
 
 .aiSearchSection {
   padding: clamp(1.6rem, 4.5vw, 3rem);
-  /* background: linear-gradient(360deg, #c3dcdf ,#fff); */
-  border-top: 1px solid var(--ring);
+ border-top: 1px solid var(--ring);
   text-align: center;
 
 }
 
-/* ===== How it works ===== */
 .blockchainExplainationSection {
   padding: clamp(1.6rem, 4.5vw, 3rem);
   background: linear-gradient(180deg, #eef3f1, #e6efec);
@@ -206,7 +197,6 @@
   font-family: "Playpen Sans Hebrew", cursive;
 }
 
-/* ===== Footer ===== */
 .footer {
   text-align: center;
   padding: 2rem 1rem;
@@ -215,9 +205,6 @@
   background: #f7faf8;
 }
 
-/* ======= RESPONSIVE RULES ======= */
-
-/* עד טאבלט (ערימה אנכית, לוגו קטן יותר, כפתורים “מלא רוחב”) */
 @media (max-width: 980px) {
   .hero {
     grid-template-columns: 1fr;
@@ -246,11 +233,11 @@
     flex: 0 0 75%;
   }
 
-  /* לא מלא-רוחב אבל נעים לנייד */
+ 
 
 }
 
-/* מובייל קטן מאוד */
+
 @media (max-width: 560px) {
   .home {
     padding-left: 10px;
@@ -292,7 +279,6 @@
     flex: 0 0 50%;
   }
 
-  /* כפתורים רוחב מלא בנייד קטן */
   .logo-hero {
     width: clamp(200px, 58vw, 300px);
   }
@@ -321,7 +307,6 @@
   }
 }
 
-/* מסכים גדולים מאוד – שמירה על רוחב מאוזן */
 @media (min-width: 1400px) {
 
   .hero,
@@ -330,10 +315,9 @@
   }
 }
 
-/* ===== Categories (Blockchain-style tiles) ===== */
 .categories {
   padding: clamp(1.2rem, 4vw, 2rem);
-  /* max-width: 1200px; */
+
   margin: 0 auto;
   width: 100%;
 }
@@ -371,7 +355,6 @@
   transform: translateY(-1px);
 }
 
-/* גריד עם גלילה אופקית בנייד + snap */
 .chain-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -393,7 +376,6 @@
   }
 }
 
-/* “בלוק” – קובייה עם מסגרת רכה, הצללה וקצוות עגולים */
 .block-tile {
   position: relative;
   display: block;
@@ -408,7 +390,7 @@
   transition: transform .18s ease, box-shadow .22s ease, border-color .2s ease;
   scroll-snap-align: start;
   isolation: isolate;
-  /* כדי שהשרשרת תהיה מאחור */
+
 }
 
 .block-tile:hover {
@@ -450,8 +432,6 @@
   line-height: 1.1;
 }
 
-
-/* התאמות כהות/בהירות עדינות */
 @media (prefers-color-scheme: dark) {
   .cat-arrow {
     background: #0f1110;
@@ -473,16 +453,13 @@
   }
 }
 
-/* ===== Categories (Always horizontal scroll + chain connectors) ===== */
 .categories {
   padding: clamp(1.2rem, 4vw, 2rem);
   max-width: 1100px;
-  /* צר יותר כדי שלא יראו הכל בדסקטופ */
-  margin: 0 auto;
+ margin: 0 auto;
   position: relative;
 }
 
-/* חיצים צפים מעל הסקולר */
 .categories-head {
   display: flex;
   align-items: center;
@@ -517,7 +494,6 @@
   transform: translateY(-1px);
 }
 
-/* --- גריד שהופך תמיד לפס גלילה אופקי (גם בדסקטופ) --- */
 .chain-grid {
   display: flex;
   gap: clamp(.8rem, 1.8vw, 1.1rem);
@@ -527,17 +503,14 @@
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
 
-  /* רמז לגלילה (fade בשוליים) */
-  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 32px, #000 calc(100% - 32px), transparent 100%);
+ -webkit-mask-image: linear-gradient(to right, transparent 0, #000 32px, #000 calc(100% - 32px), transparent 100%);
   mask-image: linear-gradient(to right, transparent 0, #000 32px, #000 calc(100% - 32px), transparent 100%);
 }
 
-/* “בלוק” */
 .block-tile {
   position: relative;
   display: block;
   min-width: 188px;
-  /* גודל מינימלי לבלוק במסילה */
   background: var(--card);
   border: 1px solid var(--ring);
   border-radius: 14px;
@@ -557,7 +530,7 @@
   border-color: #c8d7d2;
 }
 
-/* פנים הבלוק */
+
 .block-face {
   display: grid;
   place-items: center;
@@ -591,15 +564,12 @@
   line-height: 1.1;
 }
 
-/* === מחברי “שרשרת” בין בלוקים (ימין=>שמאל), RTL-aware === */
-
-/* פין קטן בצד ההתחברות של הבלוק */
 .block-tile::before {
   content: "";
   position: absolute;
   top: 50%;
   inset-inline-start: -10px;
-  /* ב-RTL זה בצד ימין של הבלוק */
+
   transform: translateY(-50%);
   width: 12px;
   height: 12px;
@@ -610,13 +580,12 @@
   z-index: 2;
 }
 
-/* מחבר אל הבלוק הבא (לאחרון אין מחבר) */
 .block-tile:not(:last-child)::after {
   content: "";
   position: absolute;
   top: 50%;
   inset-inline-end: -14px;
-  /* ב-RTL זה בצד שמאל של הבלוק */
+
   transform: translateY(-50%);
   width: 28px;
   height: 10px;
@@ -627,9 +596,6 @@
   z-index: 1;
 }
 
-
-
-/* כהה */
 @media (prefers-color-scheme: dark) {
   .cat-arrow {
     background: #0f1110;
@@ -663,7 +629,6 @@
   }
 }
 
-/* רספונסיביות קלה */
 @media (max-width: 560px) {
   .categories {
     padding-inline: 10px;

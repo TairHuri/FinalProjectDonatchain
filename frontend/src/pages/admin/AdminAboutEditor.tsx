@@ -2,10 +2,14 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import AlertDialog, { useAlertDialog } from "../../components/gui/AlertDialog";
 
+// Admin page for editing the "About" content
 export default function AdminAboutEditor() {
+  // Stores the About page data fetched from the server
   const [about, setAbout] = useState<any>(null);
+  // Custom alert dialog hook for success/failure messages
   const { showAlert, message,isFailure, clearAlert, setAlert } = useAlertDialog();
 
+  // Load About page content when component mounts
   useEffect(() => {
     const fetchAbout = async () => {
       try {
@@ -18,6 +22,7 @@ export default function AdminAboutEditor() {
     fetchAbout();
   }, []);
 
+  // Save updated About page content to the server
   const saveChanges = async () => {
     try {
       await axios.put(`${import.meta.env.VITE_API_URL}/about`, about);
@@ -63,7 +68,6 @@ export default function AdminAboutEditor() {
         placeholder="טקסט החזון"
       />
 
-      {/*  */}
       {about.features.map((f: any, i: number) => (
         <div key={i} className="mb-4">
           <input

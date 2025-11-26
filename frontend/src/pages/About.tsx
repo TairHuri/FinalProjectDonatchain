@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import { ShieldCheck, Brain, HeartHandshake, Globe } from "lucide-react";
 import axios from "axios";
 
+ //  Local state for About page content fetched from backend
+  // Correctly typed using TypeScript union (`| null`) for initial state
 export default function About() {
  
   const [about, setAbout] = useState<{
@@ -17,6 +19,7 @@ export default function About() {
   useEffect(() => {
     const fetchAbout = async () => {
       try {
+        //Fetch About page content from API
         const res = await axios.get(`${import.meta.env.VITE_API_URL}/about`);
         setAbout(res.data);
       } catch (err) {

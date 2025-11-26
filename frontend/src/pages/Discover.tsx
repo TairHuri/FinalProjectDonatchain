@@ -1,17 +1,19 @@
-
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight, CheckCircle2 } from "lucide-react";
-
 
 import "../css/general/Discover.css";
 
 
 export default function Discover() {
+ // Modal open flag (controls showing the wizard)
   const [open, setOpen] = useState(false);
+  // Current wizard step index
   const [step, setStep] = useState(0);
+  // Selected image for zoom preview (null = closed)
   const [zoomSrc, setZoomSrc] = useState<string | null>(null);
 
+   // Static steps data - could be moved outside component to avoid re-allocating every render
   const steps = [
     { title: "בחירת קמפיין", 
       desc: "גללו וחפשו את הקמפיין אליו תרצו לתרום", 

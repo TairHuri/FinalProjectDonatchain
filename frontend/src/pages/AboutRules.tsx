@@ -3,6 +3,8 @@ import axios from "axios";
 import { motion } from "framer-motion";
 import { Shield, UserCheck, Lock, Cpu, FileCode2, RefreshCcw } from "lucide-react";
 
+//  Mapping rule titles to specific icons for dynamic rendering
+//  Consider using a typed union or enum for keys to improve type safety
 const icons: Record<string, any> = {
   "כללי": Shield,
   "אחריות המשתמש": UserCheck,
@@ -13,6 +15,8 @@ const icons: Record<string, any> = {
 };
 
 export default function AboutRules() {
+   //  Holds the fetched website rules
+  //  Replace `any[]` with a proper interface for stronger typing
   const [rules, setRules] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 

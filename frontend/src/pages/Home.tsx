@@ -8,11 +8,21 @@ import AISearchBar from "../components/AISearchBar";
 
 import { getCampaignTags } from "../services/campaignApi";
 
-
+/**
+ * CategoriesSection Component
+ * Displays campaign categories with icons and horizontal scroll navigation.
+ * Fetches tag list dynamically from the backend.
+ */
 function CategoriesSection() {
+ // DOM reference for horizontal scroller
   const scrollerRef = useRef<HTMLDivElement | null>(null);
+ 
+  // Campaign tags received from API
   const [campaignTags, setCampaignTags] = useState<string[]>([])
 
+    /**
+   * Load categories from the API only when the component mounts
+   */
   useEffect(() => {
     const loadTags = async () => {
       const tags = await getCampaignTags()
@@ -22,7 +32,9 @@ function CategoriesSection() {
 
   }, []);
 
-
+  /**
+   * Dynamically returns a Lucide icon component by its name (string from DB/API)
+   */
   const getIcon = (name: string) => {
 
     const Icon = Icons[name as unknown as keyof typeof Icons] as LucideIcon
@@ -30,7 +42,9 @@ function CategoriesSection() {
     return <Icon className="block-ic" />
   }
 
-
+  /**
+   * Scrolls the category list horizontally (smooth animation)
+   */
   const scroll = (dir: "left" | "right") => {
     const el = scrollerRef.current;
     if (!el) return;
@@ -69,7 +83,16 @@ function CategoriesSection() {
   );
 }
 
-
+/**
+ * Home Page Component
+ * Represents the main landing page, including:
+ * - Hero introduction section
+ * - AI campaign search
+ * - Dynamic campaign categories
+ * - Explanation of blockchain usage
+ * - Platform benefits overview
+ * - Footer
+ */
 export default function Home() {
   return (
     <main className="home" dir="rtl">

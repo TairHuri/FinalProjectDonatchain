@@ -18,15 +18,22 @@ type SortByType =
   | "endDateNewToOld";
 
 export default function Campaigns() {
+  //  Holds the full list of campaigns fetched from API or filtered by NGO
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  //  Search query for filtering campaigns by title
   const [query, setQuery] = useState("");
+  //  Sorting option selected in dropdown
   const [sortBy, setSortBy] = useState<SortByType>("title");
+  //  UI view mode (grid / list)
   const [view, setView] = useState<"grid" | "list">("grid");
+  //  Toggle for showing active campaigns only
   const [showActiveOnly, setShowActiveOnly] = useState(true);
+
   const params = useParams();
   const [queryTag, setQueryTag] = useSearchParams();
 
-  
+ //  This type casting reveals backend inconsistency (Ngo in Campaign is not strongly typed).
+  //  Suggestion: enforce type in backend or refine Campaign interface.  
   const filterActive = (campaigns:Campaign[]) => campaigns.filter(c => (c.ngo as unknown as Ngo).isActive == true)
   
   const fetchData = async () => {
@@ -73,11 +80,9 @@ export default function Campaigns() {
   const filtered = useMemo(() => {
     const now = new Date();
 
-    // בדיקה האם הסתיים
     const isEnded = (c: Campaign) =>
       c.endDate ? new Date(c.endDate) < now : false;
 
-    // חיפוש
     let result = (Array.isArray(campaigns) ? campaigns : []).filter((c) =>
       queryTag.has("tag")
         ? c.tags.includes(queryTag.get("tag")!)

@@ -25,7 +25,6 @@
   font-family:"Heebo", system-ui, Segoe UI, Arial, sans-serif;
 }
 
-/* Header / Tabs */
 .ar-header{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:.8rem;}
 .ar-title{margin:0;font-weight:800;font-size:clamp(1.15rem,2.6vw,1.5rem);color:var(--ar-primary)}
 .ar-tabs{display:flex;gap:6px;flex-wrap:wrap}
@@ -40,7 +39,6 @@
   color:#fff;border-color:transparent; box-shadow:0 6px 18px rgba(52,94,108,.22);
 }
 
-/* Filters */
 .ar-filters{display:grid;grid-template-columns:1.5fr .9fr .9fr;gap:.6rem;margin:.6rem 0;}
 @media (max-width:820px){.ar-filters{grid-template-columns:1fr 1fr;}}
 @media (max-width:560px){.ar-filters{grid-template-columns:1fr;}}
@@ -51,7 +49,6 @@
 }
 .ar-input:focus{border-color:#cfe0dc;box-shadow:0 0 0 3px rgba(52,94,108,.12)}
 
-/* Bulk actions */
 .ar-bulk{
   display:flex;align-items:center;justify-content:space-between;gap:.6rem;margin:.4rem 0 .8rem;
   flex-wrap:wrap;
@@ -74,7 +71,6 @@
 }
 .ar-icon-btn.danger{background:#fff;border-color:#f3c4cc;color:#b31332}
 
-/* Table */
 .ar-table-wrap{overflow:auto;border:1px solid var(--ar-border);border-radius:12px}
 .ar-table{width:100%;border-collapse:collapse;background:#fff}
 .ar-table th,.ar-table td{padding:.65rem .7rem;border-bottom:1px solid var(--ar-border);vertical-align:middle}
@@ -91,7 +87,7 @@
 .ar-row-actions{display:flex;gap:.3rem;align-items:center}
 .ar-btn.tiny{padding:.25rem .5rem;border-radius:8px}
 
-/* Badges */
+
 .ar-badge{
   border-radius:10px;padding:.25rem .6rem;font-weight:800;font-size:.88rem;color:#fff;white-space:nowrap;
 }
@@ -99,7 +95,6 @@
 .ar-badge--inprogress{background:var(--ar-info)}
 .ar-badge--done{background:var(--ar-ok)}
 
-/* Drawer */
 .ar-drawer{
   position: fixed; inset-block: 0; inset-inline-end: -420px; width: min(420px, 92vw);
   background:#fff; border-inline-start:1px solid var(--ar-border); box-shadow:-10px 0 28px rgba(30,40,38,.18);
