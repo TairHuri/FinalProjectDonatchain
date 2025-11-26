@@ -1,9 +1,10 @@
 import cron from "node-cron";
 import Campaign from "../models/campaign.model";
 
+// Starts a scheduled cron job that updates campaign statuses daily
 
 export const startCampaignStatusJob = () => {
-  
+ // Schedule job to run every day at midnight (00:00:00) 
   cron.schedule("0 0 0 * * *", async () => {
     console.log("🔄 מריץ עדכון סטטוס קמפיינים לפי תאריך סיום...");
 

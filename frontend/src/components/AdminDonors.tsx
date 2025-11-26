@@ -5,14 +5,17 @@ import type { Donation } from "../models/Donation";
 import "../css/admin/AdminDonors.css";
 
 const AdminDonors = () => {
+  // State to store the list of donations
   const [donations, setDonations] = useState<Donation[]>([]);
+  // Loading state for displaying a loader while fetching data
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Fetch all donations when the component mounts
     const load = async () => {
       try {
         const data = await getAllDonations();
-        setDonations(data);
+        setDonations(data); // Save donations to state
       } catch (error) {
         console.error("שגיאה בטעינת תרומות:", error);
       } finally {
@@ -20,8 +23,10 @@ const AdminDonors = () => {
       }
     };
     load();
-  }, []);
 
+      }, []); // Dependency array ensures it runs only once
+
+  // Show loading message while fetching data
   if (loading) return <p>טוען נתוני תרומות...</p>;
 
   return (

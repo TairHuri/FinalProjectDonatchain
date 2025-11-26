@@ -5,6 +5,7 @@ import axios from "axios";
 
 export default function RulesViewer() {
   const [rules, setRules] = useState<any[]>([]);
+ //  Consider replacing `any[]` with a typed interface for better type safety
 
   useEffect(() => {
     const fetchRules = async () => {

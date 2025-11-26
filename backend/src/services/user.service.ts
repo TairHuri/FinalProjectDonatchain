@@ -4,25 +4,12 @@ import User, { IUser, UserRoleType } from '../models/user.model';
 import * as AuthService from './auth.service';
 
 export default {
-  // async register({ email, password, name, role, ngoId, address, phone, bankAccount, wallet, goals }: any) {
-  //   const user = await AuthService.registerUser({
-  //     email,
-  //     password,
-  //     name,
-  //     ngoId,
-  //     address,
-  //     phone,
-  //     bankAccount,
-  //     wallet,
-  //     goals,
-  //   });
-  //   return user;
-  // },
-
+  // Get a user by ID, excluding the password hash
   async getById(id: string) {
     return User.findById(id).select('-passwordHash');
   },
 
+    // Update a user's information
   async updateUser(id: string, updates: any) {
     const user = await User.findById(id);
     if (!user) throw new ServerError('User not found', 400);
@@ -31,12 +18,15 @@ export default {
     return user;
   },
 
+    // List all users, excluding their password hashes
   async listAll() {
     const items = await User.find().select('-passwordHash');;
   
     return { items, total:items.length};
   },
 
+  
+  // Approve a user (e.g., after verification)
    async approveUser(userId: string) {
     try {
 
@@ -51,6 +41,7 @@ export default {
       throw err
     }
   },
+    // Update a user's role (e.g., admin, NGO, donor)
    async updateRole(userId: string, role: UserRoleType) {
     try {
 

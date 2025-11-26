@@ -13,6 +13,11 @@ import roleMiddleware from '../middlewares/role.middleware';
 import { toggleCampaignStatus } from '../controllers/campaigns.controller';
 
 
+// This file defines routes related to campaign management.
+// It includes public routes for listing campaigns and fetching tags,
+// as well as protected routes for creating, updating, toggling status,
+// and generating reports, with role-based access control applied.
+
 const router = Router();
 
 router.get('/admin/all', authMiddleware, roleMiddleware(['admin']), getAllCampaigns);

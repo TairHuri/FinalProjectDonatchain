@@ -20,17 +20,29 @@ import type { Campaign } from "../models/Campaign";
 import AdminRequest from "../components/ngo/AdminRequest";
 
 
-const tabs = [{ id: 0, label: "כל הקמפיינים" }, { id: 1, label: "קמפיינים פעילים" }, { id: 2, label: "קמפיינים מתוכננים" }, { id: 3, label: "קמפיינים לא פעילים" }, { id: 4, label: "קמפיינים מושהים/מחוקים" }]
+/**
+ * Tabs for filtering different campaign states.
+ */
+const tabs = [{id:0, label:"כל הקמפיינים"}, {id:1, label:"קמפיינים פעילים"}, {id:2, label:"קמפיינים מתוכננים"}, {id:3, label:"קמפיינים לא פעילים"},{id:4, label:"קמפיינים מושהים/מחוקים"} ]
+
 const NgoDashboard: React.FC = () => {
+  // Authentication
   const { user, logout } = useAuth();
+  // Fetching all campaign data from context
   const { campaigns } = useCampaigns();
   const navigate = useNavigate();
+    /**
+   * Controls which page is currently active inside the dashboard.
+   */
   const [activePage, setActivePage] = useState<
     "dashboard" | "newCampaign" | "campaigns" | "CampaignDetails" | "profile" | "donors" | "ngoUsers" | "ngoDetails" | "adminRequest"
   >("dashboard");
   const [campaignId, setCampaignId] = useState<string | null>(null)
   console.log('campaigns', campaigns);
-  const { active, setActive } = useTabsButtons()
+  const {active, setActive} = useTabsButtons()
+   /**
+   * Campaign filters by type/status (active, planned, expired, inactive, deleted).
+   */
   const now = new Date()
   const campaignFilters: { [n: number]: (campaign: Campaign) => boolean } = {
     0: (campaign: Campaign) => true,
@@ -66,8 +78,11 @@ const NgoDashboard: React.FC = () => {
     setActivePage("CampaignDetails");
     setCampaignId(id);
   }
-  console.log(user);
-  const getDashboardSizeClass = () => {
+console.log(user);
+  /**
+   * Responsive dashboard layout class based on page content.
+   */
+ const getDashboardSizeClass = () => {
     switch (activePage) {
       case "dashboard":
         return "medium";

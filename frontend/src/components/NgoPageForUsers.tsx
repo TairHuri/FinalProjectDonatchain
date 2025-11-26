@@ -97,9 +97,7 @@ const NgoPageForUsers: React.FC = () => {
                                     >
                                         הצגת אישור העמותה
                                     </a>
-                                    {/* <div className="muted">
-                                        המסמך הרשמי המאשר רישום עמותה- לבחינת מהימנות העמותה.
-                                    </div> */}
+
                                 </div>
                             ) : (
                                 <p className="row-value">טרם עלה מסמך האישור הציבורי לעיון.</p>

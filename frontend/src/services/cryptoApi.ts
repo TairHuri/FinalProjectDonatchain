@@ -5,10 +5,12 @@ import { useAccount, useSwitchChain, useWriteContract, useWaitForTransactionRece
 import { sepolia } from 'wagmi/chains';
 import { parseEther, type Abi } from 'viem';
 import hubAbiJson from '../abi/Donatchain.json';
-
+// Contract address from environment variables
 const CONTRACT = import.meta.env.VITE_CONTRACT_ADDRESS as `0x${string}`;
+// Expected chain ID (Sepolia)
 const TARGET_CHAIN_ID = BigInt(import.meta.env.VITE_CHAIN_ID ?? "11155111"); // Sepolia
 
+// Static Sepolia configuration used for wallet switching
 const SEPOLIA = {
   chainIdDec: 11155111n,
   chainIdHex: '0xaa36a7',
@@ -18,7 +20,10 @@ const SEPOLIA = {
   blockExplorerUrls: ['https://sepolia.etherscan.io'],
 };
 
-
+/**
+ * Ensures the user's wallet is connected to the Sepolia network.
+ * If not, attempts to switch or add the chain to the wallet.
+ */
 async function ensureSepolia() {
   if (!window.ethereum) throw new Error('No injected wallet');
   const provider = new ethers.BrowserProvider(window.ethereum);
@@ -51,6 +56,10 @@ async function ensureSepolia() {
   }
 }
 
+/**
+ * Establishes a connection to the smart contract via MetaMask.
+ * Ensures the wallet is on Sepolia and returns the contract instance.
+ */
 const setupHubConnection = async () => {
   if (!window.ethereum) { throw new Error("לא נמצא ארנק בדפדפן (MetaMask)." ) }
   await ensureSepolia();
@@ -64,6 +73,10 @@ const setupHubConnection = async () => {
   return hub
 }
 
+/**
+ * Creates a new campaign on-chain.
+ * Sends a transaction to the smart contract and extracts the new campaign ID.
+ */
 export async function createCampaignOnChain(opts: {
   campaignName: string;
   charityId: number;
@@ -96,7 +109,10 @@ export async function createCampaignOnChain(opts: {
   return { status: true, onchainId };
 }
 
-
+/**
+ * Updates an existing on-chain campaign.
+ * Sends a transaction and extracts the updated campaign ID from the event logs.
+ */
 export async function updateCampaignOnChain(opts: {
   blockchainTx: number;
   campaignName: string;
@@ -127,6 +143,9 @@ export async function updateCampaignOnChain(opts: {
   return { status: true, onchainId };
 }
 
+/**
+ * Toggles an on-chain campaign's active/inactive status.
+ */
 export async function toggleCryptoCampaignStatus(opts: {
   blockchainTx: number;
   newActive: boolean;
@@ -146,10 +165,11 @@ export async function toggleCryptoCampaignStatus(opts: {
 }
 
 
-
+/**
+ * Fetches campaign data directly from the blockchain.
+ */
 export const getCampaignOnChain = async (blockchainTx: number) => {
-  //const provider = new ethers.JsonRpcProvider(RPC_URL);
-  const provider = new ethers.BrowserProvider(window.ethereum);
+ const provider = new ethers.BrowserProvider(window.ethereum);
   const contract = new ethers.Contract(CONTRACT, hubAbi.abi, provider);
 
   const campaignOnChain = await contract.campaigns(blockchainTx);
@@ -158,11 +178,16 @@ export const getCampaignOnChain = async (blockchainTx: number) => {
   
 }
 
-export // ===== פונקציות עזר לקריפטו =====
+export
+// ===== Crypto helper functions =====
 
   const HUB_ABI = hubAbiJson.abi as Abi;
 const CAMPAIGN_ID = Number(import.meta.env.VITE_CAMPAIGN_ID ?? 0);
 
+/**
+ * Hook that handles crypto donations using Wagmi.
+ * Returns donation function + transaction state.
+ */
 export const useCryptoPayment = () => {
   const { isConnected, chainId } = useAccount();
   const { switchChain } = useSwitchChain();

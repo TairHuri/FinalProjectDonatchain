@@ -7,8 +7,12 @@ import { NgoMediaFiles } from "../middlewares/multer.middleware";
 import nodemailer from "nodemailer";
 import bcrypt from "bcryptjs";
 
+/* -----------------------------
+   Register a NEW NGO + admin user
+------------------------------ */
 export const registerNewNgo = async (req: Request, res: Response) => {
   try {
+     // Extract NGO and user data from request
     const {
       userJson,
       name,
@@ -38,18 +42,22 @@ export const registerNewNgo = async (req: Request, res: Response) => {
       tags,
     };
 
+     // Uploaded files (logo & certificate)
     const ngoMediaFiles = req.files as NgoMediaFiles;
     const user = JSON.parse(userJson);
 
+    // Assign file names if uploaded
     if (ngoMediaFiles.logo) ngo.logoUrl = ngoMediaFiles.logo[0].filename;
     if (ngoMediaFiles.certificate)
       ngo.certificate = ngoMediaFiles.certificate[0].filename;
 
+    // Validate required user fields
     if (!user.email || !user.password || !user.name || !user.role)
       return res
         .status(400)
         .json({ success: false, message: "חובה למלא שם, אימייל וסיסמה" });
 
+           // Create NGO
     const createdNgo = await ngoService.create(ngo);
     user.ngoId = createdNgo._id;
     user.approved = true;
@@ -76,7 +84,9 @@ export const registerNewNgo = async (req: Request, res: Response) => {
   }
 };
 
-
+/* -----------------------------
+   Register a user to an EXISTING NGO
+------------------------------ */
 export const registerExistingNgo = async (req: Request, res: Response) => {
   try {
     const { user }: { user: IUser } = req.body;
@@ -108,6 +118,9 @@ export const registerExistingNgo = async (req: Request, res: Response) => {
   }
 };
 
+/* -----------------------------
+   Login user
+------------------------------ */
 export const login = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
@@ -157,6 +170,9 @@ export const login = async (req: Request, res: Response) => {
   }
 };
 
+/* -----------------------------
+   Get logged-in user info
+------------------------------ */
 export const me = async (req: Request, res: Response) => {
   const user = (req as any).user;
   res.json({
@@ -171,7 +187,9 @@ export const me = async (req: Request, res: Response) => {
 };
 
 
-
+/* -----------------------------
+   Nodemailer setup for password reset emails
+------------------------------ */
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -180,7 +198,9 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-
+/* -----------------------------
+   Forgot password – send reset code
+------------------------------ */
 export const forgotPassword = async (req: Request, res: Response) => {
   try {
     const { email } = req.body;
@@ -220,7 +240,9 @@ export const forgotPassword = async (req: Request, res: Response) => {
   }
 };
 
-
+/* -----------------------------
+   Verify reset code
+------------------------------ */
 export const verifyResetCode = async (req: Request, res: Response) => {
   try {
     const { email, code } = req.body;
@@ -237,7 +259,9 @@ export const verifyResetCode = async (req: Request, res: Response) => {
   }
 };
 
-
+/* -----------------------------
+   Reset password
+------------------------------ */
 export const resetPassword = async (req: Request, res: Response) => {
   try {
     const { email, code, newPassword } = req.body;

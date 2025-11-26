@@ -1,3 +1,6 @@
+// This component manages the personal details of the currently logged-in user.
+// It allows viewing, editing, changing password, and deleting the account.
+// It relies on the AuthContext to get the current user and update it after edits.
 import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext"
 import { cardStyle, primaryBtnStyle } from "../css/dashboardStyles"
@@ -13,10 +16,12 @@ import AlertDialog, { useAlertDialog } from "./gui/AlertDialog";
 import { useNavigate } from "react-router-dom";
 import ConfirmDialog, { useConfirmDialog } from "./gui/ConfirmDialog";
 
+// Props allow controlling which mode the component is in: view, edit, password change, or delete.
 const UserPersonalDetails = ({ editMode, setEditMode }: { editMode: string, setEditMode: (mode: "view" | "edit" | "password" | 'deleteUser') => void }) => {
   const { user, updateUser, logout } = useAuth()
   const nav = useNavigate();
 
+  // Alert dialog for success/failure messages
   const { showAlert, isFailure, message, clearAlert, setAlert } = useAlertDialog();
   const { openConfirm, closeConfirm, showConfirm } = useConfirmDialog();
   if (!user || !user._id || !user.token) return <p>לא בוצעה התחברות</p>
@@ -38,16 +43,20 @@ const UserPersonalDetails = ({ editMode, setEditMode }: { editMode: string, setE
 
     return count > 1
   }
+  
+  // Validate email format
   const isValidEmail = (email: string) => {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 };
 
+  // Validate Israeli phone number
 const isValidIsraeliPhone = (phone: string) => {
   if (!phone) return false;
   const clean = phone.replace(/\D/g, "");
   return /^05\d{8}$/.test(clean);
 };
 
+  // Handle password change
   const handleChangePassword = async () => {
     if (passwords.newPass !== passwords.confirmPass) {
       setAlert("הסיסמאות החדשות אינן תואמות", true);
@@ -62,6 +71,7 @@ const isValidIsraeliPhone = (phone: string) => {
     }
   };
 
+    // Handle account deletion
   const handleDeleteAccount = async () => {
     closeConfirm();
     if (!user || !user._id) return;
@@ -85,27 +95,27 @@ const isValidIsraeliPhone = (phone: string) => {
     }
     // request to server
   }
-const handleSaveChanges = async () => {
 
-  // ולידציה שם
+    // Save changes to personal details
+const handleSaveChanges = async () => {
+  // Validate name
   if (!formData.name || formData.name.trim().length < 2) {
     setAlert("יש להזין שם מלא תקין", true);
     return;
   }
 
-  // ולידציה אימייל
+ // Validate email
   if (!isValidEmail(formData.email || "")) {
     setAlert("האימייל שהוזן אינו תקין", true);
     return;
   }
 
-  // ולידציה טלפון ישראלי
+    // Validate Israeli phone
   if (!isValidIsraeliPhone(formData.phone || "")) {
     setAlert("מספר הטלפון אינו תקין. יש להזין מספר ישראלי בפורמט 05XXXXXXXX", true);
     return;
   }
 
-  // ניסיון שמירת נתונים
   try {
     const updated = await editUser(formData);
     updateUser(updated);
@@ -117,6 +127,7 @@ const handleSaveChanges = async () => {
   }
 };
 
+// Handle closing alert dialog
   const handleAlertSuccess = () => {
     if (editMode == 'deleteUser') {
       logout();
@@ -126,10 +137,6 @@ const handleSaveChanges = async () => {
       setEditMode("view")
     }
   }
-const isValidPassword = (password: string) => {
-  const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
-  return regex.test(password);
-};
   const handleChange = (field: string, value: string | number) => {
     setFormData({ ...formData, [field]: value })
   }

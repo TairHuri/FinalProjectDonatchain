@@ -2,6 +2,7 @@ import axios from "axios";
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
 import type { Ngo, NgoMediaType } from "../models/Ngo";
 
+// Verify if an NGO number exists in the system
 export async function verifyNgoNumber(ngoNumber: string){
   try{
     const httpResponse = await fetch(`${API_URL}/ngos/verify/${ngoNumber}`);
@@ -17,10 +18,10 @@ export async function verifyNgoNumber(ngoNumber: string){
   }
   
 }
+// Edit an existing NGO and update its media (logo, certificate, etc.)
+
 export async function editNgo(ngo: Ngo, token: string,  media: NgoMediaType) {
-  // content type: multipart/formdata
-  
-  const formData = new FormData()
+   const formData = new FormData()
   formData.append("name", ngo.name)
   formData.append("description", ngo.description)
   ngo.address && formData.append("address", ngo.address)
@@ -53,6 +54,7 @@ export async function editNgo(ngo: Ngo, token: string,  media: NgoMediaType) {
   return res.json();
 }
 
+// Toggle NGO active/inactive status (admin functionality)
 export async function toggleNgoStatus(id: string, token: string) {
   const res = await fetch(`${API_URL}/ngos/${id}/toggle-status`, {
     method: "PATCH",
@@ -66,12 +68,14 @@ export async function toggleNgoStatus(id: string, token: string) {
   return res.json();
 }
 
+// Fetch a list of all NGOs
 export const getNgoList = async (): Promise<{ items: Ngo[] }> => {
   const res = await axios.get<{ items: Ngo[] }>(`${API_URL}/ngos`);
 
   return res.data; 
 };
 
+// Fetch a single NGO by its ID
 export const getNgoById = async ( ngoId:string): Promise<Ngo> => {
   const res = await axios.get<Ngo>(`${API_URL}/ngos/${ngoId}`, {
 
@@ -79,7 +83,7 @@ export const getNgoById = async ( ngoId:string): Promise<Ngo> => {
 
   return res.data; 
 };
-
+// Get all NGO tags for filtering/tag selection
 export async function getNgoTags() {
   const res = await fetch(`${API_URL}/ngos/tags`);
   if (!res.ok) throw new Error(await res.text());

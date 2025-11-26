@@ -3,9 +3,10 @@ import { getNgoList } from "../../services/ngoApi"
 import type { Ngo } from "../../models/Ngo";
 
 interface Props {
-  onSelectNgo: (ngo: Ngo) => void;
+  onSelectNgo: (ngo: Ngo) => void; // Callback to notify parent when an NGO is selected
 }
 
+// Component that fetches and displays a list of NGOs
 export default function NgoList({ onSelectNgo }: Props) {
   const [ngos, setNgos] = useState<Ngo[]>([]);
   const [loading, setLoading] = useState(true);

@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import AlertDialog, { useAlertDialog } from "../../components/gui/AlertDialog";
-
+// Admin component for editing the website rules / terms & conditions
 export default function AdminRulesEditor() {
+
+  // Holds the list of rules fetched from the server
   const [rules, setRules] = useState<any[]>([]);
+  // Alert dialog state and handler methods
   const { showAlert, message,isFailure, clearAlert, setAlert } = useAlertDialog();
 
+   // Fetch current rules when component is mounted
   useEffect(() => {
     const fetchRules = async () => {
       try {
@@ -18,6 +22,7 @@ export default function AdminRulesEditor() {
     fetchRules();
   }, []);
 
+  // Save updated rules to the backend
   const saveChanges = async () => {
     try {
       await axios.put(`${import.meta.env.VITE_API_URL}/rules`, rules);

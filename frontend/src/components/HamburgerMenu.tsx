@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom"
-
+// Props type definition for the HamburgerMenu component
+// open: determines whether the menu is visible or hidden
+// setOpen: function used to toggle the menu state
 type Props = {
   open: boolean
   setOpen: (open: boolean) => void

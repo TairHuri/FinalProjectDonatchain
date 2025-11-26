@@ -2,7 +2,7 @@ import type { AdminRequestByUser } from "../models/Request";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
 
-
+// Create a new admin request made by a user
 export const createRequest = async (request:AdminRequestByUser, token:string) => {
        const res = await fetch(`${API_URL}/requests`, {
         method: "POST",
@@ -17,6 +17,7 @@ export const createRequest = async (request:AdminRequestByUser, token:string) =>
     }
     return res.json();
 }
+// Update an existing admin request
 export const updateRequest = async (requestId:string,  request:AdminRequestByUser, token:string) => {
        const res = await fetch(`${API_URL}/requests/${requestId}`, {
         method: "PUT",
@@ -32,6 +33,7 @@ export const updateRequest = async (requestId:string,  request:AdminRequestByUse
     return res.json();
 }
 
+// Get all requests for a specific NGO, including completed ones
 export const getRequestsByNgoId = async(ngoId:string, token:string) => {
     const res = await fetch(`${API_URL}/requests/${ngoId}?includeDone=true`, {
         headers:{"Authorization": `Bearer ${token}`,}
@@ -39,6 +41,7 @@ export const getRequestsByNgoId = async(ngoId:string, token:string) => {
     const requests = await res.json();
     return requests;
 }
+// Get all admin requests, optionally including completed ones
 export const getRequests = async(includeDone:boolean, token:string) => {
     const res = await fetch(`${API_URL}/requests?includeDone=${includeDone}`, {
         headers:{"Authorization": `Bearer ${token}`,}

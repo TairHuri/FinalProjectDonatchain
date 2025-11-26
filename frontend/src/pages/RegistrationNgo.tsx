@@ -16,13 +16,21 @@ import "../css/RegistrationNgo.css";
 
 export default function RegistrationNgo() {
   const nav = useNavigate();
+  
+  // Indicates whether user is registering a new NGO or joining an existing one
   const [agree, setAgree] = useState(false);
+  // Indicates whether user is registering a new NGO or joining an existing one
   const [newNgo, setNewNgo] = useState<boolean>(false);
+   // List of existing NGOs fetched from API
   const [ngoList, setNgoList] = useState<Ngo[]>([]);
+   // Holds uploaded media (logo + certificate)
   const [media, setMedia] = useState<NgoMediaType>({ logoUrl: null, certificate: null });
+   // Picker state for selecting an existing NGO
   const { openPicker, setOpenPicker, selectedItemId, setSelectedItemId } = usePickerList();
+    // Alert dialog state and handlers
   const { showAlert, isFailure, message, clearAlert, setAlert } = useAlertDialog();
 
+   // New user details (common in both flows: new NGO or existing NGO)
   const [user, setUser] = useState<User>({
     name: "",
     ngoId: "",
@@ -34,6 +42,7 @@ export default function RegistrationNgo() {
   });
 
 
+    // New NGO details (used only when creating new NGO)
   const [ngo, setNgo] = useState<Ngo>({
     _id: "",
     name: "",
@@ -53,34 +62,18 @@ export default function RegistrationNgo() {
     tags: [],
   });
 
+   // Update user values dynamically by field
   const handleChangeUser = (field: string, value: string | number) => {
     setUser({ ...user, [field]: value });
-  };
+  }; // Update NGO details dynamically
   const handleChangeNgo = (field: string, value: string | number | string[]) => {
     setNgo({ ...ngo, [field]: value });
-  };
+  };  // Update uploaded files (logo / certificate)
   const handleChangeMedia = (field: keyof NgoMediaType, value: FileList | null) => {
     setMedia({ ...media, [field]: value ? value[0] : null });
   };
 
-// const handleChangeData = (field: string, value: string | number) => {
-  // בדיקה מדויקת רק לפי ערך הקיים ברשימת העמותות
-  // const selectedNgo = ngoList.find(
-  //   (x) =>
-  //     x.name.trim() === value.toString().trim() ||
-  //     (x.ngoNumber && x.ngoNumber.toString().trim() === value.toString().trim())
-  // );
-
-//   // אם לא קיימת עמותה כזו → איפוס user.ngoId
-//   if (!selectedItemId) {
-//     setUser({ ...user, ngoId: "" });
-//     return;
-//   }
-
-//   // אם קיימת → הצמדה למשתמש
-//   setUser({ ...user, ngoId: selectedItemId });
-// };
-
+   // Automatically bind selected NGO ID from picker to user state
 useEffect(() => {
   if (!selectedItemId) {
     setUser(prev => ({ ...prev, ngoId: "" }));
@@ -91,11 +84,12 @@ useEffect(() => {
 }, [selectedItemId]);
 
 
+ // Fetch existing NGOs for registration list
   const loadNgoList = async () => {
     const res = await getNgoList();
     setNgoList(res.items);
   };
-
+// Form submission handler (validations + API calls)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -235,23 +229,6 @@ if (!user.ngoId && !newNgo) {
 
                 <Building2 className="input-icon" />
                 <PickerList useNgo={true} openPicker={openPicker} setOpenPicker={setOpenPicker} selectedItemId={selectedItemId} setSelectedItemId={setSelectedItemId} list={ngoList.map(c => ({ _id: c._id, name: `${c.name} | ${c.ngoNumber}` }))} />
-                {/* <input
-                  type="text"
-                  list="ngoList"
-                  placeholder="חפשי ובחרי עמותה קיימת…"
-                  onChange={(e) => handleChangeData("ngoId", e.target.value)}
-                  className="input-field"
-                />
-                <datalist id="ngoList">
-                  {ngoList.map((n) => (
-                    <option
-                      key={n._id}
-                      value={n.name}
-                      label={n.ngoNumber ? `(${n.ngoNumber})` : ""}
-                    />
-                  ))}
-                </datalist> */}
-
               </div>
             )}
 

@@ -11,12 +11,19 @@ import { useCryptoPayment } from "../services/cryptoApi";
 
 import '../css/campaign/CryptoPayment.css'; // שימי לב שאת מייבאת את קובץ ה-CSS החדש
 
+// Main Crypto Payment Component
 const CryptoPayment = ({ close, campaignId }: { close: () => void, campaignId: string, userId: string }) => {
 
+  // Campaign context – used to refresh campaign after successful donation
   const { updateCampaign } = useCampaigns();
+
+  // Wallet disconnect handler
   const { disconnect } = useDisconnect();
+
+  // Custom hook for crypto payments
   const { donateCrypto, waiting, isPending, isSuccess, error, hash } = useCryptoPayment();
 
+  // Donation form state
   const [ccForm, setCcform] = useState<Donation>({
     comment: '',
     phone: '',
@@ -32,10 +39,15 @@ const CryptoPayment = ({ close, campaignId }: { close: () => void, campaignId: s
     anonymous: false
   });
 
+  // Error / info message state
   const [message, setMessage] = useState<string | null>(null);
-  const [showConfirm, setShowConfirm] = useState<boolean>(false);
-  const { isLoading, start, stop } = useSpinner();
 
+  // Controls confirmation screen
+  const [showConfirm, setShowConfirm] = useState<boolean>(false);
+
+  // Spinner control
+  const { isLoading, start, stop } = useSpinner();
+  // Handles all form input changes (controlled inputs)
   const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { id, value } = event.target;
     setCcform({ ...ccForm, [id]: value });
@@ -73,7 +85,7 @@ const CryptoPayment = ({ close, campaignId }: { close: () => void, campaignId: s
     event.preventDefault();
     setMessage(null);
 
-    // ולידציה בסיסית
+
     if (!ccForm.firstName.trim()) return setMessage("יש להזין שם פרטי");
     if (!ccForm.lastName.trim()) return setMessage("יש להזין שם משפחה");
     if (!ccForm.phone.match(/^[0-9]{3}[\-.]?[0-9]{7}$/)) return setMessage("יש להזין מספר פלאפון תקין");
@@ -82,7 +94,7 @@ const CryptoPayment = ({ close, campaignId }: { close: () => void, campaignId: s
 
     try {
       start();
-      // המרה ל-String עבור ה-API
+
       await donateCrypto(`${ccForm.amount}`);
     } catch (error) {
       console.error(error);
@@ -121,7 +133,7 @@ const CryptoPayment = ({ close, campaignId }: { close: () => void, campaignId: s
       
       <form onSubmit={handlePayment}>
         
-        {/* שורה 1: שם פרטי + משפחה */}
+       {/* Row 1: First Name + Last Name */}
         <div className="form-grid">
           <div className="input-group_crypto">
             <label htmlFor="firstName" className="label-text">שם פרטי</label>
@@ -133,7 +145,6 @@ const CryptoPayment = ({ close, campaignId }: { close: () => void, campaignId: s
           </div>
         </div>
 
-        {/* שורה 2: טלפון + מייל */}
         <div className="form-grid">
           <div className="input-group_crypto">
             <label htmlFor="phone" className="label-text">פלאפון</label>
@@ -145,32 +156,32 @@ const CryptoPayment = ({ close, campaignId }: { close: () => void, campaignId: s
           </div>
         </div>
 
-        {/* סכום */}
+        {/* Donation amount */}
         <div className="input-group_crypto full-width" style={{marginBottom: '16px'}}>
            <label htmlFor="amount" className="label-text">סכום התרומה (ETH)</label>
            <input id="amount" placeholder="0.01" type="number" step="any" onChange={handleChange} className="custom-input" style={{fontSize: '1.2rem', fontWeight: 'bold'}} />
         </div>
 
-        {/* אנונימיות */}
+       {/* Anonymous donation option */}
         <label className="checkbox-wrapper">
           <input type="checkbox" checked={ccForm.anonymous} onChange={(e) => handleAnonymouse(e.target.checked)} />
           <span className="checkbox-text">הישארו אנונימיים (יופיע רק סכום התרומה בדף הקמפיין)</span>
         </label>
 
-        {/* הערה */}
+        {/* Optional comment */}
         <div className="input-group_crypto full-width">
           <label htmlFor="comment" className="label-text">הקדשה / הערה</label>
           <textarea id="comment" placeholder="כמה מילים חמות..." onChange={handleChange} className="custom-input"></textarea>
         </div>
 
-        {/* הודעות שגיאה */}
+        {/* Error / info message */}
         {message && (
           <div style={{ background: '#fee2e2', color: '#dc2626', padding: '10px', borderRadius: '8px', marginTop: '15px', textAlign: 'center', fontWeight: 'bold' }}>
             {message}
           </div>
         )}
 
-        {/* אזור התשלום וחיבור ארנק */}
+         {/* Wallet + action buttons */}
         <div className="wallet-section">
            <Crypto 
              waiting={waiting} 
@@ -178,7 +189,7 @@ const CryptoPayment = ({ close, campaignId }: { close: () => void, campaignId: s
              isSuccess={isSuccess} 
              error={error as Error} 
              hash={hash} 
-             // העברנו את כפתור הביטול פנימה כדי שיהיה באותו קו
+             
              onCancel={close}
            />
         </div>
@@ -187,14 +198,14 @@ const CryptoPayment = ({ close, campaignId }: { close: () => void, campaignId: s
     </div>
   );
 };
-
+// Props for Crypto sub-component
 type CryptoProps = {
   isPending: boolean;
   waiting: boolean;
   isSuccess: boolean;
   hash: string | undefined;
   error: Error;
-  onCancel: () => void; // הוספתי פרופ לביטול
+  onCancel: () => void; 
 };
 
 function Crypto({ waiting, isPending, isSuccess, error, onCancel }: CryptoProps) {
@@ -213,7 +224,7 @@ function Crypto({ waiting, isPending, isSuccess, error, onCancel }: CryptoProps)
          </button>
 
          <button 
-           type="submit" // זה הכפתור ששולח את הטופס הראשי
+           type="submit" 
            disabled={isPending || waiting} 
            className="btn-submit"
          >

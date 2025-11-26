@@ -1,8 +1,7 @@
 
 import puppeteer from "puppeteer";
-import { ICampaign, ICampaignWithTotal } from "../models/campaign.model";
+import {  ICampaignWithTotal } from "../models/campaign.model";
 import { IDonation } from "../models/donation.model";
-import fs from "node:fs";
 
 
 import path from 'path';
@@ -12,12 +11,9 @@ import path from 'path';
 export const reportFolder = path.join(process.cwd(), 'reports')
 export const generateCampaignReport = async (campaign: ICampaignWithTotal, donations: IDonation[], includeDonations: boolean, includeComments: boolean) => {
 
-  // עוזר: עיצוב מספרים/תאריכים
   const fmt = new Intl.NumberFormat("he-IL");
   const dateFmt = new Intl.DateTimeFormat("he-IL", { dateStyle: "short" });
   const dateDonationFmt = new Intl.DateTimeFormat("he-IL", { dateStyle: "short", timeStyle: 'short' });
-
-  // בונים HTML עם RTL
   const html = buildHtml({
     campaign,
     donations,

@@ -5,22 +5,34 @@ import { useAuth } from "../contexts/AuthContext";
 import type { Campaign } from "../models/Campaign";
 
 
-
+// Defines the structure of the Campaigns Context API.
+// This interface enforces type safety when accessing campaigns and actions.
 interface CampaignsContextType {
   campaigns: Campaign[];
+ // Creates a new campaign with optional media files and uploads it to the backend
   addCampaign: (c: Omit<Campaign, "raised">,images:File[]|null, movie:File|null, mainImage:File|null) => Promise<boolean>; // ← פרמטר אחד בלבד
+  // Fetches all campaigns associated with the current NGO
   refreshCampaigns: () => Promise<void>;
-  updateCampaign: (campaignId:string) => Promise<void>;
-  postUpdateCampaign: (campaign: Campaign) =>void;
+
+  // Reloads a single campaign from the backend by ID and updates local state
+  updateCampaign: (campaignId: string) => Promise<void>;
+
+  // Updates campaign state locally after an edit without calling the server again
+  postUpdateCampaign: (campaign: Campaign) => void;
 }
 
-
+// Create Context with undefined to force safe consumption via 
 const CampaignsContext = createContext<CampaignsContextType | undefined>(undefined);
 
+// Provider component wrapping the app and providing campaign state & actions
 export function CampaignsProvider({ children }: { children: ReactNode }) {
+  // Holds all campaigns of the logged-in NGO
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+
+  // Access authenticated user info
   const { user } = useAuth();
 
+  // Loads all campaigns related to the NGO from the backend
 const refreshCampaigns = async () => {
   try {
     console.log("Fetching campaigns for NGO:", user);
@@ -32,10 +44,13 @@ const refreshCampaigns = async () => {
   }
 };
 
+ // Fetches a single campaign by ID and replaces it in local state
 const updateCampaign = async (campaignId: string) =>{
   const campaign:Campaign = await getCampaign(campaignId)
   setCampaigns(prev => [...prev.filter(c => c._id !== campaignId), campaign])
 }
+
+// Updates campaign locally without server request (optimistic UI handling)
 const postUpdateCampaign = (campaign: Campaign) =>{
   
   setCampaigns(prev => [...prev.filter(c => c._id !== campaign._id), campaign])
@@ -64,6 +79,7 @@ const postUpdateCampaign = (campaign: Campaign) =>{
   );
 }
 
+// Custom hook for safely accessing CampaignsContext
 export function useCampaigns() {
   const ctx = useContext(CampaignsContext);
   if (!ctx) throw new Error("useCampaigns חייב להיות בתוך CampaignsProvider");

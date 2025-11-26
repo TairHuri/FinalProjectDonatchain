@@ -1,14 +1,13 @@
-/* רקע מלא */
+
 .login-page {
  display: flex;
   justify-content: center;
   align-items: center;
-  /* min-height: 100vh; */
+
   background: none;
   font-family: 'Segoe UI', Calibri, sans-serif;
 }
 
-/* כרטיס מרכזי */
 .login-card {
   background: #fff;
   border-radius: 20px;
@@ -38,7 +37,6 @@
   font-size: 14px;
 }
 
-/* שדות קלט */
 .login-form {
   display: flex;
   flex-direction: column;
@@ -72,7 +70,6 @@
   outline: none;
 }
 
-/* הצגת סיסמה */
 .pass-toggle {
   position: absolute;
   right: 14px;
@@ -86,7 +83,6 @@
   color: #16a34a;
 }
 
-/* כפתור התחברות */
 .login-btn {
   display: flex;
   align-items: center;
@@ -113,7 +109,7 @@
   cursor: not-allowed;
 }
 
-/* Loader */
+
 .loader {
   border: 3px solid #d1fae5;
   border-top: 3px solid #16a34a;
@@ -123,7 +119,6 @@
   animation: spin 0.8s linear infinite;
 }
 
-/* קישור תחתון */
 .login-footer {
   text-align: center;
   margin-top: 15px;
@@ -137,7 +132,6 @@
   text-decoration: underline;
 }
 
-/* אנימציות */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -155,7 +149,6 @@
   }
 }
 
-/* ✅ התאמה רספונסיבית למסכים קטנים */
 @media (max-width: 768px) {
   .login-card {
     width: 80vw;

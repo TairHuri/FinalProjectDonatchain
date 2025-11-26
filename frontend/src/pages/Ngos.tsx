@@ -8,12 +8,22 @@ import '../css/Ngos.css'
 import AlertDialog, { useAlertDialog } from "../components/gui/AlertDialog";
 
 export default function Ngos() {
+    // Search input value for filtering NGOs by name  
     const [search, setSearch] = useState("");
-    const [sortBy, setSortBy] = useState("name");
-    const [ngos, setNgos] = useState<Ngo[]>([])
-    const [view, setView] = useState<"grid" | "list">("grid"); // מצב תצוגה
-    const { showAlert, message, isFailure, clearAlert, setAlert } = useAlertDialog();
 
+    // Selected sorting method (name, creation date, campaign count...)  
+    const [sortBy, setSortBy] = useState("name");
+
+    // List of NGOs fetched from server  
+    const [ngos, setNgos] = useState<Ngo[]>([]);
+
+    // Current UI view mode: grid or list  
+    const [view, setView] = useState<"grid" | "list">("grid");
+
+    // Custom hook for showing alert dialog (errors, etc.)
+    const { showAlert, message,isFailure, clearAlert, setAlert } = useAlertDialog();
+
+    // Fetch NGO list from API and filter only active ones
     const loadNgoList = async () => {
         try {
             const ngos = await getNgoList();
@@ -23,9 +33,12 @@ export default function Ngos() {
             setAlert('error loading ngos', true)
         }
     }
+
+    // Call API on initial render
     useEffect(() => {
         loadNgoList();
     }, [])
+    // Filter + sort NGOs based on user actions
     const filteredNgos = ngos
         .filter((ngo) => ngo.name.toLowerCase().includes(search.toLowerCase()))
         .sort((a, b) => {
@@ -45,14 +58,14 @@ export default function Ngos() {
 
     return (
         <div dir="rtl" className="ngos-page">
-            {/* Header */}
+            {/* Page title */}
             <header className="ngos-header">
                 <div className="ngos-title-wrap">
                     <h1 className="ngos-title">רשימת עמותות</h1>
                     <span className="ngos-count">{ngos.length} עמותות</span>
                 </div>
 
-                {/* חיפוש + מיון */}
+                {/* Filters + search bar + view buttons */}
                 <div className="ngos-filters">
                     <div className="ngos-input-wrap">
                         <Search size={18} />
@@ -77,7 +90,7 @@ export default function Ngos() {
                     </select>
 
 
-                    {/* כפתורי תצוגה */}
+                    {/* Switch view buttons  */}
                     <div className="ngos-view">
                         <button
                             type="button"
@@ -98,7 +111,7 @@ export default function Ngos() {
             </header>
 
             <AlertDialog show={showAlert} message={message} isFailure={isFailure} failureOnClose={clearAlert} />
-            {/* רשימת עמותות */}
+            {/* NGO list results  */}
             {filteredNgos.length === 0 ? (
                 <div className="ngos-empty">
                     לא נמצאו עמותות תואמות. נסו לשנות את החיפוש או המיון.

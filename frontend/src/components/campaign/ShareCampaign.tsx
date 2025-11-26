@@ -1,17 +1,18 @@
-
 import { useState } from 'react';
-// import { Share2, Facebook, Send, MessageCircle } from "lucide-react";
 import { Copy, MessageCircle, Share2, Check } from "lucide-react";
 import type { Campaign } from '../../models/Campaign';
 
 import '../../css/ShareCampaign.css'
 
+// Component for sharing a campaign through different methods
 const ShareCampaign = ({ campaign }: { campaign: Campaign }) => {
   const [copied, setCopied] = useState(false);
 
+  // Generate a full URL to the campaign page
   const campaignUrl = `${window.location.origin}/campaign/${campaign._id}`;
 
 
+  // Copy the campaign link to clipboard
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(campaignUrl);
@@ -22,7 +23,7 @@ const ShareCampaign = ({ campaign }: { campaign: Campaign }) => {
     }
   };
 
-
+// Share campaign through WhatsApp or fallback if browser doesn't support native share
 const handleShareWhatsapp = () => {
   const text = `תראה את הקמפיין הזה: ${campaign.title} - ${campaignUrl}`;
 
@@ -38,7 +39,7 @@ const handleShareWhatsapp = () => {
 };
 
 
-
+// Share using the device native share API (mobile supported mainly)
   const handleNativeShare = () => {
     if (navigator.share) {
       navigator.share({
@@ -55,7 +56,7 @@ const handleShareWhatsapp = () => {
   };
   return (
     <div className='share-row'>
-      {/* חדש: שיתוף הקמפיין */}
+      {/* Sharing Section Card */}
       <div
         style={{
           marginTop: "20px",
@@ -67,7 +68,7 @@ const handleShareWhatsapp = () => {
           fontFamily: "calibri",
         }}
       >
-        {/* טקסט עליון */}
+        {/* Header text */}
         <div
           style={{
             fontSize: "0.9rem",
@@ -81,7 +82,7 @@ const handleShareWhatsapp = () => {
           שתפו את הקמפיין ועזרו לנו להגיע לעוד אנשים
         </div>
 
-        {/* קבוצת הכפתורים */}
+        {/* Buttons group */}
         <div
           style={{
             display: "flex",
@@ -90,7 +91,7 @@ const handleShareWhatsapp = () => {
             justifyContent: "center",
           }}
         >
-          {/* כפתור העתקה */}
+          {/* Copy Link Button */}
           <button
             className="campaign-share-btn"
             onClick={handleCopyLink}
@@ -118,7 +119,7 @@ const handleShareWhatsapp = () => {
             </div>
           </button>
 
-          {/* כפתור וואטסאפ */}
+          {/* WhatsApp Share Button */}
           <button
             className="campaign-share-btn"
             onClick={handleShareWhatsapp}

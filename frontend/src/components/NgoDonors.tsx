@@ -9,19 +9,21 @@ import { Users, } from "lucide-react";
 import PickerList, { usePickerList } from './gui/PickerList';
 
 const NgoDonors = () => {
-  const { user } = useAuth();
-  const { campaigns } = useCampaigns();
+  const { user } = useAuth(); // Current logged-in NGO user
+  const { campaigns } = useCampaigns(); // All campaigns for this NGO
   const { openPicker, setOpenPicker, selectedItemId, setSelectedItemId } = usePickerList();
   
   const [donations, setDonations] = useState<Donation[]>([]);
   const [loading, setLoading] = useState(false);
 
+  // Load donors for a specific campaign
   const loadDonors = async (campaignId: string) => {
     setLoading(true);
     try {
       const rows: Donation[] = await getDonationsByCampaign(campaignId);
       const uniqueDonners: { [email: string]: Donation } = {}
       console.log(rows)
+      // Keep only unique donations by email
       for (const d in rows) {
         uniqueDonners[rows[d].email] = rows[d];
       }
@@ -46,12 +48,12 @@ const NgoDonors = () => {
     }
   };
 
-
+  // Load NGO donors on component mount
   useEffect(() => {
     loadNgoDonors();
   }, []);
 
-
+  // Reload donations whenever selected campaign changes
   useEffect(() => {
     if (selectedItemId === "all") {
       loadNgoDonors();
@@ -68,66 +70,6 @@ const NgoDonors = () => {
 
         <div className="toolbar">
           <PickerList openPicker={openPicker} setOpenPicker={setOpenPicker} selectedItemId={selectedItemId} setSelectedItemId={setSelectedItemId} list={campaigns.map(c => ({ _id: c._id!, name: c.title }))} />
-          {/* <div className="picker">
-            <button
-              type="button"
-              className="picker__button"
-              onClick={() => setOpenPicker((v) => !v)}
-              aria-expanded={openPicker}
-              aria-haspopup="listbox"
-            >
-              <span className="picker__label">
-                {selectedCampaignId === "all" ? "כל הקמפיינים" : (campaigns.find(c => c._id === selectedCampaignId)?.title ?? "בחרו קמפיין")}
-              </span>
-              <ChevronDown size={16} className={`chev ${openPicker ? "open" : ""}`} />
-            </button>
-
-            {openPicker && (
-              <div className="picker__panel" role="listbox">
-
-                <div className="picker__search">
-                  <Search size={16} />
-                  <input
-                    type="text"
-                    placeholder="חיפוש קמפיין..."
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                  />
-                  {query && (
-                    <button className="picker__clear" onClick={() => setQuery("")} type="button" aria-label="נקה חיפוש">
-                      <X size={16} />
-                    </button>
-                  )}
-                </div>
-
-                <button
-                  type="button"
-                  className={`picker__option ${selectedCampaignId === "all" ? "active" : ""}`}
-                  onClick={() => { setSelectedCampaignId("all"); setOpenPicker(false); }}
-                >
-                  כל הקמפיינים
-                </button>
-
-                <div className="picker__list custom-scroll">
-                  {visibleCampaigns.length === 0 && (
-                    <div className="picker__empty">לא נמצאו קמפיינים</div>
-                  )}
-                  {visibleCampaigns.sort( (c1, c2)=> c1.title.localeCompare(c2.title)).map((c) => (
-                    <button
-                      key={c._id}
-                      type="button"
-                      className={`picker__option ${selectedCampaignId === c._id ? "active" : ""}`}
-                      onClick={() => { setSelectedCampaignId(c._id!); setOpenPicker(false); }}
-                    >
-                      {c.title}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div> */}
-
-
           {selectedItemId !== "all" && (
             <button
               type="button"

@@ -11,13 +11,17 @@ import "../../css/campaign/EditCampaign.css"
 import { getCampaignOnChain, updateCampaignOnChain } from "../../services/cryptoApi";
 import { formatDates } from "../../validations/campaignDates";
 
+// Media type for storing new uploaded files + references to input DOM elements
 type MediaType = {
   images: { value: FileList | null, ref: React.RefObject<HTMLInputElement | null> },
   movie: { value: File | null, ref: React.RefObject<HTMLInputElement | null> },
   mainImage: { value: File | null, ref: React.RefObject<HTMLInputElement | null> },
 };
 
+// Setter type used to update the campaign state from parent component
 export type SetCampaign = (func: (c: Campaign | null) => Campaign | null) => void;
+
+// Props for CampaignEdit component
 export type CampaignEditProps = {
   token: string;
   setCampaign: SetCampaign;
@@ -26,36 +30,50 @@ export type CampaignEditProps = {
 }
 const CampaignEdit = ({ campaign, setEditMode, setCampaign, token, }: CampaignEditProps) => {
 
+  // Base path to fetch images from server
   const IMAGE_URL = import.meta.env.VITE_IMAGES_URL || "http://localhost:4000/images";
 
   const { showAlert, isFailure, message, clearAlert, setAlert } = useAlertDialog();
   const [disableStartDate, setDisableStartDate] = useState<boolean>(false)
+  
+  // Copy of campaign to compare later with edited values
   const [origCampaign, setOrigCampaign] = useState<Campaign>({ ...campaign })
   const { postUpdateCampaign } = useCampaigns();
+  
+   // State to store newly selected media files and references to inputs
   const [media, setMedia] = useState<MediaType>({
     images: { value: null as FileList | null, ref: useRef<HTMLInputElement>(null) },
     movie: { value: null as File | null, ref: useRef<HTMLInputElement>(null) },
     mainImage: { value: null as File | null, ref: useRef<HTMLInputElement>(null) },
   })
 
+  // Removes media that already exists in DB
   const removeImage = (field: string, imageName: string) => {
     if (!campaign) return;
     setCampaign((prev) => {
       if (!prev) return null;
+      // If removing from images array
       if (field === 'images') {
         return { ...prev, images: prev.images.filter(img => img !== imageName) }
       } else {
+        // For movie or main image fields
         return { ...prev, [field]: null } as Campaign
       }
     })
   }
+
+   // Removes a newly selected image before upload (not saved yet)
   const removeNewMedia = (field: keyof MediaType, image: File) => {
     if (field === 'images') {
       if (!media.images.value) return;
+      
+      // Rebuild the file list without the removed image
       const existingImages = new DataTransfer();
       for (const img of media.images.value) {
         if (img.name !== image.name) existingImages.items.add(img);
       }
+
+      // For main video or movie, reset value
       setMedia(existing => ({ ...existing, images: { ...existing.images, value: existingImages.files } }))
       if (media[field].ref.current) media[field].ref.current.files = existingImages.files;
     } else {
@@ -64,20 +82,24 @@ const CampaignEdit = ({ campaign, setEditMode, setCampaign, token, }: CampaignEd
     }
   }
 
+  // Save updated campaign (both off-chain + blockchain if needed)
   const handleSaveChanges = async () => {
 
     if (!campaign || !token) return;
 
+    // Validate required fields
     if (!campaign.title || !campaign._id) {
       setAlert("יש למלא את כל השדות", true);
       return;
     }
+    // Prevent goal to be lower than already raised amount
     if (Number(campaign.goal) < Number(campaign.totalRaised)) {
       setAlert(`לא ניתן להגדיר סכום יעד (${campaign.goal} ₪) קטן מהסכום שכבר גויס (${campaign.totalRaised} ₪).`, true);
       return;
     }
 
 
+     // Collect selected images into an array
     const images: File[] = [];
     if (media.images.value) for (const img of media.images.value) images.push(img);
     try {
@@ -104,6 +126,7 @@ const CampaignEdit = ({ campaign, setEditMode, setCampaign, token, }: CampaignEd
         })
       }
 
+      // Update off-chain campaign (DB + storage)
       const updatedCampaign = await updateCampaign(
         campaign,
         token,
@@ -111,6 +134,7 @@ const CampaignEdit = ({ campaign, setEditMode, setCampaign, token, }: CampaignEd
         media.movie.value,
         media.mainImage.value
       );
+      // Update UI context if server returned valid campaign
       if (updatedCampaign._id){
         console.log('updatedCampaign', updatedCampaign);
         
@@ -136,6 +160,7 @@ const CampaignEdit = ({ campaign, setEditMode, setCampaign, token, }: CampaignEd
     }
   }, [campaign])
 
+  // Handle tag changes
   const handleChangeTags = (field: string, value: string | number | string[]) => {
     if (!campaign) return;
     setCampaign(prev => ({ ...campaign!, [field]: value }))
@@ -151,6 +176,7 @@ const CampaignEdit = ({ campaign, setEditMode, setCampaign, token, }: CampaignEd
     setCampaign(prev => ({ ...campaign, [name]: value } as Campaign))
   }
 
+   // Handle media file inputs (main image, gallery images, video)
   const handleMediaChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, files } = event.target;
     if (!campaign) return;
@@ -163,11 +189,13 @@ const CampaignEdit = ({ campaign, setEditMode, setCampaign, token, }: CampaignEd
     }
   }
 
+  // Helper to convert FileList into array
   const getImages = () => {
     const images: File[] = []
     if (media.images.value) for (const img of media.images.value) images.push(img);
     return images;
   }
+  // Called after success message closes
   const handleSuccess = () => {
     setEditMode("view");
     clearAlert();
@@ -176,17 +204,21 @@ const CampaignEdit = ({ campaign, setEditMode, setCampaign, token, }: CampaignEd
     <div className="cc-card cc-compact-media" style={cardStyle} dir="rtl">
       <h2 className="cc-title">פרטי קמפיין</h2>
 
+       {/* ===================== BASIC DETAILS ===================== */}
       <div className="cc-grid">
         <section className="cc-section">
           <h3 className="cc-section-title">פרטי בסיס</h3>
+          {/* Campaign title */}
           <input
             type="text" placeholder="שם הקמפיין" value={campaign.title} name="title"
             onChange={handleChange} style={inputStyle}
           />
+          {/* Goal amount */}
           <input
             type="number" placeholder="סכום יעד" value={campaign.goal} name="goal"
             onChange={handleChange} style={inputStyle}
           />
+          {/* Start + End dates */}
           <div className="cc-row2">
             <div>
               <label style={{ fontWeight: 700 }}>תאריך התחלה:</label>
@@ -203,15 +235,18 @@ const CampaignEdit = ({ campaign, setEditMode, setCampaign, token, }: CampaignEd
               />
             </div>
           </div>
+          {/* Campaign description */}
           <textarea
             placeholder="תיאור הקמפיין" value={campaign.description} name="description"
             onChange={handleChange} style={{ ...inputStyle, height: "110px" }}
           />
         </section>
 
+ {/* ===================== MEDIA UPLOAD ===================== */}
         <section className="cc-section">
           <h3 className="cc-section-title">מדיה</h3>
 
+{/* Main campaign image */}
           <div className="cc-media-field">
             <label>תמונת קמפיין:</label>
             <input
@@ -288,6 +323,7 @@ const CampaignEdit = ({ campaign, setEditMode, setCampaign, token, }: CampaignEd
 
       </section>
 
+ {/* ===================== ACTIONS ===================== */}
       <div className="cc-actions" style={{ gap: ".6rem" }}>
         <button onClick={handleSaveChanges} style={primaryBtnStyle}>
           עדכן קמפיין
@@ -296,7 +332,7 @@ const CampaignEdit = ({ campaign, setEditMode, setCampaign, token, }: CampaignEd
           ביטול
         </button>
       </div>
-
+{/* Success / Error popup dialog */}
       <AlertDialog message={message} show={showAlert} isFailure={isFailure} failureOnClose={clearAlert} successOnClose={handleSuccess} />
     </div>
   )

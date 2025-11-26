@@ -2,7 +2,8 @@ import { Link } from "react-router-dom";
 
 const NgoSidebar = () => {
   return (
-    <div className="w-64 bg-green-50 p-4 h-screen shadow-md" dir="rtl">
+    // Sidebar container with fixed width, background color, padding, full height, and shadow
+   <div className="w-64 bg-green-50 p-4 h-screen shadow-md" dir="rtl">
       <h2 className="text-xl font-bold mb-6">תפריט</h2>
       <ul className="flex flex-col gap-4 text-lg">
         <li>

@@ -1,4 +1,4 @@
-/* משתנים - תואם לפלטת הצבעים של הקמפיין */
+
 :root {
   --primary-color: #668f97;
   --primary-dark: #4e7078;
@@ -14,12 +14,12 @@
   max-width: 600px;
   margin: 0 auto;
   
-  /* --- התיקון לגלילה --- */
-  max-height: 85vh; /* הגבלת הגובה ל-85% מגובה המסך */
-  overflow-y: auto; /* הוספת גלילה אנכית במידת הצורך */
-  padding: 10px 20px; /* מרווח פנימי כדי שהגלילה לא תסתיר תוכן */
-  scrollbar-width: thin; /* גלילה דקה לפיירפוקס */
-  scrollbar-color: var(--primary-color) #f1f1f1; /* צבע הגלילה */
+
+  max-height: 85vh; 
+  overflow-y: auto;
+  padding: 10px 20px; 
+  scrollbar-width: thin; 
+  scrollbar-color: var(--primary-color) #f1f1f1; 
 }
 
 .crypto-container::-webkit-scrollbar {
@@ -47,18 +47,17 @@
   color: var(--primary-color);
 }
 
-/* Form Layout */
 .form-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* שתי עמודות במסך רחב */
+  grid-template-columns: 1fr 1fr; 
   gap: 16px;
   margin-bottom: 16px;
 }
 
-/* במובייל - הכל הופך לעמודה אחת */
+
 @media (max-width: 600px) {
     .crypto-container {
-    max-height: 90vh; /* במובייל ניתן קצת יותר מקום */
+    max-height: 90vh; 
     padding: 10px 15px;
   }
   .form-grid {
@@ -73,7 +72,7 @@
 }
 
 .input-group_crypto.full-width {
-  grid-column: span 2; /* אלמנטים שתופסים את כל הרוחב */
+  grid-column: span 2; 
 }
 
 @media (max-width: 600px) {
@@ -96,7 +95,7 @@
   border-radius: 8px;
   font-size: 1rem;
   transition: all 0.2s;
-  box-sizing: border-box; /* קריטי כדי שה-padding לא ישבור את הרוחב */
+  box-sizing: border-box; 
 }
 
 .custom-input:focus {
@@ -111,7 +110,6 @@ textarea.custom-input {
   min-height: 80px;
 }
 
-/* Checkbox Style */
 .checkbox-wrapper {
   display: flex;
   align-items: center;
@@ -140,9 +138,8 @@ textarea.custom-input {
   font-weight: 500;
 }
 
-/* Wallet Section */
 .wallet-section {
-  background-color: #f8fcfc; /* רקע עדין מאוד בצבע הטורקיז */
+  background-color: #f8fcfc; 
   border: 1px dashed var(--primary-color);
   border-radius: var(--radius);
   padding: 20px;
@@ -159,7 +156,6 @@ textarea.custom-input {
   margin-bottom: 10px;
 }
 
-/* Action Buttons */
 .actions-row {
   display: flex;
   gap: 12px;
@@ -205,7 +201,6 @@ textarea.custom-input {
   color: var(--text-dark);
 }
 
-/* Result / Confirmation */
 .result-box {
   text-align: center;
   padding: 40px 20px;

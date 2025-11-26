@@ -6,6 +6,8 @@ import type { Ngo } from "../models/Ngo";
 import { getNgoById } from "../services/ngoApi";
 
 
+// Defines the shape of the authentication context
+// This interface ensures strong typing when using the AuthContext
 interface AuthContextType {
   user: User | null;
   ngo: Ngo | null;
@@ -16,6 +18,7 @@ interface AuthContextType {
   updateUser: (user: User) => void
 }
 
+// Create context with default stub values to avoid undefined usage
 const AuthContext = createContext<AuthContextType>({
   user: null,
   ngo: null,
@@ -26,14 +29,21 @@ const AuthContext = createContext<AuthContextType>({
   updateUser: (user: User) => {},
 });
 
+// Main authentication provider component
+// Wraps the entire app and exposes authentication state and methods
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  // Holds currently logged-in user
   const [user, setUser] = useState<User | null>(null);
+
+  // Holds associated NGO data for the user
   const [ngo, setNgo] = useState<Ngo | null>(null);
 
-  const updateNgo = (ngo: Ngo) => {
+  // Updates NGO both in React state and localStorage for persistence
+    const updateNgo = (ngo: Ngo) => {
     localStorage.setItem('ngo', JSON.stringify(ngo))
     setNgo(ngo)
   }
+    // Updates user while preserving the authentication token
   const updateUser = (updatedUser: User) => {
     const token = user?.token ||updatedUser.token
     if(!token)return;
@@ -43,6 +53,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser({...updatedUser, token})
   }
 
+  
+  // Load user and NGO from localStorage on initial app load
+  // Ensures persistent login after page refresh
   useEffect(() => {
     const savedUser = localStorage.getItem("userData");
     if (savedUser) {
@@ -54,7 +67,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, []);
 
-
+// Handles login logic
+  // Sends credentials to the server, stores token, loads NGO info if relevant
 const login = async (data: { email: string; password: string }): Promise<{ success: boolean, message: string }> => {
   try {
     const res: { user: User, token: string, success: true } | { success: false, message: string } = await loginUser(data);
@@ -63,7 +77,6 @@ const login = async (data: { email: string; password: string }): Promise<{ succe
       updateUser({ ...res.user, 'token': res.token });
       localStorage.setItem("token", res.token);
 
-      //  נוסיף בדיקה - רק אם למשתמש יש ngoId
       if (res.user?.ngoId) {
         const ngo: Ngo = await getNgoById(res.user.ngoId);
         if (ngo) updateNgo(ngo);
@@ -80,7 +93,7 @@ const login = async (data: { email: string; password: string }): Promise<{ succe
 };
 
 
-
+// Register a new user under an existing NGO
   const register = async (data: any): Promise<boolean> => {
     try {
       const res = await registerUserExistingNgo(data);
@@ -91,6 +104,7 @@ const login = async (data: { email: string; password: string }): Promise<{ succe
     }
   };
 
+  // Clears user state and authentication storage on logout
   const logout = () => {
 
     setUser(null);
@@ -99,6 +113,7 @@ const login = async (data: { email: string; password: string }): Promise<{ succe
   };
   console.log(user);
 
+   // Provide authentication state and actions to the rest of the app
   return (
     <AuthContext.Provider value={{ ngo, user, login, register, logout, updateUser, updateNgo }}>
       {children}

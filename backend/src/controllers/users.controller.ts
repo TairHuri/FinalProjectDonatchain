@@ -6,13 +6,21 @@ import AuditLog from '../models/auditlog.model';
 import userService from '../services/user.service';
 import { ServerError } from '../middlewares/error.middleware';
 
+// Waiting time before allowing deletion of another manager (in ms)
 const deleteManagerWaitingTime = +(process.env.DELETE_MANAGER_WAITING_TIME||1)*1000*60; 
 
+// ---------------------------------------------
+// Returns authenticated user's data (profile)
+// ---------------------------------------------
 export const getMe = async (req: Request, res: Response) => {
   const user = (req as any).user;
   res.json({ user: { id: user._id, name: user.name, email: user.email, role: user.role, profile: user.profile } });
 };
 
+// ---------------------------------------------------------------
+// Allows a logged-in user to change their password
+// Validates current password and encrypts the new one
+// ---------------------------------------------------------------
 export const changePassword = async (req: Request, res: Response) => {
   const reqUser = (req as any).user;
   const { currentPassword, newPassword } = req.body;
@@ -35,6 +43,10 @@ export const changePassword = async (req: Request, res: Response) => {
   }
 };
 
+// ----------------------------------------------------------------------
+// Update logged-in user's details (only their own profile)
+// Prevents updating other users by comparing IDs
+// ----------------------------------------------------------------------
 export const updateMe = async (req: Request, res: Response) => {
   const reqUser = (req as any).user;
   const user: IUser = req.body;
@@ -52,7 +64,9 @@ export const updateMe = async (req: Request, res: Response) => {
   }
 };
 
-// admin-only
+// --------------------------------------------------------
+// Admin: Fetch all users (password excluded)
+// --------------------------------------------------------
 export const listUsers = async (req: Request, res: Response) => {
   try {
     const users = await User.find().select('-passwordHash').limit(200);
@@ -62,6 +76,9 @@ export const listUsers = async (req: Request, res: Response) => {
   }
 };
 
+// --------------------------------------------------------
+// Admin: Fetch users belonging to a specific NGO
+// --------------------------------------------------------
 export const listUsersByNgo = async (req: Request, res: Response) => {
   try {
     const { ngoId } = req.params
@@ -72,6 +89,9 @@ export const listUsersByNgo = async (req: Request, res: Response) => {
   }
 };
 
+// --------------------------------------------------------
+// Admin: Approve user registration
+// --------------------------------------------------------
 export const approveUser = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params
@@ -90,6 +110,10 @@ export const approveUser = async (req: Request, res: Response) => {
   }
 };
 
+
+// --------------------------------------------------------
+// Admin: Change a user's role
+// --------------------------------------------------------
 export const changeUserRole = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params
@@ -111,6 +135,10 @@ export const changeUserRole = async (req: Request, res: Response) => {
   }
 };
 
+// --------------------------------------------------------
+// Delete a user
+// Special rule: deleting a manager has a cooldown time
+// --------------------------------------------------------
 let lastDeletedTime:number|null = null;
 export const deleteUse = async(req: Request, res: Response) => {
   try {

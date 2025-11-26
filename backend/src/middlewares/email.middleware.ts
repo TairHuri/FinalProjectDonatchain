@@ -1,5 +1,7 @@
 import nodemailer from "nodemailer";
 
+// Create a reusable transporter object using Gmail service.
+// Auth credentials are loaded from environment variables.
 const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -8,6 +10,7 @@ const transporter = nodemailer.createTransport({
     },
 });
 
+// Sends an email to a member notifying them about NGO activation/suspension status.
 export async function sendMemberStatusEmail({
     to,
     fullName,
@@ -50,6 +53,7 @@ export async function sendMemberStatusEmail({
     }
 }
 
+// Sends an email to the NGO contact regarding activation/suspension status.
 export async function sendNgoStatusEmail({
     to,
     ngoName,

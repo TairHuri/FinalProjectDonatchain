@@ -5,30 +5,48 @@ import { Menu, X, Sun, Moon, Home, Users, Info, User, LogOut } from "lucide-reac
 import "../css/Navbar.css";
 
 export default function Navbar() {
+  // React Router hooks for navigation and path tracking
   const location = useLocation();
   const navigate = useNavigate();
+    // State to track which dropdown menu is currently open
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<string>(""); // ✅ הטאב הנבחר
+  // Active navigation tab (for highlighting and UX feedback)
+  const [activeTab, setActiveTab] = useState<string>("");
+
+  // Dark mode state
   const [darkMode, setDarkMode] = useState(false);
+
+  // Mobile drawer open/close state
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Contact modal visibility state
   const [showContact, setShowContact] = useState(false);
+
+  // "Email copied" feedback state
   const [copied, setCopied] = useState(false);
+
+  // Authentication context (user object + logout function)
   const { user, logout } = useAuth();
 
+  // Handles clicks on navigation buttons with dropdowns
+  // Prevents event bubbling and sets active tab
   const handleButtonClick = (event: React.MouseEvent<HTMLButtonElement>, name: string) => {
     event.stopPropagation();
     toggleDropdown(name);
-    setActiveTab(name); // ✅ רק זה יסומן
+    setActiveTab(name); 
   };
 
+  // Toggles the currently open dropdown
   const toggleDropdown = (name: string) => {
     setOpenDropdown(openDropdown === name ? null : name);
   };
 
+  // Automatically closes dropdown when clicking outside
   const autoClose = () => {
     if (openDropdown !== null) toggleDropdown(openDropdown);
   };
 
+  // Attach click listener for closing dropdown when clicking outside
   useEffect(() => {
     document.addEventListener("click", autoClose);
     return () => document.removeEventListener("click", autoClose);
@@ -40,10 +58,10 @@ export default function Navbar() {
     setMobileOpen(false);
   };
 
-
+ // Menu component reused in desktop and mobile drawer
   const MenuItems = () => (
     <>
-      {/* עמוד ראשי */}
+      {/* Home */}
       <li>
         <Link
           to="/"
@@ -55,7 +73,7 @@ export default function Navbar() {
         </Link>
       </li>
 
-      {/* תורמים */}
+      {/* Donors dropdown */}
       <li className="dropdownWrapper">
         <button
           onClick={(event) => handleButtonClick(event, "donors")}
@@ -82,7 +100,7 @@ export default function Navbar() {
         )}
       </li>
 
-      {/* אזור אישי / עמותות */}
+      {/* NGOs and Campaigns submenu */}
       <li className="dropdownWrapper">
         {user ? (
           <Link
@@ -124,7 +142,7 @@ export default function Navbar() {
         )}
       </li>
 
-      {/* עלינו */}
+     {/* Personal area / NGO navigation */}
       <li className="dropdownWrapper">
         <button
           onClick={(event) => handleButtonClick(event, "about")}
@@ -151,7 +169,7 @@ export default function Navbar() {
         )}
       </li>
 
-      {/* צור קשר */}
+          {/* Contact modal trigger */}
       <li>
         <button
           onClick={() => {
@@ -166,7 +184,7 @@ export default function Navbar() {
     </>
   );
 
-  // ---------- שאר הקומפוננטה (nav, drawer, contactModal) נשאר אותו דבר ----------
+   // ================== Main Navbar ==================
   return (
     <>
       <nav dir="rtl" className="navbar" data-theme={darkMode ? "dark" : "light"}>
@@ -257,7 +275,7 @@ export default function Navbar() {
     </div>
   </div>
 )}
-      {/* תפריט מובייל */}
+ 
       {/* Mobile drawer (left) */}
       <aside
         id="mobile-drawer"

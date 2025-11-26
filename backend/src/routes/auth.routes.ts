@@ -7,6 +7,9 @@ import {
   resetPassword,
 } from "../controllers/auth.controller";
 
+// This file defines authentication-related routes for the application.
+// It handles user registration (for new and existing NGOs), login, 
+// fetching the current authenticated user, and password reset workflows.
 const router = Router();
 router.post('/register/newngo', registerNewNgo);
 router.post('/register/existingngo', registerExistingNgo);

@@ -6,7 +6,15 @@ import type { CreditDonation, Donation } from "../models/Donation";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
 
-
+/**
+ * Registers a new NGO and a new user together.
+ * Sends multipart/form-data including user data, NGO details, and media files.
+ *
+ * @param user - The user data to register
+ * @param ngo - NGO details
+ * @param media - NGO media files (logo, certificate, optional)
+ * @returns Server response with success or error message
+ */
 export async function registerUserNewNgo(user: User, ngo: Ngo, media: NgoMediaType) {
   const formData = new FormData();
   formData.append("userJson", JSON.stringify(user));
@@ -43,6 +51,13 @@ export async function registerUserNewNgo(user: User, ngo: Ngo, media: NgoMediaTy
     return { success: false, message: err.message ?? "שגיאה לא צפויה" };
   }
 }
+
+/**
+ * Registers a user under an existing NGO.
+ *
+ * @param user - User registration data
+ * @returns Server response with success or error message
+ */
 export async function registerUserExistingNgo(user: User) {
   try {
     const res = await fetch(`${API_URL}/auth/register/existingngo`, {
@@ -63,20 +78,23 @@ export async function registerUserExistingNgo(user: User) {
   }
 }
 
-
+/**
+ * Retrieves a list of all NGOs.
+ *
+ * @returns A list of NGOs as a typed response
+ */
 export const getNgoList = async (): Promise<{ items: Ngo[] }> => {
   const res = await axios.get<{ items: Ngo[] }>(`${API_URL}/ngos`);
 
-  return res.data; // ✅ עכשיו TypeScript יודע שזה NgoProfileResponse
+  return res.data; 
 };
 
-// export const getNgoProfile = async (token: string, ngoId:string): Promise<Ngo> => {
-//   const res = await axios.get<Ngo>(`${API_URL}/ngos/${ngoId}`, {
-//     headers: { Authorization: `Bearer ${token}` },
-//   });
-
-//   return res.data; // ✅ עכשיו TypeScript יודע שזה NgoProfileResponse
-// };
+/**
+ * Logs in a user using email and password.
+ *
+ * @param data - Login credentials
+ * @returns Authentication result including token if successful
+ */
 export async function loginUser(data: { email: string; password: string }) {
   const res = await fetch(`${API_URL}/auth/login`, {
     method: "POST",
@@ -86,21 +104,42 @@ export async function loginUser(data: { email: string; password: string }) {
   return res.json();
 }
 
+/**
+ * Retrieves users belonging to a specific NGO.
+ *
+ * @param ngoId - The NGO ID
+ * @returns List of users under that NGO
+ */
 export async function getUsers(ngoId: string) {
   const token = localStorage.getItem("token")
   const res = await fetch(`${API_URL}/users/ngo/${ngoId}`, { headers: { "Authorization": `Bearer ${token}` } })
   return res.json();
 }
+
+/**
+ * Approves a user under an NGO (Admin/NGO manager action).
+ *
+ * @param userId - ID of the user to approve
+ * @returns Updated user or status
+ */
 export async function approveUserApi(userId: string) {
   const token = localStorage.getItem("token")
   const res = await fetch(`${API_URL}/users/approve/${userId}`, { method: 'PATCH', headers: { "Authorization": `Bearer ${token}` } })
   return res.json();
 }
 
-
+/**
+ * Creates a new campaign with images, videos, and metadata.
+ * Uses multipart/form-data for media upload.
+ *
+ * @param data - Campaign data excluding "raised"
+ * @param token - Authorization token
+ * @param images - Optional list of campaign images
+ * @param movie - Optional video file
+ * @param mainImage - Optional main image file
+ * @returns Created campaign data
+ */
 export async function createCampaign(data: Omit<Campaign, "raised">, token: string, images: File[] | null, movie: File | null, mainImage: File | null) {
-  // content type: multipart/formdata
-
   const formData = new FormData()
   formData.append("title", data.title)
   formData.append("description", data.description)
@@ -152,7 +191,12 @@ export const getCampaigns = async (ngoId?: string) => {
   return data;
 }
 
-
+/**
+ * Retrieves campaigns, optionally filtered by NGO.
+ *
+ * @param ngoId - Optional NGO ID to filter by
+ * @returns List of campaigns
+ */
 export const getCampaign = async (campaignId: string) => {
   const url = `${API_URL}/campaigns/${campaignId}`
 
@@ -167,26 +211,37 @@ export const getCampaign = async (campaignId: string) => {
   return data;
 };
 
-
+/**
+ * Submits a credit card donation.
+ *
+ * @param chargeData - Payment data
+ * @param campaignId - ID of the campaign being donated to
+ * @returns Response data and status
+ */
 export const creditDonation = async (chargeData: CreditDonation, campaignId: string) => {
   const res = await fetch(`${API_URL}/donations/${campaignId}/credit-donate`, {
     method: 'POST',
     headers: {
       "Content-Type": "application/json",
-      //"Authorization": `Bearer ${ngo?.token}`,
-    },
+ },
     body: JSON.stringify(chargeData),
   })
   const data = await res.json();
   return { data, status: res.status };
 }
+/**
+ * Submits a crypto donation.
+ *
+ * @param chargeData - Donation details
+ * @param campaignId - ID of the campaign
+ * @returns Response data and status
+ */
 export const cryptoDonation = async (chargeData: Donation, campaignId: string) => {
   const res = await fetch(`${API_URL}/donations/${campaignId}/donate`, {
     method: 'POST',
     headers: {
       "Content-Type": "application/json",
-      //"Authorization": `Bearer ${ngo?.token}`,
-    },
+   },
     body: JSON.stringify(chargeData),
   })
   const data = await res.json();

@@ -1,11 +1,11 @@
-/* צבעים תואמי המערכת */
+
 :root{
   --rq-bg: #ffffff;
   --rq-fg: #263432;
   --rq-border: #e6eeec;
   --rq-soft: #fafdfc;
-  --rq-primary: #345e6c;   /* כחול-ירקרק עמוק */
-  --rq-primary-2:#739a86;  /* ירקרק רך */
+  --rq-primary: #345e6c;  
+  --rq-primary-2:#739a86;  
   --rq-muted:#6b7a76;
 
   --rq-ok:#16a34a;
@@ -26,7 +26,7 @@
   font-family: "Heebo", system-ui, Segoe UI, Arial, sans-serif;
 }
 
-/* Header + Tabs */
+
 .rq-header{
   display:flex;align-items:center;justify-content:space-between;gap:.5rem;
   margin-bottom: clamp(12px,1.6vw,16px);
@@ -46,7 +46,7 @@
   color:#fff;border-color:transparent; box-shadow:0 6px 18px rgba(52,94,108,.22);
 }
 
-/* Grid */
+
 .rq-grid{
   display:grid; grid-template-columns: 1.25fr .85fr; gap: clamp(14px,2vw,20px);
 }
@@ -54,7 +54,6 @@
   .rq-grid{ grid-template-columns: 1fr; }
 }
 
-/* Sections */
 .rq-section{
   background: var(--rq-soft);
   border: 1px solid var(--rq-border);
@@ -66,7 +65,7 @@
   font-weight: 800; color: var(--rq-primary);
 }
 
-/* Form */
+
 .rq-form{ display:flex; flex-direction:column; gap:.65rem; }
 .rq-label{ font-weight:800; color: var(--rq-primary); font-size:.95rem; }
 .rq-input, .rq-textarea, .rq-field select{
@@ -110,7 +109,6 @@
 }
 .rq-secondary:hover{ background:#f2f7f6; }
 
-/* Templates */
 .rq-templates-grid{
   display:grid; grid-template-columns: repeat(auto-fill,minmax(180px,1fr)); gap:.6rem;
 }
@@ -127,7 +125,7 @@
 .rq-template-meta{ color: var(--rq-muted); font-size:.9rem; margin-top:.25rem; }
 .rq-hint{ color: var(--rq-muted); font-size:.92rem; margin-top:.6rem; }
 
-/* List (demo) */
+
 .rq-list{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:.5rem; }
 .rq-item{
   display:flex; align-items:center; justify-content:space-between; gap:.6rem;
@@ -137,7 +135,6 @@
 .rq-item-title{ font-weight:800; color: var(--rq-fg); }
 .rq-item-sub{ color: var(--rq-muted); font-size:.92rem; }
 
-/* Status badge */
 .rq-badge{
   border-radius:999px; padding:.35rem .7rem; font-weight:800; font-size:.9rem; color:#fff;
 }
@@ -145,7 +142,6 @@
 .rq-badge--inprogress{ background: #3b82f6; }
 .rq-badge--done{ background: var(--rq-ok); }
 
-/* ====== פריטים בליסט ====== */
 .rq-linklike{
   background: transparent;
   border: 0;
@@ -174,7 +170,7 @@
 .rq-item-title{ font-weight: 800; }
 .rq-item-sub{ color: #6b7280; font-size: .92rem; }
 
-/* ריק */
+
 .rq-empty{
   text-align: center;
   color: #6b7280;
@@ -184,12 +180,10 @@
   background: #fff;
 }
 
-/* ====== Drawer צד משתמש (קריאה בלבד) ====== */
 .rq-drawer{
   position: fixed;
   inset-block: 0;
-  inset-inline-end: -480px; /* RTL: יוצא מצד ימין */
-  width: min(480px, 96vw);
+  inset-inline-end: -480px; 
   background: #fff;
   border-inline-start: 1px solid #e5e7eb;
   box-shadow: -10px 0 28px rgba(30,40,38,.18);
@@ -255,7 +249,6 @@
   font-size: .95rem;
 }
 
-/* הודעת מנהל */
 .rq-note{
   background: #fff7ed;
   border: 1px solid #fed7aa;
@@ -266,7 +259,6 @@
   font-size: .95rem;
 }
 
-/* פוטר המגירה */
 .rq-drawer-footer{
   position: sticky;
   bottom: 0;
@@ -290,11 +282,7 @@
 }
 .rq-btn:hover{ background:#eef6f4; border-color:#cfe0dc; transform: translateY(-1px); }
 
-/* הבדג'ים הקיימים שלך נשארים כרגיל:
-   .rq-badge, .rq-badge--pending / --inprogress / --done
-*/
 
-/* ===== Filters bar ===== */
 .rq-filters{
   display: grid;
   grid-template-columns: 1fr .8fr .8fr auto;

@@ -14,7 +14,7 @@ import '../../css/AdminDashboard.css'
 import RequestFromUsers from "../../components/admin/RequestFromUsers";
 import AdminAbout from "../../components/AdminAbout";
 
-
+// Interface for dashboard statistics
 interface Stats {
   usersCount: number;
   ngosCount: number;
@@ -23,22 +23,20 @@ interface Stats {
   totalRaised: number;
 }
 
+// Main Admin Dashboard Component
 const AdminDashboard: React.FC = () => {
+  // Holds system statistics for the dashboard cards
   const [stats, setStats] = useState<Stats | null>(null);
+ // Controls which page is displayed in the dashboard
   const [activePage, setActivePage] = useState<
     "dashboard" | "donors" | "ngos" | "campaigns" | "terms" | "about" | "request"
   >("dashboard");
   const navigate = useNavigate();
   const [selectedNgo, setSelectedNgo] = useState<any | null>(null);
+ // Authentication context (logout only is used here)
   const { logout } = useAuth(); 
 
-
-  // useEffect(() => {
-  //   fetchStats();
-  //   const interval = setInterval(fetchStats, 10000); 
-  //   return () => clearInterval(interval);
-  // }, []);
-
+  // Fetch stats immediately when entering dashboard view
   useEffect(() => {
     if (activePage === "dashboard") {
       fetchStats();
@@ -47,19 +45,7 @@ const AdminDashboard: React.FC = () => {
     }
   }, [activePage]);
 
-
-  // const fetchStats = async () => {
-  //   try {
-  //     const token = localStorage.getItem("token");
-  //     const res = await axios.get(`${import.meta.env.VITE_API_URL}/admin/stats`, {
-  //       headers: { Authorization: `Bearer ${token}` },
-  //     });
-  //     setStats(res.data);
-  //   } catch (err) {
-  //     console.error("שגיאה בטעינת הנתונים:", err);
-  //   }
-  // };
-
+  // Fetch dashboard statistics from backend
   const fetchStats = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -70,6 +56,7 @@ const AdminDashboard: React.FC = () => {
         }),
       ]);
 
+      // Update state with API response
       setStats({
         usersCount: statsRes.data.usersCount,
         ngosCount: statsRes.data.ngosCount,
@@ -84,12 +71,12 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-const handleLogout = () => {
-  logout(); // מאפס את ה־context
-  localStorage.clear();
-  navigate("/login");
-
-};
+  // Handle admin logout action
+  const handleLogout = () => {
+    logout(); // Clear auth context
+    localStorage.clear(); // Clear local storage
+    navigate("/login"); // Redirect to login page
+  };
 
 
   return (
@@ -97,13 +84,12 @@ const handleLogout = () => {
       dir="rtl"
       style={{
         display: "flex",
-        // minHeight: "100vh",
         height: '100%',
         backgroundColor: "#f7f9fc",
         width: "100%",
       }}
     >
-      {/* סרגל צד */}
+ {/* Sidebar navigation */}
       <div
         style={{
           width: "18dvw",
@@ -184,7 +170,7 @@ const handleLogout = () => {
         </button>
       </div>
 
-      {/* תוכן */}
+    {/* Main content area */}
       <div className="admin-container">
         {activePage === "dashboard" && (
           <div>
@@ -208,8 +194,6 @@ const handleLogout = () => {
             )}
           </div>
         )}
-
-        {/* ✅ כאן הוספנו את התצוגה החדשה של רשימת התורמים */}
         {activePage === "donors" && <AdminDonors />}
         {activePage === "ngos" && <AdminNgoList />}
         {activePage === "campaigns" && <CampaignList />}

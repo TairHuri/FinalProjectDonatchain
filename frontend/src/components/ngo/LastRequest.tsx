@@ -1,41 +1,3 @@
-// import { useEffect, useState } from "react";
-// import { getRequestsByNgoId } from "../../services/requestApi";
-// import { useAuth } from "../../contexts/AuthContext";
-// import { categoryLabel, statusLabel, type IAdminRequestByUser } from "../../models/Request";
-
-// import "../../css/ngo/AdminRequest.css";
-
-// const LastRequest = () => {
-//     const {user} = useAuth();
-//   // דמו: בקשות אחרונות (אפשר לחבר ל־backend בהמשך)
-//   const [recentRequests, setRecentRequests] = useState<IAdminRequestByUser[]>([] );
-
-//   useEffect(() => {
-//     if(!user || !user.token)return;
-//     getRequestsByNgoId(user.ngoId, user.token).then( data => setRecentRequests(data))
-//   }, [])
-//     return(
-//         <section className="rq-section">
-//           <h3 className="rq-section-title">בקשות אחרונות</h3>
-//           <ul className="rq-list">
-//             {recentRequests.map((r) => (
-//               <li key={r._id} className="rq-item">
-//                 <div className="rq-item-main">
-//                   <div className="rq-item-title">{r.subject}</div>
-//                   <div className="rq-item-sub">{categoryLabel[r.category]} • {new Date(r.createdAt).toLocaleDateString("he-IL")}</div>
-//                 </div>
-//                 <span className={`rq-badge rq-badge--${r.status}`}>
-//                   {statusLabel[r.status]}
-//                 </span>
-//               </li>
-//             ))}
-//           </ul>
-//         </section>
-//     )
-// }
-
-// export default LastRequest;
-
 import { useEffect, useMemo, useState } from "react";
 import { getRequestsByNgoId } from "../../services/requestApi";
 import { useAuth } from "../../contexts/AuthContext";
@@ -48,25 +10,28 @@ import {
 } from "../../models/Request";
 import "../../css/ngo/AdminRequest.css";
 
+// Helper function to format ISO date to readable HH:MM DD/MM format
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleString("he-IL", { dateStyle: "short", timeStyle: "short" });
 
 export default function LastRequest() {
   const { user } = useAuth();
-  const [rows, setRows] = useState<IAdminRequestByUser[]>([]);
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [active, setActive] = useState<IAdminRequestByUser | null>(null);
+  const [rows, setRows] = useState<IAdminRequestByUser[]>([]);// Fetched requests
+  const [drawerOpen, setDrawerOpen] = useState(false); // Drawer visibility
+  const [active, setActive] = useState<IAdminRequestByUser | null>(null); // Selected request for detailed view
 
   // ---- NEW: filters ----
-  const [statusFilter, setStatusFilter] = useState<"" | RequestStatusType>("");
-  const [categoryFilter, setCategoryFilter] = useState<"" | RequestCategoryType>("");
-  const [query, setQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"" | RequestStatusType>("");// Filter by status
+  const [categoryFilter, setCategoryFilter] = useState<"" | RequestCategoryType>("");// Filter by category
+  const [query, setQuery] = useState(""); // Filter by text search
 
+   // Fetch all requests for the logged NGO user once on mount
   useEffect(() => {
     if (!user || !user.token) return;
     getRequestsByNgoId(user.ngoId, user.token).then((data) => setRows(data));
   }, []);
 
+  // Open drawer with selected request details
   const openDrawer = (req: IAdminRequestByUser) => {
     setActive(req);
     setDrawerOpen(true);
@@ -76,20 +41,21 @@ export default function LastRequest() {
     setActive(null);
   };
 
-  // אפשר להוציא רשימות אפשרויות מהנתונים שהגיעו בפועל (מותאם למה שיש)
+ // Extract available categories dynamically from fetched data
   const categoryOptions = useMemo(() => {
     const set = new Set<RequestCategoryType>();
     rows.forEach((r) => set.add(r.category));
     return Array.from(set);
   }, [rows]);
 
+    // Extract available statuses dynamically from fetched data
   const statusOptions = useMemo(() => {
     const set = new Set<RequestStatusType>();
     rows.forEach((r) => set.add(r.status));
     return Array.from(set);
   }, [rows]);
 
-  // סינון בצד לקוח
+// Client-side filtering logic for requests list
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return rows.filter((r) => {
@@ -190,7 +156,7 @@ export default function LastRequest() {
         </ul>
       </section>
 
-      {/* Drawer – קריאה בלבד */}
+       {/* ===== Read-Only Drawer Request View ===== */}
       <div
         className={`rq-drawer ${drawerOpen ? "is-open" : ""}`}
         role="dialog"

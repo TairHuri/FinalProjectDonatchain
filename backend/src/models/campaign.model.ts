@@ -1,5 +1,6 @@
 import { Schema, model, Document } from 'mongoose';
 
+// Base interface defining the structure of a Campaign
 export interface BaseCampaign{
   title: string;
   description: string;
@@ -17,14 +18,17 @@ export interface BaseCampaign{
   isActive: boolean;
   createdAt: Date;
 }
+
+// Interface for Mongoose document for a campaign
 export interface ICampaign extends Document, BaseCampaign {
   
-}
+}// Extended interface including a totalRaised field for reporting
 export interface ICampaignWithTotal extends BaseCampaign{
   totalRaised:number;
   _id?:string;
 }
 
+// Define the Mongoose schema for the Campaign collection
 const campaignSchema = new Schema(
   {
     title: { type: String, required: true, index: 'text' },

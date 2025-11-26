@@ -4,23 +4,31 @@ import { useAuth } from "../../contexts/AuthContext";
 import { createRequest, getTemplates } from "../../services/requestApi";
 
 
-
+// Component to create a new admin request + choose predefined templates
 const NewRequest = ({ setActiveTab }: { setActiveTab: (tab: 'new' | 'list') => void }) => {
     const { user } = useAuth()
+
+    // Holds predefined request templates fetched from the server
     const [templates, setTemplates] = useState<AdminRequestByUser[]>([]);
 
+    // Controlled form inputs
     const [subject, setSubject] = useState("");
     const [category, setCategory] = useState<RequestCategoryType>("general");
     const [body, setBody] = useState("");
+
+    // Maximum characters allowed in the message body
     const [charLimit] = useState(1200);
 
+    // Live validation values
     const remaining = charLimit - body.length;
     const isInvalid = subject.trim().length < 3 || body.trim().length < 10 || remaining < 0;
 
+    // Load request templates on component mount
     useEffect(() => {
         getTemplates(user!.token!).then(templates => setTemplates(templates))
     }, [])
 
+    // Fill form with data from the selected template
     const onPickTemplate = (tpl: AdminRequestByUser) => {
         setSubject(tpl.subject);
         setBody(tpl.body);
@@ -28,23 +36,37 @@ const NewRequest = ({ setActiveTab }: { setActiveTab: (tab: 'new' | 'list') => v
         setActiveTab("new");
     };
 
-    const handleSubmit = async(e: React.FormEvent) => {
-        if(!user || !user._id || !user.token)return;
+    // Handle form submit and send request to server
+    const handleSubmit = async (e: React.FormEvent) => {
+        if (!user || !user._id || !user.token) return;
 
         e.preventDefault();
         if (isInvalid) return;
-        const request: AdminRequestByUser = {subject, category, body, userId:user?._id, ngoId:user.ngoId, status:'pending', adminComment:'' }
-           const res = await  createRequest(request, user.token)
-        // כאן בעתיד תחברי ל־API
-        
+
+        // Construct request payload for API
+        const request: AdminRequestByUser = {
+            subject,
+            category,
+            body,
+            userId: user._id,
+            ngoId: user.ngoId,
+            status: 'pending',
+            adminComment: ''
+        };
+
+        // Send request to backend
+        const res = await createRequest(request, user.token);
+
+        // Reset form after success
         setSubject("");
         setBody("");
         setCategory("general");
     };
 
+
     return (
         <div className="rq-grid">
-            {/* טופס בקשה */}
+
             <section className="rq-section">
                 <h3 className="rq-section-title">יצירת בקשה</h3>
                 <form onSubmit={handleSubmit} className="rq-form">

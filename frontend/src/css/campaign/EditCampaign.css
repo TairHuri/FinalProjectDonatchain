@@ -10,7 +10,6 @@
     margin-bottom: 10px;
 }
 .image:hover {
-    /*box-shadow: 2px 2px 2px 3px #777;*/
     border: 2px ridge #fff;
 }
 
@@ -27,7 +26,6 @@
     background-color: #777;
     opacity: 0.5;
     border: 5px;
-    /* font-family: "Heebo", sans-serif; */
 }
 
 .remove-image-button:hover {

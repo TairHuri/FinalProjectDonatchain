@@ -1,5 +1,6 @@
 import { Schema, model, Document } from 'mongoose';
 
+// Interface representing a User document
 export interface IUser extends Document {
   email: string;
   passwordHash: string;
@@ -15,6 +16,7 @@ export interface IUser extends Document {
   updatedAt: Date;
 }
 
+// Mongoose schema definition for the User collection
 const userSchema = new Schema<IUser>(
   {
     email: { type: String, required: true, unique: true, index: true },

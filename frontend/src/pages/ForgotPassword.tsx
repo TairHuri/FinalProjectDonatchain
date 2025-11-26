@@ -4,11 +4,18 @@ import { useNavigate } from "react-router-dom";
 import "../css/LoginNgo.css";
 
 const ForgotPassword = () => {
+  // Store user's email input
   const [email, setEmail] = useState("");
+
+  // Message to display success or error feedback
   const [message, setMessage] = useState("");
+
+  // Loading state to disable button and show "sending..."
   const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
 
+  // Handle form submissio
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setLoading(true);

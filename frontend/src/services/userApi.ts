@@ -2,6 +2,7 @@ import type { User } from "../models/User";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
 
+// Update the current user's information
 export async function editUser(user:User) {
   const token = localStorage.getItem("token")
   const res = await fetch(`${API_URL}/users/me`, 
@@ -15,6 +16,7 @@ export async function editUser(user:User) {
   return res.json();
 }
 
+// Change current user's password
 export async function changePassword(currentPassword:string, newPassword:string) {
   const token = localStorage.getItem("token")
   const res = await fetch(`${API_URL}/users/me`, 
@@ -28,6 +30,7 @@ export async function changePassword(currentPassword:string, newPassword:string)
   return res.json();
 }
 
+// Set a user's role (admin functionality)
 export async function setUserRoleApi(userId: string, role:string) {
   const token = localStorage.getItem("token")
   const res = await fetch(`${API_URL}/users/role/${userId}`,

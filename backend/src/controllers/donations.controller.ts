@@ -3,7 +3,9 @@ import Donation from '../models/donation.model';
 import donationService from '../services/donation.service';
 import { ServerError } from '../middlewares/error.middleware';
 
-
+/**
+ * Get all donations for a specific campaign (basic info only).
+ */
 export const getDonationsByCampaign = async (req: Request, res: Response) => {
   try {
     const { campaignId } = req.query;
@@ -17,6 +19,9 @@ export const getDonationsByCampaign = async (req: Request, res: Response) => {
   }
 }
 
+/**
+ * Get full donation details for a specific campaign (includes donor data, etc.).
+ */
 export const getFullDonationsByCampaign = async (req: Request, res: Response) => {
   try {
     const { campaignId } = req.query;
@@ -29,6 +34,10 @@ export const getFullDonationsByCampaign = async (req: Request, res: Response) =>
     res.status((error as ServerError).statusCode||500).send({ message: (error as any).message });
   }
 }
+
+/**
+ * Get all donations for a specific NGO (aggregated from all its campaigns).
+ */
 export const getDonationsByNgo = async (req: Request, res: Response) => {
   try {
     const { ngoId } = req.query;
@@ -41,6 +50,10 @@ export const getDonationsByNgo = async (req: Request, res: Response) => {
 }
 
 
+/**
+ * Process a credit card donation.
+ * Also triggers email receipt sending inside the service.
+ */
 export const creditDonate = async (req: Request, res: Response) => {
   const {
     amount,originalAmount, ccNumber, expYear, expMonth, cvv,
@@ -62,6 +75,10 @@ export const creditDonate = async (req: Request, res: Response) => {
     res.status((error as ServerError).statusCode||500).send({ message: (error as any).message });
   }
 };
+/**
+ * Retrieve all donations in the system.
+ * Includes campaign and NGO information via population.
+ */
 export const getAllDonations = async (req: Request, res: Response): Promise<void> => {
   try {
     const donations = await Donation.find()
@@ -81,7 +98,10 @@ export const getAllDonations = async (req: Request, res: Response): Promise<void
   }
 };
 
-
+/**
+ * Process a cryptocurrency donation.
+ * Saves wallet transaction hash and donation metadata.
+ */
 export const cryptoDonate = async (req: Request, res: Response) => {
   const { phone, email, firstName, lastName, originalAmount, currency, method, txHash, comment, anonymous } = req.body;
   const campaignId = req.params.id;

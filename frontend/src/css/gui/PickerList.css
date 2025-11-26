@@ -86,9 +86,6 @@
 
 .picker__list {
   max-height: 240px;
-  /* top: calc(100% + 16px); */
-  /* position: absolute; */
-  /* bottom: 0; */
   overflow: auto;
 }
 .picker__empty {

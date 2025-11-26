@@ -4,7 +4,10 @@ import { cardStyle } from "../../css/dashboardStyles"
 import NgoView from "./NgoView";
 import NgoEdit from "./NgoEdit";
 
-
+/**
+ * Displays NGO details in view mode or edit mode.
+ * Allows switching between components based on `editMode`.
+ */
 const NgoDetails = ({ editMode, setEditMode }: { editMode: string, setEditMode: (mode: "view" | "edit") => void }) => {
     const { ngo, user, updateNgo } = useAuth()
 

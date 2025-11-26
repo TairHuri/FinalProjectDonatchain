@@ -3,15 +3,18 @@ import { useNavigate, useLocation } from "react-router-dom";
 import "../css/LoginNgo.css";
 
 const ResetPassword = () => {
+   // Local state for the new password, API response message, and validation errors
   const [newPassword, setNewPassword] = useState("");
   const [message, setMessage] = useState("");
   const [passwordError, setPasswordError] = useState("");
+   // Extracting the reset confirmation data passed via navigation state (email + reset code)
   const { state } = useLocation();
   const email = state?.email;
   const code = state?.code;
   const navigate = useNavigate();
 
-  // ✅ פונקציית בדיקת תנאי סיסמה
+    // Password validation rules using regex and length checks
+  // Each rule returns true if it passes
   const passwordRules = {
     length: (pw: string) => pw.length >= 8,
     upper: (pw: string) => /[A-Z]/.test(pw),
@@ -20,6 +23,7 @@ const ResetPassword = () => {
     special: (pw: string) => /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pw),
   };
 
+    // Validate password using all rules above
   const isValidPassword = (password: string) => {
     return (
       passwordRules.length(password) &&
@@ -30,6 +34,8 @@ const ResetPassword = () => {
     );
   };
 
+   // Handle reset password submit
+  //  Note: Consider wrapping fetch in try/catch and moving URL to environment variable
   const handleReset = async (e: any) => {
     e.preventDefault();
 
@@ -57,7 +63,6 @@ const ResetPassword = () => {
     }
   };
 
-  // ✅ עדכון בזמן הקלדה
   const handlePasswordChange = (value: string) => {
     setNewPassword(value);
     if (!value) setPasswordError("");
@@ -80,7 +85,6 @@ const ResetPassword = () => {
             required
           />
 
-          {/* ✅ הצגת הדרישות עם סימנים דינמיים */}
           <div className="password-hint" style={{ textAlign: "right" }}>
             <ul style={{ fontSize: "0.9rem", color: "#444", listStyle: "none", paddingRight: "10px" }}>
               <li>

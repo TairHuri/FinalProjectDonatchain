@@ -4,11 +4,15 @@ import logger from '../utils/logger';
 
 import DonatchainABI from "../../../frontend/src/abi/Donatchain.json" 
 
+// Initialize Ethereum provider using RPC URL from config
 const provider = new ethers.JsonRpcProvider(config.rpcProvider);
+// Initialize wallet if private key is provided in config
 let wallet: ethers.Wallet | null = null;
 if (config.contractPrivateKey) {
   wallet = new ethers.Wallet(config.contractPrivateKey, provider);
 }
+// Initialize smart contract instance connected via wallet or provider
+
 const contract = new ethers.Contract(config.contractAddress, DonatchainABI.abi, wallet ?? provider);
 
 // ether exchange rate logic
@@ -26,15 +30,16 @@ export default {
   provider,
   wallet,
   contract,
-  // contract: (abi: any) => {
-  //   if (!config.contractAddress) throw new Error('No contract address configured');
-  //   return new ethers.Contract(config.contractAddress, abi, wallet ?? provider);
-  // },
+   /**
+   * Record a fiat (credit) donation on-chain via the smart contract
+   * @param campaignId - ID of the campaign
+   * @param ILSAmount - donation amount in ILS
+   * @param originalAmount - original amount before conversion
+   * @param currency - original currency
+   * @param refCode - reference code for donation
+   * @returns transaction hash
+   */
   async recordFiatDonation(campaignId: number, ILSAmount: number, originalAmount: number, currency: string, refCode: string) {
-    // const campaignId = 0;
-    // const amountFiat = 5000; // באגורות = 50₪
-    // const currency = "ILS";
-    // const refCode = "PAY12345";
 
     const tx = await contract.recordCreditDonation(campaignId, ILSAmount, originalAmount, currency, refCode);
     console.log("tx sent:", tx.hash);

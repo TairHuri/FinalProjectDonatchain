@@ -4,16 +4,31 @@ import { LogIn, Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import "../css/LoginNgo.css";
 
+/**
+ * LoginNgo Component
+ * Handles the login process for NGO users and administrators.
+ * Includes form validation, API authentication, and role-based navigation.
+ */
 const LoginNgo: React.FC = () => {
+  // Form state values
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  // UI state values
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+    // Navigation + Authentication context
   const navigate = useNavigate();
   const { login } = useAuth();
 
+    /**
+   * Handle login click/submit
+   * - Validates empty fields
+   * - Sends login request
+   * - Stores user and redirects based on role
+   */
   const handleLogin = async () => {
     setError(null);
 
@@ -27,11 +42,10 @@ const LoginNgo: React.FC = () => {
       const res = await login({ email, password });
 
       if (res.success) {
-        // --- שליפת המשתמש מה-localStorage ---
+
         const storedUser = localStorage.getItem("userData");
         const user = storedUser ? JSON.parse(storedUser) : null;
 
-        // --- נבדוק אם המשתמש הוא מנהל מערכת ---
         if (user?.role === "admin") {
           navigate("/admin/dashboard");
         } else {
@@ -74,7 +88,6 @@ const LoginNgo: React.FC = () => {
             />
           </div>
 
-          {/*  */}
           <div className="input-group">
             <Lock className="input-icon" />
             <input
@@ -93,13 +106,12 @@ const LoginNgo: React.FC = () => {
             </button>
           </div>
 
-          {/*  */}
           <button type="submit" className="login-btn" disabled={loading}>
             {loading ? <span className=""></span> : <LogIn size={20} />}
             {loading ? "מתחבר..." : "התחבר"}
           </button>
 
-          {/*  */}
+
           <div className="login-footer">
             <Link to="/forgot-password">שכחתי סיסמה</Link>
           </div>

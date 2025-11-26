@@ -5,26 +5,31 @@ import { getDonationsByCampaign } from "../../services/donationApi";
 
 
 const CampaignDonations = ({ campaignId }: { campaignId: string }) => {
+     // Store a limited version of the donation objects (only UI-relevant fields)
     const [donations, setDonations] = useState<Pick<Donation, "_id" | "firstName" | "lastName"|"anonymous" | "originalAmount" | "currency" | "comment" | "txHash">[]>([])
+    // Spinner state handler (custom hook)
     const { isLoading, start, stop } = useSpinner();
 
+    // Fetch donations from API by campaign ID
     const loadDonations = async () => {
-        start()
+        start()// Start loading indicator
         try {
             const donations = await getDonationsByCampaign(campaignId)
-            console.log(donations);
-            
-            setDonations(donations)
+            console.log(donations);// Debug output
+            setDonations(donations) // Update UI state with retrieved donations
         } catch (error) {
 
         } finally {
             stop();
         }
     }
+     // Run once on mount to fetch donations
     useEffect(() => {
         loadDonations();
     }, [])
+    // Display global spinner while donations are loading
     if (isLoading) return <Spinner />
+    // UI fallback if there are no donations yet
     if (!donations || donations.length === 0) {
         return (
             <div
