@@ -1,7 +1,9 @@
 import { Schema, model, Document } from 'mongoose';
 import { INgo } from './ngo.model';
 
+// Define possible roles for a user
 export type UserRoleType = 'admin'|'manager'|'member';
+// Interface representing a User document
 export interface IUser extends Document {
   ngo?: INgo;
   email: string;
@@ -17,6 +19,7 @@ export interface IUser extends Document {
 resetCodeExpires?: Date;
 }
 
+// Mongoose schema definition for the User collection
 const userSchema = new Schema<IUser>(
   {
     email: { type: String, required: true, unique: true, index: true },

@@ -1,8 +1,12 @@
 import { Schema, model, Document } from 'mongoose';
 
-export type RequestStatusType = 'pending'|'inprogress'|'done';
-export type RequestCategoryType = 'account'|'general'|'permissions'|'campaigns'|'support'|'suggestions'
+// Define the possible statuses for an admin request.
+export type RequestStatusType = 'pending' | 'inprogress' | 'done';
 
+// Define the possible categories for an admin request.
+export type RequestCategoryType = 'account' | 'general' | 'permissions' | 'campaigns' | 'support' | 'suggestions'
+
+// Interface representing the structure of a user request to the admin.
 export interface AdminRequestByUser
   {
   subject: string;
@@ -13,11 +17,13 @@ export interface AdminRequestByUser
   adminComment:string;
 };
 
-
+// Interface for Mongoose Document, combining the AdminRequestByUser properties
+// and adding a reference to the NGO that the request is associated with.
 export interface IAdminRequestByUser extends Document, AdminRequestByUser {
     ngoId:{ type: Schema.Types.ObjectId, ref: 'Ngo' };
 }
 
+// Define the Mongoose schema for storing admin requests in MongoDB.
 const adminRequestSchema = new Schema(
   { 
     subject: { type: String },

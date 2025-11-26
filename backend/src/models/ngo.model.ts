@@ -1,6 +1,7 @@
 // src/models/ngo.model.ts
 import { Schema, model, Document } from "mongoose";
 
+// Base interface for NGO data
 export interface BaseNgo {
   name: string;
   ngoNumber?: string;
@@ -16,12 +17,14 @@ export interface BaseNgo {
   tags: string[];
 }
 
+// Mongoose document interface for an NGO
 export interface INgo extends Document, BaseNgo {
   createdBy?: Schema.Types.ObjectId | null;
   createdAt: Date;
   isActive: boolean;
 }
 
+// Mongoose schema definition for the NGO collection
 const ngoSchema = new Schema(
   {
     name: { type: String, required: true, unique: true, index: true },

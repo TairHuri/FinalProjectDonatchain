@@ -1,5 +1,6 @@
 import { Schema, model, Document } from 'mongoose';
 
+// Base interface for a donation
 export interface DonationIF {
   email: string;
   phone: string;
@@ -15,14 +16,19 @@ export interface DonationIF {
   anonymous?:boolean;
 }
 
+
+// Mongoose document interface for a donation
 export interface IDonation extends Document, DonationIF {
   createdAt: Date;
 }
+
+// Extended interface for credit card donations with payment details
 
 export interface CreditDonation extends DonationIF {
   ccNumber: string, expYear: number, expMonth: number, cvv: number, ownerId: string, ownername: string;
 }
 
+// Mongoose schema definition for the Donation collection
 const donationSchema = new Schema(
   {
     email: { type: String },

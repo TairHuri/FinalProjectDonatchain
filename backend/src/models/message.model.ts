@@ -1,15 +1,19 @@
 import { Schema, model, Document } from 'mongoose';
 
+
+// Base interface for a message
 export interface Message {
-    authorName: string;
-    text: string;
-    createdBy: string;
+    authorName: string;          // Name of the author of the message
+    text: string;                // Message content
+    createdBy: string;           // ID of the user who created the message
 }
 
+// Mongoose document interface for a message
 export interface IMessage extends Document, Message {
     ngoId:{ type: Schema.Types.ObjectId, ref: 'Ngo' };
 }
 
+// Mongoose schema definition for the Message collection
 const messageSchema = new Schema(
   {
     authorName: { type: String, required: true, },
