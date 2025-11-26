@@ -8,20 +8,26 @@ import { motion } from "framer-motion";
 import "../css/adminDashboard.css";
 import AlertDialog, { useAlertDialog } from "./gui/AlertDialog";
 
-
+// Admin campaign list component
 export default function CampaignList() {
+ // Holds all campaigns from server
   const [campaigns, setCampaigns] = useState<any[]>([]);
+   // Holds filtered campaigns after search & status filter
   const [filteredCampaigns, setFilteredCampaigns] = useState<any[]>([]);
+   // Controls loading state when fetching campaigns
   const [loading, setLoading] = useState(true);
+   // Holds campaign ID that is currently in toggle action
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  // Stores the current search input
   const [searchTerm, setSearchTerm] = useState("");
+    // Stores the selected status filter
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "paused">("all");
-
+// Alert dialog logic
   const { showAlert, isFailure, message, clearAlert, setAlert } = useAlertDialog();
 
-
+ // Get token from local storage for authorization
   const token = localStorage.getItem("token") || "";
-
+  // Fetch campaigns once when component loads
   useEffect(() => {
     fetchCampaigns();
   }, []);
@@ -30,6 +36,7 @@ export default function CampaignList() {
     applyFilters();
   }, [searchTerm, statusFilter, campaigns]);
 
+    // Fetch all campaigns from server
   const fetchCampaigns = async () => {
     try {
       setLoading(true);
@@ -42,6 +49,7 @@ export default function CampaignList() {
     }
   };
 
+    // Toggle campaign active / paused status
   const handleToggle = async (id: string) => {
     try {
       setActionLoading(id);
@@ -61,6 +69,7 @@ export default function CampaignList() {
     }
   };
 
+    // Apply search & status filters
   const applyFilters = () => {
     let filtered = [...campaigns];
 
@@ -120,7 +129,6 @@ export default function CampaignList() {
         </select>
       </div>
 
-      {/**/}
       <table className="table-auto w-full border-collapse border border-gray-300 rounded-xl overflow-hidden shadow-sm">
         <thead>
           <tr className="bg-gray-100 text-gray-700">
@@ -130,7 +138,7 @@ export default function CampaignList() {
             <th className="border px-4 py-2">נאסף</th>
             <th className="border px-4 py-2">סטטוס</th>
             <th className="border px-4 py-2">תאריך יצירה</th>
-            {/* שה */}
+
             <th className="border px-4 py-2">תאריך סיום</th>
             <th className="border px-4 py-2">פעולה</th>
           </tr>

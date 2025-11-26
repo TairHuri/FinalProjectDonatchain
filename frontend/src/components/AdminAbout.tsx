@@ -5,6 +5,7 @@ import axios from "axios";
 import AlertDialog, { useAlertDialog } from "./gui/AlertDialog";
 
 export default function AdminAbout() {
+ // State that holds all editable "About Us" page data
   const [aboutData, setAboutData] = useState({
     title: "",
     subtitle: "",
@@ -13,14 +14,22 @@ export default function AdminAbout() {
     closing: "",
   });
 
+ 
+  // Loading state for initial data fetch
   const [loading, setLoading] = useState(true);
+
+  // Saving state for update request
   const [saving, setSaving] = useState(false);
+
+  // Alert dialog controls (success/error messages)
   const { showAlert, isFailure, message, clearAlert, setAlert } = useAlertDialog();
 
+  // Fetch existing data when component loads
   useEffect(() => {
     fetchAboutData();
   }, []);
 
+  // Fetch current "About Us" data from server
   const fetchAboutData = async () => {
     try {
       const res = await axios.get(`${import.meta.env.VITE_API_URL}/about`);
@@ -32,10 +41,12 @@ export default function AdminAbout() {
     }
   };
 
+  // Generic handler for text inputs (title, subtitle, vision, closing)
   const handleChange = (field: string, value: string) => {
     setAboutData({ ...aboutData, [field]: value });
   };
 
+   // Handles editing specific feature fields (title/text)
   const handleFeatureChange = (
     index: number,
     field: "title" | "text",
@@ -46,14 +57,14 @@ export default function AdminAbout() {
     setAboutData({ ...aboutData, features: newFeatures });
   };
 
-
+ // Add an empty feature block
   const addFeature = () => {
     setAboutData({
       ...aboutData,
       features: [...aboutData.features, { title: "", text: "" }],
     });
   };
-
+  // Save all changes to the server
   const saveChanges = async () => {
     setSaving(true);
     try {

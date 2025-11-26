@@ -8,10 +8,13 @@ import Tags from "./gui/Tags";
 type Props = {
   ngo: Ngo;
   media: NgoMediaType;
+    // Updates NGO data fields (text, numbers, arrays, etc.)
   handleChangeNgo: (field: string, value: string | number | string[]) => void;
+ 
+  // Updates uploaded media files
   handleChangeMedia: (field: keyof NgoMediaType, value: FileList | null) => void;
 };
-
+// Component for creating a new NGO profile
 const NewNgo = ({ ngo, media, handleChangeNgo, handleChangeMedia }: Props) => {
 
  
@@ -155,7 +158,7 @@ const NewNgo = ({ ngo, media, handleChangeNgo, handleChangeMedia }: Props) => {
         />
       )}
 
-      {/* אישור עמותה (PDF) */}
+      {/* NGO certificate (PDF upload) */}
       <span className="section-title">העלאת אישור עמותה</span>
       <div className="input-group file-upload-group">
         <File className="input-icon" />

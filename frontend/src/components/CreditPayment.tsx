@@ -6,9 +6,17 @@ import Spinner, { useSpinner } from "./Spinner";
 
 import "../css/campaign/CreditPayment.css";
 
+
+// -----------------------------------------------------
+// Credit Card Payment Component
+// Responsible for handling donation via credit card
+// -----------------------------------------------------
 const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campaignId: string, userId: string }) => {
   const date = new Date();
   const { updateCampaign } = useCampaigns();
+   // ------------------------
+  // Credit card form state
+  // ------------------------
   const [ccForm, setCcform] = useState({
     phone: "",
     email: "",
@@ -29,12 +37,11 @@ const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campa
   const [showConfirm, setShowConfirm] = useState<boolean>(false);
   const [txHash, setTxHash] = useState<string>("");
   const { isLoading, start, stop } = useSpinner();
-
   // =====================
-  // פונקציות בדיקה
+  // Validation Functions
   // =====================
 
-  // אלגוריתם Luhn – לבדוק תקינות כרטיס אשראי
+  // Validate credit card number using the Luhn algorithm
   const isValidCreditCard = (num: string) => {
     const sanitized = num.replace(/\D/g, "");
     let sum = 0;
@@ -51,7 +58,7 @@ const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campa
     return sum % 10 === 0;
   };
 
-  // בדיקת תקינות ת"ז ישראלית
+   // Validate Israeli ID number using the official checksum algorithm
   const isValidIsraeliId = (id: string) => {
     id = id.trim();
     if (id.length > 9 || id.length < 5) return false;
@@ -65,17 +72,17 @@ const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campa
     }
     return sum % 10 === 0;
   };
-
-  // בדיקת תאריך תפוגה
+  // Check if the credit card expiration date is still valid
   const isFutureDate = (month: number, year: number) => {
     const now = new Date();
     const exp = new Date(year, month - 1);
     return exp >= new Date(now.getFullYear(), now.getMonth());
   };
+// =====================
+  // Input Handlers
+  // =====================
 
-  // =====================
-  // שינויי שדות
-  // =====================
+  // Update input fields dynamically based on element id
   const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { id, value } = event.target;
     setCcform({ ...ccForm, [id]: value });
@@ -85,14 +92,15 @@ const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campa
     setCcform({ ...ccForm, anonymous: checked });
   };
 
+
   // =====================
-  // תשלום
+  // Donation Logic
   // =====================
   const handlePayment = async (event: React.FormEvent) => {
     event.preventDefault();
     setMessage(null);
 
-    // ולידציות
+   // Input validations
     if (!ccForm.firstName.trim()) return setMessage("יש להזין שם פרטי");
     if (!ccForm.lastName.trim()) return setMessage("יש להזין שם משפחה");
     if (!ccForm.phone.match(/^[0-9]{3}[\-.]?[0-9]{7}$/)) return setMessage("יש להזין מספר פלאפון תקין (לדוגמה: 0501234567)");
@@ -109,7 +117,7 @@ const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campa
       const chargeData = {
         ...ccForm,
         amount: 0,
-        ownername: ccForm.ownerName, // השם שהטיפוס דורש
+        ownername: ccForm.ownerName, 
         campaign: campaignId
       };
 
@@ -180,7 +188,6 @@ const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campa
         </div>
       </div>
 
-      {/* אנונימיות */}
       <div className="form-checkbox-container" dir="rtl">
         <label className="checkbox-label">
           <input
@@ -192,7 +199,7 @@ const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campa
         </label>
       </div>
 
-      {/* תגובה */}
+
       <div className="form-group">
         <label htmlFor="comment">הערות/תגובה</label>
         <textarea
@@ -205,12 +212,10 @@ const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campa
 
       <hr className="divider" />
 
-      {/* פרטי תשלום */}
       <h3 className="form-section-title">💳 פרטי תשלום</h3>
 
       {message && <p className="error-message">{message}</p>}
 
-      {/* סכום ומטבע */}
       <div className="form-row amount-currency-row">
         <div className="form-group amount-group">
           <label htmlFor="originalAmount">סכום התרומה</label>
@@ -226,7 +231,6 @@ const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campa
         </div>
       </div>
 
-      {/* פרטי אשראי */}
       <div className="form-group">
         <label htmlFor="ccNumber">מספר כרטיס אשראי</label>
         <input id="ccNumber" placeholder="xxxx xxxx xxxx xxxx" type="text" onChange={handleChange} className="form-input" />
@@ -247,7 +251,7 @@ const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campa
         </div>
       </div>
 
-      {/* פרטי בעל הכרטיס */}
+
       <div className="form-row">
         <div className="form-group">
           <label htmlFor="ownerId">ת"ז בעל הכרטיס</label>
@@ -259,7 +263,6 @@ const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campa
         </div>
       </div>
 
-      {/* כפתורים */}
       <div className="form-buttons-row">
         <button type="submit" className="form-button primary-button"> תרום עכשיו</button>
         <button type="button" onClick={close} className="form-button secondary-button">ביטול</button>

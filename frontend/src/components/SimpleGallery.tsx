@@ -2,10 +2,10 @@
 import { useRef, useState, useEffect } from "react";
 
 type Props = {
-  images: string[];
-  imageBaseUrl?: string;     
-  movie?: string | null;     
-  rtl?: boolean;           
+  images: string[];           // Array of image filenames or paths
+  imageBaseUrl?: string;      // Optional base URL to prepend to image paths
+  movie?: string | null;      // Optional video filename or path
+  rtl?: boolean;              // Enable right-to-left layout (default: true)
 };
 
 export default function SimpleGallery({ images, imageBaseUrl = "", movie, rtl = true }: Props) {
@@ -14,6 +14,7 @@ export default function SimpleGallery({ images, imageBaseUrl = "", movie, rtl = 
 
   const full = (p: string) => (imageBaseUrl ? `${imageBaseUrl}/${p}` : p);
 
+  // Scroll carousel left or right by 2 cards width
   const scroll = (dir: "left" | "right") => {
     const el = trackRef.current;
     if (!el) return;
@@ -23,7 +24,7 @@ export default function SimpleGallery({ images, imageBaseUrl = "", movie, rtl = 
     el.scrollBy({ left: dir === "left" ? -delta : delta, behavior: "smooth" });
   };
 
-  // סגירה עם ESC כשזום פתוח
+
   useEffect(() => {
     if (!zoomSrc) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setZoomSrc(null);
@@ -33,9 +34,9 @@ export default function SimpleGallery({ images, imageBaseUrl = "", movie, rtl = 
 
   return (
     <section style={{ display: "grid", gap: 12, }}>
-      {/* קרוסלה */}
+      {/* Carousel container */}
       <div style={{ position: "relative", display:'flex', justifyContent:'center', width:'80vw'}}>
-        {/* חץ שמאל */}
+        {/* Left arrow button */}
         <button
           onClick={() => scroll(rtl ? "right" : "left")}
           aria-label={rtl ? "גלילה ימינה" : "גלילה שמאלה"}
@@ -44,7 +45,7 @@ export default function SimpleGallery({ images, imageBaseUrl = "", movie, rtl = 
           {rtl ? "›" : "‹"}
         </button>
 
-        {/* המסילה */}
+        {/* Image track (scrollable) */}
         <div
           ref={trackRef}
           style={{
@@ -67,7 +68,7 @@ export default function SimpleGallery({ images, imageBaseUrl = "", movie, rtl = 
           ))}
         </div>
 
-        {/* חץ ימין */}
+        {/* Right arrow button */}
         <button
           onClick={() => scroll(rtl ? "left" : "right")}
           aria-label={rtl ? "גלילה שמאלה" : "גלילה ימינה"}
@@ -77,14 +78,14 @@ export default function SimpleGallery({ images, imageBaseUrl = "", movie, rtl = 
         </button>
       </div>
 
-      {/* וידאו מתחת (אופציונלי) */}
+      {/* Optional video below carousel */}
       {movie && (
         <div style={videoFrameStyle}>
           <video src={full(movie)} controls preload="metadata" style={videoElStyle} />
         </div>
       )}
 
-      {/* Lightbox (תצוגה מוגדלת) */}
+       {/* Lightbox overlay for zoomed image */}
       {zoomSrc && (
         <div
           onClick={() => setZoomSrc(null)}

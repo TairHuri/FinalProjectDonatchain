@@ -1,44 +1,4 @@
 
-
-// const useAiSearch = () => {
-//   const onSearch = async(query: string) => {
-//     const data = await search(query)
-//     console.log(data);
-    
-//   }
-//   return {onSearch}
-// }
-// export default function AISearchBar() {
-//   const [text, setText] = useState("");
-//   const {onSearch} = useAiSearch()
-
-//   return (
-
-// <div className="smart-search-wrapper">
-    
-//     <h1 className="search-title">בוא למצוא את העמותה המדויקת בשבילך .</h1>
-//     <p className="search-subtitle">מנוע חיפוש חכם - הטקסט עליך החיפוש עלינו.</p>
-
-//     <div className="smart-search-container">
-//         <input
-//             className="search-input"
-//             value={text}
-//             onChange={(e) => setText(e.target.value)}
-//             placeholder="תאר מה אתה מחפש בעמותה, לדוגמה: אני אוהב בעלי חיים ומחפש עמותה שתומכת בהם"
-//         />
-//         <button
-//             className="search-button"
-//             onClick={() => onSearch(text)}
-//         >
-//             חפש
-//         </button>
-//     </div>
-// </div>
-//   )
-// }
-
-
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { search } from "../services/aiApi";
@@ -46,33 +6,48 @@ import { search } from "../services/aiApi";
 import "../css/general/AISearch.css";
 
 
+
+// Type for a single NGO search result item
 type SearchNgoResult = {
   _id: string;
   name: string;
   logoUrl: string;
 };
+
+// Base URL for images (fallback to localhost if env variable missing)
 const IMAGE_URL = import.meta.env.VITE_IMAGES_URL || "http://localhost:4000/images";
+
 export default function AISearchBar() {
+  // Search text entered by the user
   const [text, setText] = useState("");
+
+  // AI search results (top 5)
   const [results, setResults] = useState<SearchNgoResult[]>([]);
+
+  // Controls modal visibility
   const [showResults, setShowResults] = useState(false);
+
+  // Loading state while waiting for API response
   const [loading, setLoading] = useState(false);
 
+  // Handles AI search logic
   const handleSearch = async () => {
-    if (!text.trim()) return;
+    if (!text.trim()) return; // Prevent empty search
 
     try {
       setLoading(true);
 
-      const data = await search(text);
+      const data = await search(text); // Call backend AI API
 
-      const ngos: SearchNgoResult[] =
-        (data as SearchNgoResult[])?.slice(0, 5) 
+      // Take only the first 5 results
+      const ngos: SearchNgoResult[] = (data as SearchNgoResult[])?.slice(0, 5);
 
       setResults(ngos);
       setShowResults(true);
     } catch (err) {
       console.error("AI search error:", err);
+
+      // Show empty state if error occurred
       setResults([]);
       setShowResults(true);
     } finally {
@@ -80,6 +55,7 @@ export default function AISearchBar() {
     }
   };
 
+  // Close the modal window
   const closeModal = () => setShowResults(false);
 
   return (

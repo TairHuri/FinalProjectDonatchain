@@ -18,18 +18,19 @@ import "../css/campaign/CreateCampaign.css";               // ⬅️ חדש: ק�
 import { createCampaignOnChain } from "../services/cryptoApi";
 import { formatDates } from "../validations/campaignDates";
 
-
-// const IMAGE_URL = import.meta.env.VITE_IMAGES_URL || "http://localhost:4000/images";
-
-
-
+// Component for creating a new donation campaign
 const CreateCampaign = ({ postSave }: { postSave: () => void }) => {
+   // Logged-in user data
   const { user } = useAuth();
+    // Spinner controls for async operations
   const { isLoading, start, stop } = useSpinner();
+ 
+  // Campaign context for storing newly created campaigns
   const { addCampaign } = useCampaigns();
+  // NGO entity associated with the user
   const [ngo, setNgo] = useState<Ngo | null>(null);
   
-
+  // Form state object
   const [form, setForm] = useState({
     title: "",
     goal: "",
@@ -39,11 +40,12 @@ const CreateCampaign = ({ postSave }: { postSave: () => void }) => {
     images: null as FileList | null,
     movie: null as File | null,
     mainImage: null as File | null,
-    tags: [] as string[],                       // ⬅️ חדש: קטגוריות שנבחרו
+    tags: [] as string[],                       
   });
 
   const { showAlert, isFailure, message, clearAlert, setAlert } = useAlertDialog();
 
+    // Load NGO details once the user is available
   useEffect(() => {
     const loadNgo = async (u: User) => {
       const n = await getNgoById(u?.ngoId);
@@ -53,6 +55,7 @@ const CreateCampaign = ({ postSave }: { postSave: () => void }) => {
 
   }, [user]);
 
+    // Main submit handler
   const handleCreateCampaign = async (event: FormEvent) => {
     event.preventDefault();
     if (!user || !ngo || !ngo.wallet) return;
@@ -63,6 +66,7 @@ const CreateCampaign = ({ postSave }: { postSave: () => void }) => {
     }
 
     start();
+    // Build campaign payload
     const newCampaign = {
       ngo: user.ngoId,
       title: form.title,
