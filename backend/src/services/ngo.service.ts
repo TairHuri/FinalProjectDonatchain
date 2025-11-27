@@ -4,6 +4,7 @@ import fetch from 'node-fetch';
 import tags from '../config/tags.json'
 import aiService from './ai.service';
 import { ServerError } from '../middlewares/error.middleware';
+import serverMessages from '../config/serverMessages.json'
 
 // Resource IDs for government NGO verification APIs
 const VERIFY_NGO_RES_AMUTOT = "be5b7935-3922-45d4-9638-08871b17ec95"; 
@@ -124,7 +125,7 @@ async verifyNgoActive(ngoNumber: string)  {
   getNgoTags: () => tags.ngo,
   async toggleNgoStatus(ngoId:string){
     const ngo = await Ngo.findById(ngoId);
-    if (!ngo) throw new ServerError( "עמותה לא נמצאה" , 404) ;
+    if (!ngo) throw new ServerError( serverMessages.ngo.not_found.he , 404) ;
     ngo.isActive = !ngo.isActive;
     return await ngo.save({ validateModifiedOnly: true });
     

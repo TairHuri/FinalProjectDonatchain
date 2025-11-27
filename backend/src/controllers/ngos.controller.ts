@@ -7,7 +7,8 @@ import Campaign from "../models/campaign.model";
 import service, { ApiSuccessType } from '../services/ngo.service'
 import ngoService from "../services/ngo.service";
 import aiService from '../services/ai.service'
-import { ServerError } from "../middlewares/error.middleware";
+import serverMessages from '../config/serverMessages.json'
+import { ServerError } from '../middlewares/error.middleware';
 import { sendMemberStatusEmail, sendNgoStatusEmail } from "../middlewares/email.middleware";
 
 // ===============================
@@ -17,7 +18,7 @@ export const aiSearchNgo = async (req: Request, res: Response) => {
   try {
     const { q } = req.query;
     if(!q){
-      throw new ServerError("invalid or empty query", 400)
+      throw new ServerError(serverMessages.aiSearch.query.he, 400)
     }
     const result:{message:string, data:{name:string, ngoNumber:number,Similarity_Score:number }[]} = await aiService.search(q.toString())
     const ngoResults = await ngoService.getByNgoNumberList(result.data.map(d =>`${d.ngoNumber}`));
@@ -35,7 +36,7 @@ export const verifyNgo = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   if (!id) {
-    return res.status(400).send({ message: 'הקלידו את מספר העמותה' })
+    return res.status(400).send({ message: serverMessages.ngo.missing_ngoNumber.he })
   }
   const activeResult = await service.verifyNgoActive(id.toString());
   if (!activeResult.status) {

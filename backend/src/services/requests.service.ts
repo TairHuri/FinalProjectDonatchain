@@ -1,7 +1,7 @@
 import mongoose, { FilterQuery } from "mongoose";
 import AdminRequestModel, { AdminRequestByUser, IAdminRequestByUser } from "../models/adminRequestByUser";
 import { ServerError } from "../middlewares/error.middleware";
-import { UndecodedEventLog } from "ethers";
+import serverMessages from '../config/serverMessages.json'
 
 export default {
     // Create a new admin request
@@ -15,7 +15,7 @@ export default {
     // Update an existing admin request
   async update(requestId: string, data: IAdminRequestByUser) {
     if (requestId != data._id) {
-      throw new ServerError('invalid requestId', 400);
+      throw new ServerError(serverMessages.request.id.he, 400);
     }
     const updatedRequest = await AdminRequestModel.findByIdAndUpdate(requestId, data)
     return updatedRequest;

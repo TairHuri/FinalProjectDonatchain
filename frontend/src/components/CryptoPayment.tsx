@@ -111,18 +111,18 @@ const CryptoPayment = ({ close, campaignId }: { close: () => void, campaignId: s
         <div style={{ fontSize: '3rem', marginBottom: '10px' }}>🎉</div>
         <h3 className="result-title">תרומתך התבצעה בהצלחה!</h3>
         <p>תודה רבה על תרומתך הנדיבה.</p>
-        
+
         <div className="hash-box">
-           Hash: {hash}
+          Hash: {hash}
         </div>
-        
+
         <div className="resultLink">
           <a href={`https://sepolia.etherscan.io/tx/${hash}`} target="_blank" rel="noreferrer" className="etherscan-link">
             מעבר לתיעוד התרומה (Etherscan)
           </a>
         </div>
         <div>
-          <button type="button" onClick={close} className="btn-submit" style={{width: '200px'}}>סגור ואישור</button>
+          <button type="button" onClick={close} className="btn-submit" style={{ width: '200px' }}>סגור ואישור</button>
         </div>
       </div>
     );
@@ -130,10 +130,10 @@ const CryptoPayment = ({ close, campaignId }: { close: () => void, campaignId: s
   return (
     <div className="crypto-container" dir="rtl">
       <h2 className="crypto-title">תרומה בקריפטו (ETH)</h2>
-      
+
       <form onSubmit={handlePayment}>
-        
-       {/* Row 1: First Name + Last Name */}
+
+        {/* Row 1: First Name + Last Name */}
         <div className="form-grid">
           <div className="input-group_crypto">
             <label htmlFor="firstName" className="label-text">שם פרטי</label>
@@ -157,21 +157,21 @@ const CryptoPayment = ({ close, campaignId }: { close: () => void, campaignId: s
         </div>
 
         {/* Donation amount */}
-        <div className="input-group_crypto full-width" style={{marginBottom: '16px'}}>
-           <label htmlFor="amount" className="label-text">סכום התרומה (ETH)</label>
-           <input id="amount" placeholder="0.01" type="number" step="any" onChange={handleChange} className="custom-input" style={{fontSize: '1.2rem', fontWeight: 'bold'}} />
+        <div className="input-group_crypto full-width" style={{ marginBottom: '16px' }}>
+          <label htmlFor="amount" className="label-text">סכום התרומה (ETH)</label>
+          <input id="amount" placeholder="0.01" type="number" step="any" onChange={handleChange} className="custom-input" style={{ fontSize: '1.2rem', fontWeight: 'bold' }} />
         </div>
 
-       {/* Anonymous donation option */}
+        {/* Anonymous donation option */}
         <label className="checkbox-wrapper">
           <input type="checkbox" checked={ccForm.anonymous} onChange={(e) => handleAnonymouse(e.target.checked)} />
-          <span className="checkbox-text">הישארו אנונימיים (יופיע רק סכום התרומה בדף הקמפיין)</span>
+          <span className="checkbox-text">הישארו אנונימיים – אני רוצה שבעמוד הקמפיין יופיע רק סכום התרומה</span>
         </label>
 
         {/* Optional comment */}
         <div className="input-group_crypto full-width">
-          <label htmlFor="comment" className="label-text">הקדשה / הערה</label>
-          <textarea id="comment" placeholder="כמה מילים חמות..." onChange={handleChange} className="custom-input"></textarea>
+          <label htmlFor="comment" className="label-text">הקדשה / תגובה</label>
+          <textarea id="comment" placeholder="כמה מילים על תרומתך (לא חובה)" onChange={handleChange} className="custom-input"></textarea>
         </div>
 
         {/* Error / info message */}
@@ -181,17 +181,17 @@ const CryptoPayment = ({ close, campaignId }: { close: () => void, campaignId: s
           </div>
         )}
 
-         {/* Wallet + action buttons */}
+        {/* Wallet + action buttons */}
         <div className="wallet-section">
-           <Crypto 
-             waiting={waiting} 
-             isPending={isPending} 
-             isSuccess={isSuccess} 
-             error={error as Error} 
-             hash={hash} 
-             
-             onCancel={close}
-           />
+          <Crypto
+            waiting={waiting}
+            isPending={isPending}
+            isSuccess={isSuccess}
+            error={error as Error}
+            hash={hash}
+
+            onCancel={close}
+          />
         </div>
 
       </form>
@@ -205,31 +205,31 @@ type CryptoProps = {
   isSuccess: boolean;
   hash: string | undefined;
   error: Error;
-  onCancel: () => void; 
+  onCancel: () => void;
 };
 
 function Crypto({ waiting, isPending, isSuccess, error, onCancel }: CryptoProps) {
   return (
     <div style={{ width: '100%' }}>
-      
+
       {/* 1. Connect Button */}
       <div className="connect-wrapper">
-         <ConnectButton accountStatus="address" showBalance={false} />
+        <ConnectButton accountStatus="address" showBalance={false} />
       </div>
 
       {/* 2. Action Buttons */}
       <div className="actions-row">
-         <button type="button" onClick={onCancel} className="btn-cancel">
-           ביטול
-         </button>
 
-         <button 
-           type="submit" 
-           disabled={isPending || waiting} 
-           className="btn-submit"
-         >
-           {isPending || waiting ? "מעבד תרומה..." : "בצע תרומה"}
-         </button>
+        <button
+          type="submit"
+          disabled={isPending || waiting}
+          className="btn-submit"
+        >
+          {isPending || waiting ? "מעבד תרומה..." : "בצע תרומה"}
+        </button>
+        <button type="button" onClick={onCancel} className="btn-cancel">
+          ביטול
+        </button>
       </div>
 
       {/* 3. Status Messages */}

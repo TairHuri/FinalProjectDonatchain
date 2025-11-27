@@ -3,6 +3,7 @@ import CampaignService from '../services/campaign.service';
 import { MediaFiles } from '../middlewares/multer.middleware';
 import { INgo } from '../models/ngo.model';
 import { ServerError } from '../middlewares/error.middleware';
+import serverMessages from '../config/serverMessages.json'
 import { IUser } from '../models/user.model';
 import { ICampaign } from '../models/campaign.model';
 import campaignService from '../services/campaign.service';
@@ -169,7 +170,7 @@ export const toggleCampaignStatus = async (req: Request, res: Response) => {
 export const getCampagnsByNgo = async (req: Request, res: Response) => {
   try {
     const { ngoId } = req.query;
-    if (!ngoId) return res.status(400).send({ message: 'invalid ngo id' })
+    if (!ngoId) return res.status(400).send({ message: serverMessages.ngo.id.he})
     return await CampaignService.getByNgo(ngoId.toString())
   } catch (err: any) {
     res.status(500).json({ message: err.message });

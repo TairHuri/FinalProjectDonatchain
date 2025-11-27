@@ -1,26 +1,95 @@
 {
-    "ngo":{
-        "statusUpdate":{
-            "en":"status updated successfully",
-            "he":"סטטוס עודכן בהצלחה"
+    "user": {
+        "not_found": {
+            "en": "user not found",
+            "he": "משתמש לא נמצא"
+        },
+        "worng_password": {
+            "en": " wrong password",
+            "he":"סיסמה שגויה" 
+        },
+        "delete_timer":
+        {
+            "en":"please try again in a minute",
+            "he":"בבקשה נסה בעוד דקה"
         }
     },
-    "campaign":{
-        "not_found":{
-            "en":"Campain was not found",
-            "he":"הקמפיין לא נמצא"
+    "ngo": {
+        "statusUpdate": {
+            "en": "status updated successfully",
+            "he": "סטטוס עודכן בהצלחה"
         },
-        "status_campaign":{
-            "en":"failed to update campaign status",
-            "he":"עדכון סטטוס הקמפיין נכשל"
+        "not_found": {
+            "en": "ngo not found",
+            "he": "עמותה לא נמצאה"
         },
-        "status_campaigns":{
-            "en":"failed to update campaigns status",
-            "he":"עדכון סטטוס הקמפיינים נכשל"
+        "id": {
+            "en": "invalid ngo id",
+            "he": "מזהה עמותה לא תקין"
         },
-        "permissions":{
-            "en":"You do not have permissions for this campaign",
-            "he":"אין לך הרשאות בקמפיין זה"
+        "missing_ngoNumber": {
+            "en": "ngo number is missing",
+            "he": "מספר עמותה חסר"
+        }
+    },
+    "campaign": {
+        "not_found": {
+            "en": "Campain was not found",
+            "he": "הקמפיין לא נמצא"
+        },
+        "status_campaign": {
+            "en": "failed to update campaign status",
+            "he": "עדכון סטטוס הקמפיין נכשל"
+        },
+        "status_campaigns": {
+            "en": "failed to update campaigns status",
+            "he": "עדכון סטטוס הקמפיינים נכשל"
+        },
+        "permissions": {
+            "en": "You do not have permissions for this campaign",
+            "he": "אין לך הרשאות בקמפיין זה"
+        },
+        "missing_id": {
+            "en": "missing campaignId",
+            "he": "מזהה קמפיין חסר"
+        }
+    },
+    "donor": {
+        "get": {
+            "en": "Error retrieving donor list",
+            "he": "שגיאה בשליפת רשימת תורמים"
+        }
+    },
+    "aiSearch": {
+        "query": {
+            "en": "invalid or empty query",
+            "he": "שאילתא לא תקינה"
+        }
+    },
+    "blockchain": {
+        "transaction": {
+            "en": "Invalid transaction",
+            "he": "טרנזקציה לא תקינה"
+        },
+        "campaing": {
+            "en": "campaing in insuitable for crypto",
+            "he": "קמפיין לא מתאים לקריפטו"
+        }
+    },
+    "credit": {
+        "server": {
+            "en": "Charge server error: ",
+            "he": "שגיאת שרת אשראי:"
+        },
+        "payment":{
+            "en":"Payment failed",
+            "he":"תשלום נכשל"
+        }
+    },
+    "request": {
+        "id": {
+            "en": "invalid requestId",
+            "he": "מזהה בקשה לא תקין"
         }
     }
 }

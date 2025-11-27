@@ -15,7 +15,7 @@ import type { Ngo } from "../models/Ngo";
 import { type Campaign } from "../models/Campaign";
 
 // Icons
-import { Calendar, Clock, Tag, Link as LinkIcon, Users, CreditCard, Bitcoin} from "lucide-react";
+import { Calendar, Clock, Tag, Link as LinkIcon, Users, CreditCard, Bitcoin } from "lucide-react";
 
 import '../css/campaign/CampaignPage.css';
 
@@ -179,7 +179,7 @@ const CampaignPage: React.FC = () => {
       </section>
 
       {/* 2. Top Section: Visuals (Full Width) */}
-      {(campaign.images.length >0 || campaign.movie)&&  <section className="media-section">
+      {(campaign.images.length > 0 || campaign.movie) && <section className="media-section">
         <div className="main-stage">
           {isVideo && campaign.movie ? (
             <video src={`${IMAGE_URL}/${campaign.movie}`} controls autoPlay className="gallery-media" />

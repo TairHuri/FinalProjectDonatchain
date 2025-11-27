@@ -4,6 +4,7 @@ import Campaign from '../models/campaign.model';
 import AuditLog from '../models/auditlog.model';
 import blockchainService from './blockchain.service';
 import campaignService from './campaign.service';
+import serverMessages from '../config/serverMessages.json'
 import { ServerError } from '../middlewares/error.middleware';
 import fetch from 'node-fetch';
 import { sendReceiptEmail } from "../utils/receiptEmail"; 
@@ -17,13 +18,13 @@ export default {
       // Fetch the campaign from the database
       const campaign = await Campaign.findById(campaignId);
 
-      if (!campaign) throw new ServerError('Campaign not found', 404)
+      if (!campaign) throw new ServerError(serverMessages.campaign.not_found.he, 404)
 
           // Verify blockchain transaction if crypto method is used
       if (donation.method === 'crypto' && donation.txHash) {
         const receipt = await blockchainService.getTransaction(donation.txHash);
         if (!receipt || receipt.status !== 1) {
-          throw new ServerError('Invalid transaction', 400)
+          throw new ServerError(serverMessages.blockchain.transaction.he, 400)
         }
       }
 
@@ -58,7 +59,7 @@ export default {
     try {
       const campaign = await campaignService.getById(campaignId, false);
       if (!campaign?.blockchainTx) {
-        throw new ServerError('campaing in insuitable for crypto', 400);
+        throw new ServerError(serverMessages.blockchain.campaing.he, 400);
       }
 
       const { originalAmount, ccNumber, expYear, expMonth, cvv,
@@ -119,7 +120,7 @@ export default {
         return donation;
       } else {
         const text = await chargeResponse.text();
-        throw new ServerError('Charge server error: ' + text, 502);
+        throw new ServerError( serverMessages.credit.server.he + text, 502);
       }
     } catch (error) {
       console.error(' Error in creditDonate:', error);

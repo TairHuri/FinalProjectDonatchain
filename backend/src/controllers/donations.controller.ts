@@ -2,14 +2,14 @@ import { Request, Response } from 'express';
 import Donation from '../models/donation.model';
 import donationService from '../services/donation.service';
 import { ServerError } from '../middlewares/error.middleware';
-
+import serverMessages from '../config/serverMessages.json'
 /**
  * Get all donations for a specific campaign (basic info only).
  */
 export const getDonationsByCampaign = async (req: Request, res: Response) => {
   try {
     const { campaignId } = req.query;
-    if(!campaignId)return res.status(400).send({message: 'missing campaignId'})
+    if(!campaignId)return res.status(400).send({message:serverMessages.campaign.missing_id.he})
     const donatios = await donationService.listByCampaign(campaignId.toString())  
     res.send(donatios)
   } catch (error) {
@@ -25,7 +25,7 @@ export const getDonationsByCampaign = async (req: Request, res: Response) => {
 export const getFullDonationsByCampaign = async (req: Request, res: Response) => {
   try {
     const { campaignId } = req.query;
-    if(!campaignId)return res.status(400).send({message: 'missing campaignId'})
+    if(!campaignId)return res.status(400).send({message: serverMessages.campaign.missing_id.he})
     const donatios = await donationService.fullListByCampaign(campaignId.toString())  //Donation.find({ campaign: campaignId })
     res.send(donatios)
   } catch (error) {

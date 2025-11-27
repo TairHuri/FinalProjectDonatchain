@@ -5,6 +5,7 @@ import * as AuthService from '../services/auth.service';
 import AuditLog from '../models/auditlog.model';
 import userService from '../services/user.service';
 import { ServerError } from '../middlewares/error.middleware';
+import serverMessages from '../config/serverMessages.json'
 
 // Waiting time before allowing deletion of another manager (in ms)
 const deleteManagerWaitingTime = +(process.env.DELETE_MANAGER_WAITING_TIME||1)*1000*60; 
@@ -27,11 +28,11 @@ export const changePassword = async (req: Request, res: Response) => {
   try {
     const user = await userService.getById(reqUser._id)
     if (!user) {
-      return res.status(401).send({ message: 'please login and try again' })
+      return res.status(401).send({ message:serverMessages.user.not_found.he})
     }
     const ok = await AuthService.comparePassword(currentPassword, user.password);
     if (!ok)
-      return res.status(400).json({ success: false, message: "סיסמה שגויה" });
+      return res.status(400).json({ success: false, message: serverMessages.user.worng_password.he});
     user.password = await AuthService.encryptPassword(newPassword.toString());
     const updatedUser = await userService.updateUser(user._id, user)
 
@@ -52,7 +53,7 @@ export const updateMe = async (req: Request, res: Response) => {
   const user: IUser = req.body;
   try {
     if (user._id != reqUser._id) {
-      return res.status(403).send({ message: 'cannot update other user' })
+      return res.status(403).send({ message: serverMessages.user.not_found.he })
     }
     const updatedUser = await userService.updateUser(user._id, user)
 
@@ -146,13 +147,13 @@ export const deleteUse = async(req: Request, res: Response) => {
     
     const user = await userService.getById(userId)
     if(!user){
-      res.status(400).send({message:'invalid user'})
+      res.status(400).send({message:serverMessages.user.not_found.he})
       return;
     }
     if(user.role == 'manager'){
       const now = Date.now();
       if(lastDeletedTime !=null && (lastDeletedTime + deleteManagerWaitingTime > now)){
-        return res.status(400).send({message:'please try again in a minute'})
+        return res.status(400).send({message:serverMessages.user.delete_timer.he})
       }
       lastDeletedTime = now;
       

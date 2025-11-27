@@ -43,7 +43,7 @@ export const getAllDonors = async (req: Request, res: Response) => {
     res.json(donors);
   } catch (err) {
     console.error('שגיאה בשליפת התורמים:', err);
-    res.status(500).send('שגיאה בשליפת רשימת התורמים');
+    res.status(500).send({message: serverMessages.donor.get.he});
   }
 };
 
