@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { cardStyle, primaryBtnStyle } from "../../css/dashboardStyles"
+import { cardStyle, primaryBtnStyle } from "../../css/general/dashboardStyles"
 import type { Campaign } from "../../models/Campaign"
 import AlertDialog, { useAlertDialog } from "../gui/AlertDialog";
 import ConfirmDialog, { useConfirmDialog } from "../gui/ConfirmDialog";
@@ -9,7 +9,7 @@ import ReportDialog from "./ReportDialog";
 
 import "../../css/campaign/EditCampaign.css"
 import { toggleCryptoCampaignStatus } from "../../services/cryptoApi";
-import Spinner, { useSpinner } from "../Spinner";
+import Spinner, { useSpinner } from "../gui/Spinner";
 
 export type CampaignViewProps = {
   campaign: Campaign;

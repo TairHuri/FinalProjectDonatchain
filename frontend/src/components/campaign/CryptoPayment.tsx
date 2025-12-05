@@ -1,18 +1,18 @@
 
 import { useState, type ChangeEvent, useEffect } from "react";
-import { useCampaigns } from "../contexts/CampaignsContext";
-import { cryptoDonation } from "../services/donationApi";
+import { useCampaigns } from "../../contexts/CampaignsContext";
+import { cryptoDonation } from "../../services/donationApi";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useDisconnect } from 'wagmi';
-import type { Donation } from "../models/Donation";
-import Spinner from "./Spinner";
-import { useSpinner } from "./Spinner";
-import { useCryptoPayment } from "../services/cryptoApi";
+import type { Donation } from "../../models/Donation";
+import Spinner from "../gui/Spinner";
+import { useSpinner } from "../gui/Spinner";
+import { useCryptoPayment } from "../../services/cryptoApi";
 
-import '../css/campaign/CryptoPayment.css'; // שימי לב שאת מייבאת את קובץ ה-CSS החדש
+import '../../css/campaign/CryptoPayment.css'; // שימי לב שאת מייבאת את קובץ ה-CSS החדש
 
 // Main Crypto Payment Component
-const CryptoPayment = ({ close, campaignId }: { close: () => void, campaignId: string, userId: string }) => {
+const CryptoPayment = ({ close, campaignId }: { close: () => void, campaignId: string }) => {
 
   // Campaign context – used to refresh campaign after successful donation
   const { updateCampaign } = useCampaigns();

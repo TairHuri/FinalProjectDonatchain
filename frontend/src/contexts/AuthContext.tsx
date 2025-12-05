@@ -25,8 +25,8 @@ const AuthContext = createContext<AuthContextType>({
   login: async () => ({ success: true, message: '' }),
   register: async () => false,
   logout: () => { },
-  updateNgo: (ngo: Ngo) => { },
-  updateUser: (user: User) => {},
+  updateNgo: () => { },
+  updateUser: () => {},
 });
 
 // Main authentication provider component

@@ -1,17 +1,17 @@
 import { useState, type ChangeEvent } from "react";
-import { useCampaigns } from "../contexts/CampaignsContext";
-import { creditDonation } from "../services/donationApi";
-import { buttonStyle } from "../css/dashboardStyles";
-import Spinner, { useSpinner } from "./Spinner";
+import { useCampaigns } from "../../contexts/CampaignsContext";
+import { creditDonation } from "../../services/donationApi";
+import { buttonStyle } from "../../css/general/dashboardStyles";
+import Spinner, { useSpinner } from "../gui/Spinner";
 
-import "../css/campaign/CreditPayment.css";
+import "../../css/campaign/CreditPayment.css";
 
 
 // -----------------------------------------------------
 // Credit Card Payment Component
 // Responsible for handling donation via credit card
 // -----------------------------------------------------
-const CreditPayment = ({ close, campaignId, userId }: { close: () => void, campaignId: string, userId: string }) => {
+const CreditPayment = ({ close, campaignId }: { close: () => void, campaignId: string }) => {
   const date = new Date();
   const { updateCampaign } = useCampaigns();
   // ------------------------

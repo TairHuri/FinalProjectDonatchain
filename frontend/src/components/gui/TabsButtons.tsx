@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "../../css/TabsButtons.css";
+import "../../css/gui/TabsButtons.css";
 
 /**
  * Represents a single tab option.

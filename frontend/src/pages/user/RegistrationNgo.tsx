@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
-import { getNgoList, registerUserExistingNgo, registerUserNewNgo } from "../services/ngoApi";
+import { getNgoList, registerUserExistingNgo, registerUserNewNgo } from "../../services/ngoApi";
 import { Building2, Mail, Lock, Phone } from "lucide-react";
-import type { User, UserRoleType } from "../models/User";
-import type { Ngo, NgoMediaType } from "../models/Ngo";
+import type { User, UserRoleType } from "../../models/User";
+import type { Ngo, NgoMediaType } from "../../models/Ngo";
 
-import NewNgo from "../components/NewNgo";
+import NewNgo from "../../components/ngo/NewNgo";
 import { useNavigate } from 'react-router-dom';
-import AlertDialog, { useAlertDialog } from "../components/gui/AlertDialog";
-import { validateNgo, validateUser } from "../validations/registration.validation";
-import { verifyNgoNumber } from "../services/ngoApi";
-import PickerList, { usePickerList } from "../components/gui/PickerList";
+import AlertDialog, { useAlertDialog } from "../../components/gui/AlertDialog";
+import { validateNgo, validateUser } from "../../validations/registration.validation";
+import { verifyNgoNumber } from "../../services/ngoApi";
+import PickerList, { usePickerList } from "../../components/gui/PickerList";
 
-import "../css/RegistrationNgo.css";
+import "../../css/ngo/RegistrationNgo.css";
 
 
 export default function RegistrationNgo() {

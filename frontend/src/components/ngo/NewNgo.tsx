@@ -1,9 +1,9 @@
 
-import type { Ngo, NgoMediaType } from "../models/Ngo";
+import type { Ngo, NgoMediaType } from "../../models/Ngo";
 
 import { Mail, MapPin, Phone, CreditCard, Wallet, Building2, File, Image, IdCard, ScreenShare, Goal } from "lucide-react";
-import { getNgoTags } from "../services/ngoApi";
-import Tags from "./gui/Tags";
+import { getNgoTags } from "../../services/ngoApi";
+import Tags from "../gui/Tags";
 
 type Props = {
   ngo: Ngo;

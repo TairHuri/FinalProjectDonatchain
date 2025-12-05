@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
-import '../../css/AlertDialog.css'
-import { useCall } from "wagmi"; // (Unused import - can be removed if not needed)
+import '../../css/gui/AlertDialog.css'
+
 
 /**
  * Props for the AlertDialog component.

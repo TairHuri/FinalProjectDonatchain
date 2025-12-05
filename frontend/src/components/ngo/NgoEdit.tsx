@@ -4,7 +4,7 @@ import type { Ngo, NgoMediaType } from "../../models/Ngo";
 import AlertDialog, { useAlertDialog } from "../gui/AlertDialog";
 import { editNgo, getNgoTags } from "../../services/ngoApi";
 
-import { inputStyle, primaryBtnStyle } from "../../css/dashboardStyles";
+import { inputStyle, primaryBtnStyle } from "../../css/general/dashboardStyles";
 import Tags from "../gui/Tags";
 
 export type NgoEditProps = {

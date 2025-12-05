@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import '../css/Spinner.css'
+import '../../css/gui/Spinner.css'
 
 const Spinner = () => {
     return (

@@ -63,7 +63,7 @@ const postUpdateCampaign = (campaign: Campaign) =>{
    const addCampaign = async (c: Omit<Campaign, "raised">, images:File[]|null, movie:File|null,mainImage:File|null) => {
     try {
       if (!user?.token) throw new Error("NGO not logged in");
-      const campaign =await createCampaign(c, user.token, images, movie,mainImage);
+      await createCampaign(c, user.token, images, movie,mainImage);
       await refreshCampaigns();
       return true
     } catch (err) {

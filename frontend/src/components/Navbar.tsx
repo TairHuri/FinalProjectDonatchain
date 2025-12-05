@@ -1,12 +1,11 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { Menu, X, Sun, Moon, Home, Users, Info, User, LogOut } from "lucide-react";
-import "../css/Navbar.css";
+import "../css/general/Navbar.css";
 
 export default function Navbar() {
-  // React Router hooks for navigation and path tracking
-  const location = useLocation();
+  // React Router hook for navigation
   const navigate = useNavigate();
     // State to track which dropdown menu is currently open
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);

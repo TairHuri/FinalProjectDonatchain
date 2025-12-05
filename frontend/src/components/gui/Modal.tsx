@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import "../../css/Modal.css";
+import "../../css/gui/Modal.css";
 
 const Modal = ({
   component,

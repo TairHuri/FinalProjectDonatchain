@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Copy, MessageCircle, Share2, Check } from "lucide-react";
 import type { Campaign } from '../../models/Campaign';
 
-import '../../css/ShareCampaign.css'
+import '../../css/campaign/ShareCampaign.css'
 
 // Component for sharing a campaign through different methods
 const ShareCampaign = ({ campaign }: { campaign: Campaign }) => {

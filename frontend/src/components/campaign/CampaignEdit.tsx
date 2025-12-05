@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { cardStyle, inputStyle, primaryBtnStyle } from "../../css/dashboardStyles"
+import { cardStyle, inputStyle, primaryBtnStyle } from "../../css/general/dashboardStyles"
 import { useCampaigns } from "../../contexts/CampaignsContext";
 import type { Campaign } from "../../models/Campaign";
 import { getCampaignTags, updateCampaign } from "../../services/campaignApi";
@@ -8,7 +8,7 @@ import Tags from "./../gui/Tags";
 
 import "../../css/campaign/CreateCampaign.css";
 import "../../css/campaign/EditCampaign.css"
-import { getCampaignOnChain, updateCampaignOnChain } from "../../services/cryptoApi";
+import {  updateCampaignOnChain } from "../../services/cryptoApi";
 import { formatDates } from "../../validations/campaignDates";
 
 // Media type for storing new uploaded files + references to input DOM elements
@@ -37,7 +37,7 @@ const CampaignEdit = ({ campaign, setEditMode, setCampaign, token, }: CampaignEd
   const [disableStartDate, setDisableStartDate] = useState<boolean>(false)
   
   // Copy of campaign to compare later with edited values
-  const [origCampaign, setOrigCampaign] = useState<Campaign>({ ...campaign })
+  const [origCampaign, ] = useState<Campaign>({ ...campaign })
   const { postUpdateCampaign } = useCampaigns();
   
    // State to store newly selected media files and references to inputs
@@ -153,7 +153,7 @@ const CampaignEdit = ({ campaign, setEditMode, setCampaign, token, }: CampaignEd
   useEffect(() => {
 
     if (campaign) {
-      setCampaign(prev => campaign)
+      setCampaign(()=>campaign)
       const now = new Date();
       const startDate = new Date(campaign.startDate)
       if (now.getTime() > startDate.getTime()) setDisableStartDate(true)
@@ -163,7 +163,7 @@ const CampaignEdit = ({ campaign, setEditMode, setCampaign, token, }: CampaignEd
   // Handle tag changes
   const handleChangeTags = (field: string, value: string | number | string[]) => {
     if (!campaign) return;
-    setCampaign(prev => ({ ...campaign!, [field]: value }))
+    setCampaign(() => ({ ...campaign!, [field]: value }))
   }
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     if (!campaign) return;
@@ -173,7 +173,7 @@ const CampaignEdit = ({ campaign, setEditMode, setCampaign, token, }: CampaignEd
       const startDate = new Date(campaign.startDate)
       if (now.getTime() > startDate.getTime()) setDisableStartDate(true)
     }
-    setCampaign(prev => ({ ...campaign, [name]: value } as Campaign))
+    setCampaign(() => ({ ...campaign, [name]: value } as Campaign))
   }
 
    // Handle media file inputs (main image, gallery images, video)

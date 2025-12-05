@@ -1,5 +1,5 @@
 import { useAuth } from "../../contexts/AuthContext"
-import { cardStyle } from "../../css/dashboardStyles"
+import { cardStyle } from "../../css/general/dashboardStyles"
 
 import NgoView from "./NgoView";
 import NgoEdit from "./NgoEdit";

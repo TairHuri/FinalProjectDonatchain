@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { getAllCampaigns } from "../services/campaignApi";
-import { toggleAdminCampaignStatus } from "../services/adminApi";
+import  { useEffect, useState } from "react";
+import { getAllCampaigns } from "../../services/campaignApi";
+import { toggleAdminCampaignStatus } from "../../services/adminApi";
 
 import { PauseCircle, PlayCircle, Loader2, Search } from "lucide-react";
 import { motion } from "framer-motion";
 
-import "../css/adminDashboard.css";
-import AlertDialog, { useAlertDialog } from "./gui/AlertDialog";
+import "../../css/admin/adminDashboard.css";
+import AlertDialog, { useAlertDialog } from "../gui/AlertDialog";
 
 // Admin campaign list component
 export default function CampaignList() {

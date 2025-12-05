@@ -1,19 +1,19 @@
 import { Link } from "react-router-dom";
-import type { Ngo } from "../models/Ngo";
-import styles from "../css/NgoItem.module.css";
-import { FlexContainer } from "./CampaignItem";
+import type { Ngo } from "../../models/Ngo";
+import { FlexContainer } from "../campaign/CampaignItem";
+import styles from "../../css/ngo/NgoItem.module.css";
 
 const IMAGE_URL = import.meta.env.VITE_IMAGES_URL || "http://localhost:4000/images";
 
-function host(url?: string) {
-  if (!url) return "";
-  try {
-    const u = new URL(url.startsWith("http") ? url : `https://${url}`);
-    return u.hostname.replace(/^www\./, "");
-  } catch {
-    return url;
-  }
-}
+// function host(url?: string) {
+//   if (!url) return "";
+//   try {
+//     const u = new URL(url.startsWith("http") ? url : `https://${url}`);
+//     return u.hostname.replace(/^www\./, "");
+//   } catch {
+//     return url;
+//   }
+// }
 
 export default function NgoItem({ ngo, view }: { ngo: Ngo; view: "grid" | "list" }) {
   const campaignsCount = (ngo as any).ngoCampaignsCount ?? 0;

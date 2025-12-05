@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Mail } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import "../css/LoginNgo.css";
+import "../../css/ngo/LoginNgo.css";
 
 const ForgotPassword = () => {
   // Store user's email input

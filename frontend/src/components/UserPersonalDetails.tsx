@@ -3,7 +3,7 @@
 // It relies on the AuthContext to get the current user and update it after edits.
 import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext"
-import { cardStyle, primaryBtnStyle } from "../css/dashboardStyles"
+import { cardStyle, primaryBtnStyle } from "../css/general/dashboardStyles"
 
 import InputText from "./gui/InputText";
 import type { User } from "../models/User";
@@ -63,7 +63,7 @@ const isValidIsraeliPhone = (phone: string) => {
       return;
     }
     try {
-      const user = await changePassword(passwords.current, passwords.newPass);
+      await changePassword(passwords.current, passwords.newPass);
       setAlert("אימות סיסמה בוצע בהצלחה", false);
 
     } catch (error) {

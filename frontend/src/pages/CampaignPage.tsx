@@ -4,8 +4,8 @@ import { useParams } from "react-router-dom";
 import { useCampaigns } from "../contexts/CampaignsContext";
 import { getCampaign } from "../services/campaignApi";
 // Components
-import CreditPayment from "../components/CreditPayment";
-import CryptoPayment from "../components/CryptoPayment";
+import CreditPayment from "../components/campaign/CreditPayment";
+import CryptoPayment from "../components/campaign/CryptoPayment";
 import Modal from "../components/gui/Modal";
 import CampaignDonations from "../components/campaign/CampaignDonations";
 import NgoDetailsCard from "../components/ngo/NgoDetailsCard";
@@ -241,8 +241,8 @@ const CampaignPage: React.FC = () => {
       </section>
 
       {/* Modals */}
-      <Modal show={showCryptoPay} onClose={() => setShowCryptoPay(false)} component={<CryptoPayment close={() => setShowCryptoPay(false)} campaignId={campaign._id!} userId={campaign.ngo} />} />
-      <Modal show={showCreditPay} onClose={() => setShowCreditPay(false)} component={<CreditPayment close={() => setShowCreditPay(false)} campaignId={campaign._id!} userId={campaign.ngo} />} />
+      <Modal show={showCryptoPay} onClose={() => setShowCryptoPay(false)} component={<CryptoPayment close={() => setShowCryptoPay(false)} campaignId={campaign._id!} />} />
+      <Modal show={showCreditPay} onClose={() => setShowCreditPay(false)} component={<CreditPayment close={() => setShowCreditPay(false)} campaignId={campaign._id!}  />} />
 
     </div>
   );

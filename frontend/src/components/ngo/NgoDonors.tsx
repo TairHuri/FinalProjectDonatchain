@@ -1,12 +1,12 @@
-import '../css/NgoDonors.css'
 
-import { useEffect, useMemo, useState } from "react";
-import { useCampaigns } from "../contexts/CampaignsContext";
-import type { Donation } from "../models/Donation";
-import { getDonationsByCampaign, getDonationsByNgo } from "../services/donationApi";
-import { useAuth } from "../contexts/AuthContext";
+import { useEffect, useState } from "react";
+import { useCampaigns } from "../../contexts/CampaignsContext";
+import type { Donation } from "../../models/Donation";
+import { getDonationsByCampaign, getDonationsByNgo } from "../../services/donationApi";
+import { useAuth } from "../../contexts/AuthContext";
 import { Users, } from "lucide-react";
-import PickerList, { usePickerList } from './gui/PickerList';
+import PickerList, { usePickerList } from '../gui/PickerList';
+import '../../css/ngo/NgoDonors.css'
 
 const NgoDonors = () => {
   const { user } = useAuth(); // Current logged-in NGO user

@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import type { ChangeEvent } from "react";
 
 import axios from "axios";
-import AlertDialog, { useAlertDialog } from "./gui/AlertDialog";
+import AlertDialog, { useAlertDialog } from "../gui/AlertDialog";
 
 export default function AdminAbout() {
-  const [about, setAbout] = useState<any>(null);
-    const { showAlert, message,isFailure, clearAlert, setAlert } = useAlertDialog();
+
+  const { showAlert, message, isFailure, clearAlert, setAlert } = useAlertDialog();
   const [aboutData, setAboutData] = useState({
     heroTitle: "",
     heroText: "",
@@ -18,13 +18,13 @@ export default function AdminAbout() {
     closingText: "",
   });
 
- 
+
   // Loading state for initial data fetch
   const [loading, setLoading] = useState(true);
 
   // Saving state for update request
   const [saving, setSaving] = useState(false);
-  
+
 
   // Fetch existing data when component loads
   useEffect(() => {
@@ -42,12 +42,12 @@ export default function AdminAbout() {
       setLoading(false);
     }
   };
-// Generic handler for text inputs (title, subtitle, vision, closing)
+  // Generic handler for text inputs (title, subtitle, vision, closing)
   const handleChange = (field: string, value: string) => {
     setAboutData({ ...aboutData, [field]: value });
   };
 
-   // Handles editing specific feature fields (title/text)
+  // Handles editing specific feature fields (title/text)
   const handleFeatureChange = (
     index: number,
     field: "title" | "text",
@@ -58,7 +58,7 @@ export default function AdminAbout() {
     setAboutData({ ...aboutData, features: newFeatures });
   };
 
- // Add an empty feature block
+  // Add an empty feature block
   const addFeature = () => {
     setAboutData({
       ...aboutData,
@@ -152,7 +152,7 @@ export default function AdminAbout() {
       <button onClick={addFeature} style={addBtnStyle}>
         ➕ הוספת מאפיין חדש
       </button>
-      <br/>
+      <br />
       <label style={{ marginTop: "20px" }}>הודעת סיום:</label>
       <textarea
         value={aboutData.closingText}

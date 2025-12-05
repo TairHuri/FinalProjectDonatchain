@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import "../css/LoginNgo.css";
+import "../../css/ngo/LoginNgo.css";
 
 const ResetPassword = () => {
    // Local state for the new password, API response message, and validation errors

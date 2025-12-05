@@ -1,7 +1,7 @@
-import { useRef, useEffect, useState, type ReactNode, type ReactElement } from "react";
+import { useRef, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ShieldCheck, Users, Cpu, Coins, type LucideIcon } from "lucide-react";
-import "../css/Home.css";
+import "../css/general/Home.css";
 import { motion } from "framer-motion";
 import * as Icons from "lucide-react";
 import AISearchBar from "../components/AISearchBar";

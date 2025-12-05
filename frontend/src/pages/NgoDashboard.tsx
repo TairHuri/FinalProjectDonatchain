@@ -2,20 +2,20 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useCampaigns } from "../contexts/CampaignsContext";
 import { PlusCircle, Home, Users, LogOut, FileText, Settings, FilePenLine } from "lucide-react";
-import NgoDonors from "../components/NgoDonors";
-import CampaignItem from "../components/CampaignItem";
-import { cardStyle, menuBtnStyle } from "../css/dashboardStyles";
+import NgoDonors from "../components/ngo/NgoDonors";
+import CampaignItem from "../components/campaign/CampaignItem";
+import { cardStyle, menuBtnStyle } from "../css/general/dashboardStyles";
 
 import NgoUsers from "../components/ngo/NgoUsers";
 import UserPersonalDetails from "../components/UserPersonalDetails";
-import CreateCampaign from "../components/CreateCampaign";
+import CreateCampaign from "../components/campaign/CreateCampaign";
 import NgoDetails from "../components/ngo/NgoDetails";
 import { getDonationsByNgo } from "../services/donationApi";
 import { useNavigate } from "react-router-dom";
 import CampaignDetails from "../components/campaign/CampaignDetails";
 import TabsButtons, { useTabsButtons } from "../components/gui/TabsButtons";
 
-import '../css/NgoDashboard.css'
+import '../css/ngo/NgoDashboard.css'
 import type { Campaign } from "../models/Campaign";
 import AdminRequest from "../components/ngo/AdminRequest";
 
@@ -45,7 +45,7 @@ const NgoDashboard: React.FC = () => {
    */
   const now = new Date()
   const campaignFilters: { [n: number]: (campaign: Campaign) => boolean } = {
-    0: (campaign: Campaign) => true,
+    0: () => true,
     1: (campaign: Campaign) => campaign.startDate.toString().localeCompare(now.toISOString()) <= 0 && campaign.endDate.toString().localeCompare(now.toISOString()) >= 0 && campaign.isActive == true,
     2: (campaign: Campaign) => campaign.startDate.toString().localeCompare(now.toISOString()) >= 0,
     3: (campaign: Campaign) => campaign.endDate.toString().localeCompare(now.toISOString()) <= 0,
@@ -78,28 +78,7 @@ const NgoDashboard: React.FC = () => {
     setActivePage("CampaignDetails");
     setCampaignId(id);
   }
-console.log(user);
-  /**
-   * Responsive dashboard layout class based on page content.
-   */
- const getDashboardSizeClass = () => {
-    switch (activePage) {
-      case "dashboard":
-        return "medium";
-      case "newCampaign":
-      case "CampaignDetails":
-      case "ngoDetails":
-        return "large";
-      case "campaigns":
-      case "donors":
-      case "ngoUsers":
-      case "profile":
-      case "adminRequest":
-        return "small";
-      default:
-        return "medium";
-    }
-  };
+
 
   if (!user || !user.ngoId) return;
   return (

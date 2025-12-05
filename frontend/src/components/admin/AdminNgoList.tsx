@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getNgoList } from "../../services/ngoApi";
 import { Loader2, PauseCircle, PlayCircle, Eye } from "lucide-react";
 import { motion } from "framer-motion";

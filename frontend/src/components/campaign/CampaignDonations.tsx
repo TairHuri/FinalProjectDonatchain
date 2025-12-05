@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import type { Donation } from "../../models/Donation";
-import Spinner, { useSpinner } from "../Spinner";
+import Spinner, { useSpinner } from "../gui/Spinner";
 import { getDonationsByCampaign } from "../../services/donationApi";
 
 

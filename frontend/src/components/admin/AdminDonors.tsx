@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { getAllDonations } from "../services/donationApi";
-import type { Donation } from "../models/Donation";
+import { getAllDonations } from "../../services/donationApi";
+import type { Donation } from "../../models/Donation";
 
-import "../css/admin/AdminDonors.css";
+import "../../css/admin/AdminDonors.css";
 
 const AdminDonors = () => {
   // State to store the list of donations

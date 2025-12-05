@@ -1,22 +1,22 @@
 
 import { useEffect, useState, type FormEvent } from "react";
-import { useAuth } from "../contexts/AuthContext";
-import { useCampaigns } from "../contexts/CampaignsContext";
-import { cardStyle, primaryBtnStyle } from "../css/dashboardStyles";
-import { getNgoById } from "../services/ngoApi";
-import type { Ngo } from "../models/Ngo";
-import type { User } from "../models/User";
-import Spinner, { useSpinner } from "./Spinner";
-import '../css/AlertDialog.css';
+import { useAuth } from "../../contexts/AuthContext";
+import { useCampaigns } from "../../contexts/CampaignsContext";
+import { cardStyle, primaryBtnStyle } from "../../css/general/dashboardStyles";
+import { getNgoById } from "../../services/ngoApi";
+import type { Ngo } from "../../models/Ngo";
+import type { User } from "../../models/User";
+import Spinner, { useSpinner } from "../gui/Spinner";
 
-import InputText, { InputFile } from "./gui/InputText";
-import AlertDialog, { useAlertDialog } from "./gui/AlertDialog";
-import { getCampaignTags } from "../services/campaignApi";
-import Tags from "./gui/Tags";
+import InputText, { InputFile } from "../gui/InputText";
+import AlertDialog, { useAlertDialog } from "../gui/AlertDialog";
+import { getCampaignTags } from "../../services/campaignApi";
+import Tags from "../gui/Tags";
 
-import "../css/campaign/CreateCampaign.css";               // ⬅️ חדש: קובץ העיצוב לעמוד
-import { createCampaignOnChain } from "../services/cryptoApi";
-import { formatDates } from "../validations/campaignDates";
+import { createCampaignOnChain } from "../../services/cryptoApi";
+import { formatDates } from "../../validations/campaignDates";
+import '../../css/gui/AlertDialog.css';
+import "../../css/campaign/CreateCampaign.css"; 
 
 // Component for creating a new donation campaign
 const CreateCampaign = ({ postSave }: { postSave: () => void }) => {

@@ -2,9 +2,9 @@ import { useEffect, useState, useMemo } from "react";
 import { Grid, List, Search } from "lucide-react";
 import { useParams, Link, useSearchParams } from "react-router-dom";
 import { getCampaigns } from "../services/campaignApi";
-import CampaignItem from "../components/CampaignItem";
+import CampaignItem from "../components/campaign/CampaignItem";
 import type { Campaign } from "../models/Campaign";
-import "../css/Campaigns.css";
+import "../css/campaign/Campaigns.css";
 import type { Ngo } from "../models/Ngo";
 
 type SortByType =
@@ -30,7 +30,7 @@ export default function Campaigns() {
   const [showActiveOnly, setShowActiveOnly] = useState(true);
 
   const params = useParams();
-  const [queryTag, setQueryTag] = useSearchParams();
+  const [queryTag, ] = useSearchParams();
 
  //  This type casting reveals backend inconsistency (Ngo in Campaign is not strongly typed).
   //  Suggestion: enforce type in backend or refine Campaign interface.  

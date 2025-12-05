@@ -4,9 +4,9 @@ import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Campaigns from "./pages/Campaigns";
 import About from "./pages/About";
-import LoginNgo from "./pages/LoginNgo";
+import LoginNgo from "./pages/user/LoginNgo";
 import DonorsNgo from "./pages/DonorsNgo";
-import RegistrationNgo from "./pages/RegistrationNgo";
+import RegistrationNgo from "./pages/user/RegistrationNgo";
 import NgoDashboard from "./pages/NgoDashboard";
 import { AuthProvider } from "./contexts/AuthContext";
 import { CampaignsProvider } from "./contexts/CampaignsContext";
@@ -15,16 +15,16 @@ import Donate from "./pages/Donate";
 import CampaignPage from "./pages/CampaignPage";
 import AboutRules from "./pages/AboutRules";
 import AdminDashboard from "./pages/admin/AdminDashboard";
-import AdminRoute from "./components/AdminRoute";
+import AdminRoute from "./components/admin/AdminRoute";
 
 import "./App.css";
 import Ngos from "./pages/Ngos";
-import NgoPageForUsers from "./components/NgoPageForUsers";
+import NgoPageForUsers from "./components/ngo/NgoPageForUsers";
 
 
-import ForgotPassword from "./pages/ForgotPassword";
-import VerifyCode from "./pages/VerifyCode";
-import ResetPassword from "./pages/ResetPassword";
+import ForgotPassword from "./pages/user/ForgotPassword";
+import VerifyCode from "./pages/user/VerifyCode";
+import ResetPassword from "./pages/user/ResetPassword";
 
 const App: React.FC = () => {
   return (

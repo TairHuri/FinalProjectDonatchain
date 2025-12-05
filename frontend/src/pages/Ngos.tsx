@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { Grid, List, Search } from "lucide-react"; // אייקונים
-import NgoItem from "../components/NgoItem";
+import NgoItem from "../components/ngo/NgoItem";
 import { getNgoList } from "../services/ngoApi";
 import type { Ngo } from "../models/Ngo";
 
-import '../css/Ngos.css'
+import '../css/ngo/Ngos.css'
 import AlertDialog, { useAlertDialog } from "../components/gui/AlertDialog";
 
 export default function Ngos() {

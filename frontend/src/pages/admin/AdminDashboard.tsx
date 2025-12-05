@@ -2,17 +2,17 @@ import { useEffect, useState, type ReactNode } from "react";
 import axios from "axios";
 import { Users, Building2, FileText, Heart, Settings, Home, LogOut, FilePenLine, } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { cardStyle, menuBtnStyle } from "../../css/dashboardStyles";
-import AdminDonors from "../../components/AdminDonors";
-import CampaignList from "../../components/CampaignList";
-import AdminAboutEditor from "./AdminAboutEditor";
+import { cardStyle, menuBtnStyle } from "../../css/general/dashboardStyles";
+import AdminDonors from "../../components/admin/AdminDonors";
+import CampaignList from "../../components/campaign/CampaignList";
+
 import RulesViewer from "./RulesViewer";
 import AdminRulesEditor from "./AdminRulesEditor";
 import AdminNgoList from "../../components/admin/AdminNgoList";
 import { useAuth } from "../../contexts/AuthContext"; 
-import '../../css/AdminDashboard.css'
+import AdminAbout from "../../components/admin/AdminAbout";
 import RequestFromUsers from "../../components/admin/RequestFromUsers";
-import AdminAbout from "../../components/AdminAbout";
+import '../../css/admin/AdminDashboard.css'
 
 // Interface for dashboard statistics
 interface Stats {
@@ -32,7 +32,7 @@ const AdminDashboard: React.FC = () => {
     "dashboard" | "donors" | "ngos" | "campaigns" | "terms" | "about" | "request"
   >("dashboard");
   const navigate = useNavigate();
-  const [selectedNgo, setSelectedNgo] = useState<any | null>(null);
+
  // Authentication context (logout only is used here)
   const { logout } = useAuth(); 
 

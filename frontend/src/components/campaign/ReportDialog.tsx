@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "../../css/campaign/ReportDialog.css";
 import { getCampaignReport } from "../../services/campaignApi";
-import Spinner, { useSpinner } from "../Spinner";
+import Spinner, { useSpinner } from "../gui/Spinner";
 
 type Props = {
   token: string;

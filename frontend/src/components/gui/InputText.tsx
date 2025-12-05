@@ -1,6 +1,6 @@
 
 import type { ReactNode } from "react"
-import { inputLogin, inputStyle } from "../../css/dashboardStyles"
+import { inputLogin, inputStyle } from "../../css/general/dashboardStyles"
 
 /**
  * InputTextProps defines shared text input properties
@@ -177,7 +177,7 @@ export interface InputFileWithIconProps<T,> extends InputIconProps {
   accept?: string
   field: keyof T;
 }
-export const InputFileWithIcon = <T,>({ Icon, label, className, field, value, placeholder, onChange, accept, multiple = false, }: InputFileWithIconProps<T>) => {
+export const InputFileWithIcon = <T,>({ Icon, label, className, field, placeholder, onChange, accept, multiple = false, }: InputFileWithIconProps<T>) => {
   return (
     <div style={{ position: "relative", display: 'flex', alignItems: 'center', gap: '0.7rem' }}>
       {Icon}

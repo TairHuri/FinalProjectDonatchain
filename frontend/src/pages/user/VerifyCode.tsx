@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import "../css/LoginNgo.css";
+import "../../css/ngo/LoginNgo.css";
 
 const VerifyCode = () => {
   //  Local state to store the entered verification code and potential error message

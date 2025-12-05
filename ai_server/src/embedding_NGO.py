@@ -48,7 +48,10 @@ def create_new_ngo_embedding(name, description, embedding_model):
 
 def add_new_ngo_embedding(new_vectors):
     existing_embeddings = np.load(EMBEDDINGS_FILE_PATH)
-    updated_embeddings = np.concatenate([existing_embeddings, new_vectors], axis=0)
+    if existing_embeddings:
+        updated_embeddings = np.concatenate([existing_embeddings, new_vectors], axis=0)
+    else:
+        updated_embeddings = np.concatenate([new_vectors], axis=0)
     np.save(EMBEDDINGS_FILE_PATH, updated_embeddings)
 
 

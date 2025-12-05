@@ -55,7 +55,7 @@ const NewRequest = ({ setActiveTab }: { setActiveTab: (tab: 'new' | 'list') => v
         };
 
         // Send request to backend
-        const res = await createRequest(request, user.token);
+        await createRequest(request, user.token);
 
         // Reset form after success
         setSubject("");

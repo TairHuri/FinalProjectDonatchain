@@ -1,12 +1,12 @@
 
 import React, { useEffect, useState } from "react";
-import type { Ngo } from "../models/Ngo";
+import type { Ngo } from "../../models/Ngo";
 import { useNavigate, useParams } from "react-router-dom";
-import { getNgoById } from "../services/ngoApi";
-import Spinner, { useSpinner } from "./Spinner";
+import { getNgoById } from "../../services/ngoApi";
+import Spinner, { useSpinner } from "../gui/Spinner";
 
-import "../css/ngo/NgoPageForUsers.css";
-import AlertDialog, { useAlertDialog } from "./gui/AlertDialog";
+import "../../css/ngo/NgoPageForUsers.css";
+import AlertDialog, { useAlertDialog } from "../gui/AlertDialog";
 
 const CERTIFICATE_URL = import.meta.env.VITE_CERTIFICATES_URL || "http://localhost:4000/certificates";
 

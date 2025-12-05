@@ -1,9 +1,9 @@
-import type { Campaign } from "../models/Campaign";
+import type { Campaign } from "../../models/Campaign";
 import { useNavigate } from "react-router-dom";
-import type { Ngo } from "../models/Ngo";
+import type { Ngo } from "../../models/Ngo";
 import type { ReactNode } from "react";
 
-import styles from "../css/CampaignItem.module.css";
+import styles from "../../css/campaign/CampaignItem.module.css";
 
 // Base URL for campaign / NGO images
 const IMAGE_URL = import.meta.env.VITE_IMAGES_URL || "http://localhost:4000/images";
@@ -20,7 +20,7 @@ function endOfDay(dateStr?: string) {
 const CampaignItem = ({
   c,
   showButtons = false,
-  edit = (id: string) => {},
+  edit = () => {},
   view = "grid",
 }: {
   c: Campaign;

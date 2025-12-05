@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import '../../css/AlertDialog.css'
+import '../../css/gui/AlertDialog.css'
 
 /**
  * Props for the confirmation dialog component.
@@ -53,10 +53,10 @@ export const useConfirmDialog = () => {
   const [showConfirm, setShowConfirm] = useState<boolean>(false); // Tracks dialog visibility state
 
   /** Opens the confirmation dialog */
-  const openConfirm = () => setShowConfirm(prev => true);
+  const openConfirm = () => setShowConfirm(true);
 
   /** Closes the confirmation dialog */
-  const closeConfirm = () => setShowConfirm(prev => false);
+  const closeConfirm = () => setShowConfirm(false);
 
   return { showConfirm, openConfirm, closeConfirm }
 }

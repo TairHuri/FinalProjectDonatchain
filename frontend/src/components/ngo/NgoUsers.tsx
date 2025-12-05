@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react"
 import { approveUserApi, getUsers } from "../../services/userApi";
 import UserItem from "../UserItem";
 
-import "../../css/NgoUsers.css";
+import "../../css/ngo/NgoUsers.css";
 import { setUserRoleApi, deleteUserApi } from "../../services/userApi";
 import AlertDialog, { useAlertDialog } from "../gui/AlertDialog";
 import type { Message } from "../../models/Message";

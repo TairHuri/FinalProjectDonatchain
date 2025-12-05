@@ -1,4 +1,4 @@
-import { primaryBtnStyle } from "../../css/dashboardStyles";
+import { primaryBtnStyle } from "../../css/general/dashboardStyles";
 import type { Ngo } from "../../models/Ngo";
 
 export type NgoViewProps = {
