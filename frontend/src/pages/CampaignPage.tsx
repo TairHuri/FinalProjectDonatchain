@@ -241,7 +241,7 @@ const CampaignPage: React.FC = () => {
       </section>
 
       {/* Modals */}
-      <Modal show={showCryptoPay} onClose={() => setShowCryptoPay(false)} component={<CryptoPayment close={() => setShowCryptoPay(false)} campaignId={campaign._id!} />} />
+      <Modal show={showCryptoPay} onClose={() => setShowCryptoPay(false)} component={<CryptoPayment close={() => setShowCryptoPay(false)} campaignId={campaign._id!} campaignTx={campaign.blockchainTx!} />} />
       <Modal show={showCreditPay} onClose={() => setShowCreditPay(false)} component={<CreditPayment close={() => setShowCreditPay(false)} campaignId={campaign._id!}  />} />
 
     </div>

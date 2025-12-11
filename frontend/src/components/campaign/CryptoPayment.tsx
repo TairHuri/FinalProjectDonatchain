@@ -12,7 +12,7 @@ import { useCryptoPayment } from "../../services/cryptoApi";
 import '../../css/campaign/CryptoPayment.css'; // שימי לב שאת מייבאת את קובץ ה-CSS החדש
 
 // Main Crypto Payment Component
-const CryptoPayment = ({ close, campaignId }: { close: () => void, campaignId: string }) => {
+const CryptoPayment = ({ close, campaignId, campaignTx }: { close: () => void, campaignId: string, campaignTx: string }) => {
 
   // Campaign context – used to refresh campaign after successful donation
   const { updateCampaign } = useCampaigns();
@@ -95,7 +95,7 @@ const CryptoPayment = ({ close, campaignId }: { close: () => void, campaignId: s
     try {
       start();
 
-      await donateCrypto(`${ccForm.amount}`);
+      await donateCrypto(`${ccForm.amount}`, campaignTx);
     } catch (error) {
       console.error(error);
       setMessage((error as any).message || "אירעה שגיאה בעת ביצוע התרומה, אנא נסי שוב.");

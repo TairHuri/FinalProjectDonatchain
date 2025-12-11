@@ -182,7 +182,6 @@ export
 // ===== Crypto helper functions =====
 
   const HUB_ABI = hubAbiJson.abi as Abi;
-const CAMPAIGN_ID = Number(import.meta.env.VITE_CAMPAIGN_ID ?? 0);
 
 /**
  * Hook that handles crypto donations using Wagmi.
@@ -194,7 +193,7 @@ export const useCryptoPayment = () => {
   const { writeContract, data: hash, isPending, error } = useWriteContract();
   const { isLoading: waiting, isSuccess } = useWaitForTransactionReceipt({ hash });
 
-  async function donateCrypto(amountEth: string) {
+  async function donateCrypto(amountEth: string, campaignTx:string) {
     if (!isConnected) throw new Error("התחברי לארנק");
     if (chainId !== sepolia.id) return switchChain({ chainId: sepolia.id });
 
@@ -202,7 +201,7 @@ export const useCryptoPayment = () => {
       address: CONTRACT,
       abi: HUB_ABI,
       functionName: "donateCrypto",
-      args: [BigInt(CAMPAIGN_ID)],
+      args: [BigInt(campaignTx)],
       value: parseEther(amountEth || "0.01"),
     });
   }

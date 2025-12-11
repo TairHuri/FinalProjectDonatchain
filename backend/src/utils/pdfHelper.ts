@@ -27,7 +27,7 @@ export const generateCampaignReport = async (campaign: ICampaignWithTotal, donat
 
   });
 
-  // מרימים דפדפן ריק ומייצרים PDF
+  // Pick up a blank browser and generate a PDF
   const browser = await puppeteer.launch({
     args: ["--no-sandbox", "--font-render-hinting=none"],
   });
@@ -53,7 +53,7 @@ export const generateCampaignReport = async (campaign: ICampaignWithTotal, donat
 
 
 
-// פונקציות עזר ל-HTML
+// HTML helper functions
 function headerTemplate() {
   return `
   <style>
@@ -97,7 +97,7 @@ function buildHtml(opts: {
 
   const percent = Math.min((campaign.totalRaised / Math.max(campaign.goal, 1)) * 100, 100);
 
-  // שימי לב: ל-RTL תקפידי על dir="rtl" ועל יישור ימין
+
   return `
 <!doctype html>
 <html lang="he" dir="rtl">

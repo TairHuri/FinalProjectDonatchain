@@ -3,9 +3,11 @@ import PDFDocument from "pdfkit";
 import fs from "fs";
 import path from "path";
 import * as QRCode from "qrcode";
-import dotenv from "dotenv";
+import { config } from "../config";
+import { ServerError } from "../middlewares/error.middleware";
+// import dotenv from "dotenv";
 
-dotenv.config();
+// dotenv.config();
 
 export interface DonationData {
   donorEmail: string;
@@ -16,12 +18,16 @@ export interface DonationData {
   method: "credit" | "crypto";
   txHash?: string;
 }
-
+if(config.emailServer == '' || config.emailPort == 0){
+  throw new Error("missing email server or email port")
+}
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: config.emailServer,
+  port: config.emailPort,
+  secure: false,
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    user: config.emailUser,
+    pass: config.emailPassword,
   },
 });
 
@@ -57,7 +63,7 @@ const logoPath = path.resolve(__dirname, "../../../frontend/public/log.png");
 if (fs.existsSync(logoPath)) {
   doc.image(logoPath, 60, 50, { width: 90 }); 
 } else {
-  console.warn(" לוגו לא נמצא בנתיב:", logoPath);
+  console.warn("Logo not found in path:", logoPath);
 }
 
   doc.fontSize(26).text(fixHebrew(" קבלה על תרומה"), 60, 70, right);
@@ -166,9 +172,9 @@ export async function sendReceiptEmail(data: DonationData): Promise<void> {
 
   try {
     await transporter.sendMail(mailOptions);
-    console.log(` קבלה נשלחה בהצלחה אל ${data.donorEmail}`);
+    console.log(`Receipt successfully sent to ${data.donorEmail}`);
   } catch (error) {
-    console.error(" שגיאה בשליחת המייל:", error);
+    console.error("Error sending email:", error);
   } finally {
     fs.unlink(pdfPath, () => {});
   }
