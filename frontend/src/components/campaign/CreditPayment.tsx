@@ -1,7 +1,6 @@
 import { useState, type ChangeEvent } from "react";
 import { useCampaigns } from "../../contexts/CampaignsContext";
 import { creditDonation } from "../../services/donationApi";
-import { buttonStyle } from "../../css/general/dashboardStyles";
 import Spinner, { useSpinner } from "../gui/Spinner";
 
 import "../../css/campaign/CreditPayment.css";
