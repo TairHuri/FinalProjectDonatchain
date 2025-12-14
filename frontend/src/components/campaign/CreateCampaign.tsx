@@ -80,7 +80,7 @@ const CreateCampaign = ({ postSave }: { postSave: () => void }) => {
       blockchainTx: '',
       images: [],
       movie: '',
-      tags: form.tags,                          // ⬅️ שולחים לשרת
+      tags: form.tags,                          
     };
 
     const images: File[] = [];
@@ -93,7 +93,7 @@ try{
       charityId: +ngo.ngoNumber,
       startDate: startDate.getTime()/1000,
       endDate: endDate.getTime()/1000,
-      goalAmount: newCampaign.goal,
+      goalAmount: newCampaign.goal * 100,
       beneficiary: ngo.wallet
     });
     if (!blockchainTx.status) { 
