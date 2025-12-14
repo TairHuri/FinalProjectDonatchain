@@ -5,13 +5,13 @@ import logger from './utils/logger';
 import { createAdmin } from './scripts/createAdmin';
 import { startCampaignStatusJob } from "./jobs/campaignScheduler";
 import { startCryptoRateJob } from './jobs/cryptoExchangeRateScheduler';
-import fs from 'fs'
-import https from 'https'
+// import fs from 'fs'
+// import https from 'https'
 
-const sslFiles = {
-  key: fs.readFileSync("server.key"),
-  cert: fs.readFileSync("server.cert"),
-}
+// const sslFiles = {
+//   key: fs.readFileSync("server.key"),
+//   cert: fs.readFileSync("server.cert"),
+// }
 
 const start = async () => {
   // Connect to MongoDB using the URI from config
