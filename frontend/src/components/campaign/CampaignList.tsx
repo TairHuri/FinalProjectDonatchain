@@ -5,7 +5,7 @@ import { toggleAdminCampaignStatus } from "../../services/adminApi";
 import { PauseCircle, PlayCircle, Loader2, Search } from "lucide-react";
 import { motion } from "framer-motion";
 
-import "../../css/admin/adminDashboard.css";
+import "../../css/admin/AdminDashboard.css";
 import AlertDialog, { useAlertDialog } from "../gui/AlertDialog";
 
 // Admin campaign list component
