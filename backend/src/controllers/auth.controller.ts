@@ -6,6 +6,7 @@ import { BaseNgo } from "../models/ngo.model";
 import { NgoMediaFiles } from "../middlewares/multer.middleware";
 import nodemailer from "nodemailer";
 import bcrypt from "bcryptjs";
+import {transporter}from '../middlewares/email.middleware'
 
 /* -----------------------------
    Register a NEW NGO + admin user
@@ -187,16 +188,16 @@ export const me = async (req: Request, res: Response) => {
 };
 
 
-/* -----------------------------
-   Nodemailer setup for password reset emails
------------------------------- */
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+// /* -----------------------------
+//    Nodemailer setup for password reset emails
+// ------------------------------ */
+// const transporter = nodemailer.createTransport({
+//   service: "gmail",
+//   auth: {
+//     user: process.env.EMAIL_USER,
+//     pass: process.env.EMAIL_PASS,
+//   },
+// });
 
 /* -----------------------------
    Forgot password – send reset code

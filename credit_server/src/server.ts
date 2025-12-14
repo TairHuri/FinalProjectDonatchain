@@ -67,7 +67,7 @@ app.post("/api/charge", async (req: Request, res: Response) => {
     }
 
 
-    res.send({ message: "ok", charge, code: `PAY${Date.now()}` });
+    res.send({ message: "ok", charge:+charge.toFixed(2), code: `PAY${Date.now()}` });
   } catch (error: any) {
     console.error("Charge error:", error.message);
     res.status(400).send({ message: "Payment failed", error: error.message });

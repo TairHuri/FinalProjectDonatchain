@@ -178,7 +178,7 @@ export const getCampaignOnChain = async (blockchainTx: number) => {
   
 }
 
-export
+
 // ===== Crypto helper functions =====
 
   const HUB_ABI = hubAbiJson.abi as Abi;

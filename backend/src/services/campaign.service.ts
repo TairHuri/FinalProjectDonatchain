@@ -11,7 +11,7 @@ import { IUser } from '../models/user.model';
 import { INgo } from '../models/ngo.model';
 
 // Helper function to calculate total raised amount in a campaign (crypto converted to ETH + credit)
-const calculateTotal = (campaigns: ICampaign[]) => campaigns.map(c => ({ ...c, totalRaised: c.raised.crypto * blockchainService.exchangeRate.eth + c.raised.credit }))
+const calculateTotal = (campaigns: ICampaign[]) => campaigns.map(c => ({ ...c, totalRaised: c.raised.crypto + c.raised.credit }))
 export default {
 
     // Generates a PDF report for a campaign
@@ -141,9 +141,9 @@ async changeCampainsStatus(ngoId: string, isActive:boolean){
       const campaign = await Campaign.findById(campaignId);
       if (!campaign) throw new Error('Campaign not found');
       if (method == 'card')
-        campaign.raised.credit = (+campaign.raised || 0) + +amount;
+        campaign.raised.credit = (+campaign.raised.credit || 0) + +amount;
       else
-        campaign.raised.crypto = (+campaign.raised || 0) + +amount;
+        campaign.raised.crypto = (+campaign.raised.crypto || 0) + +amount;
       campaign.numOfDonors = (campaign.numOfDonors || 0) + 1;
 
       await campaign.save();

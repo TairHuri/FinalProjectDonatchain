@@ -3,8 +3,6 @@
   color: var(--text-dark);
   max-width: 600px;
   margin: 0 auto;
-
-
   max-height: 85vh;
   overflow-y: auto;
   padding: 10px 20px;
@@ -218,4 +216,61 @@
     padding: 20px;
     margin: 10px;
   }
+}
+
+.credit-result-box {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.credit-result-title {
+  color: var(--primary-color);
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+}
+
+.credit-hash-box {
+  background: #f3f4f6;
+  padding: 10px;
+  border-radius: 6px;
+  word-break: break-all;
+  font-family: monospace;
+  margin: 15px 0;
+  font-size: 0.85rem;
+}
+
+.credit-etherscan-link {
+  color: var(--primary-color);
+  font-weight: bold;
+  text-decoration: none;
+  display: inline-block;
+  margin-bottom: 24px;
+  border-bottom: 1px solid transparent;
+}
+
+.credit-etherscan-link:hover {
+  border-bottom-color: var(--primary-color);
+}
+
+.credit-btn-submit {
+  flex: 2;
+  background-color: #28a745;
+  color: white;
+  font-weight: bold;
+  padding: 14px;
+  border-radius: 8px;
+  border: none;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.credit-btn-submit:hover:not(:disabled) {
+  background-color: #218838;
+  transform: translateY(-1px);
+}
+
+.credit-btn-submit:disabled {
+  background-color: #cbd5e1;
+  cursor: not-allowed;
 }

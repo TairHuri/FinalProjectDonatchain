@@ -3,11 +3,8 @@ import PDFDocument from "pdfkit";
 import fs from "fs";
 import path from "path";
 import * as QRCode from "qrcode";
-import { config } from "../config";
-import { ServerError } from "../middlewares/error.middleware";
-// import dotenv from "dotenv";
+import { transporter } from "../middlewares/email.middleware";
 
-// dotenv.config();
 
 export interface DonationData {
   donorEmail: string;
@@ -18,19 +15,6 @@ export interface DonationData {
   method: "credit" | "crypto";
   txHash?: string;
 }
-if(config.emailServer == '' || config.emailPort == 0){
-  throw new Error("missing email server or email port")
-}
-const transporter = nodemailer.createTransport({
-  host: config.emailServer,
-  port: config.emailPort,
-  secure: false,
-  auth: {
-    user: config.emailUser,
-    pass: config.emailPassword,
-  },
-});
-
 
 async function generateReceiptPDF(data: DonationData): Promise<string> {
   const pdfPath = path.join(__dirname, `receipt_${Date.now()}.pdf`);

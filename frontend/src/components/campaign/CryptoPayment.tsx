@@ -9,7 +9,7 @@ import Spinner from "../gui/Spinner";
 import { useSpinner } from "../gui/Spinner";
 import { useCryptoPayment } from "../../services/cryptoApi";
 
-import '../../css/campaign/CryptoPayment.css'; // שימי לב שאת מייבאת את קובץ ה-CSS החדש
+import '../../css/campaign/CryptoPayment.css';
 
 // Main Crypto Payment Component
 const CryptoPayment = ({ close, campaignId, campaignTx }: { close: () => void, campaignId: string, campaignTx: string }) => {
@@ -90,12 +90,12 @@ const CryptoPayment = ({ close, campaignId, campaignTx }: { close: () => void, c
     if (!ccForm.lastName.trim()) return setMessage("יש להזין שם משפחה");
     if (!ccForm.phone.match(/^[0-9]{3}[\-.]?[0-9]{7}$/)) return setMessage("יש להזין מספר פלאפון תקין");
     if (!ccForm.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) return setMessage("יש להזין כתובת מייל תקינה");
-    if (!ccForm.amount || ccForm.amount <= 0) return setMessage("יש להזין סכום תרומה תקין");
+    if (!ccForm.originalAmount || ccForm.originalAmount <= 0) return setMessage("יש להזין סכום תרומה תקין");
 
     try {
       start();
 
-      await donateCrypto(`${ccForm.amount}`, campaignTx);
+      await donateCrypto(`${ccForm.originalAmount}`, campaignTx);
     } catch (error) {
       console.error(error);
       setMessage((error as any).message || "אירעה שגיאה בעת ביצוע התרומה, אנא נסי שוב.");
@@ -122,7 +122,7 @@ const CryptoPayment = ({ close, campaignId, campaignTx }: { close: () => void, c
           </a>
         </div>
         <div>
-          <button type="button" onClick={close} className="btn-submit" style={{ width: '200px' }}>סגור ואישור</button>
+          <button type="button" onClick={close} className="btn-submit" style={{ width: '200px' }}>סגור</button>
         </div>
       </div>
     );
@@ -158,8 +158,8 @@ const CryptoPayment = ({ close, campaignId, campaignTx }: { close: () => void, c
 
         {/* Donation amount */}
         <div className="input-group_crypto full-width" style={{ marginBottom: '16px' }}>
-          <label htmlFor="amount" className="label-text">סכום התרומה (ETH)</label>
-          <input id="amount" placeholder="0.01" type="number" step="any" onChange={handleChange} className="custom-input" style={{ fontSize: '1.2rem', fontWeight: 'bold' }} />
+          <label htmlFor="originalAmount" className="label-text">סכום התרומה (ETH)</label>
+          <input id="originalAmount" placeholder="0.01" type="number" step="any" onChange={handleChange} className="custom-input" style={{ fontSize: '1.2rem', fontWeight: 'bold' }} />
         </div>
 
         {/* Anonymous donation option */}

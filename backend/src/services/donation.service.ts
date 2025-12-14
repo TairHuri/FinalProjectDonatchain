@@ -27,7 +27,7 @@ export default {
           throw new ServerError(serverMessages.blockchain.transaction.he, 400)
         }
       }
-
+      donation.amount *= blockchainService.exchangeRate.eth;
       const createdDonation = new Donation({ ...donation, campaign: campaign._id, });
       await createdDonation.save();
 
@@ -64,7 +64,7 @@ export default {
 
       const { originalAmount, ccNumber, expYear, expMonth, cvv,
         ownerId, ownername, currency,
-        email, firstName, lastName } = creditDonation;
+        email, firstName, lastName,anonymous } = creditDonation;
 
       // send the creditServer the original amount (in the original currency)
       // the credit server will return the ILS amount in the field: charge
@@ -100,6 +100,7 @@ export default {
           currency,
           method: 'card',
           txHash: txHash,
+          anonymous,
           comment: creditDonation.comment,
         });
 

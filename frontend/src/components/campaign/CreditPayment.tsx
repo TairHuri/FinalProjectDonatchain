@@ -89,6 +89,7 @@ const CreditPayment = ({ close, campaignId }: { close: () => void, campaignId: s
   };
 
   const handleAnonymouse = (checked: boolean) => {
+    console.log({anonymous: checked})
     setCcform({ ...ccForm, anonymous: checked });
   };
 
@@ -146,18 +147,22 @@ const CreditPayment = ({ close, campaignId }: { close: () => void, campaignId: s
 
   if (showConfirm)
     return (
-      <div className="result">
-        <h3 className="resultTitle">התרומה התבצעה בהצלחה</h3>
-        <h3 className="resultSecondTitle">כתובת hash של התרומה: {txHash}</h3>
+      <div className="credit-container credit-result-box">
+        <div style={{ fontSize: '3rem', marginBottom: '10px' }}>🎉</div>
+        <h3 className="result-title">תרומתך התבצעה בהצלחה!</h3>
+        <p>תודה רבה על תרומתך הנדיבה.</p>
+
+        <div className="credit-hash-box">
+          Hash: {txHash}
+        </div>
+
         <div className="resultLink">
-          <a href={`https://sepolia.etherscan.io/tx/${txHash}`} target="_blank" rel="noreferrer">
-            מעבר לתיעוד התרומה
+          <a href={`https://sepolia.etherscan.io/tx/${txHash}`} target="_blank" rel="noreferrer" className="credit-etherscan-link">
+            מעבר לתיעוד התרומה (Etherscan)
           </a>
         </div>
         <div>
-          <button type="button" onClick={close} style={buttonStyle}>
-            אישור
-          </button>
+          <button type="button" onClick={close} className="credit-btn-submit" style={{ width: '200px' }}>סגור</button>
         </div>
       </div>
     );

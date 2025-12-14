@@ -112,7 +112,7 @@ const NgoDashboard: React.FC = () => {
           </button>
           <button
             onClick={() => setActivePage("newCampaign")}
-            style={{ ...menuBtnStyle, background: "linear-gradient(90deg,#10b981,#059669)" }}
+            style={{ ...menuBtnStyle, background: "linear-gradient(90deg,#10b981,#059669)",padding: "12px 12px 12px 12px" }}
           >
             <PlusCircle size={20} /> קמפיין חדש
           </button>

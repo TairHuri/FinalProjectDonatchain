@@ -1,13 +1,16 @@
 import nodemailer from "nodemailer";
+import { config } from "../config";
 
 // Create a reusable transporter object using Gmail service.
 // Auth credentials are loaded from environment variables.
-const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-    },
+export const transporter = nodemailer.createTransport({
+  host: config.emailServer,
+  port: config.emailPort,
+  secure: false,
+  auth: {
+    user: config.emailUser,
+    pass: config.emailPassword,
+  },
 });
 
 // Sends an email to a member notifying them about NGO activation/suspension status.
