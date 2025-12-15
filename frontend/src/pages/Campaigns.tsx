@@ -136,8 +136,8 @@ export default function Campaigns() {
             <option value="raised">סכום שגויס (גבוה לנמוך)</option>
             <option value="goalLowToHigh">יעד (נמוך לגבוה)</option>
             <option value="goalHighToLow">יעד (גבוה לנמוך)</option>
-            <option value="creationDateNewToOld">יצירה (חדש לישן)</option>
-            <option value="creationDateOldToNew">יצירה (ישן לחדש)</option>
+            <option value="creationDateNewToOld">יצירה (ישן לחדש)</option>
+            <option value="creationDateOldToNew">יצירה (חדש לישן)</option>
             <option value="endDateNewToOld">סיום (חדש לישן)</option>
             <option value="endDateOldToNew">סיום (ישן לחדש)</option>
           </select>

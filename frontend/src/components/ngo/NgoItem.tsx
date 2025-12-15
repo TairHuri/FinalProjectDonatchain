@@ -16,7 +16,7 @@ const IMAGE_URL = import.meta.env.VITE_IMAGES_URL || "http://localhost:4000/imag
 // }
 
 export default function NgoItem({ ngo, view }: { ngo: Ngo; view: "grid" | "list" }) {
-  const campaignsCount = (ngo as any).ngoCampaignsCount ?? 0;
+  // const campaignsCount = (ngo as any).ngoCampaignsCount ?? 0;
 
   return (
     <Link to={`/ngos/${ngo._id}`} className={`${view === "grid" ? styles['grid_container_grid'] : styles["grid_container_flex"]} ${styles['card']}`} aria-label={`צפייה בעמותה ${ngo.name}`} dir="rtl">
@@ -54,11 +54,11 @@ export default function NgoItem({ ngo, view }: { ngo: Ngo; view: "grid" | "list"
           )}
         </div>
 
-        {campaignsCount > 0 && (
+        {/* {campaignsCount > 0 && (
           <div className={styles.footer}>
             <span className={styles.chip}>{campaignsCount} קמפיינים</span>
           </div>
-        )}
+        )} */}
         {/* </div> */}
       </FlexContainer>
       {/* </article> */}

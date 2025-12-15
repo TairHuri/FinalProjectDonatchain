@@ -49,17 +49,23 @@
 
 .ngo-media {
   position: relative;
-  aspect-ratio: 16/9;
+  aspect-ratio: 1/1;
   background: #f0f2f1;
   overflow: hidden;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
 }
 
 .ngo-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  
+  object-fit: contain;    
+  object-position: center; 
   display: block;
-  transition: transform .35s ease;
 }
 
 .title-grid,
