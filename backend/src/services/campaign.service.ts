@@ -44,7 +44,7 @@ export default {
 
     // Update an existing campaign
   async update(payload: any) {
-    const campaign = await Campaign.findByIdAndUpdate(payload._id, payload, { new: true }).populate('ngo')
+    const campaign = await Campaign.findByIdAndUpdate(payload._id, payload, { new: true }).populate('ngo').lean();
 
     return calculateTotal([campaign!])[0];
   },

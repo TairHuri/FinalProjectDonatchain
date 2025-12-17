@@ -76,7 +76,7 @@ export const updateCampaign = async (req: Request, res: Response) => {
       blockchainTx,
       goal,
       tags,
-      images: [...images, ...newImages],
+      images: [...(typeof images == 'string'?[images]:images ), ...newImages],
       movie: movie ? movie : newMovie,
       mainImage: mainImage ? mainImage : newMainImage,
       ngo: user.ngoId,
