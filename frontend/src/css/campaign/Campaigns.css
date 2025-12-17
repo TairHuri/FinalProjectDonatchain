@@ -148,9 +148,6 @@
 .item-link_flex{ display:block }
 
 .item-link_flex{
-  display: grid;
-  grid-template-columns: 220px 1fr;
-  gap: 0;
   align-items: stretch;
 }
 
