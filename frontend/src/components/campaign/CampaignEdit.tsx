@@ -149,7 +149,7 @@ const CampaignEdit = ({ campaign, setEditMode, setCampaign, token, }: CampaignEd
       console.log(error);
       setAlert("עדכון הקמפיין נכשל", true);
     }finally{
-      close();
+      stop();
     }
   };
 
