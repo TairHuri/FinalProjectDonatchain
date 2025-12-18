@@ -6,8 +6,13 @@
 }
 
 .flex-container_flex {
-  padding: 12px 40px 14px;
-  
+  padding: 12px 10px 20px 10px;
+}
+.flex-container_flex h2{
+  text-align: center;
+}
+.flex-container_flex span{
+  text-align: center;
 }
 
 .link {
@@ -20,9 +25,12 @@
 
 .grid_container_flex {
   display: grid;
-  grid-template-columns: 220px 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 0;
   align-items: stretch;
+}
+.grid_container_flex > * {
+  min-width: 0;
 }
 
 .grid_container_flex .ngo-media {
@@ -154,6 +162,7 @@
   display: flex;
   gap: .35rem;
   align-items: baseline;
+  justify-content: center;
   min-width: 0;
 }
 
@@ -164,7 +173,6 @@
 }
 
 .value {
-  flex: 1 1 auto;
   min-width: 0;
   white-space: nowrap;
   overflow: hidden;

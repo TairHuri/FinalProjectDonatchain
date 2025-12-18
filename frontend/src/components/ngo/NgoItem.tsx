@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import type { Ngo } from "../../models/Ngo";
-import { FlexContainer } from "../campaign/CampaignItem";
 import styles from "../../css/ngo/NgoItem.module.css";
+import type { ReactNode } from "react";
 
 const IMAGE_URL = import.meta.env.VITE_IMAGES_URL || "http://localhost:4000/images";
 
@@ -65,3 +65,12 @@ export default function NgoItem({ ngo, view }: { ngo: Ngo; view: "grid" | "list"
     </Link>
   );
 }
+
+export const FlexContainer = ({
+  isGrid,
+  children,
+}: {
+  isGrid: boolean;
+  children: ReactNode[] | ReactNode;
+}) =>
+  isGrid ? <>{children}</> : <div className={styles["flex-container_flex"]}>{children}</div>;
