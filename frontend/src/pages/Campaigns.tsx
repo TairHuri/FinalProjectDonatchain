@@ -82,6 +82,8 @@ export default function Campaigns() {
 
     const isEnded = (c: Campaign) =>
       c.endDate ? new Date(c.endDate) < now : false;
+    const isStarted = (c: Campaign) =>
+      c.startDate ? new Date(c.startDate) > now : false;
 
     let result = (Array.isArray(campaigns) ? campaigns : []).filter((c) =>
       queryTag.has("tag")
@@ -90,7 +92,7 @@ export default function Campaigns() {
     );
 
     if (showActiveOnly) {
-      result = result.filter((c) => !isEnded(c));
+      result = result.filter((c) => !isEnded(c) || !isStarted(c));
     }
 
     result = result.sort((a, b) => {
