@@ -36,7 +36,7 @@ export default {
       await AuditLog.create({ action: 'donation_created', meta: { donationId: createdDonation._id } });
 
       // Send a receipt email to the donor
-      await sendReceiptEmail({
+      sendReceiptEmail({
         donorEmail: donation.email,
         donorFirstName: donation.firstName,
         donorLastName: donation.lastName,
@@ -108,7 +108,7 @@ export default {
         await campaignService.addDonationToCampaign(campaignId, +data.charge, 'card');
         await AuditLog.create({ action: 'donation_created', meta: { donationId: donation._id } });
 
-        await sendReceiptEmail({
+        sendReceiptEmail({
           donorEmail: donation.email,
           donorFirstName: donation.firstName,
           donorLastName: donation.lastName,
