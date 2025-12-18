@@ -122,7 +122,7 @@ const CampaignEdit = ({ campaign, setEditMode, setCampaign, token, }: CampaignEd
           campaignName: campaign.title,
           startDate: finalStartDate,
           endDate: finalEndDate,
-          goalAmount: campaign.goal
+          goalAmount: campaign.goal * 1000
         })
       }
 

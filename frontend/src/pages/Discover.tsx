@@ -86,7 +86,6 @@ export default function Discover() {
         </div>
       </section>
 
-      {/*  */}
       <AnimatePresence>
         {open && (
           <>

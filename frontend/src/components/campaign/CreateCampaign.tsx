@@ -93,7 +93,7 @@ try{
       charityId: +ngo.ngoNumber,
       startDate: startDate.getTime()/1000,
       endDate: endDate.getTime()/1000,
-      goalAmount: newCampaign.goal * 100,
+      goalAmount: newCampaign.goal * 1000,
       beneficiary: ngo.wallet
     });
     if (!blockchainTx.status) { 

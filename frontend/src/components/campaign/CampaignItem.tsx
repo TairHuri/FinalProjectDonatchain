@@ -76,7 +76,7 @@ const CampaignItem = ({
         {/* Donation progress row */}
         <div className={styles["amount-row"]}>
           <div className={styles.amount}>
-            {(c.totalRaised!).toLocaleString()} ₪
+            {( c.totalRaised! ).toLocaleString()} ₪
             <span className={styles.muted}>
               {" "}
               מתוך {c.goal.toLocaleString()} ₪
