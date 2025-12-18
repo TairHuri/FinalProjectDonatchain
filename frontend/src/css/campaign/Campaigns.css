@@ -54,6 +54,11 @@
   gap:.5rem;
 }
 @media (max-width:900px){ .camps-filters{ grid-template-columns: 1fr 1fr; } }
+@media (max-width:680px){
+.camps-page{
+  padding: 1px 15px;
+}
+}
 @media (max-width:560px){ .camps-filters{ grid-template-columns: 1fr; } }
 
 
