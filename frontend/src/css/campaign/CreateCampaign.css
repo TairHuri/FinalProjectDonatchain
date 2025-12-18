@@ -149,9 +149,3 @@
   .cc-compact-media .cc-gallery     { grid-template-columns: repeat(auto-fill, minmax(84px,1fr)); gap: 6px; }
   .cc-compact-media .cc-thumb       { max-height: 96px; }
 }
-
-.spinner-container{
-  display: flex;
-  align-items: center;
-  height: 100%;
-}

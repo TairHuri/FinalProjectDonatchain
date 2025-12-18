@@ -183,7 +183,7 @@ try{
     setForm((f) => ({ ...f, [field]: value ? (multiple ? value : value[0]) : null }));
   };
 
-  if (isLoading) return (<div className='spinner-container'><Spinner /></div>);
+  if (isLoading) return (<div style={{display:'flex', alignItems:'center', height:'100%'}}><Spinner /></div>);
 
   return (
     <>

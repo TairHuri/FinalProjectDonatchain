@@ -10,6 +10,7 @@ import "../../css/campaign/CreateCampaign.css";
 import "../../css/campaign/EditCampaign.css"
 import {  updateCampaignOnChain } from "../../services/cryptoApi";
 import { formatDates } from "../../validations/campaignDates";
+import Spinner, { useSpinner } from "../gui/Spinner";
 
 // Media type for storing new uploaded files + references to input DOM elements
 type MediaType = {
@@ -35,6 +36,7 @@ const CampaignEdit = ({ campaign, setEditMode, setCampaign, token, }: CampaignEd
 
   const { showAlert, isFailure, message, clearAlert, setAlert } = useAlertDialog();
   const [disableStartDate, setDisableStartDate] = useState<boolean>(false)
+  const { isLoading, start, stop } = useSpinner();
   
   // Copy of campaign to compare later with edited values
   const [origCampaign, ] = useState<Campaign>({ ...campaign })
@@ -97,7 +99,7 @@ const CampaignEdit = ({ campaign, setEditMode, setCampaign, token, }: CampaignEd
       setAlert(`לא ניתן להגדיר סכום יעד (${campaign.goal} ₪) קטן מהסכום שכבר גויס (${campaign.totalRaised} ₪).`, true);
       return;
     }
-
+    start();
 
      // Collect selected images into an array
     const images: File[] = [];
@@ -146,6 +148,8 @@ const CampaignEdit = ({ campaign, setEditMode, setCampaign, token, }: CampaignEd
     } catch (error) {
       console.log(error);
       setAlert("עדכון הקמפיין נכשל", true);
+    }finally{
+      close();
     }
   };
 
@@ -200,6 +204,7 @@ const CampaignEdit = ({ campaign, setEditMode, setCampaign, token, }: CampaignEd
     setEditMode("view");
     clearAlert();
   }
+  if (isLoading) return (<div style={{display:'flex', alignItems:'center', height:'100%'}}><Spinner /></div>);
   return (
     <div className="cc-card cc-compact-media" style={cardStyle} dir="rtl">
       <h2 className="cc-title">פרטי קמפיין</h2>
