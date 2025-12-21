@@ -66,7 +66,7 @@ const NgoDonors = () => {
     <div className="ngo-donors" dir="rtl">
 
       <div className="ngo-donors__header">
-        <h2 className="ngo-donors__title"><Users size={18} /> תורמי העמותה</h2>
+        <h2 className="ngo-donors__title"> תורמי העמותה</h2>
 
         <div className="toolbar">
           <PickerList openPicker={openPicker} setOpenPicker={setOpenPicker} selectedItemId={selectedItemId} setSelectedItemId={setSelectedItemId} list={campaigns.map(c => ({ _id: c._id!, name: c.title }))} />

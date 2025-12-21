@@ -1,10 +1,9 @@
-
-.admin-container{
+.admin-container {
     background-color: rgb(251, 249, 249);
     max-height: calc(100dvh - 67px);
     overflow-y: auto;
-    flex: 1; 
-    padding: 20px 10px; 
+    flex: 1;
+    padding: 20px 10px;
     padding-top: '5px';
 }
 
@@ -18,4 +17,71 @@
     margin-inline: auto;
     color: var(--ar-fg);
     font-family: "Heebo", system-ui, Segoe UI, Arial, sans-serif;
+}
+
+.admin-first-div {
+    display: flex;
+    height: 100%;
+    background-color: #f7f9fc;
+    width: 100%;
+}
+
+.admin-sidebar-navigation {
+    width: 18dvw;
+    background: #1f2937;
+    color: white;
+    padding: 15px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.admin-sidebar-navigation-title {
+    font-family: 'calibri';
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.admin-sidebar-navigation-exit {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 12px 5px 15px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    color: #f87171;
+    font-size: 16px;
+    font-weight: bolder;
+    font-family: 'calibri';
+    cursor: pointer;
+    margin-bottom: 1px;
+    padding-bottom: 1px;
+}
+
+.home-page-title {
+    font-family: 'calibri';
+    font-size: 28px;
+    font-weight: bold;
+    color: #059669;
+}
+
+.home-page-sub-title {
+    font-family: 'calibri';
+    font-size: 18px;
+    margin-top: 10px;
+}
+
+.home-page-cards-details {
+    font-family: 'calibri';
+    display: flex;
+    gap: 20px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+    text-align: center;
+}
+
+.home-page-load-data {
+    margin-top: 20px;
 }

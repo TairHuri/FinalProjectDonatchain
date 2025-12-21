@@ -4,7 +4,7 @@ import type { Ngo, NgoMediaType } from "../../models/Ngo";
 import AlertDialog, { useAlertDialog } from "../gui/AlertDialog";
 import { editNgo, getNgoTags } from "../../services/ngoApi";
 
-import { inputStyle, primaryBtnStyle } from "../../css/general/dashboardStyles";
+import { inputStyle, primaryBtnStyle,ngoDetailsTitle } from "../../css/general/dashboardStyles";
 import Tags from "../gui/Tags";
 
 export type NgoEditProps = {
@@ -63,7 +63,7 @@ const NgoEdit = ({ token, ngoDetails, updateNgo, setEditMode }: NgoEditProps) =>
     }
     return (
         <div>
-            <h2 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "20px" }}>
+            <h2 style={ngoDetailsTitle}>
                 עריכת פרטי העמותה
             </h2>
             <InputText field='name' value={ngo.name} placeholder="שם העמותה" onChange={handleChange} />

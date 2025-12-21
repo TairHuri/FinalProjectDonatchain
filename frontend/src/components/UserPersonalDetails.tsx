@@ -11,10 +11,11 @@ import { changePassword, deleteUserApi, editUser } from "../services/userApi";
 import { getUsers } from "../services/userApi";
 
 
-import '../css/user/UserPersonalDetails.css'
 import AlertDialog, { useAlertDialog } from "./gui/AlertDialog";
 import { useNavigate } from "react-router-dom";
 import ConfirmDialog, { useConfirmDialog } from "./gui/ConfirmDialog";
+
+import '../css/user/UserPersonalDetails.css'
 
 // Props allow controlling which mode the component is in: view, edit, password change, or delete.
 const UserPersonalDetails = ({ editMode, setEditMode }: { editMode: string, setEditMode: (mode: "view" | "edit" | "password" | 'deleteUser') => void }) => {
@@ -147,13 +148,13 @@ const handleSaveChanges = async () => {
 
   return (
     <div style={cardStyle}>
-      <h2 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "20px" }}>
+      <h2 className="title-personal-details">
         {editMode == 'password' ? 'שינוי סיסמה' : 'פרטים אישיים'}
       </h2>
       {user ? (
         <>
           {editMode === "view" && (
-            <div>
+            <div style={{fontFamily:"Heebo, system-ui, Segoe UI, Arial, sans-serif"}}>
               <p><strong>שם חבר העמותה:</strong> {user.name}</p>
               <p><strong>אימייל:</strong> {user.email}</p>
               <p><strong>טלפון:</strong> {user.phone}</p>

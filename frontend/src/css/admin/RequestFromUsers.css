@@ -61,6 +61,7 @@
   border:1px solid var(--ar-border);background:#fff;color:var(--ar-primary);
   border-radius:10px;padding:.45rem .8rem;font-weight:800;cursor:pointer;
   transition: background .15s, transform .15s, border-color .15s;
+  font-family: "Heebo", system-ui, Segoe UI, Arial, sans-serif;
 }
 .ar-btn:hover{background:#eef6f4;border-color:#cfe0dc;transform:translateY(-1px)}
 .ar-btn.danger{color:#fff;background:linear-gradient(135deg,#e11d48,#f43f5e);border-color:transparent}
@@ -92,8 +93,8 @@
   border-radius:10px;padding:.25rem .6rem;font-weight:800;font-size:.88rem;color:#fff;white-space:nowrap;
 }
 .ar-badge--pending{background:var(--ar-warn)}
-.ar-badge--inprogress{background:var(--ar-info)}
-.ar-badge--done{background:var(--ar-ok)}
+.ar-badge--inprogress{background:var(--ar-ok)}
+.ar-badge--done{background: rgb(223, 63, 63)}
 
 .ar-drawer{
   position: fixed; inset-block: 0; inset-inline-end: -420px; width: min(420px, 92vw);
@@ -269,10 +270,10 @@
 }
 
 .ar-btn.primary{
+  background: #3a6ff8;
   color: #fff;
-  background: linear-gradient(135deg, var(--ar-primary), var(--ar-primary-2));
-  border-color: transparent;
-  box-shadow: 0 8px 18px rgba(52,94,108,.20);
+  border-color: #3a6ff8;
+  box-shadow: 0 6px 14px rgba(58,111,248,0.4);
 }
 .ar-btn.primary:hover{
   filter: brightness(1.05);

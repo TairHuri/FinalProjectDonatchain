@@ -4,7 +4,6 @@ import { useCampaigns } from "../contexts/CampaignsContext";
 import { PlusCircle, Home, Users, LogOut, FileText, Settings, FilePenLine } from "lucide-react";
 import NgoDonors from "../components/ngo/NgoDonors";
 import CampaignItem from "../components/campaign/CampaignItem";
-import { cardStyle, menuBtnStyle } from "../css/general/dashboardStyles";
 
 import NgoUsers from "../components/ngo/NgoUsers";
 import UserPersonalDetails from "../components/UserPersonalDetails";
@@ -15,15 +14,16 @@ import { useNavigate } from "react-router-dom";
 import CampaignDetails from "../components/campaign/CampaignDetails";
 import TabsButtons, { useTabsButtons } from "../components/gui/TabsButtons";
 
-import '../css/ngo/NgoDashboard.css'
 import type { Campaign } from "../models/Campaign";
 import AdminRequest from "../components/ngo/AdminRequest";
 
+import { cardStyle, menuBtnStyle } from "../css/general/dashboardStyles";
+import '../css/ngo/NgoDashboard.css'
 
 /**
  * Tabs for filtering different campaign states.
  */
-const tabs = [{id:0, label:"כל הקמפיינים"}, {id:1, label:"קמפיינים פעילים"}, {id:2, label:"קמפיינים מתוכננים"}, {id:3, label:"קמפיינים לא פעילים"},{id:4, label:"קמפיינים מושהים/מחוקים"} ]
+const tabs = [{ id: 0, label: "כל הקמפיינים" }, { id: 1, label: "קמפיינים פעילים" }, { id: 2, label: "קמפיינים מתוכננים" }, { id: 3, label: "קמפיינים לא פעילים" }, { id: 4, label: "קמפיינים מושהים/מחוקים" }]
 
 const NgoDashboard: React.FC = () => {
   // Authentication
@@ -31,18 +31,18 @@ const NgoDashboard: React.FC = () => {
   // Fetching all campaign data from context
   const { campaigns } = useCampaigns();
   const navigate = useNavigate();
-    /**
-   * Controls which page is currently active inside the dashboard.
-   */
+  /**
+ * Controls which page is currently active inside the dashboard.
+ */
   const [activePage, setActivePage] = useState<
     "dashboard" | "newCampaign" | "campaigns" | "CampaignDetails" | "profile" | "donors" | "ngoUsers" | "ngoDetails" | "adminRequest"
   >("dashboard");
   const [campaignId, setCampaignId] = useState<string | null>(null)
   console.log('campaigns', campaigns);
-  const {active, setActive} = useTabsButtons()
-   /**
-   * Campaign filters by type/status (active, planned, expired, inactive, deleted).
-   */
+  const { active, setActive } = useTabsButtons()
+  /**
+  * Campaign filters by type/status (active, planned, expired, inactive, deleted).
+  */
   const now = new Date()
   const campaignFilters: { [n: number]: (campaign: Campaign) => boolean } = {
     0: () => true,
@@ -82,28 +82,10 @@ const NgoDashboard: React.FC = () => {
 
   if (!user || !user.ngoId) return;
   return (
-    <div dir="rtl"
-    style={{
-        display: "flex",
-        // minHeight: "100vh",
-        height: '100%',
-        backgroundColor: "#f7f9fc",
-        width: "100%",
-      }}>
-      {/*  */}
-      <div
-        style={{
-          width: "20vw",
-          background: "#1f2937",
-          color: "white",
-          padding: "5px 20px",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-        }}
-      >
+    <div dir="rtl" className="first-div-ngo-dashboard">
+      <div className="second-div-ngo-dashboard">
         <div>
-          <h2 style={{ fontSize: "20px", fontWeight: "bold", marginBottom: "20px" }}>
+          <h2 className="title-ngo-dashboard">
             ניהול עמותה
           </h2>
 
@@ -112,7 +94,7 @@ const NgoDashboard: React.FC = () => {
           </button>
           <button
             onClick={() => setActivePage("newCampaign")}
-            style={{ ...menuBtnStyle, background: "linear-gradient(90deg,#10b981,#059669)",padding: "12px 12px 12px 12px" }}
+            style={{ ...menuBtnStyle, background: "linear-gradient(90deg,#10b981,#059669)", padding: "12px 12px 12px 12px" }}
           >
             <PlusCircle size={20} /> קמפיין חדש
           </button>
@@ -149,19 +131,21 @@ const NgoDashboard: React.FC = () => {
         </button>
       </div>
 
-      {/**/}
-      <div className={`ngo-dashboard-container`} style={{ flex: 1, padding: "10px", alignItems:'start' }}>
+
+      <div className={`ngo-dashboard-container`} style={{ flex: 1, padding: "10px", alignItems: 'start' }}>
         {activePage === "ngoDetails" && <NgoDetails editMode={editMode} setEditMode={setEditMode} />}
         {activePage === "ngoUsers" && <div style={cardStyle}><NgoUsers /></div>}
         {activePage === "dashboard" && (
-          <div  style={{...cardStyle}}>
-            <h1 style={{ fontSize: "28px", fontWeight: "bold", color: "#059669" }}>
+          <div style={{ ...cardStyle }}>
+            <h1 className="title_home_page-ngo-dashboard">
               ברוך הבא, {user?.name}
             </h1>
-            <p style={{ fontSize: "18px", marginTop: "10px" }}>זהו האזור האישי שלך.</p>
+            <p className="sub_title_home_page-ngo-dashboard">
+              זהו האזור האישי שלך.
+            </p>
 
-            {/* */}
-            <div style={{ display: "flex", gap: "20px", marginTop: "30px" }}>
+
+            <div className="details_home_page-ngo-dashboard">
               {statCard("קמפיינים פעילים", campaigns.filter(campaignFilters[1]).length)}
               {statCard("סכום כולל", "₪" + campaigns.reduce((a, c) => a + c.totalRaised!, 0).toFixed(2))}
               {statCard("תרומות", donationsCount)}
@@ -174,12 +158,12 @@ const NgoDashboard: React.FC = () => {
         {activePage === "profile" && <UserPersonalDetails editMode={editMode} setEditMode={setEditMode} />}
 
         {activePage === "campaigns" && (
-          <div className="ngo-campaigns-container"  style={cardStyle}>
-            <h2 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "20px" }}>הקמפיינים שלי</h2>
-            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <div className="ngo-campaigns-container" style={cardStyle}>
+            <h2 className="my_campaigns_title-ngo-dashboard">הקמפיינים שלי</h2>
+            <div className="my_campaigns_tabs-ngo-dashboard">
               <TabsButtons active={active} setActive={setActive} tabs={tabs} />
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: "20px", }}>
+            <div className=".my_campaigns_view-ngo-dashboard">
               {campaigns.filter(campaignFilters[active]).map((c) => (
                 <div key={c._id}>
                   <CampaignItem c={c} showButtons={true} edit={editCampaign} />

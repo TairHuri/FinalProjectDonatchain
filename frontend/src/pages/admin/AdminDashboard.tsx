@@ -80,36 +80,11 @@ const AdminDashboard: React.FC = () => {
 
 
   return (
-    <div
-      dir="rtl"
-      style={{
-        display: "flex",
-        height: '100%',
-        backgroundColor: "#f7f9fc",
-        width: "100%",
-      }}
-    >
+    <div dir="rtl" className="admin-first-div">
  {/* Sidebar navigation */}
-      <div
-        style={{
-          width: "18dvw",
-          background: "#1f2937",
-          color: "white",
-          padding: " 15px 10px",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-        }}
-      >
+      <div className="admin-sidebar-navigation">
         <div>
-          <h2
-            style={{
-              fontFamily: 'calibri',
-              fontSize: "20px",
-              fontWeight: "bold",
-              marginBottom: "20px",
-            }}
-          >
+          <h2 className="admin-sidebar-navigation-title">
             ניהול מערכת
           </h2>
 
@@ -162,9 +137,7 @@ const AdminDashboard: React.FC = () => {
           </button>
         </div>
 
-        <button
-          style={{ ...menuBtnStyle, color: "#f87171", marginBottom: '1px', paddingBottom: '1px' }}
-          onClick={handleLogout}
+        <button className="admin-sidebar-navigation-exit" onClick={handleLogout}
         >
           <LogOut size={20} /> יציאה
         </button>
@@ -174,16 +147,16 @@ const AdminDashboard: React.FC = () => {
       <div className="admin-container">
         {activePage === "dashboard" && (
           <div style={cardStyle}>
-            <h1 style={{ fontFamily: 'calibri', fontSize: "28px", fontWeight: "bold", color: "#059669", }}>
+            <h1 className="home-page-title">
               ברוך הבא, מנהל המערכת
             </h1>
-            <p style={{ fontFamily: 'calibri', fontSize: "18px", marginTop: "10px" }}>
+            <p className="home-page-sub-title">
               זהו הדשבורד שלך לניהול כל נתוני האתר.
             </p>
             {!stats ? (
-              <p style={{ marginTop: "20px" }}>טוען נתונים...</p>
+              <p className="home-page-load-data">טוען נתונים...</p>
             ) : (
-              <div style={{ fontFamily: 'calibri', display: "flex", gap: "20px", marginTop: "30px", flexWrap: "wrap", textAlign: 'center', }}>
+              <div className="home-page-cards-details">
                 {statCard("משתמשים", stats?.usersCount ?? 0)}
                 {statCard("עמותות", stats?.ngosCount ?? 0)}
                 {statCard("קמפיינים", stats?.campaignsCount ?? 0)}

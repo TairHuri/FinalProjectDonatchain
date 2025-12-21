@@ -7,12 +7,20 @@
     color: #1a1a1a;
 }
 
+.title-ngo-members {
+    margin: 0 0 .8rem;
+    font-size: clamp(1.35rem, 2.8vw, 1.65rem);
+    font-weight: 800;
+    color: #059669;
+   font-family: "Heebo", system-ui, Segoe UI, Arial, sans-serif;
+}
+
 .headerCard {
     background: #ffffff;
     border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
     padding: 1.25rem 1.5rem;
-    border: 1px solid rgba(0,0,0,0.05);
+    border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .headerTopRow {
@@ -112,7 +120,7 @@
 }
 
 .tabCount {
-    background: rgba(255,255,255,0.12);
+    background: rgba(255, 255, 255, 0.12);
     color: inherit;
     min-width: 1.5rem;
     text-align: center;
@@ -126,8 +134,8 @@
 .tabContentCard {
     background: #ffffff;
     border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.06);
-    border: 1px solid rgba(0,0,0,0.05);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(0, 0, 0, 0.05);
     padding: 1rem 1.25rem;
 }
 
@@ -200,6 +208,7 @@
     cursor: pointer;
     line-height: 1.2;
 }
+
 .primaryBtn:hover {
     filter: brightness(1.1);
 }
@@ -215,6 +224,7 @@
     cursor: pointer;
     line-height: 1.2;
 }
+
 .secondaryBtn:hover {
     background: #f9fafb;
 }
@@ -230,6 +240,7 @@
     cursor: pointer;
     line-height: 1.2;
 }
+
 .dangerGhostBtn:hover {
     background: #fff1f2;
 }
@@ -245,6 +256,7 @@
     line-height: 1.1;
     cursor: pointer;
 }
+
 .smallBtn:hover {
     filter: brightness(1.1);
 }
@@ -260,6 +272,7 @@
     line-height: 1.1;
     cursor: pointer;
 }
+
 .smallGhostBtn:hover {
     background: #f9fafb;
 }
@@ -275,6 +288,7 @@
     line-height: 1.1;
     cursor: pointer;
 }
+
 .smallDangerBtn:hover {
     background: #fff1f2;
 }
@@ -338,7 +352,7 @@
     gap: .5rem;
 }
 
-.user-role{
+.user-role {
     display: inline-block;
     padding: 2px;
     margin: 2px;

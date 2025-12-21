@@ -5,12 +5,13 @@ import { useEffect, useMemo, useState } from "react"
 import { approveUserApi, getUsers } from "../../services/userApi";
 import UserItem from "../UserItem";
 
-import "../../css/ngo/NgoUsers.css";
 import { setUserRoleApi, deleteUserApi } from "../../services/userApi";
 import AlertDialog, { useAlertDialog } from "../gui/AlertDialog";
 import type { Message } from "../../models/Message";
 import { getMessagesByNgoId, saveMessage } from "../../services/messageApi";
 import ConfirmDialog, { useConfirmDialog } from "../gui/ConfirmDialog";
+
+import "../../css/ngo/NgoUsers.css";
 
 // Available tabs for the NGO users page
 type Tab = "members" | "pending" | "board";
@@ -19,14 +20,14 @@ const NgoUsers = () => {
     const { user } = useAuth();
     if (!user) return null;
 
-     // Default message object for posting new board messages
+    // Default message object for posting new board messages
     const defaultMessage = useMemo(() => ({ ngoId: user.ngoId!, text: '', authorName: user.name!, createdBy: user._id! }), [user])
     const [users, setUsers] = useState<User[]>([])
     const [messages, setMessages] = useState<Message[]>([]);
     const [activeTab, setActiveTab] = useState<Tab>("members");
     const [newMessage, setNewMessage] = useState<Message>(defaultMessage);
 
-// Fetch all messages of the NGO message board
+    // Fetch all messages of the NGO message board
     const loadMesaages = async () => {
         if (!user || !user.ngoId || !user.token) return;
 
@@ -96,18 +97,19 @@ const NgoUsers = () => {
         }
     }
 
-     // Filter members by approval status
+    // Filter members by approval status
     const activeMembers = users.filter(u => u.approved == true);
     const pendingMembers = users.filter(u => u.approved == false);
     const isCurrentManager = user?.role == 'manager';
     if (!user) return null;
     return (
         <div className={'container'}>
-             {/* Global Alert Dialog */}
+            {/* Global Alert Dialog */}
             <AlertDialog show={showAlert} isFailure={true} message={message} failureOnClose={clearAlert} />
-{/* Tabs Navigation */}
+            <h2 className="title-ngo-members">חברי העמותה</h2>
+            {/* Tabs Navigation */}
             <div className='tabsRow'>
-               {/* Members Tab */}
+                {/* Members Tab */}
                 <button
                     className={`tabBtn ${activeTab === "members" ? 'tabActive' : ""}`}
                     onClick={() => setActiveTab("members")}
@@ -167,13 +169,13 @@ export default NgoUsers;
 
 function MembersTable({ members, loggedinUser, changeUserRole, declineUser, isCurrentManager }: { members: User[], loggedinUser: User, changeUserRole: (userId: string, role: string) => void, declineUser: (userId: string) => void, isCurrentManager: boolean }) {
     const canDemote = members.find(m => m._id != loggedinUser._id && m.role == 'manager')
-    const {openConfirm, showConfirm,closeConfirm} = useConfirmDialog();
+    const { openConfirm, showConfirm, closeConfirm } = useConfirmDialog();
     const [userId, setUserId] = useState<string>("")
     const [message, setMessage] = useState<string>("")
-    const confirmDecline = (userId:string) =>{
+    const confirmDecline = (userId: string) => {
         setUserId(userId)
         const user = members.find(m => m._id == userId);
-        if(!user) return;
+        if (!user) return;
         setMessage(`האם למחוק את ${user.name}`)
         openConfirm()
     }
@@ -231,7 +233,7 @@ function MembersTable({ members, loggedinUser, changeUserRole, declineUser, isCu
                     ))}
                 </tbody>
             </table>
-            <ConfirmDialog show={showConfirm} message={message} onYes={removeUser} onNo={closeConfirm}/>
+            <ConfirmDialog show={showConfirm} message={message} onYes={removeUser} onNo={closeConfirm} />
         </div>
     );
 }

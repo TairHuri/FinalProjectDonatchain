@@ -14,7 +14,7 @@ export default function AdmninRequest() {
       
       {/* Page header with title and navigation tabs */}
       <header className="rq-header">
-        <h2 className="rq-title">בקשות למערכת</h2>
+        <h2 className="rq-title">בקשות מהמערכת</h2>
 
         {/* Tab navigation buttons */}
         <nav className="rq-tabs">

@@ -1,5 +1,5 @@
-import { primaryBtnStyle } from "../../css/general/dashboardStyles";
 import type { Ngo } from "../../models/Ngo";
+import { primaryBtnStyle,ngoDetailsTitle } from "../../css/general/dashboardStyles";
 
 export type NgoViewProps = {
     ngo: Ngo;
@@ -13,11 +13,12 @@ const NgoView = ({ ngo, setEditMode, userRole }: NgoViewProps) => {
     return (
         <div>
             {/* Section title */}
-            <h2 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "20px" }}>
+            <h2 style={ngoDetailsTitle}>
                 פרטי העמותה
             </h2>
             {/* NGO logo */}
             <img src={`${IMAGE_URL}/${ngo.logoUrl}`} alt="ngo logo" style={{ width: "60px", height: "60px", borderRadius: "50%" }} />
+            <div style={{fontFamily:"Heebo, system-ui, Segoe UI, Arial, sans-serif"}}>
             <p><strong>שם העמותה:</strong> {ngo.name}</p>
             <p><strong>מספר העמותה:</strong> {ngo.ngoNumber}</p>
             <p><strong>אימייל:</strong> {ngo.email}</p>
@@ -28,6 +29,7 @@ const NgoView = ({ ngo, setEditMode, userRole }: NgoViewProps) => {
             <p><strong>תיאור:</strong> {ngo.description}</p>
             <p><strong>קטגוריות:</strong> {(ngo.tags || []).join(", ") || "-"}</p>
             {ngo.certificate && <p><strong><a href={`${CERTIFICATES_URL}/${ngo.certificate}`} target="_blank">אישור עמותה</a></strong></p>}
+            </div>
             <button
                 onClick={() => setEditMode("edit")}
                 style={{ ...primaryBtnStyle, marginTop: "15px" }}

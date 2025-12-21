@@ -1,5 +1,13 @@
-.user-edit-buttons{
+.user-edit-buttons {
     display: flex;
     justify-content: space-around;
     gap: 5vw;
+}
+
+.title-personal-details {
+    margin: 0 0 .8rem;
+    font-size: clamp(1.35rem, 2.8vw, 1.65rem);
+    font-weight: 800;
+    color: #059669;
+    font-family: "Heebo", system-ui, Segoe UI, Arial, sans-serif;
 }

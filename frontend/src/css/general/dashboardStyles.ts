@@ -127,4 +127,11 @@ export const ngoListStyle: React.CSSProperties = {
   border: '1px solid #000000ff',
   borderRadius: "10px",
 };
+export const ngoDetailsTitle: React.CSSProperties = {
+  margin: '0 0 .8rem',
+  fontSize: 'clamp(1.35rem, 2.8vw, 1.65rem)',
+  fontWeight: '800',
+  color: '#059669',
+  fontFamily: '"Heebo", system-ui, Segoe UI, Arial, sans-serif',
+};
 

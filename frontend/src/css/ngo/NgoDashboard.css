@@ -1,12 +1,13 @@
-.ngo-dashboard-container{
-    display: flex;
-    background-color: #f7f9fc;
-    width: 100%;
-    margin-top: 5px;
-    max-height: calc(100dvh - 79px);
-    overflow-y: auto;
+.ngo-dashboard-container {
+  display: flex;
+  background-color: #f7f9fc;
+  width: 100%;
+  margin-top: 5px;
+  max-height: calc(100dvh - 79px);
+  overflow-y: auto;
 }
-.ngo-dashboard-container > div{
+
+.ngo-dashboard-container>div {
   width: 100%;
 }
 
@@ -40,4 +41,71 @@
 .dashboard-content.large {
   transform: scale(1.05);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
+
+.first-div-ngo-dashboard {
+  display: flex;
+  height: 100%;
+  background-color: #f7f9fc;
+  width: 100%;
+}
+
+.second-div-ngo-dashboard {
+  width: 20vw;
+  background: #1f2937;
+  color: white;
+  padding: 5px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.title-ngo-dashboard {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  font-family: "Heebo", system-ui, Segoe UI, Arial, sans-serif;
+}
+
+.title_home_page-ngo-dashboard {
+  margin: 0 0 .8rem;
+  font-size: clamp(1.35rem, 2.8vw, 1.65rem);
+  font-weight: 800;
+  color: #059669;
+  font-family: "Heebo", system-ui, Segoe UI, Arial, sans-serif;
+}
+
+.sub_title_home_page-ngo-dashboard {
+  margin-top: 10px;
+  font-size: 18px;
+  font-family: "Heebo", system-ui, Segoe UI, Arial, sans-serif;
+}
+
+.details_home_page-ngo-dashboard {
+  margin-top: 30px;
+  display: flex;
+  gap: 20px;
+  font-family: "Heebo", system-ui, Segoe UI, Arial, sans-serif;
+  flex-wrap: wrap;
+  text-align: center;
+}
+
+.my_campaigns_title-ngo-dashboard {
+  font-size: clamp(1.35rem, 2.8vw, 1.65rem);
+  font-weight: 800;
+  margin: 0 0 .8rem;
+  color: #059669;
+  font-family: "Heebo", system-ui, Segoe UI, Arial, sans-serif;
+}
+
+.my_campaigns_tabs-ngo-dashboard {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.my_campaigns_view-ngo-dashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
 }
