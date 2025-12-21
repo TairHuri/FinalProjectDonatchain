@@ -9,6 +9,7 @@
   scrollbar-width: thin;
 }
 
+
 .credit-container::-webkit-scrollbar {
   width: 8px;
 }
@@ -36,7 +37,6 @@
 
 .form-section-title {
   text-align: right;
-  /* color: #004c99;  */
   border-bottom: 2px solid #e0e6ed;
   padding-bottom: 10px;
   margin-top: 25px;
@@ -76,6 +76,7 @@
   line-height: 1.5;
   transition: border-color 0.3s, box-shadow 0.3s;
   background-color: white;
+  text-align: right;
 }
 
 .form-input:focus,
@@ -179,6 +180,7 @@
   align-items: flex-end;
 }
 
+
 .expiry-fields {
   display: flex;
   gap: 10px;
@@ -216,6 +218,22 @@
     padding: 20px;
     margin: 10px;
   }
+
+  .form-row.small-fields-row {
+    flex-direction: column !important;
+    align-items: flex-end !important;
+  }
+
+  .form-row.small-fields-row .form-group {
+    flex-grow: 0 !important;
+    align-self: flex-end !important;
+    width: min(340px, 100%) !important;
+  }
+
+  .form-row.small-fields-row .expiry-fields {
+    justify-content: flex-end !important;
+  }
+
 }
 
 .credit-result-box {

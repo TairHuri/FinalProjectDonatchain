@@ -137,18 +137,18 @@ const CryptoPayment = ({ close, campaignId, campaignTx }: { close: () => void, c
         <div className="form-grid">
           <div className="input-group_crypto">
             <label htmlFor="firstName" className="label-text">שם פרטי</label>
-            <input id="firstName" placeholder="ישראל" type="text" onChange={handleChange} className="custom-input" />
+            <input id="firstName" placeholder="שם פרטי" type="text" onChange={handleChange} className="custom-input" />
           </div>
           <div className="input-group_crypto">
             <label htmlFor="lastName" className="label-text">שם משפחה</label>
-            <input id="lastName" placeholder="ישראלי" type="text" onChange={handleChange} className="custom-input" />
+            <input id="lastName" placeholder="שם משפחה" type="text" onChange={handleChange} className="custom-input" />
           </div>
         </div>
 
         <div className="form-grid">
           <div className="input-group_crypto">
             <label htmlFor="phone" className="label-text">פלאפון</label>
-            <input id="phone" placeholder="050-0000000" type="tel" onChange={handleChange} className="custom-input" />
+            <input id="phone" placeholder="05x-xxxxxxx" type="tel" onChange={handleChange} className="custom-input" />
           </div>
           <div className="input-group_crypto">
             <label htmlFor="email" className="label-text">מייל</label>

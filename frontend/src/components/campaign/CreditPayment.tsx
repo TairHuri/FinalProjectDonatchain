@@ -186,12 +186,12 @@ const CreditPayment = ({ close, campaignId }: { close: () => void, campaignId: s
 
         <div className="form-row">
           <div className="form-group">
-            <label htmlFor="phone">טלפון</label>
-            <input id="phone" placeholder="מספר טלפון" type="tel" onChange={handleChange} className="form-input" />
+            <label htmlFor="phone">פלאפון</label>
+            <input id="phone" placeholder="05x-xxxxxxx" type="tel" onChange={handleChange} className="form-input" />
           </div>
           <div className="form-group">
             <label htmlFor="email">מייל</label>
-            <input id="email" placeholder="מייל" type="email" onChange={handleChange} className="form-input" />
+            <input id="email" placeholder="example@mail.com" type="email" onChange={handleChange} className="form-input" />
           </div>
         </div>
 
