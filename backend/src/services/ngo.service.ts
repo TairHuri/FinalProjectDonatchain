@@ -86,8 +86,6 @@ async verifyNgoActive(ngoNumber: string)  {
       result[govNgo[yearField].toString()] = {status:false, message:govNgo[yearStatus]}
     }
   }
-
-  console.log('verifyNgoApproved', respArr,)
   return result;
 },
 

@@ -104,8 +104,6 @@ export default function Campaigns() {
 
     return result;
   }, [campaigns, query, sortBy, showActiveOnly]);
-
-  console.log(campaigns.length);
   
   return (
     <div className="camps-page" dir="rtl">

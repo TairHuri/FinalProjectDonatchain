@@ -22,7 +22,6 @@ const NgoDonors = () => {
     try {
       const rows: Donation[] = await getDonationsByCampaign(campaignId);
       const uniqueDonners: { [email: string]: Donation } = {}
-      console.log(rows)
       // Keep only unique donations by email
       for (const d in rows) {
         uniqueDonners[rows[d].email] = rows[d];

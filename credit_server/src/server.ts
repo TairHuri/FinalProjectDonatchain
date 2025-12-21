@@ -40,10 +40,8 @@ const getExchangeRates = async () => {
       exchangeRate[key as keyof typeof exchangeRate] = (data as BOISuccess).currentExchangeRate
     }
   } catch (error) {
-    console.log((error as any).message);
+    console.error((error as any).message);
   }
-  console.log('updated currencies from bank of Israel', exchangeRate);
-  
 }
 
 getExchangeRates();
@@ -75,5 +73,5 @@ app.post("/api/charge", async (req: Request, res: Response) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`✅ Credit Server ready on port ${PORT}`);
+  console.log(`Credit Server ready on port ${PORT}`);
 });

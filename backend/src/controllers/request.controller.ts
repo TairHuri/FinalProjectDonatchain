@@ -13,7 +13,6 @@ export const createdRequest = async (req: Request, res: Response) => {
         res.status(201).send(createdRequest)
     }catch(error){
         console.log(error);
-        
         res.status((error as ServerError).statusCode||500).send({ message: (error as any).message });
     }
 }

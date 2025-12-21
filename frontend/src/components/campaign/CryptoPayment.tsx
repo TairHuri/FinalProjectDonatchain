@@ -75,7 +75,7 @@ const CryptoPayment = ({ close, campaignId, campaignTx }: { close: () => void, c
         setMessage(data.message);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     } finally {
       stop();
     }

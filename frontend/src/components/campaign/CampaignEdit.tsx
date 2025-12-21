@@ -118,7 +118,7 @@ const CampaignEdit = ({ campaign, setEditMode, setCampaign, token, }: CampaignEd
         //const campaignOnChain = await getCampaignOnChain(+campaign.blockchainTx!);
         const finalStartDate = chainFields.startDate? startDate.getTime() / 1000 : 0;
         const finalEndDate = chainFields.endDate? endDate.getTime() / 1000 : 0;
-        console.log(finalStartDate, finalEndDate);
+      
         await updateCampaignOnChain({
           blockchainTx: +campaign.blockchainTx!,
           campaignName: campaign.title,
@@ -138,15 +138,13 @@ const CampaignEdit = ({ campaign, setEditMode, setCampaign, token, }: CampaignEd
       );
       // Update UI context if server returned valid campaign
       if (updatedCampaign._id){
-        console.log('updatedCampaign', updatedCampaign);
-        
          postUpdateCampaign(updatedCampaign);
       }
 
       setAlert("קמפיין עודכן בהצלחה", false);
 
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setAlert("עדכון הקמפיין נכשל", true);
     }finally{
       stop();

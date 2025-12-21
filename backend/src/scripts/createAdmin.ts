@@ -9,13 +9,12 @@ const mongoUri = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/donatchain"
 
 export async function createAdmin() {
   try {
-    console.log("🔄 Checking for admin user...");
     const email = "admin@donatchain.com";
     const password = "Admin123!";
 
     const existing = await User.findOne({ email });
     if (existing) {
-      console.log("⚠️ Admin user already exists!");
+      console.log("Admin user already exists");
       return;
     }
 
@@ -28,13 +27,9 @@ export async function createAdmin() {
       approved: true,
       ngoId: new mongoose.Types.ObjectId(),
     });
-
     await adminUser.save();
-    console.log("✅ Admin user created successfully!");
-    console.log(`📧 Email: ${email}`);
-    console.log(`🔑 Password: ${password}`);
   } catch (error) {
-    console.error("❌ Error creating admin:", error);
+    console.error("Error creating admin:", error);
   }
 }
 
@@ -42,11 +37,9 @@ if (require.main === module) {
   mongoose
     .connect(mongoUri)
     .then(async () => {
-      console.log("✅ Connected to MongoDB");
       await createAdmin();
     })
     .finally(async () => {
       await mongoose.disconnect();
-      console.log("🔌 Disconnected from MongoDB");
     });
 }

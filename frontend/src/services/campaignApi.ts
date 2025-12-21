@@ -24,7 +24,6 @@ export async function updateCampaign(data: Campaign, token: string, images: File
     formData.append("startDate", data.startDate)
     formData.append("endDate", data.endDate)
     formData.append("isActive", `${data.isActive}`)
-    console.log(data.tags);
     
     for(const tag of data.tags){        
         formData.append("tags", tag)

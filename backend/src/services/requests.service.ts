@@ -6,8 +6,6 @@ import serverMessages from '../config/serverMessages.json'
 export default {
     // Create a new admin request
   async create(data: AdminRequestByUser) {
-    console.log(data);
-
     const request = new AdminRequestModel(data);
     const createdRequest = await request.save();
     return createdRequest;
@@ -86,8 +84,6 @@ export default {
       }
 
     ])
-    console.log('requests', requests);
-    
     return requests;
   },
   async getRequestsByNgo(ngoId: string, includeDone = false) {

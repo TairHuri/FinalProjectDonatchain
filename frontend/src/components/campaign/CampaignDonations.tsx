@@ -15,7 +15,6 @@ const CampaignDonations = ({ campaignId }: { campaignId: string }) => {
         start()// Start loading indicator
         try {
             const donations = await getDonationsByCampaign(campaignId)
-            console.log(donations);// Debug output
             setDonations(donations) // Update UI state with retrieved donations
         } catch (error) {
 

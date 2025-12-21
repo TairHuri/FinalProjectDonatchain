@@ -39,9 +39,6 @@ const UserPersonalDetails = ({ editMode, setEditMode }: { editMode: string, setE
 
     const users: { items: User[] } = await getUsers(user?.ngoId)
     const count = users.items.reduce((accumulator, user) => accumulator + (user.role == 'manager' ? 1 : 0), 0)
-
-    console.log('count', count);
-
     return count > 1
   }
   

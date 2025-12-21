@@ -156,7 +156,6 @@ export async function sendReceiptEmail(data: DonationData): Promise<void> {
 
   try {
     await transporter.sendMail(mailOptions);
-    console.log(`Receipt successfully sent to ${data.donorEmail}`);
   } catch (error) {
     console.error("Error sending email:", error);
   } finally {

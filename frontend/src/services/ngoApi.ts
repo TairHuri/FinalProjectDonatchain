@@ -13,8 +13,7 @@ export async function verifyNgoNumber(ngoNumber: string){
     }
     return {status: true, message:null};
   }catch(error){
-    console.log(error);
-    
+    console.error(error);
     return {status:false, message: 'שגיאה בקריאה לשרת'}
   }
   

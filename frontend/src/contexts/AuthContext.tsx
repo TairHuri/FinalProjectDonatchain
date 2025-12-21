@@ -47,7 +47,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const updateUser = (updatedUser: User) => {
     const token = user?.token ||updatedUser.token
     if(!token)return;
-    console.log(user, token)
     localStorage.setItem("userData", JSON.stringify({...updatedUser, 'token': token }));
      // localStorage.setItem("userData", JSON.stringify({ ...res.user, 'token': res.token }));
     setUser({...updatedUser, token})
@@ -111,7 +110,6 @@ const login = async (data: { email: string; password: string }): Promise<{ succe
     localStorage.removeItem("token");
     localStorage.removeItem("userData");
   };
-  console.log(user);
 
    // Provide authentication state and actions to the rest of the app
   return (

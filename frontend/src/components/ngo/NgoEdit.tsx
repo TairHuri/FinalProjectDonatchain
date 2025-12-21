@@ -15,7 +15,7 @@ export type NgoEditProps = {
 }
 
 const NgoEdit = ({ token, ngoDetails, updateNgo, setEditMode }: NgoEditProps) => {
-    console.log('ngoDetails', ngoDetails);
+   
     // Alert handler hook for user notifications
     const { showAlert, isFailure, message, clearAlert, setAlert } = useAlertDialog();
   // Current editable NGO object
@@ -33,8 +33,6 @@ const NgoEdit = ({ token, ngoDetails, updateNgo, setEditMode }: NgoEditProps) =>
             setAlert("יש למלא את כל השדות", true);
             return;
         }
-
-        console.log(ngo)
         if (!token) {
             return null;
         }

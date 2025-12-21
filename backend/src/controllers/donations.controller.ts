@@ -14,7 +14,6 @@ export const getDonationsByCampaign = async (req: Request, res: Response) => {
     res.send(donatios)
   } catch (error) {
     console.log(error);
-    
     res.status((error as ServerError).statusCode||500).send({ message: (error as any).message });
   }
 }
@@ -30,7 +29,6 @@ export const getFullDonationsByCampaign = async (req: Request, res: Response) =>
     res.send(donatios)
   } catch (error) {
     console.log(error);
-    
     res.status((error as ServerError).statusCode||500).send({ message: (error as any).message });
   }
 }

@@ -98,7 +98,6 @@ export const toggleCampignsStatus = async(req: Request, res: Response) =>{
   const {ngoId} = req.params;
   const {campaignIds, isActive} = req.body;
   try{
-    console.log('**************** campaignIds', campaignIds);
     if(campaignIds.length >0){
       await campaignService.toggleAdminCampaignsStatus(campaignIds, isActive, ngoId);
     }
@@ -130,7 +129,6 @@ export const toggleCampignsStatus = async(req: Request, res: Response) =>{
     res.send({message: serverMessages.ngo.statusUpdate.he});
   }catch(error){
     console.log(error);
-    
     res.status((error as ServerError).statusCode||500).send({status:false, message: (error as any).message})
   }
 }

@@ -14,15 +14,11 @@ import campaignService from '../services/campaign.service';
  * Handles uploaded media files: images, main image, and movie.
  */
 export const createCampaign = async (req: Request, res: Response) => {
-
   const { title, description, startDate, endDate, tags, goal, isActive, blockchainTx } = req.body;
-
   const user: { _id: string, ngoId: string } = (req as any).user;
-  console.log('req.files', req.files);
 
   try {
     const mediaFiles = req.files as MediaFiles
-
     const images: string[] = mediaFiles.images ? mediaFiles.images.map((file: Express.Multer.File) => file.filename) : []
     const movie: string | null = mediaFiles.movie ? mediaFiles.movie[0].filename : null
     const mainImage: string | null = mediaFiles.mainImage ? mediaFiles.mainImage[0].filename : null
@@ -44,7 +40,6 @@ export const createCampaign = async (req: Request, res: Response) => {
     res.status(201).json(campaign);
   } catch (err: any) {
     console.log(err);
-
     res.status(400).json({ message: err.message });
   }
 }
@@ -58,7 +53,6 @@ export const updateCampaign = async (req: Request, res: Response) => {
   const { title, description, startDate, endDate, tags, goal, isActive, blockchainTx, existingImages: images = [], existingMovie: movie, existingMainImage: mainImage } = req.body;
 
   const user: { _id: string, ngoId: string } = (req as any).user;
-  console.log('existingImages', images);
 
   try {
     const mediaFiles = req.files as MediaFiles
@@ -85,7 +79,6 @@ export const updateCampaign = async (req: Request, res: Response) => {
     res.json(campaign);
   } catch (err: any) {
     console.log(err);
-
     res.status(400).json({ message: err.message });
   }
 }
@@ -193,8 +186,6 @@ export const getCampaignReport = async (req: Request, res: Response) => {
   const { id } = req.params;
   const includeDonations = req.query.includeDonations === "1";
   const includeComments = req.query.includeComments === "1";
-  console.log('getCampaignReport');
-
   try {
     const data: { filename: string, pdf: Uint8Array<ArrayBufferLike> } = await CampaignService.generateReport(id, req.user as IUser, includeDonations, includeComments);
     res.setHeader("Content-Type", "application/pdf");

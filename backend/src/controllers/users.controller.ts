@@ -120,7 +120,6 @@ export const changeUserRole = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params
     const { role } = req.body;
-    console.log('role', req.body);
     const updatedUser = await userService.updateRole(userId, role)
     if (!updatedUser) {
       return res.status(404).json({ success: false, message: "משתמש לא קיים" });

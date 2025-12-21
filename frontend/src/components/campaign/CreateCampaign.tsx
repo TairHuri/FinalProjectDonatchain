@@ -114,7 +114,7 @@ try{
     });
     postSave();
      }catch(error){
-      console.log(error);
+      console.error(error);
       setAlert((error as any).message, true)
       stop(); 
     }

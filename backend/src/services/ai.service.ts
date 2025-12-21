@@ -24,7 +24,7 @@ const addNewNgo = async (ngo: INgo) => {
         });
         return true;
     } catch (error) {
-        console.log(error);
+        console.error(error);
         return false;
     }
 
@@ -39,7 +39,7 @@ const updateNgo = async (ngo: INgo) => {
         });
         return response;
     } catch (error) {
-        console.log(error);
+        console.error(error);
         return false;
     }
 

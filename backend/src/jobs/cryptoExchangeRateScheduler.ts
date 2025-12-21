@@ -7,7 +7,6 @@ const getEtherRate = async () => {
     const res = await fetch(blockchainService.rateApi);
     const data:ExchangeRateApi = await res.json();
     blockchainService.exchangeRate.eth = blockchainService.parseRateApi(data)
-    console.log('startCryptoRateJob', blockchainService.exchangeRate.eth);
     
   };
 export const startCryptoRateJob = () => {

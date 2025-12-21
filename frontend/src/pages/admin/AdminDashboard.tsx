@@ -64,10 +64,8 @@ const AdminDashboard: React.FC = () => {
         donationsCount: statsRes.data.donationsCount,
         totalRaised: statsRes.data.totalRaised,
       });
-
-      console.log("✅ הנתונים רועננו בהצלחה!");
     } catch (err) {
-      console.error("❌ שגיאה בטעינת הנתונים בדשבורד המנהל:", err);
+      console.error("Error loading data in the admin dashboard:", err);
     }
   };
 

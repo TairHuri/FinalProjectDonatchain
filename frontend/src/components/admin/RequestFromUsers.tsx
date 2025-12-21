@@ -83,13 +83,10 @@ export default function RequestFromUsers() {
    */
   const changeStatus = (ids: string[], status: RequestStatusType, adminComment:string) => {
     setRows(prev => prev.map(request => ids.includes(request._id) ? { ...request, status, adminComment } : request));
-    console.log(active, active && ids.includes(active._id));
     
     // If currently opened request was updated, sync it as well
     if (active && ids.includes(active._id)) {
       setActive({ ...active, status, adminComment });
-      console.log('updateRequestOnServer', { ...active, status, adminComment });
-      
       updateRequestOnServer({ ...active, status, adminComment })
     }
     // Remove from selection after update

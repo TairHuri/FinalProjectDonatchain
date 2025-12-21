@@ -88,7 +88,6 @@ const CreditPayment = ({ close, campaignId }: { close: () => void, campaignId: s
   };
 
   const handleAnonymouse = (checked: boolean) => {
-    console.log({anonymous: checked})
     setCcform({ ...ccForm, anonymous: checked });
   };
 

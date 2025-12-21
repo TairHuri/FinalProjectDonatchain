@@ -29,7 +29,7 @@ export default function Ngos() {
             const ngos = await getNgoList();
             setNgos(ngos.items.filter(n => n.isActive == true));
         } catch (error) {
-            console.log(error);
+            console.error(error);
             setAlert('error loading ngos', true)
         }
     }

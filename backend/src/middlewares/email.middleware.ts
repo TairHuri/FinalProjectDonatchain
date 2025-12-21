@@ -50,9 +50,8 @@ export async function sendMemberStatusEmail({
             subject,
             html,
         });
-        console.log(`📧 נשלח מייל לחבר בעמותה: ${to}`);
     } catch (err) {
-        console.error("❌ שגיאה בשליחת מייל לחבר עמותה:", err);
+        console.error("Error sending email to an association member:", err);
     }
 }
 
@@ -91,9 +90,7 @@ export async function sendNgoStatusEmail({
             subject,
             html,
         });
-
-        console.log(` מייל נשלח בהצלחה לעמותה: ${to} (${ngoName})`);
     } catch (err) {
-        console.error(" שגיאה בשליחת מייל לעמותה:", err);
+        console.error("Error sending email to the association:", err);
     }
 }

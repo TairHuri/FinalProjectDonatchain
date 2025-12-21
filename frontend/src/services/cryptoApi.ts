@@ -173,7 +173,6 @@ export const getCampaignOnChain = async (blockchainTx: number) => {
   const contract = new ethers.Contract(CONTRACT, hubAbi.abi, provider);
 
   const campaignOnChain = await contract.campaigns(blockchainTx);
-  console.log(campaignOnChain);
   return campaignOnChain;
   
 }

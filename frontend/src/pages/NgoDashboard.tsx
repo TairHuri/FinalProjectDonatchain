@@ -38,7 +38,6 @@ const NgoDashboard: React.FC = () => {
     "dashboard" | "newCampaign" | "campaigns" | "CampaignDetails" | "profile" | "donors" | "ngoUsers" | "ngoDetails" | "adminRequest"
   >("dashboard");
   const [campaignId, setCampaignId] = useState<string | null>(null)
-  console.log('campaigns', campaigns);
   const { active, setActive } = useTabsButtons()
   /**
   * Campaign filters by type/status (active, planned, expired, inactive, deleted).

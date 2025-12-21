@@ -6,8 +6,6 @@ import Campaign from "../models/campaign.model";
 export const startCampaignStatusJob = () => {
  // Schedule job to run every day at midnight (00:00:00) 
   cron.schedule("0 0 0 * * *", async () => {
-    console.log("🔄 מריץ עדכון סטטוס קמפיינים לפי תאריך סיום...");
-
     try {
       const now = new Date();
       const result = await Campaign.updateMany(
@@ -16,14 +14,11 @@ export const startCampaignStatusJob = () => {
       );
 
       if (result.modifiedCount > 0) {
-        console.log(` עודכנו ${result.modifiedCount} קמפיינים שפג תוקפם.`);
       } else {
-        console.log(" לא נמצאו קמפיינים שפג תוקפם.");
+        console.log("No expired campaigns found.");
       }
     } catch (err) {
-      console.error(" שגיאה בהרצת עדכון קמפיינים:", err);
+      console.error("Error running campaign update:", err);
     }
   });
-
-  console.log("🕒 מתזמן הקמפיינים הופעל בהצלחה!");
 };

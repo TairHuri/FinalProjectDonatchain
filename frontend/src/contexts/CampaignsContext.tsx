@@ -35,9 +35,7 @@ export function CampaignsProvider({ children }: { children: ReactNode }) {
   // Loads all campaigns related to the NGO from the backend
 const refreshCampaigns = async () => {
   try {
-    console.log("Fetching campaigns for NGO:", user);
     const data = await getCampaigns(user?.ngoId);
-    console.log("Campaigns received:", data);
     setCampaigns(data.items);
   } catch (err) {
     console.error("Failed to fetch campaigns:", err);

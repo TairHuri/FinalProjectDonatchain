@@ -40,11 +40,8 @@ export default {
    * @returns transaction hash
    */
   async recordFiatDonation(campaignId: number, ILSAmount: number, originalAmount: number, currency: string, refCode: string) {
-    // const tx = await contract.recordCreditDonation(campaignId, Math.floor(ILSAmount*100), Math.floor(originalAmount*100), currency, refCode);
     const tx = await contract.recordCreditDonation(campaignId, originalAmount,ILSAmount, currency, refCode);
-    console.log("tx sent:", tx.hash);
     await tx.wait();
-    console.log("התרומה נרשמה בבלוקצ’יין");
     return tx.hash;
   },
   async getTransaction(txHash: string) {
