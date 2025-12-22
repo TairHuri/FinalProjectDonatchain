@@ -6,6 +6,7 @@ import { editNgo, getNgoTags } from "../../services/ngoApi";
 
 import { inputStyle, primaryBtnStyle,ngoDetailsTitle } from "../../css/general/dashboardStyles";
 import Tags from "../gui/Tags";
+import Spinner, { useSpinner } from "../gui/Spinner";
 
 export type NgoEditProps = {
     token: string;
@@ -23,6 +24,8 @@ const NgoEdit = ({ token, ngoDetails, updateNgo, setEditMode }: NgoEditProps) =>
    // Media upload fields: NGO logo + certificate PDF
     const [media, setMedia] = useState<NgoMediaType>({ logoUrl: null, certificate: null });
 
+    const {start, stop, isLoading} = useSpinner()
+
     // Handle media file selection (logo / certificate)
     const handleChangeMedia = (field: keyof NgoMediaType, value: FileList | null) => {
         setMedia({ ...media, [field]: value ? value[0] : null });
@@ -36,6 +39,7 @@ const NgoEdit = ({ token, ngoDetails, updateNgo, setEditMode }: NgoEditProps) =>
         if (!token) {
             return null;
         }
+        start();
 
         try {
             const res = await editNgo(ngo, token, media);
@@ -47,6 +51,8 @@ const NgoEdit = ({ token, ngoDetails, updateNgo, setEditMode }: NgoEditProps) =>
             }
         } catch (error) {
             setAlert('לא ניתן לעדכן שלב זה' + '\n' + (error as any).message, true);
+        }finally{
+            stop();
         }
     };
 
@@ -59,6 +65,7 @@ const NgoEdit = ({ token, ngoDetails, updateNgo, setEditMode }: NgoEditProps) =>
         clearAlert();
         setEditMode('view');
     }
+    if(isLoading) return <div style={{display:'flex', alignItems:'center', height:'100%'}}><Spinner /></div>
     return (
         <div>
             <h2 style={ngoDetailsTitle}>
