@@ -164,7 +164,7 @@ const NgoDashboard: React.FC = () => {
             </div>
             <div className="my_campaigns_view-ngo-dashboard">
               {campaigns.filter(campaignFilters[active]).map((c) => (
-                <div key={c._id}>
+                <div key={c._id} >
                   <CampaignItem c={c} showButtons={true} edit={editCampaign} />
                 </div>
               ))}
