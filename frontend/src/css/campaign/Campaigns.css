@@ -16,8 +16,7 @@
   width: 100%;
   height: 100%;
   justify-content: flex-start;
- padding: 1px 40px;
-  padding-top: 15px;
+ padding: 15px 40px;
 }
 
 /* ===== Header ===== */
@@ -56,7 +55,7 @@
 @media (max-width:900px){ .camps-filters{ grid-template-columns: 1fr 1fr; } }
 @media (max-width:680px){
 .camps-page{
-  padding: 1px 15px;
+  padding: 15px 15px;
 }
 }
 @media (max-width:560px){ .camps-filters{ grid-template-columns: 1fr; } }
