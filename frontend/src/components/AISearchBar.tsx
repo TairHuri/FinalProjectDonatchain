@@ -54,7 +54,11 @@ export default function AISearchBar() {
       setLoading(false);
     }
   };
-
+  const searchOnEnter = (event: React.KeyboardEvent) => {
+    if(event.key == 'Enter'){
+      handleSearch()
+    }
+  }
   // Close the modal window
   const closeModal = () => setShowResults(false);
 
@@ -69,6 +73,7 @@ export default function AISearchBar() {
             className="search-input"
             value={text}
             onChange={(e) => setText(e.target.value)}
+            onKeyDown={searchOnEnter}
             placeholder="תאר מה אתה מחפש בעמותה, לדוגמה: אני אוהב בעלי חיים ומחפש עמותה שתומכת בהם"
           />
           <button
