@@ -92,7 +92,7 @@ export default function Campaigns() {
     );
 
     if (showActiveOnly) {
-      result = result.filter((c) => !isEnded(c) || !isStarted(c));
+      result = result.filter((c) => !isEnded(c) && !isStarted(c));
     }
 
     result = result.sort((a, b) => {
