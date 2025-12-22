@@ -69,6 +69,7 @@
 }
 @media (max-width:900px){ .ngos-filters{ grid-template-columns: 1fr 1fr; } }
 @media (max-width:560px){ .ngos-filters{ grid-template-columns: 1fr; } }
+@media (max-width:900px){ .ngos-page{ padding: 1px 15px;} }
 
 .ngos-input-wrap{
   display:flex;
@@ -143,7 +144,7 @@
 /* ===== Grid / List containers ===== */
 .ngos-items-container_grid{
   display:grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
   gap:16px;
 }
 .ngos-items-container_flex{
