@@ -2,6 +2,7 @@
 import puppeteer from "puppeteer";
 import {  ICampaignWithTotal } from "../models/campaign.model";
 import { IDonation } from "../models/donation.model";
+import {config} from '../config';
 
 
 import path from 'path';
@@ -22,8 +23,8 @@ export const generateCampaignReport = async (campaign: ICampaignWithTotal, donat
     dateDonationFmt: (d: Date) => dateDonationFmt.format(new Date(d)),
     includeDonations,
     includeComments,
-    imagesBaseUrl: process.env.IMAGES_URL || "http://localhost:4000/images",
-    etherscanUrl: process.env.ETHERSCAN_URL || "https://sepolia.etherscan.io/tx",
+    imagesBaseUrl: config.imagesUrl,
+    etherscanUrl: config.etherscanUrl,
 
   });
 

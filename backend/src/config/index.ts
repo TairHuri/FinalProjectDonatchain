@@ -22,6 +22,9 @@ interface Config {
   deleteManagerWaitingTime:number;
   adminEmail:string;
   adminPassword:string;
+  nodeEnv:string;
+  imagesUrl:string;
+  etherscanUrl:string; 
 }
 
 export const config: Config = {
@@ -44,4 +47,7 @@ export const config: Config = {
   deleteManagerWaitingTime: Number(process.env.DELETE_MANAGER_WAITING_TIME) || 1,
   adminEmail:process.env.ADMIN_EMAIL || '',
   adminPassword:process.env.ADMIN_PASSWORD || '',
+  nodeEnv:process.env.NODE_ENV || 'development',
+  imagesUrl: process.env.IMAGES_URL || 'http://localhost:4000/images',
+  etherscanUrl: process.env.ETHERSCAN_URL || 'https://sepolia.etherscan.io/tx',
 };

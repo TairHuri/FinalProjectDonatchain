@@ -1,10 +1,9 @@
-import nodemailer from "nodemailer";
 import PDFDocument from "pdfkit";
 import fs from "fs";
 import path from "path";
 import * as QRCode from "qrcode";
 import { transporter } from "../middlewares/email.middleware";
-
+import {config} from '../config'
 
 export interface DonationData {
   donorEmail: string;
@@ -137,7 +136,7 @@ export async function sendReceiptEmail(data: DonationData): Promise<void> {
   const pdfPath = await generateReceiptPDF(data);
 
   const mailOptions = {
-    from: `"DonatChain" <${process.env.EMAIL_USER}>`,
+    from: `"DonatChain" <${config.emailUser}>`,
     to: data.donorEmail,
     subject: "קבלה על תרומה - DonatChain",
     html: `

@@ -45,7 +45,7 @@ export async function sendMemberStatusEmail({
 
     try {
         await transporter.sendMail({
-            from: `"DonatChain" <${process.env.EMAIL_USER}>`,
+            from: `"DonatChain" <${config.emailUser}>`,
             to,
             subject,
             html,
@@ -85,7 +85,7 @@ export async function sendNgoStatusEmail({
 
     try {
         await transporter.sendMail({
-            from: `"DonatChain" <${process.env.EMAIL_USER}>`,
+            from: `"DonatChain" <${config.emailUser}>`,
             to,
             subject,
             html,

@@ -4,7 +4,7 @@ import ngoService from "../services/ngo.service";
 import User, { IUser } from "../models/user.model";
 import { BaseNgo } from "../models/ngo.model";
 import { NgoMediaFiles } from "../middlewares/multer.middleware";
-import nodemailer from "nodemailer";
+import {config} from '../config'
 import bcrypt from "bcryptjs";
 import {transporter}from '../middlewares/email.middleware'
 
@@ -188,17 +188,6 @@ export const me = async (req: Request, res: Response) => {
 };
 
 
-// /* -----------------------------
-//    Nodemailer setup for password reset emails
-// ------------------------------ */
-// const transporter = nodemailer.createTransport({
-//   service: "gmail",
-//   auth: {
-//     user: process.env.EMAIL_USER,
-//     pass: process.env.EMAIL_PASS,
-//   },
-// });
-
 /* -----------------------------
    Forgot password – send reset code
 ------------------------------ */
@@ -228,7 +217,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
     `;
 
     await transporter.sendMail({
-      from: `"DonatChain" <${process.env.EMAIL_USER}>`,
+      from: `"DonatChain" <${config.emailUser}>`,
       to: email,
       subject: "איפוס סיסמה - DonatChain",
       html,
