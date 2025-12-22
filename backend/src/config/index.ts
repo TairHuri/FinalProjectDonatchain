@@ -20,6 +20,8 @@ interface Config {
   emailServer: string;
   emailPort: number;
   deleteManagerWaitingTime:number;
+  adminEmail:string;
+  adminPassword:string;
 }
 
 export const config: Config = {
@@ -40,5 +42,6 @@ export const config: Config = {
   emailServer: process.env.EMAIL_SERVER || '',
   emailPort: Number(process.env.EMAIL_PORT) || 0,
   deleteManagerWaitingTime: Number(process.env.DELETE_MANAGER_WAITING_TIME) || 1,
-
+  adminEmail:process.env.ADMIN_EMAIL || '',
+  adminPassword:process.env.ADMIN_PASSWORD || '',
 };

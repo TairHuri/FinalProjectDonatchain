@@ -1,16 +1,24 @@
 import mongoose from "mongoose";
-import dotenv from "dotenv";
 import bcrypt from "bcryptjs";
 import User from "../models/user.model";
+import {config} from '../config'
 
-dotenv.config();
 
 const mongoUri = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/donatchain";
 
 export async function createAdmin() {
   try {
-    const email = "admin@donatchain.com";
-    const password = "Admin123!";
+    const email = config.adminEmail;
+    const password = config.adminPassword;
+
+    if(email.length == 0){
+      console.error("Admin email is missing or invalid - stopping server");
+      process.exit(1);
+    }
+    if(password.length == 0){
+      console.error("Admin password is missing or invalid - stopping server");
+      process.exit(1);
+    }
 
     const existing = await User.findOne({ email });
     if (existing) {
@@ -25,7 +33,7 @@ export async function createAdmin() {
       password: hashedPassword,
       role: "admin",
       approved: true,
-      ngoId: new mongoose.Types.ObjectId(),
+
     });
     await adminUser.save();
   } catch (error) {

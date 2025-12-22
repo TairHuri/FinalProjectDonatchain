@@ -162,7 +162,7 @@ const NgoDashboard: React.FC = () => {
             <div className="my_campaigns_tabs-ngo-dashboard">
               <TabsButtons active={active} setActive={setActive} tabs={tabs} />
             </div>
-            <div className=".my_campaigns_view-ngo-dashboard">
+            <div className="my_campaigns_view-ngo-dashboard">
               {campaigns.filter(campaignFilters[active]).map((c) => (
                 <div key={c._id}>
                   <CampaignItem c={c} showButtons={true} edit={editCampaign} />
