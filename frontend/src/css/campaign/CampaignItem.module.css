@@ -191,7 +191,8 @@
     text-align: center;
   }
   .amount-row{
-    display: block;
+    display: flex;
+    align-items: end;
   }
   .percent{
     float: left;
